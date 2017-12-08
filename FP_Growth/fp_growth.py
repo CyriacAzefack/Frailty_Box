@@ -291,6 +291,9 @@ class FPTree(object) :
 def find_frequent_patterns(transactions, support_treshold) :
     """
     Find the frequent patterns in the transactions
+    :param transactions : a list of all items transactions
+    :param support_treshold : minimal number of items occurences
+    :return : a dictionnary with pattern as key and support as value
     """
     tree = FPTree(transactions, support_treshold, None, None)
     patterns = tree.mine_patterns(support_treshold)
