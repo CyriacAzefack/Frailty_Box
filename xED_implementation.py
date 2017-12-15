@@ -14,6 +14,7 @@ import math
 from sklearn.cluster import DBSCAN
 from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
+from dateutil.parser import parse
 
 sys.path.append(os.path.abspath("./FP_Growth"))
 import fp_growth
@@ -52,11 +53,16 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
         periodicities = {}
         
         for episode in frequent_episodes.keys():
-            periodicities[episode] = build_description(df, episode, candidate_periods, 
+             result = build_description(df, episode, candidate_periods, 
                                                            support_treshold, std_max, tolerance_ratio, accuracy_min)
-        
+             if result is None:
+                 periodicities.pop(episode, None)
+             else:
+                 periodicities[episode] = result
+                 
         for episode, periodicity in periodicities.items():
-            periodicity["nb_factorized_events"], periodicity["factorized_events_id"], periodicity["missing_events"] = find_factorized_events(df, episode, periodicity, tolerance_ratio)
+            if periodicity is not None:
+                periodicity["nb_factorized_events"], periodicity["factorized_events_id"], periodicity["missing_events"] = find_factorized_events(df, episode, periodicity, tolerance_ratio)
         
         
         sorted_episodes_by_compression = sorted(periodicities.keys(), key=lambda x: periodicities[x]["nb_factorized_events"], reverse=True)
@@ -93,7 +99,7 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
             
             df = df[["date", "activity"]]
     
-    
+
     return final_periodicities, df
     
 
@@ -132,7 +138,6 @@ def find_factorized_events(df, episode, periodicity, tolerance_ratio) :
     """
     Compute the number of factorized events 
     """
-    
     
     dataset_duration = (max(df.date) - min(df.date))/np.timedelta64(1, 's') #in seconds
     nb_comp = len(periodicity["numeric"])
@@ -232,7 +237,10 @@ def build_description(df, episode, candidate_periods, support_treshold, std_max,
             data_points = data_points.reshape(-1, 1)
             db = DBSCAN(eps=std_max*period.total_seconds(), min_samples=support_treshold).fit(data_points)
            
-            N_comp = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0) # Noisy samples are given the label -1. 
+            N_comp = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0) # Noisy samples are given the label -1.
+            
+            if N_comp == 0:
+                continue
             gmm = GaussianMixture(n_components = N_comp, covariance_type='full', init_params='random')
             gmm.fit(data_points)
 
@@ -259,13 +267,16 @@ def build_description(df, episode, candidate_periods, support_treshold, std_max,
                   
            
             if(accuracy >= accuracy_min) & (accuracy > description["accuracy"]):
+                
                 description["period"] = period
                 description["accuracy"] = accuracy
                 description["numeric"] = gmm_descr
                 description["readable"] = gmm_descr_str
                 description["delta_t"] = max(occ_period.loc[group_filter & occ_period.expected==True, "start_time"]) - min(list(occ_period.loc[group_filter & occ_period.expected==True, "start_time"]))
                 
-                
+    
+    if description['accuracy'] == 0:
+        return None
     return description
 
 def find_occurences(df, episode) :
@@ -325,8 +336,9 @@ if __name__ == "__main__":
     """
     The dataframe should have 1 index (date as datetime) and 1 feature (activity)
     """
-    dataset = pd.rdf = pd.read_csv("toy_dataset.txt", delimiter=';')
-    date_format = '%Y-%d-%m %H:%M'
+    dataset = pd.rdf = pd.read_csv("kaData.txt", delimiter=';')
+    #date_format = '%Y-%d-%m %H:%M'
+    date_format = '%d-%b-%Y %H:%M:%S'
     dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
     #dataset = dataset.set_index('date')
     results, df = xED_algorithm(df=dataset)
