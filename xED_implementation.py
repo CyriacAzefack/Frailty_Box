@@ -80,13 +80,14 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
             
             #add missing events
             for event in periodicities[sorted_episodes_by_compression[0]]["missing_events"] :
-                df.loc[len(df)] = event
+                df.loc[max(df.index) + 1] = [event["date"], event["activity"]]
             
             #drop described events
-            df.drop(periodicities[sorted_episodes_by_compression[0]]["factorized_events_id"], inplace=True)
+            drops_ids = periodicities[sorted_episodes_by_compression[0]]["factorized_events_id"]
+            df.drop(drops_ids, inplace=True)
             
            
-            factorized_events_id += periodicities[sorted_episodes_by_compression[0]]["factorized_events_id"]
+            factorized_events_id += drops_ids
             
             
             if (len(sorted_episodes_by_compression) < 2 ):
@@ -96,8 +97,6 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
             
             
             compressed = True
-            
-            df = df[["date", "activity"]]
     
 
     return final_periodicities, df
@@ -337,11 +336,13 @@ if __name__ == "__main__":
     The dataframe should have 1 index (date as datetime) and 1 feature (activity)
     """
     dataset = pd.rdf = pd.read_csv("kaData.txt", delimiter=';')
-    #date_format = '%Y-%d-%m %H:%M'
     date_format = '%d-%b-%Y %H:%M:%S'
+#    dataset = pd.rdf = pd.read_csv("toy_dataset.txt", delimiter=';')
+#    date_format = '%Y-%d-%m %H:%M'
+    
     dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
     #dataset = dataset.set_index('date')
-    results, df = xED_algorithm(df=dataset)
+    results, df = xED_algorithm(df=dataset, Tep=60, support_treshold=3, tolerance_ratio=2)
     
     dat = pd.DataFrame(columns= ["episode", "readable", "period", "accuracy", "delta_t", "nb_factorized_events"])
     for v in results :
