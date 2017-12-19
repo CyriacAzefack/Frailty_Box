@@ -248,7 +248,12 @@ def find_frequent_patterns(transactions, support_threshold):
     Given a set of transactions, find the patterns in it
     over the specified support threshold.
     """
-    tree = FPTree(transactions, support_threshold, None, None)
+    no_duplicate_transactions = []
+    
+    for transaction in transactions:
+        no_duplicate_transactions.append(list(set(transaction)))
+    
+    tree = FPTree(no_duplicate_transactions, support_threshold, None, None)
     return tree.mine_patterns(support_threshold)
 
 
