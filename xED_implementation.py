@@ -54,7 +54,7 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
         frequent_episodes = pyfpgrowth.find_frequent_patterns(transactions, support_treshold)
         
         
-        #frequent_episodes = [("prepare Breakfast start", "prepare Breakfast end")]
+        frequent_episodes = [("kitchen", "coffee")]
         if not frequent_episodes:
             break
         
@@ -69,7 +69,7 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
                  
         for episode, periodicity in periodicities.items():
             if periodicity is not None:
-                periodicity["nb_factorized_events"], periodicity["factorized_events_id"], periodicity["missing_events"] = find_factorized_events(df, episode, periodicity, tolerance_ratio)
+                periodicity["nb_factorized_events"], periodicity["factorized_events_id"], periodicity["missing_events"] = find_factorized_events(df, episode, periodicity, tolerance_ratio, Tep)
         
         
         sorted_episodes_by_compression = sorted(periodicities.keys(), key=lambda x: periodicities[x]["nb_factorized_events"], reverse=True)
@@ -97,8 +97,9 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
             factorized_events_id += drops_ids
             
             
-            if (len(sorted_episodes_by_compression) < 2 ):
+            if len(sorted_episodes_by_compression) < 2 :
                 break
+            
             #Remove sorted_episodes_by_compression[0] from the list
             sorted_episodes_by_compression = sorted_episodes_by_compression[1:]
             
@@ -142,7 +143,7 @@ def extract_transactions(df, Tep = 30 ) :
     
     return transactions
 
-def find_factorized_events(df, episode, periodicity, tolerance_ratio) :
+def find_factorized_events(df, episode, periodicity, tolerance_ratio, Tep) :
     """
     Compute the number of factorized events 
     """
@@ -150,10 +151,13 @@ def find_factorized_events(df, episode, periodicity, tolerance_ratio) :
     nb_deleted_events_expected = periodicity["nb_occurrences_expected"] * len(episode)
     
     missing_events = []
+    factorized_events_id = []
     
     df_copy = df[df.activity.isin(episode)].copy(deep=True)
+    df_copy.sort_values(["date"], ascending = True, inplace = True)
     
-    occurences = find_occurences(df_copy, episode)
+    
+    occurences = find_occurences(df_copy, episode, Tep)
     occurences.loc[:, "rel_start_time"] = occurences["start_time"].apply(lambda x : modulo_datetime(x.to_pydatetime(), periodicity["period"]))
     occurences.loc[:, "expected"] = occurences.loc[:, "rel_start_time"].apply(
                     lambda x : occurence_expected(x.total_seconds(), periodicity["numeric"], tolerance_ratio))
@@ -161,60 +165,130 @@ def find_factorized_events(df, episode, periodicity, tolerance_ratio) :
     #Drop the unexpected occurrences
     occurences = pd.DataFrame(occurences.values[occurences.expected == True], columns=occurences.columns)
     
-    factorized_events_id = []
-
     for index, occurence in occurences.iterrows():
-        events_id = df_copy.loc[(df_copy.start_time >= occurence["start_time"]) &
-                                (df_copy.start_time <= occurence["end_time"])].index
+        events_id = df_copy.loc[(df_copy.date >= occurence["start_time"]) &
+                                (df_copy.date <= occurence["end_time"])].index
         factorized_events_id = factorized_events_id + list(events_id)
     
+    #drop the already analysed events
+    df_copy.drop(factorized_events_id, inplace=True)
     
-    if periodicity["accurracy"] < 1:
-        #check for missing events
-        df_copy.loc[:, "rel_start_time"] = df_copy["date"].apply(lambda x : modulo_datetime(x.to_pydatetime(), periodicity["period"]))
+    
+    #TRRACK MISING OCCURENCES
+    
+    missing_occurences = find_missing_occurences(episode, occurences, periodicity, tolerance_ratio)
+    
+    df_copy.loc[:, "rel_start_time"] = df_copy["date"].apply(lambda x : modulo_datetime(x.to_pydatetime(), periodicity["period"]))
+    
+     # Tag the events which occured as expected
+    df_copy.loc[:, "expected"] = df_copy.loc[:, "rel_start_time"].apply(
+                lambda x : occurence_expected(x.total_seconds(), periodicity["numeric"], tolerance_ratio))
+    start_time = min(df_copy.date)
+    end_time = max(df_copy.date)
+    
+    current_day_start_time = start_time
+    
+    
+    while True:
+        current_day_end_time = current_day_start_time + periodicity["period"]
         
-         # Tag the expected occurences
-         df_copy.loc[:, "expected"] = df_copy.loc[:, "rel_start_time"].apply(
-                    lambda x : occurence_expected(x.total_seconds(), periodicity["numeric"], tolerance_ratio))
-        start_time = min(df_copy.date)
-        end_time = max(df_copy.date)
+        rel_current_day_start_time = modulo_datetime(current_day_start_time.to_pydatetime(), periodicity["period"]).total_seconds()
+        rel_current_day_end_time = modulo_datetime(current_day_end_time.to_pydatetime(), periodicity["period"]).total_seconds()
         
-        current_day_start_time = start_time
-        
-        while True:
-            current_day_end_time = current_start_time + periodicity["period"]
-            
-            if current_day_end_time > end_time :
-                break
-            
-            rel_current_day_start_time = modulo_datetime(current_day_start_time, periodicity["period"]).total_seconds()
-            rel_current_day_end_time = modulo_datetime(current_day_end_time, periodicity["period"]).total_seconds()
-            
-            for mean_time, std_time in periodicity["numeric"]:
-                #building the component date range to check for events
-                if mean_time >= rel_current_day_start_time:
-                    comp_mean_date = current_day_start_time + dt.timedelta(seconds=(mean_time - rel_current_day_start_time))
-                else :
-                    comp_mean_date = current_day_start_time + dt.timedelta(seconds = periodicity["period"].total_seconds + mean_time - rel_current_day_start_time)
-                    
-                comp_start_date = comp_mean_date - dt.timedelta(seconds = tolerance_ratio * std_time)
-                comp_end_date = comp_mean_date + dt.timedelta(seconds = tolerance_ratio * std_time)
-                event_occured = set(df_copy.loc[(df_copy.expected == True) &
-                                                (df_copy.date >= comp_start_date) &
-                                                (df_copy.date <= comp_end_date), "activity"].values)
-                miss_events = set(list(episode)).symmetric_difference(set(events))
-            
-                if len(miss_events) == 0:
-                    continue
+        for mean_time, std_time in periodicity["numeric"].items():
+            #building the component date range to check for events
+            if mean_time >= rel_current_day_start_time:
+                comp_mean_date = current_day_start_time + dt.timedelta(seconds=(mean_time - rel_current_day_start_time))
+            else :
+                comp_mean_date = current_day_start_time + dt.timedelta(seconds = periodicity["period"].total_seconds() + mean_time - rel_current_day_start_time)
                 
-                for event in miss_events:
-                    missing_events.append({"activity" : "[MISSING] " + event, "date" : comp_mean_date})
+            comp_start_date = comp_mean_date - dt.timedelta(seconds = tolerance_ratio * std_time)
+            comp_end_date = comp_mean_date + dt.timedelta(seconds = tolerance_ratio * std_time)
+            
+            if comp_start_date > end_time:
+                continue
+            
+            event_filter = (df_copy.expected == True) & (df_copy.date >= comp_start_date) & (df_copy.date <= comp_end_date)
+            events_occured = list(df_copy.loc[event_filter, "activity"].values)
+            
+            #Add factorized events (not a complete occurrence but there are some event of the episode registered, need to be dropped)
+            for event in events_occured :
+                factorized_events_id.append(df_copy.loc[event_filter & (df_copy.activity == event)].index[0])
                 
+            miss_events = list(set(episode).symmetric_difference(set(events_occured)))
+            
+            for event in miss_events:
+                missing_events.append({"activity" : "[MISSING] " + event, "date" : comp_mean_date})
+        
+        current_day_start_time = current_day_end_time
+        
+        #Finish when we are out of the dataset
+        if current_day_start_time > end_time :
+            break
     
     compression_power = len(factorized_events_id) - len(missing_events)
     return compression_power, factorized_events_id, missing_events
         
+def find_missing_occurences(episode, occurences, periodicity, tolerance_ratio):
+    """
+    find all the missing occurrences of the episode
+    """
     
+    missing_occurences = pd.DataFrame(columns = ["min_time", "max_time", "start_time"])
+    avg_occurence_duration = np.mean(occurences['end_time'] - occurences['start_time'])
+    
+    for mean_time, std_time in periodicity['numeric'].items():
+        
+        #Find all the occurrences of the current component
+        occurences.loc[:, "expected"] = occurences.loc[:, "rel_start_time"].apply(
+                    lambda x : occurence_expected(x.total_seconds(), dict([(mean_time, std_time)]), tolerance_ratio))
+        comp_occurences = occurences[occurences.expected == True].copy(deep=True)
+        
+        #Compute time between occurences
+        comp_occurences.loc[:, "time_since_last_occ"] = comp_occurences['start_time'] - comp_occurences['end_time'].shift(1)
+        
+        #First row 'time_since_last_occ' is NaT so we replace by a duration of '0'
+        comp_occurences.fillna(0, inplace=True)
+        
+        #if the time_since_last_occ is more than a period, we might have a missing occurence in between
+        comp_occurences = comp_occurences.drop(comp_occurences[comp_occurences['time_since_last_occ'] < periodicity['period']].index)        
+        
+        for index, comp_occurence in comp_occurences.iterrows():
+            search_end_time = comp_occurence['start_time']
+            search_start_time = comp_occurence['start_time'] - comp_occurence['time_since_last_occ']
+            
+            #Now we search for all the potentials occurences in this timespan
+            current_start_time = search_start_time + periodicity["period"]
+            
+            #Since search_start_time is the end of a previous occurence
+    
+            while True:
+                current_end_time = current_start_time + periodicity["period"]
+                
+                rel_current_start_time = modulo_datetime(current_start_time.to_pydatetime(), periodicity["period"]).total_seconds()
+                
+
+                if mean_time >= rel_current_start_time:
+                    comp_mean_date = current_start_time + dt.timedelta(seconds=(mean_time - rel_current_start_time))
+                else :
+                    comp_mean_date = current_start_time + dt.timedelta(seconds = periodicity["period"].total_seconds() + mean_time - rel_current_start_time)
+                    
+                comp_start_date = comp_mean_date - dt.timedelta(seconds = tolerance_ratio * std_time)
+                comp_end_date = comp_mean_date + dt.timedelta(seconds = tolerance_ratio * std_time)
+                
+                current_start_time = current_end_time
+                
+                if current_start_time > search_end_time:
+                    break
+
+                               
+                missing_occurences.loc[len(missing_occurences)] = [comp_start_date, comp_end_date + avg_occurence_duration, comp_mean_date]
+                
+    return missing_occurences
+            
+        
+        
+        
     
     
 def build_description(df, episode, Tep, candidate_periods, support_treshold, std_max, tolerance_ratio, accuracy_min):
@@ -237,8 +311,8 @@ def build_description(df, episode, Tep, candidate_periods, support_treshold, std
             "numeric": {}, #all the components of the description. mean_time as key and std_time as value
             "readable": {}, #A readable string for the description
             "accuracy" : 0, #Accuracy of the description
-            "nb_occurrences_expected" : 0 #Number of episode occurences expected
-            "delta_t" : None, # Time duration when the description is valid
+            "nb_occurrences_expected" : 0, #Number of episode occurences expected
+            "delta_t" : None # Time duration when the description is valid
             }
     
     occurences = find_occurences(df, episode, Tep)
@@ -287,16 +361,16 @@ def build_description(df, episode, Tep, candidate_periods, support_treshold, std
             
             if N_comp == 0:
                 continue
-            gmm = GaussianMixture(n_components = N_comp, covariance_type='full', n_init=10)
+            gmm = GaussianMixture(n_components = N_comp, tol=0.01, covariance_type='spherical', n_init=10)
             gmm.fit(data_points)
-
+            
             gmm_descr = {} # time_mean as key and std as value
             gmm_descr_str = {}
             
-            for i in range(len(gmm.means_)):
+            for i in range(len(gmm.means_)):                
                 gmm_descr_str[str(dt.timedelta(seconds=gmm.means_[i][0]))] = str(dt.timedelta(
-                        seconds=np.sqrt(gmm.covariances_)[i][0][0]))
-                gmm_descr[gmm.means_[i][0]] = np.sqrt(gmm.covariances_)[i][0][0]
+                        seconds=math.ceil(np.sqrt(gmm.covariances_)[i])))
+                gmm_descr[gmm.means_[i][0]] = math.ceil(np.sqrt(gmm.covariances_[i]))
                 
             
             # Tag the expected occurences
@@ -360,9 +434,6 @@ def find_occurences(df, episode, Tep) :
     while True:
         current_end_time = current_start_time + dt.timedelta(hours=tep_hours, minutes=tep_minutes)
         
-        if current_end_time > max(episode_df.date):
-            break
-        
         #Find the episode events in the span time
         events_occured = set(episode_df.loc[(episode_df.date >= current_start_time) &
                                         (episode_df.date < current_end_time), "activity"].values)
@@ -373,6 +444,9 @@ def find_occurences(df, episode, Tep) :
                                         (episode_df.date < current_end_time), "date"].values)
             occurences.loc[len(occurences)] = [current_start_time, current_end_time]
             
+        
+        if len(episode_df.loc[episode_df.date > current_end_time]) == 0:
+            break
         
         current_start_time =  min(episode_df.loc[episode_df.date > current_end_time, "date"])
             
@@ -400,7 +474,7 @@ def occurence_expected(start_time, description, tolerance_ratio = 1):
     :param tolerance_ratio : tolerable distance to the mean
     """
     for mean_time in description.keys():
-        if abs(start_time - mean_time) < tolerance_ratio*description[mean_time]:
+        if abs(start_time - mean_time) <= tolerance_ratio*description[mean_time]:
             return True
         
     return False
