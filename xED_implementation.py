@@ -44,42 +44,66 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
     
     final_periodicities = []
     
+    comp_iter = 0
     while compressed:
-        
+        comp_iter += 1
         compressed = False
         
         transactions = extract_transactions(df, Tep)
-           
+        
+        print("\n")
+        print("###############################")
+        print("#    COMPRESSION N°%d START   #" % comp_iter)
+        print("##############################")
+        print("\n")
+        
+        
+        print("Finding frequent episodes candidates...".center(100, '*'))
         #frequent_episodes = fp_growth.find_frequent_patterns(transactions, support_treshold)
         frequent_episodes = pyfpgrowth.find_frequent_patterns(transactions, support_treshold)
         
+        frequent_episodes = [("got to bed end", "use toilet start", "use toilet end", )]
         
-        frequent_episodes = [("kitchen", "coffee")]
+        print(len(frequent_episodes), "episodes found !!")
+        
         if not frequent_episodes:
             break
         
-        
         periodicities = {}
         
+        
+        print("Building candidates episodes periodicities...".center(100, '*'))
+        i = 0
         for episode in frequent_episodes:
-             result = build_description(df, episode, Tep, candidate_periods, 
-                                                           support_treshold, std_max, tolerance_ratio, accuracy_min)
-             if result is not None:
-                 periodicities[episode] = result
-                 
+            i += 1
+            
+            result = build_description(df, episode, Tep, candidate_periods, 
+                                                           support_treshold, std_max, tolerance_ratio, accuracy_min)   
+            if result is not None:
+                print("\nInteresting periodicity found for the episode", episode)
+                periodicities[episode] = result
+                
+            sys.stdout.write("\r%.2f %% of episodes treated!!" % (100*i/len(frequent_episodes)))
+            sys.stdout.flush()
+        sys.stdout.write("\n")
+        
+        
         for episode, periodicity in periodicities.items():
             if periodicity is not None:
                 periodicity["nb_factorized_events"], periodicity["factorized_events_id"], periodicity["missing_events"] = find_factorized_events(df, episode, periodicity, tolerance_ratio, Tep)
         
-        
+        print("Sorting the candidate frequent episodes by compression power...".center(100, '*'))
         sorted_episodes_by_compression = sorted(periodicities.keys(), key=lambda x: periodicities[x]["nb_factorized_events"], reverse=True)
         
         factorized_events_id = []
+        
+        print("Dataset Rewriting".center(100, '*'))
         
         while set(factorized_events_id).isdisjoint(periodicities[sorted_episodes_by_compression[0]]["factorized_events_id"]) and (periodicities[sorted_episodes_by_compression[0]]["nb_factorized_events"] > 0) :
             
             df = df[["date", "activity"]]
             
+            print("Factorize data by the episode", sorted_episodes_by_compression[0])
             #Factorize data
             periodicities[sorted_episodes_by_compression[0]]["episode"] = sorted_episodes_by_compression[0]
             
@@ -178,53 +202,17 @@ def find_factorized_events(df, episode, periodicity, tolerance_ratio, Tep) :
     
     missing_occurences = find_missing_occurences(episode, occurences, periodicity, tolerance_ratio)
     
-    df_copy.loc[:, "rel_start_time"] = df_copy["date"].apply(lambda x : modulo_datetime(x.to_pydatetime(), periodicity["period"]))
-    
-     # Tag the events which occured as expected
-    df_copy.loc[:, "expected"] = df_copy.loc[:, "rel_start_time"].apply(
-                lambda x : occurence_expected(x.total_seconds(), periodicity["numeric"], tolerance_ratio))
-    start_time = min(df_copy.date)
-    end_time = max(df_copy.date)
-    
-    current_day_start_time = start_time
-    
-    
-    while True:
-        current_day_end_time = current_day_start_time + periodicity["period"]
+    for index, missing_occurence in missing_occurences.iterrows():
+        occured_events_filter = (df_copy.date >= missing_occurence["min_time"]) & (df_copy.date <= missing_occurence["max_time"])
+        occured_events = list(df_copy.loc[occured_events_filter, "activity"].values)
         
-        rel_current_day_start_time = modulo_datetime(current_day_start_time.to_pydatetime(), periodicity["period"]).total_seconds()
-        rel_current_day_end_time = modulo_datetime(current_day_end_time.to_pydatetime(), periodicity["period"]).total_seconds()
+        for event in occured_events:
+            factorized_events_id.append(df_copy.loc[occured_events_filter & (df_copy.activity == event)].index[0])
+            
+        non_occurred_events = list(set(episode).symmetric_difference(set(occured_events)))
         
-        for mean_time, std_time in periodicity["numeric"].items():
-            #building the component date range to check for events
-            if mean_time >= rel_current_day_start_time:
-                comp_mean_date = current_day_start_time + dt.timedelta(seconds=(mean_time - rel_current_day_start_time))
-            else :
-                comp_mean_date = current_day_start_time + dt.timedelta(seconds = periodicity["period"].total_seconds() + mean_time - rel_current_day_start_time)
-                
-            comp_start_date = comp_mean_date - dt.timedelta(seconds = tolerance_ratio * std_time)
-            comp_end_date = comp_mean_date + dt.timedelta(seconds = tolerance_ratio * std_time)
-            
-            if comp_start_date > end_time:
-                continue
-            
-            event_filter = (df_copy.expected == True) & (df_copy.date >= comp_start_date) & (df_copy.date <= comp_end_date)
-            events_occured = list(df_copy.loc[event_filter, "activity"].values)
-            
-            #Add factorized events (not a complete occurrence but there are some event of the episode registered, need to be dropped)
-            for event in events_occured :
-                factorized_events_id.append(df_copy.loc[event_filter & (df_copy.activity == event)].index[0])
-                
-            miss_events = list(set(episode).symmetric_difference(set(events_occured)))
-            
-            for event in miss_events:
-                missing_events.append({"activity" : "[MISSING] " + event, "date" : comp_mean_date})
-        
-        current_day_start_time = current_day_end_time
-        
-        #Finish when we are out of the dataset
-        if current_day_start_time > end_time :
-            break
+        for event in non_occurred_events:
+            missing_events.append({"activity" : "[MISSING] " + event, "date" : missing_occurence["start_time"]})
     
     compression_power = len(factorized_events_id) - len(missing_events)
     return compression_power, factorized_events_id, missing_events
@@ -355,7 +343,7 @@ def build_description(df, episode, Tep, candidate_periods, support_treshold, std
                 continue
             
             data_points = data_points.reshape(-1, 1)
-            db = DBSCAN(eps=std_max*period.total_seconds(), min_samples=support_treshold).fit(data_points)
+            db = DBSCAN(eps=std_max*period.total_seconds()/2, min_samples=support_treshold).fit(data_points)
            
             N_comp = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0) # Noisy samples are given the label -1.
             
@@ -400,8 +388,8 @@ def build_description(df, episode, Tep, candidate_periods, support_treshold, std
             
                   
            
-            if accuracy > 1:
-                raise ValueError('The accuray should not exceed 1.00 !!', episode, nb_occurrences_expected, nb_occurences_observed) 
+#            if accuracy > 1:
+#                raise ValueError('The accuray should not exceed 1.00 !!', episode, nb_occurrences_expected, nb_occurences_observed) 
             if(accuracy >= accuracy_min) & (accuracy > description["accuracy"]):
                 
                 description["period"] = period
@@ -488,10 +476,10 @@ if __name__ == "__main__":
     """
     The dataframe should have 1 index (date as datetime) and 1 feature (activity)
     """
-    #dataset = pd.read_csv("KA_dataset.csv", delimiter=';')
-    #date_format = '%d-%b-%Y %H:%M:%S'
-    dataset = pd.read_csv("toy_dataset.txt", delimiter=';')
-    date_format = '%Y-%d-%m %H:%M'
+    dataset = pd.read_csv("KA_dataset.csv", delimiter=';')
+    date_format = '%d-%b-%Y %H:%M:%S'
+#    dataset = pd.read_csv("toy_dataset.txt", delimiter=';')
+#    date_format = '%Y-%d-%m %H:%M'
     
     dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
     #dataset = dataset.set_index('date')
