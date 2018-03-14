@@ -9,6 +9,7 @@ import os
 import pandas as pd
 import numpy as np
 import datetime as dt
+import matplotlib
 import matplotlib.pyplot as plt
 import math
 from sklearn.cluster import DBSCAN
@@ -17,8 +18,9 @@ from sklearn.preprocessing import StandardScaler
 from dateutil.parser import parse
 import seaborn as sns
 
+matplotlib.style.use("seaborn")
+
 sys.path.append(os.path.abspath("./FP_Growth"))
-import fp_growth
 import pyfpgrowth
 
 
@@ -59,10 +61,10 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
         
         
         print("Finding frequent episodes candidates...".center(100, '*'))
-        #frequent_episodes = fp_growth.find_frequent_patterns(transactions, support_treshold)
         frequent_episodes = pyfpgrowth.find_frequent_patterns(transactions, support_treshold)
         
-        frequent_episodes = [("got to bed end", "use toilet start", "use toilet end", )]
+        frequent_episodes = [("use toilet start", "use toilet end", "go to bed end" )]
+        #frequent_episodes= [('use toilet end', 'use toilet start')]
         
         print(len(frequent_episodes), "episodes found !!")
         
@@ -88,9 +90,21 @@ def xED_algorithm(df, Tep=60, support_treshold = 2, accuracy_min = 0.5, std_max 
         sys.stdout.write("\n")
         
         
+        if len(periodicities) == 0:
+            print("No more intersting periodicities found!!".center(100, '*'))
+            break;
+        else :
+            print((str(len(periodicities)) + " intersting periodicities found!!").center(100, '*'))
+            
+        print("Finding periodicities factorized events...".center(100, '*'))
+        i = 0
         for episode, periodicity in periodicities.items():
+            i += 1
             if periodicity is not None:
                 periodicity["nb_factorized_events"], periodicity["factorized_events_id"], periodicity["missing_events"] = find_factorized_events(df, episode, periodicity, tolerance_ratio, Tep)
+            sys.stdout.write("\r%.2f %% of episodes treated!!" % (100*i/len(periodicities)))
+            sys.stdout.flush()
+        sys.stdout.write("\n")
         
         print("Sorting the candidate frequent episodes by compression power...".center(100, '*'))
         sorted_episodes_by_compression = sorted(periodicities.keys(), key=lambda x: periodicities[x]["nb_factorized_events"], reverse=True)
@@ -167,6 +181,7 @@ def extract_transactions(df, Tep = 30 ) :
     
     return transactions
 
+
 def find_factorized_events(df, episode, periodicity, tolerance_ratio, Tep) :
     """
     Compute the number of factorized events 
@@ -181,7 +196,7 @@ def find_factorized_events(df, episode, periodicity, tolerance_ratio, Tep) :
     df_copy.sort_values(["date"], ascending = True, inplace = True)
     
     
-    occurences = find_occurences(df_copy, episode, Tep)
+    occurences = find_occurences(df_copy, episode, Tep, start=periodicity['start_time'], end=periodicity['end_time'])
     occurences.loc[:, "rel_start_time"] = occurences["start_time"].apply(lambda x : modulo_datetime(x.to_pydatetime(), periodicity["period"]))
     occurences.loc[:, "expected"] = occurences.loc[:, "rel_start_time"].apply(
                     lambda x : occurence_expected(x.total_seconds(), periodicity["numeric"], tolerance_ratio))
@@ -234,6 +249,8 @@ def find_missing_occurences(episode, occurences, periodicity, tolerance_ratio):
         
         #Compute time between occurences
         comp_occurences.loc[:, "time_since_last_occ"] = comp_occurences['start_time'] - comp_occurences['end_time'].shift(1)
+        
+        comp_occurences.loc[:, "time_since_last_occ"] = pd.to_timedelta(comp_occurences.loc[:, "time_since_last_occ"])
         
         #First row 'time_since_last_occ' is NaT so we replace by a duration of '0'
         comp_occurences.fillna(0, inplace=True)
@@ -299,16 +316,17 @@ def build_description(df, episode, Tep, candidate_periods, support_treshold, std
             "numeric": {}, #all the components of the description. mean_time as key and std_time as value
             "readable": {}, #A readable string for the description
             "accuracy" : 0, #Accuracy of the description
+            "period" : None, #The period of the description
             "nb_occurrences_expected" : 0, #Number of episode occurences expected
-            "delta_t" : None # Time duration when the description is valid
+            "start_time" : None, # Start date validity of the descritpion
+            "end_time" : None # End date validity of the descritpion            
             }
     
     occurences = find_occurences(df, episode, Tep)
     
 
     
-    df_start_time = min(df.date)
-    df_end_time = max(df.date)
+    
     
     for period in candidate_periods:
         delta_T_max = 3*period #Gap maximum between two consecutives occurences to be in the same group
@@ -339,57 +357,89 @@ def build_description(df, episode, Tep, candidate_periods, support_treshold, std
 
             #Find the CLUSTERS
             data_points = occ_period.loc[group_filter, "rel_start_time"].astype('timedelta64[s]').values
+            
+            #TODO : Central Limit theorem (to apply here???)
             if len(data_points) == 0:
                 continue
             
             data_points = data_points.reshape(-1, 1)
-            db = DBSCAN(eps=std_max*period.total_seconds()/2, min_samples=support_treshold).fit(data_points)
+            db = DBSCAN(eps=std_max*period.total_seconds()/tolerance_ratio, min_samples=support_treshold).fit(data_points)
            
             N_comp = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0) # Noisy samples are given the label -1.
             
             if N_comp == 0:
                 continue
-            gmm = GaussianMixture(n_components = N_comp, tol=0.01, covariance_type='spherical', n_init=10)
-            gmm.fit(data_points)
+            gmm = GaussianMixture(n_components = N_comp, covariance_type='spherical', n_init=10, tol = 10)
+            gmm.fit(db.components_)
             
+          
             gmm_descr = {} # time_mean as key and std as value
             gmm_descr_str = {}
             
+
             for i in range(len(gmm.means_)):                
                 gmm_descr_str[str(dt.timedelta(seconds=gmm.means_[i][0]))] = str(dt.timedelta(
                         seconds=math.ceil(np.sqrt(gmm.covariances_)[i])))
                 gmm_descr[gmm.means_[i][0]] = math.ceil(np.sqrt(gmm.covariances_[i]))
+
                 
-            
+                        
             # Tag the expected occurences
             occ_period.loc[group_filter, "expected"] = occ_period.loc[group_filter, "rel_start_time"].apply(
                     lambda x : occurence_expected(x.total_seconds(), gmm_descr, tolerance_ratio))
             
-            #Compute description accuracy
-            rel_df_start_time = modulo_datetime(df_start_time.to_pydatetime(), period).total_seconds()
-            rel_df_end_time = modulo_datetime(df_end_time.to_pydatetime(), period).total_seconds()
+            
+            #Compute description accuracy on the description period validity
+            descr_start_time = min(occ_period.loc[group_filter, "start_time"])            
+            descr_start_time -= modulo_datetime(descr_start_time.to_pydatetime(), period)
+            descr_end_time = max(occ_period.loc[group_filter, "start_time"])
+            descr_end_time -= modulo_datetime(descr_end_time.to_pydatetime(), period)
+            descr_end_time += period
+            
+            ### TODO: Should be replaced by "0"
+            rel_descr_start_time = modulo_datetime(descr_start_time.to_pydatetime(), period).total_seconds()
+            rel_descr_end_time = modulo_datetime(descr_end_time.to_pydatetime(), period).total_seconds()
             
             #Push to the first 
-            nb_full_periods_dataset = (df_end_time - df_start_time)/np.timedelta64(1, 's') 
-            nb_full_periods_dataset = -1 + math.floor((nb_full_periods_dataset - rel_df_end_time + rel_df_start_time)/ period.total_seconds()) 
+            nb_full_periods_dataset = (descr_end_time - descr_start_time)/np.timedelta64(1, 's') 
+            nb_full_periods_dataset = -1 + math.floor((nb_full_periods_dataset - rel_descr_end_time + rel_descr_start_time)/ period.total_seconds()) 
             nb_occurrences_expected  = N_comp * nb_full_periods_dataset #but that's not all
 
                 
             for mean_time in gmm_descr.keys():
-                if mean_time >= rel_df_start_time:
+                if mean_time >= rel_descr_start_time:
                     nb_occurrences_expected += 1
                 
-                if mean_time <= rel_df_end_time:
+                if mean_time <= rel_descr_end_time:
                     nb_occurrences_expected += 1
             
-            nb_occurences_observed = len(occ_period[group_filter & occ_period.expected == True])
+            #Count the number of observed occurences
+            nb_occurences_observed = 0
+            
+            current_start_time = descr_start_time
+            
+            while True:
+                current_end_time = current_start_time + period
+                
+                if current_end_time > descr_end_time:
+                    break
+                
+                nb_occ = len(occ_period.loc[group_filter & 
+                                            (occ_period.start_time >= current_start_time) & 
+                                            (occ_period.start_time < current_end_time)])
+                nb_occurences_observed += min(nb_occ, N_comp)
+                
+                current_start_time = current_end_time
+                
+            # = len(occ_period[group_filter & occ_period.expected == True])
             accuracy = nb_occurences_observed / nb_occurrences_expected
             
-            
-                  
            
-#            if accuracy > 1:
-#                raise ValueError('The accuray should not exceed 1.00 !!', episode, nb_occurrences_expected, nb_occurences_observed) 
+                  
+            # Raise an error if the accuracy is more than 1
+            if accuracy > 1:
+                raise ValueError('The accuray should not exceed 1.00 !!', episode, nb_occurrences_expected, nb_occurences_observed) 
+            
             if(accuracy >= accuracy_min) & (accuracy > description["accuracy"]):
                 
                 description["period"] = period
@@ -397,14 +447,16 @@ def build_description(df, episode, Tep, candidate_periods, support_treshold, std
                 description["numeric"] = gmm_descr
                 description["readable"] = gmm_descr_str
                 description["nb_occurrences_expected"] = nb_occurrences_expected
-                description["delta_t"] = max(occ_period.loc[group_filter & occ_period.expected==True, "start_time"]) - min(list(occ_period.loc[group_filter & occ_period.expected==True, "start_time"]))
+                description["start_time"] = descr_start_time
+                description["end_time"] = descr_end_time
                 
     
     if description['accuracy'] == 0:
         return None
     return description
 
-def find_occurences(df, episode, Tep) :
+
+def find_occurences(df, episode, Tep, start=None, end=None) :
     """
     return a dataframe of occurences of the episode in the dataframe df
     """
@@ -416,7 +468,9 @@ def find_occurences(df, episode, Tep) :
 
     episode_df = df.loc[df.activity.isin(episode)]
     
-    current_start_time = min(episode_df.date)
+    current_start_time = min(episode_df.date) if start is None else start
+    
+    end_time = max(episode_df.date) if end is None else end
     
     
     while True:
@@ -432,11 +486,13 @@ def find_occurences(df, episode, Tep) :
                                         (episode_df.date < current_end_time), "date"].values)
             occurences.loc[len(occurences)] = [current_start_time, current_end_time]
             
-        
         if len(episode_df.loc[episode_df.date > current_end_time]) == 0:
-            break
-        
+            break;
+            
         current_start_time =  min(episode_df.loc[episode_df.date > current_end_time, "date"])
+        
+        if current_start_time >= end_time:
+            break;
             
     return occurences
 
@@ -476,20 +532,20 @@ if __name__ == "__main__":
     """
     The dataframe should have 1 index (date as datetime) and 1 feature (activity)
     """
-    dataset = pd.read_csv("KA_dataset.csv", delimiter=';')
-    date_format = '%d-%b-%Y %H:%M:%S'
-#    dataset = pd.read_csv("toy_dataset.txt", delimiter=';')
-#    date_format = '%Y-%d-%m %H:%M'
+    #dataset = pd.read_csv("KA_dataset.csv", delimiter=';')
+    #date_format = '%d-%b-%Y %H:%M:%S'
+    dataset = pd.read_csv("toy_dataset.txt", delimiter=';')
+    date_format = '%Y-%d-%m %H:%M'
     
     dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
     #dataset = dataset.set_index('date')
-    results, df = xED_algorithm(df=dataset, Tep=30, support_treshold=2, 
+    results, df = xED_algorithm(df=dataset, Tep=30, support_treshold=3, 
                                 tolerance_ratio=2, 
                                 candidate_periods = [dt.timedelta(days=1)])
     
-    dat = pd.DataFrame(columns= ["episode", "readable", "period", "accuracy", "delta_t", "nb_factorized_events"])
+    dat = pd.DataFrame(columns= ["episode", "readable", "period", "accuracy", "start_time", "end_time", "nb_factorized_events"])
     for v in results :
-        dat.loc[len(dat)] = [v['episode'], v["readable"], v["period"], v["accuracy"], v["delta_t"], v["nb_factorized_events"]]
+        dat.loc[len(dat)] = [v['episode'], v["readable"], v["period"], v["accuracy"], v["start_time"], v["end_time"], v["nb_factorized_events"]]
 
 
 
