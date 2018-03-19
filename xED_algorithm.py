@@ -101,8 +101,8 @@ def pick_dataset(name) :
         
     elif name == 'KA':
         dataset = pd.read_csv("data/KA_dataset.csv", delimiter=';')
-        date_format = '%d-%b-%Y %H:%M:%S'
-        dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+        #date_format = '%d-%b-%Y %H:%M:%S'
+        dataset['date'] = pd.to_datetime(dataset['date'])
         
     return dataset
 

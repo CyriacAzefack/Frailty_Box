@@ -11,18 +11,20 @@ import seaborn as sns
 import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn.mixture import GaussianMixture
+import matplotlib.pyplot as plt
 
 import xED_algorithm
 
 def main():
     data = xED_algorithm.pick_dataset('KA')
-    episode = ["go to bed end", "use toilet start", "use toilet end"]
-    #episode = ["use toilet start"]
+    #episode = ["go to bed end", "use toilet start", "use toilet end"]
+    #episode = ["take shower start", "take shower end", "leave house start"]
+    #episode = ["prepare Breakfast start", "prepare Breakfast end"]
+    episode = ["use toilet start", "use toilet end", "go to bed start"]
     
+    descr = periodicity_search(data, episode)
     
-    delta_t, descr = periodicity_search(data, episode)
-    
-    print(delta_t)
+    print("Episode ", episode)
     print(translate_description(descr))
     
     
@@ -53,7 +55,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
     #find the episode occurences
     occurrences = find_occurrences(data, episode, Tep)
     
-    best_delta_T = None
+    
     best_descr = None
     
     best_accuracy = 0
@@ -67,6 +69,13 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
         
         #First row 'time_since_last_occ' is NaT so we replace by a duration of '0'
         period_occ.fillna(0, inplace=True)
+        
+        period_occ.loc[:, "relative_date"] = period_occ.date.apply(
+                    lambda x : modulo_datetime(x.to_pydatetime(), T))
+        
+        #Display relative times histogram
+        plt.figure()
+        sns.distplot(period_occ.relative_date, norm_hist=False, rug=False, kde=True)
         
         #Spit the occurrences in groups
         group_gap_bounds = [data.date.min(), data.date.max()]
@@ -87,31 +96,35 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
             group_end_time = group_occurrences.date.max().to_pydatetime()
             
             #Compute the relative occurrences times (in seconds)
-            group_occurrences.loc[:, "relative_date"] = period_occ.date.apply(
-                    lambda x : modulo_datetime(x.to_pydatetime(), T))
-            
-            #Display relative times histogram
-            #sns.distplot(group_occurrences.relative_date, norm_hist=False, rug=False)
             
             data_points = group_occurrences["relative_date"].values.reshape(-1, 1)
+            
+            
+            #sns.distplot(data_points, norm_hist=False, rug=False, kde=True)
             
             #if no data then switch to the next group
             if len(data_points) == 0 :
                 continue
             
-            Nb_clusters = find_number_clusters(data_points, eps = std_max*T.total_seconds(), min_samples = support_min)
+            Nb_clusters, interesting_points = find_number_clusters(data_points, eps = std_max*T.total_seconds(), min_samples = support_min)
             
              #if no clusters found then switch to the next group
             if Nb_clusters == 0:
                 continue
             
-            GMM = GaussianMixture(n_components = Nb_clusters, covariance_type='spherical', n_init = 10)
-            GMM.fit(data_points)
+            GMM = GaussianMixture(n_components = Nb_clusters, covariance_type='diag', n_init = 10)
+            GMM.fit(interesting_points)
             
             GMM_descr = {} # mean_time (in seconds) as key and std_duration (in seconds) as value
             
-            for i in range(len(GMM.means_)):                
-                GMM_descr[GMM.means_[i][0]] = math.ceil(np.sqrt(GMM.covariances_[i]))
+            for i in range(len(GMM.means_)):
+                mu = GMM.means_[i][0]
+                sigma = math.ceil(np.sqrt(GMM.covariances_[i]))
+                GMM_descr[mu] = sigma
+                plt.plot([0, mu - tolerance_ratio*sigma], [mu - tolerance_ratio*sigma, 0], linewidth=2)
+                plt.plot([0, mu + tolerance_ratio*sigma], [mu + tolerance_ratio*sigma, 0], linewidth=2)
+                
+
                 
             #Compute the description accuracy
             
@@ -146,12 +159,10 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
                     lambda x : is_occurence_expected(x, GMM_descr))
             
             
-            
-            
             group_occurrences["diff_mean_time"] = abs(group_occurrences["relative_date"] - group_occurrences["expected"])
             
             
-            
+            group_occurrences.fillna(0, inplace=True)
             group_occurrences["comp_abs_mean_time"] = group_occurrences.apply(
                     lambda row : relative2absolute_date(row["expected"], row["date"].to_pydatetime(), T), axis=1)
             
@@ -169,18 +180,19 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
                 raise ValueError('The accuray should not exceed 1.00 !!', episode, Nb_occurrences_happening_as_expected, Nb_expected_occurrences) 
             
             if (accuracy >= accuracy_min) & (accuracy > best_accuracy):
+                #sns.distplot(data_points, norm_hist=False, rug=False, kde=True)
                 best_accuracy = accuracy
                 
-                best_delta_T = [group_start_time, group_end_time]
                 best_descr = {
                         "description" : GMM_descr,
                         "period" : T,
-                        "accuracy" : accuracy
+                        "accuracy" : accuracy,
+                        "delta_t" : [group_start_time, group_end_time]
                         }
     
     
     
-    return best_delta_T, best_descr
+    return best_descr
     
 
 def relative2absolute_date(relative_date, reference_date, period) :
@@ -202,7 +214,7 @@ def find_number_clusters(data_points, eps, min_samples):
            
     Nb_clusters = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0) # Noisy samples are given the label -1.
     
-    return Nb_clusters
+    return Nb_clusters, db.components_
             
 def modulo_datetime(date, period):
     """
@@ -270,6 +282,7 @@ def translate_description(description) :
     natural_desc = {}
     natural_desc['period'] = str(description['period'])
     natural_desc['accuracy'] = round(description['accuracy'], 3)
+    natural_desc['delta_t'] = [str(description['delta_t'][0]), str(description['delta_t'][1])]
     natural_desc['description'] = {}
     for mean_time, std_time in description['description'].items():
         natural_desc['description'][str(dt.timedelta(seconds = mean_time))] = str(dt.timedelta(seconds = std_time))
