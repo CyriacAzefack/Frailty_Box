@@ -20,7 +20,8 @@ def main():
     #episode = ["go to bed end", "use toilet start", "use toilet end"]
     #episode = ["take shower start", "take shower end", "leave house start"]
     #episode = ["prepare Breakfast start", "prepare Breakfast end"]
-    episode = ["use toilet start", "use toilet end", "go to bed start"]
+    #episode = ["use toilet start", "use toilet end", "go to bed start"]
+    episode = ["leave house end"]
     
     descr = periodicity_search(data, episode)
     
@@ -47,7 +48,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
         return None
     
     
-    candidate_periods = [dt.timedelta(days=1), ]
+    candidate_periods = [dt.timedelta(days=1),]
     
     #Pick the episode events from the input sequence
     data = data.loc[data.activity.isin(episode)].copy()
@@ -70,6 +71,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
         #First row 'time_since_last_occ' is NaT so we replace by a duration of '0'
         period_occ.fillna(0, inplace=True)
         
+        #Compute relative dates
         period_occ.loc[:, "relative_date"] = period_occ.date.apply(
                     lambda x : modulo_datetime(x.to_pydatetime(), T))
         
@@ -95,24 +97,28 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
             group_start_time = group_occurrences.date.min().to_pydatetime()
             group_end_time = group_occurrences.date.max().to_pydatetime()
             
-            #Compute the relative occurrences times (in seconds)
-            
+                       
             data_points = group_occurrences["relative_date"].values.reshape(-1, 1)
-            
-            
-            #sns.distplot(data_points, norm_hist=False, rug=False, kde=True)
-            
             #if no data then switch to the next group
             if len(data_points) == 0 :
                 continue
             
-            Nb_clusters, interesting_points = find_number_clusters(data_points, eps = std_max*T.total_seconds(), min_samples = support_min)
+            # For midnight-morning issue
+            
+            data_points_2 = [x + T.total_seconds() for x in data_points]
+            
+            big_data_points = np.asarray(list(data_points) + list(data_points_2)).reshape(-1, 1)
+            
+            #Display points
+            #sns.distplot(big_data_points, norm_hist=False, rug=False, kde=True)
+            
+            Nb_clusters, interesting_points = find_number_clusters(big_data_points, eps = std_max*T.total_seconds(), min_samples = support_min)
             
              #if no clusters found then switch to the next group
             if Nb_clusters == 0:
                 continue
             
-            GMM = GaussianMixture(n_components = Nb_clusters, covariance_type='diag', n_init = 10)
+            GMM = GaussianMixture(n_components = Nb_clusters, covariance_type='spherical', n_init = 10)
             GMM.fit(interesting_points)
             
             GMM_descr = {} # mean_time (in seconds) as key and std_duration (in seconds) as value
@@ -120,9 +126,18 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
             for i in range(len(GMM.means_)):
                 mu = GMM.means_[i][0]
                 sigma = math.ceil(np.sqrt(GMM.covariances_[i]))
-                GMM_descr[mu] = sigma
-                plt.plot([0, mu - tolerance_ratio*sigma], [mu - tolerance_ratio*sigma, 0], linewidth=2)
-                plt.plot([0, mu + tolerance_ratio*sigma], [mu + tolerance_ratio*sigma, 0], linewidth=2)
+                
+                lower_limit = mu - tolerance_ratio*sigma
+                upper_limit = mu + tolerance_ratio*sigma
+                
+                if (lower_limit < 0) or (lower_limit > T.total_seconds()) :
+                    continue
+                
+                GMM_descr[mu % T.total_seconds()] = sigma
+                # Plot the interval
+                c=np.random.rand(3,)
+                plt.plot([0, lower_limit], [lower_limit, 0], linewidth=2, color=c)
+                plt.plot([0, upper_limit], [upper_limit, 0], linewidth=2, color=c)
                 
 
                 
