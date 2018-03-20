@@ -5,19 +5,8 @@ Created on Wed Mar 14 10:22:14 2018
 @author: cyriac.azefack
 """
 
-import sys 
-import os
-import pandas as pd
-import numpy as np
-import datetime as dt
 import matplotlib
-import matplotlib.pyplot as plt
-import math
-from sklearn.cluster import DBSCAN
-from sklearn.mixture import GaussianMixture
-from sklearn.preprocessing import StandardScaler
-from dateutil.parser import parse
-import seaborn as sns
+import pandas as pd
 
 matplotlib.style.use("seaborn")
 
@@ -46,13 +35,13 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
     """
     Implementation of the extended Discovery Algorithm designed by Julie Soulas U{https://hal.archives-ouvertes.fr/tel-01356217/}
     
-    :param df : Starting dataframe, date[datetime] as index and 1 column named "activity"
+    :param data : Starting dataframe, date[datetime] as index and 1 column named "activity"
     :param Tep : [in Minutes] Maximal time interval between events in an episode occurrence. Should correspond to the maximal duration of the ADLs.
-    :param support_treshold : [greater than 1] Minimal number of occurrences of an episode, for that episode to be considered as frequent.
+    :param support_min : [greater than 1] Minimal number of occurrences of an episode, for that episode to be considered as frequent.
     :param accuracy_min : [between 0 and 1] Minimal accuracy for a periodicity description to be considered as interesting, and thus factorized
     :param std_max : Standard deviation max for a description (ratio of the period)
     :param tolerance_ratio : [greater than 0] An event expected to happen at time t (with standard deviation sigma) occurs as expected if it occurs in the interval [t - tolerance_ratio*sigma, t + tolerance_ratio*sigma]
-    :param delta_Tmax : If there is a gap > delta_Tmax between two occurrences of an episode, theoccurrences before and after the gap are split (different validity intervals).
+    :param delta_Tmax_ratio : If there is a gap > delta_Tmax_ratio * Period between two occurrences of an episode, theoccurrences before and after the gap are split (different validity intervals).
     :return The compressed dataset
     """
     compressed = True
@@ -79,14 +68,13 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
         
         for episode in frequent_episodes :
             #Build the description of the episode if interesting enough (Accuracy > Accuracy_min)
-            delta_t, descr = candidate_study.periodicity_search(data, episode, delta_Tmax_ratio, 
-                                                                support_min, std_max, accuracy_min, 
-                                                                tolerance_ratio, Tep)
-            periodicity = {
-                    'detla_t' : delta_t,
-                    'descr' : descr
-                    }
-            periodicities.append(periodicity)
+            description = candidate_study.periodicity_search(data, episode,
+                                                             delta_Tmax_ratio=delta_Tmax_ratio,
+                                                             support_min=support_min,
+                                                             std_max=std_max,
+                                                             accuracy_min=accuracy_min,
+                                                             tolerance_ratio=tolerance_ratio, Tep=Tep)
+            periodicities.append(description)
     
     return [], data
 

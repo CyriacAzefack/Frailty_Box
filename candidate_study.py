@@ -4,51 +4,82 @@ Created on Thu Mar 15 09:41:33 2018
 
 @author: cyriac.azefack
 """
-import math
 import datetime as dt
+import math
+
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
-import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn.mixture import GaussianMixture
-import matplotlib.pyplot as plt
 
 import xED_algorithm
 
-def main():
-    data = xED_algorithm.pick_dataset('KA')
-    #episode = ["go to bed end", "use toilet start", "use toilet end"]
-    #episode = ["take shower start", "take shower end", "leave house start"]
-    #episode = ["prepare Breakfast start", "prepare Breakfast end"]
-    #episode = ["use toilet start", "use toilet end", "go to bed start"]
-    episode = ["leave house end"]
-    
-    descr = periodicity_search(data, episode)
-    
-    print("Episode ", episode)
-    print(translate_description(descr))
-    
-    
 
-    
-def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std_max = 0.1, 
-                          accuracy_min = 0.5, tolerance_ratio = 2, Tep = 30):
+def main():
+    data = xED_algorithm.pick_dataset('toy')
+    episodes = []
+    # episodes.append(["go to bed end", "use toilet start", "use toilet end"])
+    # episodes.append(["take shower start", "take shower end", "leave house start"])
+    # episodes.append(["use toilet start", "use toilet end", "go to bed start"])
+    # episodes.append(["prepare Breakfast start", "prepare Breakfast end"])
+    # episodes.append(["leave house end"])
+
+    episodes.append(["kitchen", "coffee"])
+    # episode = ["kitchen", "lunch", "coffee"]
+
+    with open('output_result.csv', 'w') as file:
+        file.truncate()
+        file.write("Episode;period;description;accuracy;start date;end date\n")
+        for episode in episodes:
+            descr = periodicity_search(data, episode, plot_graphs=True)
+
+            nat = translate_description(descr)
+            line = str(episode) + ";"
+            line += str(nat["period"]) + ";"
+            line += str(nat["description"]) + ";"
+            line += str(nat["accuracy"]).replace('.', ',') + ";"
+            line += str(nat["delta_t"][0]) + ";"
+            line += str(nat["delta_t"][1]) + ";"
+            line += "\n"
+
+            file.write(line)
+            print("Episode ", episode)
+            print(nat)
+
+
+def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max=0.1,
+                       accuracy_min=0.5, tolerance_ratio=2, Tep=30, plot_graphs=False):
     
     """
     Find the best description of an episode if it exists
     
     return delta_T : 
     """
-    
-    def is_occurence_expected(relative_date, GMM_descr):
-        for mean_time, std_time in GMM_descr.items() : 
-            if abs(relative_date - mean_time) <= tolerance_ratio * std_time:
-                return mean_time
+
+    def is_occurence_expected(relative_date, GMM_descr, period):
+        for mu, sigma in GMM_descr.items():
+            if abs(relative_date - mu) <= tolerance_ratio * sigma:  # Normal cases
+                return mu
+
+            # Handle the bord effects cases
+            lower_limit = mu - tolerance_ratio * sigma
+            upper_limit = mu + tolerance_ratio * sigma
+
+            mu2 = mu
+            if lower_limit < 0:  # Midnight-morning issue (early in the period)
+                mu2 = mu + period.total_seconds()
+            elif upper_limit > period.total_seconds():
+                mu2 = mu - period.total_seconds()
+
+            if abs(relative_date - mu2) <= tolerance_ratio * sigma:  # Normal cases
+                return mu2
+            
         
         return None
-    
-    
-    candidate_periods = [dt.timedelta(days=1),]
+
+    candidate_periods = [dt.timedelta(days=1), ]
     
     #Pick the episode events from the input sequence
     data = data.loc[data.activity.isin(episode)].copy()
@@ -76,8 +107,11 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
                     lambda x : modulo_datetime(x.to_pydatetime(), T))
         
         #Display relative times histogram
-        plt.figure()
-        sns.distplot(period_occ.relative_date, norm_hist=False, rug=False, kde=True)
+
+        if plot_graphs:
+            plt.figure()
+            plt.title(episode)
+            # sns.distplot(period_occ.relative_date, norm_hist=False, rug=False, kde=True)
         
         #Spit the occurrences in groups
         group_gap_bounds = [data.date.min(), data.date.max()]
@@ -108,85 +142,92 @@ def periodicity_search(data, episode, delta_Tmax_ratio = 3, support_min = 3, std
             data_points_2 = [x + T.total_seconds() for x in data_points]
             
             big_data_points = np.asarray(list(data_points) + list(data_points_2)).reshape(-1, 1)
-            
-            #Display points
-            #sns.distplot(big_data_points, norm_hist=False, rug=False, kde=True)
-            
+
             Nb_clusters, interesting_points = find_number_clusters(big_data_points, eps = std_max*T.total_seconds(), min_samples = support_min)
-            
-             #if no clusters found then switch to the next group
+
+            #if no clusters found then switch to the next group
             if Nb_clusters == 0:
                 continue
-            
-            GMM = GaussianMixture(n_components = Nb_clusters, covariance_type='spherical', n_init = 10)
+            # Display points
+            if plot_graphs:
+                sns.distplot(interesting_points, norm_hist=False, rug=False, kde=True, bins=10)
+
+            GMM = GaussianMixture(n_components=Nb_clusters, covariance_type='spherical', n_init=50)
             GMM.fit(interesting_points)
             
             GMM_descr = {} # mean_time (in seconds) as key and std_duration (in seconds) as value
             
             for i in range(len(GMM.means_)):
                 mu = GMM.means_[i][0]
-                sigma = math.ceil(np.sqrt(GMM.covariances_[i]))
+                sigma = math.ceil(np.sqrt(GMM.covariances_[0]))
                 
                 lower_limit = mu - tolerance_ratio*sigma
                 upper_limit = mu + tolerance_ratio*sigma
                 
                 if (lower_limit < 0) or (lower_limit > T.total_seconds()) :
                     continue
-                
-                GMM_descr[mu % T.total_seconds()] = sigma
-                # Plot the interval
-                c=np.random.rand(3,)
-                plt.plot([0, lower_limit], [lower_limit, 0], linewidth=2, color=c)
-                plt.plot([0, upper_limit], [upper_limit, 0], linewidth=2, color=c)
-                
 
-                
+                mu = mu % T.total_seconds()
+                GMM_descr[mu] = sigma
+
+                if plot_graphs:
+                    lower_limit = mu - tolerance_ratio * sigma
+                    upper_limit = mu + tolerance_ratio * sigma
+                    # Plot the interval
+                    c = np.random.rand(3, )
+                    plt.plot([0, lower_limit], [lower_limit, 0], linewidth=2, color=c)
+                    plt.plot([0, upper_limit], [upper_limit, 0], linewidth=2, color=c)
+
             #Compute the description accuracy
             
             #First, compute the number of full periods between "group_start_time" and "group_end_time"
-            relative_group_start_time = modulo_datetime(group_start_time, T)
-            relative_group_end_time = modulo_datetime(group_end_time, T)
-            start_first_period = group_start_time - dt.timedelta(seconds = relative_group_start_time) + T
-            end_last_period = group_end_time - dt.timedelta(seconds = relative_group_end_time)
+            group_relative_start_time = modulo_datetime(group_start_time, T)
+            group_relative_end_time = modulo_datetime(group_end_time, T)
+            start_first_period = group_start_time - dt.timedelta(seconds=group_relative_start_time) + T
+            end_last_period = group_end_time - dt.timedelta(seconds=group_relative_end_time)
             Nb_periods = (end_last_period - start_first_period).total_seconds()/T.total_seconds()
             
             #Now the bord effects
             bord_effects_expected_occ = 0
-            for mean_time, std_time in GMM_descr.items() : 
-                if relative_group_start_time < mean_time:
+            for mean_time, std_time in GMM_descr.items():
+
+                lower_limit = mean_time - tolerance_ratio * std_time
+                upper_limit = mean_time + tolerance_ratio * std_time
+
+                if group_relative_start_time < lower_limit:
                     bord_effects_expected_occ += 1
-                elif abs(relative_group_start_time - mean_time) <= tolerance_ratio * std_time:
+                elif abs(group_relative_start_time - mean_time) <= tolerance_ratio * std_time:
                     bord_effects_expected_occ += 1
-                    
-                if relative_group_end_time > mean_time:
+
+                if group_relative_end_time > upper_limit:
                     bord_effects_expected_occ += 1
-                elif abs(relative_group_end_time - mean_time) <= tolerance_ratio * std_time:
+                elif abs(group_relative_end_time - mean_time) <= tolerance_ratio * std_time:
                      bord_effects_expected_occ += 1
             
             Nb_comp = len(GMM_descr)
             
             #Number of occurrences expected
             Nb_expected_occurrences = Nb_periods * Nb_comp + bord_effects_expected_occ
-            
-            #COmponent relative mean_time
-            
+
+            # "Expected" is the relative mean time of the component where an occurrence happen           
             group_occurrences["expected"] = group_occurrences["relative_date"].apply(
-                    lambda x : is_occurence_expected(x, GMM_descr))
-            
-            
+                lambda x: is_occurence_expected(x, GMM_descr, T))
+
+            # "diff_mean_time" is the time distance from the occurrence to the relative mean time of the component where an occurrence happen  
             group_occurrences["diff_mean_time"] = abs(group_occurrences["relative_date"] - group_occurrences["expected"])
             
             
             group_occurrences.fillna(0, inplace=True)
-            group_occurrences["comp_abs_mean_time"] = group_occurrences.apply(
+
+            # "component_absolute_mean_time" is the absolute date of the component where an occurrence happen
+            group_occurrences["component_absolute_mean_time"] = group_occurrences.apply(
                     lambda row : relative2absolute_date(row["expected"], row["date"].to_pydatetime(), T), axis=1)
-            
-            
-            group_occurrences.sort_values(['expected'], ascending = True, inplace = True)
-            
-            group_occurrences.drop_duplicates(['comp_abs_mean_time'], keep='first', inplace=True)
-            
-            Nb_occurrences_happening_as_expected = len(group_occurrences.loc[group_occurrences.expected.notnull()])
+
+            group_occurrences.sort_values(['diff_mean_time'], ascending=True, inplace=True)
+
+            group_occurrences.drop_duplicates(['component_absolute_mean_time'], keep='first', inplace=True)
+
+            Nb_occurrences_happening_as_expected = len(group_occurrences.loc[group_occurrences.expected != 0])
             
             accuracy = Nb_occurrences_happening_as_expected / Nb_expected_occurrences
             
