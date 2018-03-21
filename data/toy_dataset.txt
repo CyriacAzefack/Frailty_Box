@@ -1,7 +1,6 @@
 date;activity
 2017-29-11 07:51;kitchen
 2017-29-11 07:59;breakfast
-2017-29-11 07:59;breakfast
 2017-29-11 08:02;coffee
 2017-29-11 12:42;kitchen
 2017-29-11 12:46;lunch

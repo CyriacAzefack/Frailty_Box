@@ -25,8 +25,9 @@ def main():
     # episodes.append(["use toilet start", "use toilet end", "go to bed start"])
     # episodes.append(["prepare Breakfast start", "prepare Breakfast end"])
     # episodes.append(["leave house end"])
+    #episodes.append(['brush teeth start', 'go to bed start'])
 
-    episodes.append(["kitchen", "coffee"])
+    episodes.append(["breakfast"])
     # episode = ["kitchen", "lunch", "coffee"]
 
     with open('output_result.csv', 'w') as file:
@@ -111,10 +112,10 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
         if plot_graphs:
             plt.figure()
             plt.title(episode)
-            # sns.distplot(period_occ.relative_date, norm_hist=False, rug=False, kde=True)
+            sns.distplot(period_occ.relative_date, norm_hist=False, rug=False, kde=True)
         
         #Spit the occurrences in groups
-        group_gap_bounds = [data.date.min(), data.date.max()]
+        group_gap_bounds = [data.date.min(), data.date.max()+dt.timedelta(seconds=10)]
         
         group_gap_bounds[1:1] = sorted(list(period_occ[period_occ.time_since_last_occ > delta_Tmax].date))
         
@@ -149,10 +150,10 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
             if Nb_clusters == 0:
                 continue
             # Display points
-            if plot_graphs:
-                sns.distplot(interesting_points, norm_hist=False, rug=False, kde=True, bins=10)
+#            if plot_graphs:
+#                sns.distplot(interesting_points, norm_hist=False, rug=False, kde=True, bins=10)
 
-            GMM = GaussianMixture(n_components=Nb_clusters, covariance_type='spherical', n_init=50)
+            GMM = GaussianMixture(n_components=Nb_clusters, covariance_type='spherical', n_init=10)
             GMM.fit(interesting_points)
             
             GMM_descr = {} # mean_time (in seconds) as key and std_duration (in seconds) as value
@@ -189,6 +190,12 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
             
             #Now the bord effects
             bord_effects_expected_occ = 0
+            if is_occurence_expected(group_relative_start_time, GMM_descr, T) is not None :
+                bord_effects_expected_occ += 1
+                
+            if is_occurence_expected(group_relative_end_time, GMM_descr, T) is not None :
+                bord_effects_expected_occ += 1
+                
             for mean_time, std_time in GMM_descr.items():
 
                 lower_limit = mean_time - tolerance_ratio * std_time
@@ -196,13 +203,10 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 
                 if group_relative_start_time < lower_limit:
                     bord_effects_expected_occ += 1
-                elif abs(group_relative_start_time - mean_time) <= tolerance_ratio * std_time:
-                    bord_effects_expected_occ += 1
 
                 if group_relative_end_time > upper_limit:
                     bord_effects_expected_occ += 1
-                elif abs(group_relative_end_time - mean_time) <= tolerance_ratio * std_time:
-                     bord_effects_expected_occ += 1
+               
             
             Nb_comp = len(GMM_descr)
             
@@ -224,11 +228,14 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
                     lambda row : relative2absolute_date(row["expected"], row["date"].to_pydatetime(), T), axis=1)
 
             group_occurrences.sort_values(['diff_mean_time'], ascending=True, inplace=True)
-
+            
+            #Drop extra occurrences
             group_occurrences.drop_duplicates(['component_absolute_mean_time'], keep='first', inplace=True)
 
             Nb_occurrences_happening_as_expected = len(group_occurrences.loc[group_occurrences.expected != 0])
             
+            if Nb_expected_occurrences == 0:
+                continue
             accuracy = Nb_occurrences_happening_as_expected / Nb_expected_occurrences
             
              # Raise an error if the accuracy is more than 1
@@ -239,10 +246,14 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
                 #sns.distplot(data_points, norm_hist=False, rug=False, kde=True)
                 best_accuracy = accuracy
                 
+    
+                
                 best_descr = {
                         "description" : GMM_descr,
                         "period" : T,
                         "accuracy" : accuracy,
+                        "compression_power": Nb_occurrences_happening_as_expected * len(episode),
+                        "expected_occurrences" : group_occurrences[["date"]],
                         "delta_t" : [group_start_time, group_end_time]
                         }
     
@@ -290,7 +301,7 @@ def find_occurrences(data, episode, Tep):
     """
     Find the occurences of the  episode
     
-    :param Tep : Maximation duration of an occurence
+    :param Tep : Maximum duration of an occurence
     """
     Tep = dt.timedelta(minutes=Tep)
     
@@ -339,6 +350,7 @@ def translate_description(description) :
     natural_desc['period'] = str(description['period'])
     natural_desc['accuracy'] = round(description['accuracy'], 3)
     natural_desc['delta_t'] = [str(description['delta_t'][0]), str(description['delta_t'][1])]
+    natural_desc["compression_power"] = description["compression_power"]
     natural_desc['description'] = {}
     for mean_time, std_time in description['description'].items():
         natural_desc['description'][str(dt.timedelta(seconds = mean_time))] = str(dt.timedelta(seconds = std_time))
