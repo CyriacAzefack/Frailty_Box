@@ -1,0 +1,177 @@
+date;activity
+2008-11-19 22:50:00;leave house END
+2008-11-19 22:59:25;get drink START
+2008-11-19 23:00:00;get drink END
+2008-11-20 00:14:50;get drink START
+2008-11-20 00:15:20;get drink END
+2008-11-20 01:30:30;use toilet downstairs START
+2008-11-20 01:31:10;use toilet downstairs END
+2008-11-20 08:48:40;use toilet downstairs START
+2008-11-20 08:49:40;use toilet downstairs END
+2008-11-20 11:03:00;use toilet downstairs START
+2008-11-20 11:04:00;use toilet downstairs END
+2008-11-20 13:18:50;use toilet downstairs START
+2008-11-20 13:20:40;use toilet downstairs END
+2008-11-20 15:28:00;leave house START
+2008-11-20 17:22:00;use toilet downstairs START
+2008-11-20 17:23:20;use toilet downstairs END
+2008-11-20 22:38:00;leave house END
+2008-11-21 06:01:00;use toilet downstairs START
+2008-11-21 06:04:40;use toilet downstairs END
+2008-11-21 14:37:50;get drink START
+2008-11-21 14:38:40;get drink END
+2008-11-21 14:52:20;use toilet downstairs START
+2008-11-21 14:55:00;use toilet downstairs END
+2008-11-21 15:43:00;take shower START
+2008-11-21 16:29:40;take shower END
+2008-11-21 16:43:50;leave house START
+2008-11-21 17:29:30;leave house END
+2008-11-21 18:17:15;brush teeth START
+2008-11-21 18:22:10;brush teeth END
+2008-11-21 21:21:30;leave house END
+2008-11-21 21:32:00;leave house END
+2008-11-22 01:28:20;use toilet downstairs START
+2008-11-22 01:29:00;use toilet downstairs END
+2008-11-22 09:38:50;take shower START
+2008-11-22 09:45:10;take shower END
+2008-11-22 12:29:30;leave house END
+2008-11-22 13:04:00;leave house START
+2008-11-22 13:09:00;leave house END
+2008-11-22 13:10:00;leave house START
+2008-11-23 02:02:30;leave house END
+2008-11-23 02:11:20;go to bed START
+2008-11-23 05:28:50;use toilet downstairs START
+2008-11-23 05:29:50;use toilet downstairs END
+2008-11-23 17:11:30;leave house START
+2008-11-23 21:55:20;leave house END
+2008-11-23 21:56:45;use toilet downstairs START
+2008-11-23 21:58:20;use toilet downstairs END
+2008-11-23 23:14:00;get drink START
+2008-11-23 23:15:10;get drink END
+2008-11-24 09:34:00;brush teeth START
+2008-11-24 09:38:30;brush teeth END
+2008-11-24 09:39:20;use toilet downstairs START
+2008-11-24 09:39:50;use toilet downstairs END
+2008-11-24 11:19:30;get drink START
+2008-11-24 11:25:00;get drink END
+2008-11-24 13:07:40;use toilet downstairs START
+2008-11-24 13:08:30;use toilet downstairs END
+2008-11-24 16:46:30;use toilet downstairs START
+2008-11-24 16:47:20;use toilet downstairs END
+2008-11-24 16:59:00;prepare Dinner START
+2008-11-24 22:22:20;leave house END
+2008-11-24 22:25:00;leave house START
+2008-11-24 22:40:40;leave house END
+2008-11-25 00:14:50;use toilet downstairs START
+2008-11-25 00:15:40;use toilet downstairs END
+2008-11-25 00:48:10;use toilet downstairs START
+2008-11-25 00:48:50;use toilet downstairs END
+2008-11-25 17:05:30;use toilet downstairs START
+2008-11-25 17:06:30;use toilet downstairs END
+2008-11-25 18:06:55;brush teeth START
+2008-11-25 18:11:20;brush teeth END
+2008-11-26 00:13:20;use toilet downstairs START
+2008-11-26 00:14:35;use toilet downstairs END
+2008-11-26 00:45:45;use toilet downstairs START
+2008-11-26 00:46:30;use toilet downstairs END
+2008-11-26 08:42:00;leave house START
+2008-11-26 21:48:40;leave house END
+2008-11-26 23:48:20;use toilet downstairs START
+2008-11-26 23:49:10;use toilet downstairs END
+2008-11-27 00:11:20;use toilet downstairs START
+2008-11-27 00:12:20;use toilet downstairs END
+2008-11-27 07:00:00;brush teeth START
+2008-11-27 07:02:00;brush teeth END
+2008-11-27 18:07:10;brush teeth START
+2008-11-27 18:11:20;brush teeth END
+2008-11-27 20:18:50;leave house START
+2008-11-27 22:36:50;leave house END
+2008-11-28 07:09:55;go to bed END
+2008-11-28 07:12:00;take shower START
+2008-11-28 07:16:20;take shower END
+2008-11-28 20:01:00;prepare Dinner START
+2008-11-28 21:15:00;leave house START
+2008-11-28 22:37:50;leave house END
+2008-11-28 22:38:30;use toilet downstairs START
+2008-11-28 22:39:20;use toilet downstairs END
+2008-11-28 22:43:10;get drink START
+2008-11-28 22:46:15;get drink END
+2008-11-28 22:47:40;leave house START
+2008-11-28 23:42:35;leave house END
+2008-11-28 23:45:50;go to bed START
+2008-11-29 07:35:35;leave house START
+2008-11-29 11:44:10;leave house START
+2008-11-29 16:41:20;leave house END
+2008-11-29 18:50:00;take shower START
+2008-11-29 19:09:50;take shower END
+2008-11-29 19:19:25;leave house START
+2008-11-30 09:39:00;leave house START
+2008-11-30 13:11:40;take shower START
+2008-11-30 13:46:00;take shower END
+2008-11-30 14:48:55;brush teeth START
+2008-11-30 14:52:00;brush teeth END
+2008-11-30 21:33:45;leave house END
+2008-12-01 00:12:20;use toilet downstairs START
+2008-12-01 00:13:00;use toilet downstairs END
+2008-12-01 08:28:55;use toilet downstairs START
+2008-12-01 08:31:25;use toilet downstairs END
+2008-12-01 11:15:20;leave house END
+2008-12-01 11:24:00;leave house START
+2008-12-01 18:04:10;use toilet downstairs START
+2008-12-01 18:05:10;use toilet downstairs END
+2008-12-01 23:48:55;leave house END
+2008-12-02 00:39:10;use toilet downstairs START
+2008-12-02 00:40:52;use toilet downstairs END
+2008-12-02 06:09:10;take shower START
+2008-12-02 06:14:00;take shower END
+2008-12-02 06:59:45;go to bed END
+2008-12-02 07:01:45;take shower START
+2008-12-02 07:07:40;take shower END
+2008-12-02 22:52:00;leave house END
+2008-12-02 23:55:00;use toilet downstairs START
+2008-12-02 23:56:00;use toilet downstairs END
+2008-12-03 16:43:15;leave house END
+2008-12-03 16:51:55;leave house START
+2008-12-03 18:46:55;use toilet downstairs START
+2008-12-03 18:49:00;use toilet downstairs END
+2008-12-03 19:58:15;use toilet downstairs START
+2008-12-03 19:58:55;use toilet downstairs END
+2008-12-03 21:49:30;use toilet downstairs START
+2008-12-03 21:51:50;use toilet downstairs END
+2008-12-03 22:04:35;use toilet downstairs START
+2008-12-03 22:06:30;use toilet downstairs END
+2008-12-04 00:14:10;use toilet downstairs START
+2008-12-04 00:14:50;use toilet downstairs END
+2008-12-04 00:16:00;go to bed START
+2008-12-04 07:01:30;take shower START
+2008-12-04 07:07:00;take shower END
+2008-12-04 07:21:20;leave house START
+2008-12-05 03:03:20;use toilet downstairs START
+2008-12-05 03:04:20;use toilet downstairs END
+2008-12-05 16:52:55;prepare Dinner START
+2008-12-05 20:02:00;leave house START
+2008-12-06 04:49:55;use toilet downstairs START
+2008-12-06 04:50:40;use toilet downstairs END
+2008-12-06 04:51:50;go to bed START
+2008-12-06 09:52:30;leave house START
+2008-12-06 12:13:30;use toilet downstairs START
+2008-12-06 12:14:20;use toilet downstairs END
+2008-12-06 12:17:50;leave house START
+2008-12-06 13:25:50;leave house END
+2008-12-06 18:31:00;leave house START
+2008-12-07 02:07:30;use toilet downstairs START
+2008-12-07 02:08:10;use toilet downstairs END
+2008-12-07 08:10:05;use toilet downstairs START
+2008-12-07 08:11:10;use toilet downstairs END
+2008-12-07 09:49:40;leave house START
+2008-12-07 12:19:15;leave house END
+2008-12-07 12:37:30;take shower START
+2008-12-07 12:43:25;use toilet downstairs START
+2008-12-07 12:44:00;use toilet downstairs END
+2008-12-07 13:10:50;take shower END
+2008-12-07 21:23:30;use toilet downstairs START
+2008-12-07 21:24:20;use toilet downstairs END
+2008-12-08 02:18:20;use toilet downstairs START
+2008-12-08 02:19:35;use toilet downstairs END
+2008-12-08 02:24:10;go to bed START
+2008-12-08 08:15:00;go to bed END
