@@ -26,22 +26,38 @@ def main():
     The dataframe should have 1 index (date as datetime) and 1 feature (activity)
     """
     
-    dataset = pick_dataset('KA')
+    letters = ['A']
+    dataset_type = 'activity'
     
-    #dataset = dataset.set_index('date')
-
-    start_time = t.process_time()
-    results, data = xED_algorithm(data=dataset, Tep=30, support_min=3, 
-                                tolerance_ratio=2)
-
-    elapsed_time = dt.timedelta(seconds = round(t.process_time() - start_time, 3))
-
-    print("\n")
-    print("###############################")
-    print("Time to process all the dataset : {}".format(elapsed_time))
-    print("##############################")
-    print("\n")
-   
+    for letter in letters :
+        dataset = pick_dataset(letter, dataset_type)
+        
+        #dataset = dataset.set_index('date')
+    
+        start_time = t.process_time()
+        results, data_left = xED_algorithm(data=dataset, Tep=30, support_min=2,
+                                    tolerance_ratio=2)
+    
+        elapsed_time = dt.timedelta(seconds = round(t.process_time() - start_time, 3))
+    
+        print("\n")
+        print("###############################")
+        print("Time to process all the dataset : {}".format(elapsed_time))
+        print("##############################")
+        print("\n")
+    
+        
+        results.to_csv("output/K{} House/K{}_{}_periodicities.csv".format(letter, letter, dataset_type), sep=";", index=False)
+        
+        data_left.to_csv("output/K{} House/K{}_{}_data_left.csv".format(letter, letter, dataset_type), sep=";", index=False)
+        
+        writer = pd.ExcelWriter("output/K{} House/K{}_{}_all.xlsx".format(letter, letter, dataset_type))
+        dataset.to_excel(writer, sheet_name="Data input", index=False)       
+        results.to_excel(writer, sheet_name="Periodicities", index=False)
+        data_left.to_excel(writer, sheet_name="Data Left", index=False)
+        writer.save()
+        
+        
     
 
 def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5, 
@@ -60,7 +76,8 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
     """
     compressed = True
 
-    final_periodicities = pd.DataFrame(columns=["Episode", "Period", "Description", "Start Time", "End Time", "Compression Power", "Accuracy"])
+    final_periodicities = pd.DataFrame(columns=["Episode", "Period", "Description", "Validity Duration",
+                                                "Start Time", "End Time", "Compression Power", "Accuracy"])
     comp_iter = 0
     while compressed :
         comp_iter += 1
@@ -75,15 +92,15 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
         compressed = False
         
         if verbose :
-            print("  Finding frequent episodes candidates...  ".center(50, '*'))
+            print("  Finding frequent episodes candidates...  ".center(100, '*'))
         
         frequent_episodes = FP_growth.find_frequent_episodes(data, support_min, Tep)
         
-        print(len(frequent_episodes), "episodes found !!")
+        print(len(frequent_episodes), "candidate episodes found !!")
         
         periodicities = {}
         
-        print("Building candidates episodes periodicities...".center(100, '*'))
+        print(" Building candidates episodes periodicities... ".center(100, '*'))
         
         episode_index = 0
         for episode in frequent_episodes.keys():
@@ -123,6 +140,7 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
             periodicity = periodicities[episode]
 
             if periodicity["compression_power"] <= 1:
+                print("### COMPRESSION FINISHED : Insufficient compression power reached...")
                 break;
 
 
@@ -145,6 +163,7 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
             count_duplicates =  factorised_events.duplicated(['date', 'activity']).sum()
             if count_duplicates != 0 :
                 # Current periodicity involves events in factorized_events
+                print("### COMPRESSION FINISHED : Overlapping factorized events reached...")
                 break
 
             # Factorize DATA
@@ -157,6 +176,7 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
 
             final_periodicities.loc[len(final_periodicities)] = [episode, natural_periodicity["period"],
                                                                  natural_periodicity["description"],
+                                                                 natural_periodicity["validity duration"],
                                                                  natural_periodicity["delta_t"][0],
                                                                  natural_periodicity["delta_t"][1],
                                                                  natural_periodicity["compression_power"],
@@ -165,6 +185,7 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
             # Remove periodicity from the list
             sorted_episode = sorted_episode[1:]
             if len(sorted_episode) == 0:
+                print("### COMPRESSION FINISHED : No more frequent episodes...")
                 break;
 
             compressed = True
@@ -174,17 +195,17 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
 
 
 
-def pick_dataset(name) :
+def pick_dataset(letter, dataset_type = None) :
     dataset = None
-    if name == 'toy':
-        dataset = pd.read_csv("data/toy_dataset.txt", delimiter=';')
+    if letter == 'toy':
+        dataset = pd.read_csv("input/toy_dataset.txt", delimiter=';')
         date_format = '%Y-%d-%m %H:%M'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
-        
-    elif name == 'KA':
-        dataset = pd.read_csv("data/KA_dataset.csv", delimiter=';')
-        #date_format = '%d-%b-%Y %H:%M:%S'
+    
+    else :
+        dataset = pd.read_csv("input/K{} House/K{}_{}_dataset.csv".format(letter, letter, dataset_type), delimiter=';')
         dataset['date'] = pd.to_datetime(dataset['date'])
+    
         
     return dataset
 

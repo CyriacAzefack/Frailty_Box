@@ -350,6 +350,7 @@ def translate_description(description) :
     natural_desc['period'] = str(description['period'])
     natural_desc['accuracy'] = round(description['accuracy'], 3)
     natural_desc['delta_t'] = [str(description['delta_t'][0]), str(description['delta_t'][1])]
+    natural_desc['validity duration'] = str(description['delta_t'][1] - description['delta_t'][0])
     natural_desc["compression_power"] = description["compression_power"]
     natural_desc['description'] = {}
     for mean_time, std_time in description['description'].items():
