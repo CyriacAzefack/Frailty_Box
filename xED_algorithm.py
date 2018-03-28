@@ -5,66 +5,91 @@ Created on Wed Mar 14 10:22:14 2018
 @author: cyriac.azefack
 """
 
-import matplotlib
-import pandas as pd
+import datetime as dt
+import errno
+import os
+import pickle
 import sys
 import time as t
-import datetime as dt
 
-#matplotlib.style.use("seaborn")
+import numpy as np
+# import matplotlib
+import pandas as pd
 
 import FP_growth
 import candidate_study
 
 
-def main(): 
+# matplotlib.style.use("seaborn")
+
+
+def main():
     ########################################
     # DATA PREPROCESSING
     ########################################
-    
+
     """
     The dataframe should have 1 index (date as datetime) and 1 feature (activity)
     """
-    
+
     letters = ['A']
     dataset_type = 'activity'
-    
+
     for letter in letters :
         dataset = pick_dataset(letter, dataset_type)
-        
-        #dataset = dataset.set_index('date')
-    
+
         start_time = t.process_time()
-        results, data_left = xED_algorithm(data=dataset, Tep=30, support_min=2,
+
+        patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=30, support_min=3,
                                     tolerance_ratio=2)
-    
-        elapsed_time = dt.timedelta(seconds = round(t.process_time() - start_time, 3))
-    
+        ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
+
+        elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
+
+
         print("\n")
         print("###############################")
         print("Time to process all the dataset : {}".format(elapsed_time))
+        print("{}% of K{}_{}_dataset data explained by xED patterns".format(ratio_data_treated, letter, dataset_type))
         print("##############################")
         print("\n")
-    
-        
-        results.to_csv("output/K{} House/K{}_{}_periodicities.csv".format(letter, letter, dataset_type), sep=";", index=False)
-        
-        data_left.to_csv("output/K{} House/K{}_{}_data_left.csv".format(letter, letter, dataset_type), sep=";", index=False)
-        
-        writer = pd.ExcelWriter("output/K{} House/K{}_{}_all.xlsx".format(letter, letter, dataset_type))
-        dataset.to_excel(writer, sheet_name="Data input", index=False)       
-        results.to_excel(writer, sheet_name="Periodicities", index=False)
-        data_left.to_excel(writer, sheet_name="Data Left", index=False)
-        writer.save()
-        
-        
-    
 
-def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5, 
+        dirname = "output/K{} House/{}".format(letter, dataset_type)
+        log_filename = dirname + "/log.txt"
+        if not os.path.exists(os.path.dirname(log_filename)):
+            try:
+                os.makedirs(os.path.dirname(log_filename))
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+        with open(log_filename, 'w+') as file:
+            file.write("Time to process all the dataset : {}\n".format(elapsed_time))
+            file.write("{}% of K{}_{}_dataset data explained by xED patterns\n".format(ratio_data_treated, letter,
+                                                                                       dataset_type))
+            file.write("{} Patterns found\n".format(len(patterns)))
+
+        # Dump the results in pickle files to re-use them later
+        pickle.dump(patterns, open(dirname + "/patterns.pickle", 'wb'))
+        pickle.dump(data_left, open(dirname + "/data_left.pickle", 'wb'))
+
+        # Write readable results in csv file
+        patterns_string.to_csv(dirname + "/patterns.csv", sep=";", index=False)
+        data_left.to_csv(dirname + "/data_left.csv", sep=";", index=False)
+
+        # Write all the results in differents excel sheets
+        writer = pd.ExcelWriter(dirname + "/all_results.xlsx")
+        dataset.to_excel(writer, sheet_name="Input Data", index=False)
+        patterns_string.to_excel(writer, sheet_name="Patterns", index=False)
+        data_left.to_excel(writer, sheet_name="Non treated Data", index=False)
+        writer.save()
+
+
+def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
                   std_max = 0.1, tolerance_ratio = 2, delta_Tmax_ratio = 3, verbose = True):
     """
     Implementation of the extended Discovery Algorithm designed by Julie Soulas U{https://hal.archives-ouvertes.fr/tel-01356217/}
-    
+
     :param data : Starting dataframe, date[datetime] as index and 1 column named "activity"
     :param Tep : [in Minutes] Maximal time interval between events in an episode occurrence. Should correspond to the maximal duration of the ADLs.
     :param support_min : [greater than 1] Minimal number of occurrences of an episode, for that episode to be considered as frequent.
@@ -78,30 +103,32 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
 
     final_periodicities = pd.DataFrame(columns=["Episode", "Period", "Description", "Validity Duration",
                                                 "Start Time", "End Time", "Compression Power", "Accuracy"])
+    final_periodicities_string = pd.DataFrame(columns=["Episode", "Period", "Description", "Validity Duration",
+                                                       "Start Time", "End Time", "Compression Power", "Accuracy"])
     comp_iter = 0
     while compressed :
         comp_iter += 1
-        
+
         if verbose:
             print("\n")
             print("###############################")
             print("#    COMPRESSION N°%d START   #" % comp_iter)
             print("##############################")
             print("\n")
-            
+
         compressed = False
-        
+
         if verbose :
             print("  Finding frequent episodes candidates...  ".center(100, '*'))
-        
+
         frequent_episodes = FP_growth.find_frequent_episodes(data, support_min, Tep)
-        
+
         print(len(frequent_episodes), "candidate episodes found !!")
-        
+
         periodicities = {}
-        
+
         print(" Building candidates episodes periodicities... ".center(100, '*'))
-        
+
         episode_index = 0
         for episode in frequent_episodes.keys():
             episode_index += 1
@@ -115,11 +142,11 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
             if description is not None:
                 #print("\nInteresting periodicity found for the episode", episode)
                 periodicities[episode] = description
-                
+
             sys.stdout.write("\r%.2f %% of episodes treated!!" % (100*episode_index/len(frequent_episodes)))
             sys.stdout.flush()
         sys.stdout.write("\n")
-        
+
         if len(periodicities) == 0:
             print("No more intersting periodicities found!!".center(100, '*'))
             break;
@@ -132,10 +159,10 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
         print("Dataset Rewriting".center(100, '*'))
 
         factorised_events = pd.DataFrame(columns=["date", "activity"])
-        
+
         data_bis = data.copy() #Data to handle the rewriting
         while True:
-            
+
             episode = sorted_episode[0]
             periodicity = periodicities[episode]
 
@@ -168,13 +195,25 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
 
             # Factorize DATA
             data = pd.concat([data, mini_factorised_events]).drop_duplicates(keep=False)
-            data.reset_index(inplace=True, drop=True)
 
+            # Add missing events
+            events_to_add = find_missing_events(data_bis, episode, expected_occurrences,
+                                                periodicity["description"], periodicity["period"], tolerance_ratio)
+            data = pd.concat([data, events_to_add]).drop_duplicates(keep=False)
+            data.reset_index(inplace=True, drop=True)
 
             # Add the periodicity to the results
             natural_periodicity = candidate_study.translate_description(periodicity)
 
-            final_periodicities.loc[len(final_periodicities)] = [episode, natural_periodicity["period"],
+            final_periodicities.loc[len(final_periodicities)] = [episode, periodicity["period"],
+                                                                 periodicity["description"],
+                                                                 periodicity["delta_t"][1] - periodicity["delta_t"][0],
+                                                                 periodicity["delta_t"][0],
+                                                                 periodicity["delta_t"][1],
+                                                                 periodicity["compression_power"],
+                                                                 periodicity["accuracy"]]
+
+            final_periodicities_string.loc[len(final_periodicities_string)] = [episode, natural_periodicity["period"],
                                                                  natural_periodicity["description"],
                                                                  natural_periodicity["validity duration"],
                                                                  natural_periodicity["delta_t"][0],
@@ -189,10 +228,84 @@ def xED_algorithm(data, Tep = 30, support_min = 2, accuracy_min = 0.5,
                 break;
 
             compressed = True
-            
 
-    return final_periodicities, data
+    return final_periodicities, final_periodicities_string, data
 
+
+def find_missing_events(data, episode, occurrences, description, period, tolerance_ratio):
+    """
+    Find missing occurrences of the episode description in the original dataset
+    :return the missing events
+    """
+
+    data = data.loc[data.activity.isin(episode)]
+
+    missing_events_df = pd.DataFrame(columns=["date", "activity"])
+
+    occ_start_time = occurrences.date.min().to_pydatetime()
+    start_period_date = occ_start_time + dt.timedelta(
+        seconds=(period.total_seconds() - candidate_study.modulo_datetime(occ_start_time, period)))
+
+    occ_end_time = occurrences.date.max().to_pydatetime()
+    end_period_date = occ_end_time - dt.timedelta(seconds=candidate_study.modulo_datetime(occ_end_time, period))
+
+    # Deal with the periods
+    current_period_start_date = start_period_date
+    while current_period_start_date < end_period_date:
+        current_period_end_date = current_period_start_date + period
+        for mu, sigma in description.items():
+            comp_start_date = current_period_start_date + dt.timedelta(seconds=(mu - tolerance_ratio * sigma))
+            comp_end_date = current_period_start_date + dt.timedelta(seconds=(mu + tolerance_ratio * sigma))
+
+            occurrence_happenned = len(
+                occurrences.loc[(occurrences.date >= comp_start_date) & (occurrences.date <= comp_end_date)]) > 0
+
+            if occurrence_happenned:
+                continue
+
+            # If not happenned fill the missing events
+            present_events = set(
+                data.loc[(data.date >= comp_start_date) & (data.date <= comp_end_date), "activity"].values)
+            intersection = present_events.intersection(episode)
+            missing_events = set(episode) - intersection
+
+            for event in intersection:
+                event_date = data.loc[
+                    (data.date >= comp_start_date) & (data.date <= comp_end_date) & (data.activity == event)].date.min()
+                missing_events_df.loc[len(missing_events_df)] = [event_date, event]
+            for event in missing_events:
+                ts = int(mu + sigma * np.random.randn())
+                event_date = current_period_start_date + dt.timedelta(seconds=ts)
+                missing_events_df.loc[len(missing_events_df)] = [event_date, "MISSING " + event]
+
+        current_period_start_date = current_period_end_date
+
+    # Now the bord effects
+    for mu, sigma in description.items():
+        if mu < candidate_study.modulo_datetime(occ_start_time, period):
+            continue
+        if mu > candidate_study.modulo_datetime(occ_end_time, period):
+            continue
+
+        comp_start_date = current_period_start_date + dt.timedelta(seconds=(mu - tolerance_ratio * sigma))
+        comp_end_date = current_period_start_date + dt.timedelta(seconds=(mu + tolerance_ratio * sigma))
+
+        occurrence_happenned = len(
+            occurrences.loc[(occurrences.date >= comp_start_date) & (occurrences.date <= comp_end_date)]) > 0
+
+        if occurrence_happenned:
+            continue
+
+        # If not happenned fill the missing events
+        present_events = set(data.loc[(data.date >= comp_start_date) & (data.date <= comp_end_date), "activity"].values)
+        missing_events = set(episode) - present_events.intersection(episode)
+
+        for event in missing_events:
+            ts = int(mu + sigma * np.random.randn())
+            event_date = current_period_start_date + dt.timedelta(seconds=ts)
+            missing_events_df.loc[len(missing_events_df)] = [event_date, "MISSING " + event]
+
+    return missing_events_df
 
 
 def pick_dataset(letter, dataset_type = None) :
@@ -201,12 +314,11 @@ def pick_dataset(letter, dataset_type = None) :
         dataset = pd.read_csv("input/toy_dataset.txt", delimiter=';')
         date_format = '%Y-%d-%m %H:%M'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
-    
+
     else :
         dataset = pd.read_csv("input/K{} House/K{}_{}_dataset.csv".format(letter, letter, dataset_type), delimiter=';')
         dataset['date'] = pd.to_datetime(dataset['date'])
-    
-        
+
     return dataset
 
 if __name__ == "__main__":

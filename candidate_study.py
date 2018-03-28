@@ -18,19 +18,19 @@ import xED_algorithm
 
 
 def main():
-    data = xED_algorithm.pick_dataset('toy')
+    data = xED_algorithm.pick_dataset('toy', 'activity')
     episodes = []
-    # episodes.append(["go to bed end", "use toilet start", "use toilet end"])
+    # episodes.append(("go to bed END", "use toilet START", "use toilet START"))
     # episodes.append(["take shower start", "take shower end", "leave house start"])
     # episodes.append(["use toilet start", "use toilet end", "go to bed start"])
     # episodes.append(["prepare Breakfast start", "prepare Breakfast end"])
     # episodes.append(["leave house end"])
     #episodes.append(['brush teeth start', 'go to bed start'])
 
-    episodes.append(["breakfast"])
-    # episode = ["kitchen", "lunch", "coffee"]
+    # episodes.append(["breakfast"])
+    episodes.append(("kitchen",))
 
-    with open('output_result.csv', 'w') as file:
+    with open('output/output_candidate_study_step.csv', 'w') as file:
         file.truncate()
         file.write("Episode;period;description;accuracy;start date;end date\n")
         for episode in episodes:
@@ -59,32 +59,15 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
     return delta_T : 
     """
 
-    def is_occurence_expected(relative_date, GMM_descr, period):
-        for mu, sigma in GMM_descr.items():
-            if abs(relative_date - mu) <= tolerance_ratio * sigma:  # Normal cases
-                return mu
+    candidate_periods = [dt.timedelta(days=1), dt.timedelta(days=7)]
+    # Pick the episode events from the input sequence
+    data = data.loc[data.activity.isin(episode)].copy()
 
-            # Handle the bord effects cases
-            lower_limit = mu - tolerance_ratio * sigma
-            upper_limit = mu + tolerance_ratio * sigma
-
-            mu2 = mu
-            if lower_limit < 0:  # Midnight-morning issue (early in the period)
-                mu2 = mu + period.total_seconds()
-            elif upper_limit > period.total_seconds():
-                mu2 = mu - period.total_seconds()
-
-            if abs(relative_date - mu2) <= tolerance_ratio * sigma:  # Normal cases
-                return mu2
-            
-        
+    if len(data) == 0:
         return None
 
-    candidate_periods = [dt.timedelta(days=1), ]
-    
-    #Pick the episode events from the input sequence
-    data = data.loc[data.activity.isin(episode)].copy()
-    
+
+
     #find the episode occurences
     occurrences = find_occurrences(data, episode, Tep)
     
@@ -95,6 +78,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
     
     for T in candidate_periods:
         delta_Tmax = delta_Tmax_ratio * T
+        period_occ = pd.DataFrame()
         period_occ = occurrences.copy()
         
         # Compute intervals between occurrences
@@ -126,9 +110,6 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
             group_occurrences = period_occ.loc[(period_occ.date >= group_start_time) & 
                                               (period_occ.date < group_end_time)].copy()
             
-            if len(group_occurrences) == 0:
-                continue
-            
             group_start_time = group_occurrences.date.min().to_pydatetime()
             group_end_time = group_occurrences.date.max().to_pydatetime()
             
@@ -139,11 +120,11 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
                 continue
             
             # For midnight-morning issue
-            
             data_points_2 = [x + T.total_seconds() for x in data_points]
             
             big_data_points = np.asarray(list(data_points) + list(data_points_2)).reshape(-1, 1)
 
+            # print("EPSILON DBSCAN :", dt.timedelta(seconds = std_max*T.total_seconds()))
             Nb_clusters, interesting_points = find_number_clusters(big_data_points, eps = std_max*T.total_seconds(), min_samples = support_min)
 
             #if no clusters found then switch to the next group
@@ -153,15 +134,17 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 #            if plot_graphs:
 #                sns.distplot(interesting_points, norm_hist=False, rug=False, kde=True, bins=10)
 
-            GMM = GaussianMixture(n_components=Nb_clusters, covariance_type='spherical', n_init=10)
+            GMM = GaussianMixture(n_components=Nb_clusters, n_init=10)
             GMM.fit(interesting_points)
             
             GMM_descr = {} # mean_time (in seconds) as key and std_duration (in seconds) as value
             
             for i in range(len(GMM.means_)):
                 mu = GMM.means_[i][0]
-                sigma = math.ceil(np.sqrt(GMM.covariances_[0]))
-                
+                sigma = math.ceil(np.sqrt(GMM.covariances_[i]))
+
+                if sigma > std_max * T.total_seconds():
+                    continue
                 lower_limit = mu - tolerance_ratio*sigma
                 upper_limit = mu + tolerance_ratio*sigma
                 
@@ -190,10 +173,10 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
             
             #Now the bord effects
             bord_effects_expected_occ = 0
-            if is_occurence_expected(group_relative_start_time, GMM_descr, T) is not None :
+            if is_occurence_expected(group_relative_start_time, GMM_descr, T, tolerance_ratio) is not None:
                 bord_effects_expected_occ += 1
-                
-            if is_occurence_expected(group_relative_end_time, GMM_descr, T) is not None :
+
+            if is_occurence_expected(group_relative_end_time, GMM_descr, T, tolerance_ratio) is not None:
                 bord_effects_expected_occ += 1
                 
             for mean_time, std_time in GMM_descr.items():
@@ -215,7 +198,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 
             # "Expected" is the relative mean time of the component where an occurrence happen           
             group_occurrences["expected"] = group_occurrences["relative_date"].apply(
-                lambda x: is_occurence_expected(x, GMM_descr, T))
+                lambda x: is_occurence_expected(x, GMM_descr, T, tolerance_ratio))
 
             # "diff_mean_time" is the time distance from the occurrence to the relative mean time of the component where an occurrence happen  
             group_occurrences["diff_mean_time"] = abs(group_occurrences["relative_date"] - group_occurrences["expected"])
@@ -273,16 +256,18 @@ def relative2absolute_date(relative_date, reference_date, period) :
     
     return date
 
+
 def find_number_clusters(data_points, eps, min_samples):
     """
     return the number of clusters
     """
-    db = DBSCAN(eps=eps, min_samples=min_samples).fit(data_points)
+    db = DBSCAN(eps=eps, min_samples=min_samples, p=1).fit(data_points)
            
     Nb_clusters = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0) # Noisy samples are given the label -1.
     
     return Nb_clusters, db.components_
-            
+
+
 def modulo_datetime(date, period):
     """
     Compute the relative date in the period (time in seconds since the beginning of the corresponding period)
@@ -300,8 +285,8 @@ def modulo_datetime(date, period):
 def find_occurrences(data, episode, Tep):
     """
     Find the occurences of the  episode
-    
-    :param Tep : Maximum duration of an occurence
+    :param Tep : Maximum duration of an occurrence
+    :return : A dataframe of occurrences with one date column
     """
     Tep = dt.timedelta(minutes=Tep)
     
@@ -340,6 +325,7 @@ def find_occurrences(data, episode, Tep):
     
     return occurrences
 
+
 def translate_description(description) :
     """
     Translate the description in natural language
@@ -357,7 +343,27 @@ def translate_description(description) :
         natural_desc['description'][str(dt.timedelta(seconds = mean_time))] = str(dt.timedelta(seconds = std_time))
         
     return natural_desc
-    
+
+
+def is_occurence_expected(relative_date, GMM_descr, period, tolerance_ratio):
+    for mu, sigma in GMM_descr.items():
+        if abs(relative_date - mu) <= tolerance_ratio * sigma:  # Normal cases
+            return mu
+
+        # Handle the bord effects cases
+        lower_limit = mu - tolerance_ratio * sigma
+        upper_limit = mu + tolerance_ratio * sigma
+
+        mu2 = mu
+        if lower_limit < 0:  # Midnight-morning issue (early in the period)
+            mu2 = mu + period.total_seconds()
+        elif upper_limit > period.total_seconds():
+            mu2 = mu - period.total_seconds()
+
+        if abs(relative_date - mu2) <= tolerance_ratio * sigma:  # Normal cases
+            return mu2
+
+    return None
     
 if __name__ == "__main__":
     main()
