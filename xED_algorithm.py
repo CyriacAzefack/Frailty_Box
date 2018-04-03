@@ -29,11 +29,11 @@ def main():
     ########################################
 
     """
-    The dataframe should have 1 index (date as datetime) and 1 feature (activity)
+    The dataframe should have 1 index (date as datetime) and 1 feature (label)
     """
 
     letters = ['A']
-    dataset_type = 'activity'
+    dataset_type = 'label'
 
     for letter in letters :
         dataset = pick_dataset(letter, dataset_type)
@@ -90,7 +90,7 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
     """
     Implementation of the extended Discovery Algorithm designed by Julie Soulas U{https://hal.archives-ouvertes.fr/tel-01356217/}
 
-    :param data : Starting dataframe, date[datetime] as index and 1 column named "activity"
+    :param data : Starting dataframe, date[datetime] as index and 1 column named "label"
     :param Tep : [in Minutes] Maximal time interval between events in an episode occurrence. Should correspond to the maximal duration of the ADLs.
     :param support_min : [greater than 1] Minimal number of occurrences of an episode, for that episode to be considered as frequent.
     :param accuracy_min : [between 0 and 1] Minimal accuracy for a periodicity description to be considered as interesting, and thus factorized
@@ -158,7 +158,7 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
 
         print("Dataset Rewriting".center(100, '*'))
 
-        factorised_events = pd.DataFrame(columns=["date", "activity"])
+        factorised_events = pd.DataFrame(columns=["date", "label"])
 
         data_bis = data.copy() #Data to handle the rewriting
         while True:
@@ -173,21 +173,21 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
 
             expected_occurrences = periodicity["expected_occurrences"]
 
-            mini_factorised_events = pd.DataFrame(columns=["date", "activity"])
+            mini_factorised_events = pd.DataFrame(columns=["date", "label"])
 
             #Find the events corresponding to the expected occurrences
             for index, occurrence in  expected_occurrences.iterrows() :
                 start_date = occurrence["date"]
                 end_date = start_date + dt.timedelta(minutes=Tep)
-                mini_data = data_bis.loc[(data_bis.activity.isin(episode))
-                                     & (data_bis.date >= start_date)
-                                     & (data_bis.date < end_date)].copy()
+                mini_data = data_bis.loc[(data_bis.label.isin(episode))
+                                         & (data_bis.date >= start_date)
+                                         & (data_bis.date < end_date)].copy()
                 mini_data.sort_values(["date"], ascending=True, inplace=True)
-                mini_data.drop_duplicates(["activity"], keep='first', inplace=True)
+                mini_data.drop_duplicates(["label"], keep='first', inplace=True)
                 mini_factorised_events = mini_factorised_events.append(mini_data, ignore_index=True)
 
             factorised_events = factorised_events.append(mini_factorised_events, ignore_index=True)
-            count_duplicates =  factorised_events.duplicated(['date', 'activity']).sum()
+            count_duplicates = factorised_events.duplicated(['date', 'label']).sum()
             if count_duplicates != 0 :
                 # Current periodicity involves events in factorized_events
                 print("### COMPRESSION FINISHED : Overlapping factorized events reached...")
@@ -238,16 +238,17 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
     :return the missing events
     """
 
-    data = data.loc[data.activity.isin(episode)]
+    data = data.loc[data.label.isin(episode)]
 
-    missing_events_df = pd.DataFrame(columns=["date", "activity"])
+    missing_events_df = pd.DataFrame(columns=["date", "label"])
 
     occ_start_time = occurrences.date.min().to_pydatetime()
     start_period_date = occ_start_time + dt.timedelta(
         seconds=(period.total_seconds() - candidate_study.modulo_datetime(occ_start_time, period)))
 
     occ_end_time = occurrences.date.max().to_pydatetime()
-    end_period_date = occ_end_time - dt.timedelta(seconds=candidate_study.modulo_datetime(occ_end_time, period))
+    end_period_date = occ_end_time - dt.timedelta(
+        seconds=candidate_study.modulo_datetime(occ_end_time, period))
 
     # Deal with the periods
     current_period_start_date = start_period_date
@@ -265,13 +266,13 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
 
             # If not happenned fill the missing events
             present_events = set(
-                data.loc[(data.date >= comp_start_date) & (data.date <= comp_end_date), "activity"].values)
+                data.loc[(data.date >= comp_start_date) & (data.date <= comp_end_date), "label"].values)
             intersection = present_events.intersection(episode)
             missing_events = set(episode) - intersection
 
             for event in intersection:
                 event_date = data.loc[
-                    (data.date >= comp_start_date) & (data.date <= comp_end_date) & (data.activity == event)].date.min()
+                    (data.date >= comp_start_date) & (data.date <= comp_end_date) & (data.label == event)].date.min()
                 missing_events_df.loc[len(missing_events_df)] = [event_date, event]
             for event in missing_events:
                 ts = int(mu + sigma * np.random.randn())
@@ -297,7 +298,7 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
             continue
 
         # If not happenned fill the missing events
-        present_events = set(data.loc[(data.date >= comp_start_date) & (data.date <= comp_end_date), "activity"].values)
+        present_events = set(data.loc[(data.date >= comp_start_date) & (data.date <= comp_end_date), "label"].values)
         missing_events = set(episode) - present_events.intersection(episode)
 
         for event in missing_events:

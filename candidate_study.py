@@ -18,7 +18,7 @@ import xED_algorithm
 
 
 def main():
-    data = xED_algorithm.pick_dataset('toy', 'activity')
+    data = xED_algorithm.pick_dataset('toy', 'label')
     episodes = []
     # episodes.append(("go to bed END", "use toilet START", "use toilet START"))
     # episodes.append(["take shower start", "take shower end", "leave house start"])
@@ -61,7 +61,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 
     candidate_periods = [dt.timedelta(days=1), dt.timedelta(days=7)]
     # Pick the episode events from the input sequence
-    data = data.loc[data.activity.isin(episode)].copy()
+    data = data.loc[data.label.isin(episode)].copy()
 
     if len(data) == 0:
         return None
@@ -289,7 +289,8 @@ def find_occurrences(data, episode, Tep):
     :return : A dataframe of occurrences with one date column
     """
     Tep = dt.timedelta(minutes=Tep)
-    
+
+    data = data.loc[data.label.isin(episode)].copy()
     occurrences = pd.DataFrame(columns = ["date"])
     
     
@@ -301,10 +302,10 @@ def find_occurrences(data, episode, Tep):
         end_time = row.date + Tep
         
         date_condition = (data.date >= start_time) & (data.date < end_time)
-        
-        next_activities = set(data.loc[date_condition, "activity"].values)
-        
-        return set(episode).issubset(next_activities)
+
+        next_labels = set(data.loc[date_condition, "label"].values)
+
+        return set(episode).issubset(next_labels)
         
     
     data.loc[:, "occurrence"] = data.apply(sliding_window, axis=1)
@@ -318,7 +319,7 @@ def find_occurrences(data, episode, Tep):
         # TODO: can be improved
         indexes = []
         for s in episode :
-            i = data.loc[(data.date >= occ_time) & (data.activity == s)].date.argmin()
+            i = data.loc[(data.date >= occ_time) & (data.label == s)].date.argmin()
             indexes.append(int(i))
         
         data.loc[data.index.isin(indexes), 'occurrence'] = False

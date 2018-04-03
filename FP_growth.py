@@ -1,5 +1,5 @@
-import itertools
 import datetime as dt
+import itertools
 
 
 class FPNode(object):
@@ -311,8 +311,8 @@ def extract_transactions_itemsets (data, Tep):
         current_end_time = current_start_time + Tep
         
         date_condition = (data.date >= current_start_time) & (data.date < current_end_time)
-        
-        transactions.append(list(set(data.loc[date_condition, "activity"].values))) # list of set to avoid doublons
+
+        transactions.append(list(set(data.loc[date_condition, "label"].values)))  # list of set to avoid doublons
         data.loc[date_condition, 'trans_id'] = current_trans_id
         
         if len(data.loc[data.date > current_end_time]) > 0 :

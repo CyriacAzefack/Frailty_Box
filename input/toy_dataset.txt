@@ -1,4 +1,4 @@
-date;activity
+date;label
 2017-29-11 07:51;kitchen
 2017-29-11 07:59;breakfast
 2017-29-11 08:02;coffee
