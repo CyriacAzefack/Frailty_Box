@@ -41,13 +41,14 @@ def patterns2graph(data, labels, description, period, tolerance_ratio=2, Tep=30)
     nodes = ['START PERIOD'] + labels + ['END PERIOD']
     n = len(nodes)
     for mu, sigma in description.items():
+        # n x n edges for probabilities transition
         Mp = np.zeros((n, n))
-        Mwait = defaultdict(lambda: defaultdict(list))
-        for i in range(n):
-            for j in range(n):
-                Mwait[i][j] = []
 
-        mini_desc = {mu: sigma}
+        # n-1 x n-1 edges for waiting time transition laws (no wait time to END NODE)
+        Mwait = defaultdict(lambda: defaultdict(list))
+        for i in range(n - 1):
+            for j in range(n - 1):
+                Mwait[i][j] = []
 
         # Find pattern occurrences
         occurrences = find_occurrences(data, tuple(labels), Tep)
@@ -56,24 +57,34 @@ def patterns2graph(data, labels, description, period, tolerance_ratio=2, Tep=30)
             lambda x: modulo_datetime(x.to_pydatetime(), period))
 
         occurrences["expected"] = occurrences["relative_date"].apply(
-            lambda x: is_occurence_expected(x, mini_desc, period, tolerance_ratio))
+            lambda x: is_occurence_expected(x, {mu: sigma}, period, tolerance_ratio))
         occurrences.dropna(inplace=True, axis=0)
 
         events = find_events_occurrences(data, labels, occurrences, period, Tep)
 
         nb_periods = events.period_id.max() + 1
         nb_periods_with_occurrences = len(events.period_id.unique())
+        nb_occurrences_label = np.zeros(n)
+        # START Node
+        nb_occurrences_label[0] = nb_periods
+        nb_occurrences_label[n - 1] = nb_periods
+        for i in range(n - 2):
+            label = nodes[i + 1]
+            # count the label occurrences
+            nb_occurrences_label[i + 1] = len(events.loc[events.label == label])
 
         start_date = occurrences.date.min().to_pydatetime()
         first_period_start_date = start_date - dt.timedelta(
             seconds=modulo_datetime(start_date, period))
         # Build the transition probability matrix
         # We always have the EDGE END --> START
+        # TODO : EDGE END ----> START is putted as 1 (for check purporses)
         Mp[n - 1, 0] = 1
-        Mwait[n - 1][0].append(0)
+        # Mwait[n-1][0].append(0)
 
         # Missing occurrences, #START --> END directly (waiting time = Period)
-        Mp[0, n - 1] += (nb_periods - nb_periods_with_occurrences) / nb_periods
+        # TODO : Totally missing occurrences
+        Mp[0, n - 1] += (nb_periods - len(events.period_id.unique())) / nb_periods
         Mwait[0][n - 1].append(period.total_seconds())
         for period_id in events.period_id.unique():
             period_start_date = first_period_start_date + period_id * period
@@ -94,14 +105,14 @@ def patterns2graph(data, labels, description, period, tolerance_ratio=2, Tep=30)
                         sorting_id = period_events.loc[period_events.date > row['date']].date.argmin()
                         sorting_label = period_events.loc[[sorting_id]].label.values[0]
                         sorting_label_date = period_events.loc[[sorting_id]].date.min().to_pydatetime()
-                        Mp[nodes.index(label), nodes.index(sorting_label)] += (
-                                                                                      1 / nb_label) / nb_periods_with_occurrences
+                        Mp[nodes.index(label), nodes.index(sorting_label)] += 1 / nb_occurrences_label[
+                            nodes.index(label)]
                         Mwait[nodes.index(label)][nodes.index(sorting_label)].append(
                             modulo_datetime(sorting_label_date, period) - modulo_datetime(row['date'].to_pydatetime(),
                                                                                           period))
                     else:
                         # last label of the occurrence, Label --> END PERIOD
-                        Mp[nodes.index(label), n - 1] += (1 / nb_label) / nb_periods_with_occurrences
+                        Mp[nodes.index(label), n - 1] += 1 / nb_occurrences_label[nodes.index(label)]
                         Mwait[nodes.index(label)][n - 1].append(
                             period.total_seconds() - modulo_datetime(row['date'].to_pydatetime(), period))
 
@@ -160,7 +171,7 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
             # Fill events Dataframe
             occ_date = occurrences.loc[date_filter].date.min().to_pydatetime()
             occ_end_date = occ_date + Tep
-            occ_events = data.loc[(data.date >= occ_date) & (data.date < occ_end_date)].copy()
+            occ_events = data.loc[(data.date >= occ_date) & (data.date <= occ_end_date)].copy()
             occ_events['period_id'] = period_id
             events = pd.concat([events, occ_events]).drop_duplicates(keep=False)
             events.reset_index(inplace=True, drop=True)
