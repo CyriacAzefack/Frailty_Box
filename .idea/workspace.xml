@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/candidate_study.py" beforeDir="false" afterPath="$PROJECT_DIR$/candidate_study.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/patterns2graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/patterns2graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xED_algorithm.py" beforeDir="false" afterPath="$PROJECT_DIR$/xED_algorithm.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,10 +30,10 @@
       <file leaf-file-name="patterns2graph.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/patterns2graph.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="266" lean-forward="true" selection-start-line="266" selection-end-line="266" />
+            <state relative-caret-position="4250">
+              <caret line="250" column="72" selection-start-line="250" selection-start-column="72" selection-end-line="250" selection-end-column="72" />
               <folding>
-                <element signature="e#93#128#0" expanded="true" />
+                <element signature="e#93#106#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -102,6 +100,7 @@
       <find>datetime</find>
       <find>filn</find>
       <find>filen</find>
+      <find>title</find>
       <find>filenam</find>
     </findStrings>
     <replaceStrings>
@@ -335,7 +334,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522925269161</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Graph construction Finished">
+      <created>1523273095419</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1523273095419</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -408,7 +414,8 @@
     <MESSAGE value="xED Algorithm and Output done" />
     <MESSAGE value="Graph Drawing from a manual pattern" />
     <MESSAGE value="Own label management for graphs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Own label management for graphs" />
+    <MESSAGE value="Graph construction Finished" />
+    <option name="LAST_COMMIT_MESSAGE" value="Graph construction Finished" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -428,12 +435,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/patterns2graph.py</url>
-          <line>302</line>
+          <line>308</line>
           <option name="timeStamp" value="117" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/patterns2graph.py</url>
-          <line>81</line>
+          <line>80</line>
           <option name="timeStamp" value="132" />
         </line-breakpoint>
       </breakpoints>
@@ -457,13 +464,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/candidate_study.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4522">
-          <caret line="276" selection-start-line="276" selection-end-line="276" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/FP_growth.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5321">
@@ -476,7 +476,7 @@
         <state relative-caret-position="4250">
           <caret line="259" column="39" selection-start-line="259" selection-start-column="39" selection-end-line="259" selection-end-column="39" />
           <folding>
-            <element signature="e#93#128#0" expanded="true" />
+            <element signature="e#93#106#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -500,7 +500,7 @@
         <state relative-caret-position="1037">
           <caret line="61" column="44" selection-start-line="61" selection-start-column="44" selection-end-line="61" selection-end-column="44" />
           <folding>
-            <element signature="e#93#128#0" expanded="true" />
+            <element signature="e#93#106#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -531,7 +531,7 @@
         <state relative-caret-position="1037">
           <caret line="61" column="44" selection-start-line="61" selection-start-column="44" selection-end-line="61" selection-end-column="44" />
           <folding>
-            <element signature="e#93#128#0" expanded="true" />
+            <element signature="e#93#106#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -771,13 +771,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/networkx/drawing/nx_pydot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="244" column="4" selection-start-line="244" selection-start-column="4" selection-end-line="244" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/candidate_study.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4522">
@@ -792,12 +785,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/networkx/drawing/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+          <folding>
+            <element signature="e#43#64#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/networkx/drawing/nx_pydot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2739">
+          <caret line="333" column="20" selection-start-line="333" selection-start-column="20" selection-end-line="333" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/patterns2graph.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="266" lean-forward="true" selection-start-line="266" selection-end-line="266" />
+        <state relative-caret-position="4250">
+          <caret line="250" column="72" selection-start-line="250" selection-start-column="72" selection-end-line="250" selection-end-column="72" />
           <folding>
-            <element signature="e#93#128#0" expanded="true" />
+            <element signature="e#93#106#0" expanded="true" />
           </folding>
         </state>
       </provider>

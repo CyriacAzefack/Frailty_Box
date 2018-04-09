@@ -4,7 +4,6 @@ Created on Wed Mar 28 11:22:58 2018
 
 @author: cyriac.azefack
 """
-import base64
 from collections import defaultdict
 from pprint import pprint
 from subprocess import check_call
@@ -167,9 +166,13 @@ def patterns2graph(data, labels, description, period, start_date, end_date, tole
                     # dist_law = find_best_fitting_dist (array)
 
         # FIXME : The file should have a readable name including the time description
-        filename = 'directed_graph_'
-        filename = base64.urlsafe_b64encode(filename.encode('ascii', 'strict')).decode('ascii', 'strict')
-        draw_directed_graph(nodes=nodes, matrix=Mp, filename=output_folder + filename, show_image=False)
+        td = dt.timedelta(seconds=mu)
+        filename = 'directed_graph_{}_{}_{}'.format(td.days, td.seconds // 3600, (td.seconds // 60) % 60)
+
+        title = 'Period : ' + str(period) + '\n'
+        title += 'Mean Time : ' + str(td) + '  ---   Std Time : ' + str(dt.timedelta(seconds=sigma))
+
+        draw_directed_graph(nodes=nodes, matrix=Mp, filename=output_folder + filename, title=title, show_image=False)
 
     return Mp_dict, Mwait_dict
 
@@ -222,7 +225,7 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
     return events
 
 
-def draw_directed_graph(nodes, matrix, filename, show_image=False):
+def draw_directed_graph(nodes, matrix, filename, title, show_image=False):
     '''
     Draw the directed graph corresponding and save the image
     :param nodes: Nodes of the graph
@@ -238,12 +241,14 @@ def draw_directed_graph(nodes, matrix, filename, show_image=False):
 
     # create graph object
     # TODO : Add a title to the graph
-    G = nx.MultiDiGraph(label='qsdqsd')
+    G = nx.MultiDiGraph()
 
     # nodes correspond to states
     G.add_nodes_from(nodes)
     print(f'Nodes:\n{G.nodes()}\n')
 
+    G.graph['graph'] = {'label': title, 'labelloc': 't', 'fontsize': '20 ', 'fontcolor': 'blue',
+                        'fontname': 'times-bold'}  # default
     # edges represent transition probabilities
     for k, v in edges_wts.items():
         tmp_origin, tmp_destination = k[0], k[1]
@@ -260,6 +265,7 @@ def draw_directed_graph(nodes, matrix, filename, show_image=False):
                    color='blue' if v > 0.5 else 'black')
     print(f'Edges:')
     pprint(G.edges(data=True))
+    # pprint(G.graph.get('graph', {}))
 
     pos = nx.drawing.nx_pydot.graphviz_layout(G, prog='dot')
     nx.draw_networkx(G, pos)
@@ -268,6 +274,7 @@ def draw_directed_graph(nodes, matrix, filename, show_image=False):
     edge_labels = {(n1, n2): d['label'] for n1, n2, d in G.edges(data=True)}
 
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
     nx.drawing.nx_pydot.write_dot(G, filename + '.dot')
     check_call(['dot', '-Tpng', filename + '.dot', '-o', filename + '.png'])
     if show_image:
