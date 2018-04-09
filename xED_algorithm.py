@@ -32,7 +32,7 @@ def main():
     The dataframe should have 1 index (date as datetime) and 1 feature (label)
     """
 
-    letters = ['A']
+    letters = ['C']
     dataset_type = 'label'
 
     for letter in letters :
@@ -40,8 +40,8 @@ def main():
 
         start_time = t.process_time()
 
-        patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=30, support_min=3,
-                                    tolerance_ratio=2)
+        patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=30, support_min=2,
+                                                             tolerance_ratio=2)
         ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
 
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
@@ -197,9 +197,12 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
             data = pd.concat([data, mini_factorised_events]).drop_duplicates(keep=False)
 
             # Add missing events
-            events_to_add = find_missing_events(data_bis, episode, expected_occurrences,
-                                                periodicity["description"], periodicity["period"], tolerance_ratio)
-            data = pd.concat([data, events_to_add]).drop_duplicates(keep=False)
+            # FIXME : Do we add missing events or not?
+            if False:
+                events_to_add = find_missing_events(data_bis, episode, expected_occurrences,
+                                                    periodicity["description"], periodicity["period"], tolerance_ratio)
+                data = pd.concat([data, events_to_add]).drop_duplicates(keep=False)
+            
             data.reset_index(inplace=True, drop=True)
 
             # Add the periodicity to the results

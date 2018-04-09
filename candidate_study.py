@@ -306,8 +306,7 @@ def find_occurrences(data, episode, Tep):
         next_labels = set(data.loc[date_condition, "label"].values)
 
         return set(episode).issubset(next_labels)
-        
-    
+
     data.loc[:, "occurrence"] = data.apply(sliding_window, axis=1)
     
     while (len(data.loc[data.occurrence == True]) > 0):

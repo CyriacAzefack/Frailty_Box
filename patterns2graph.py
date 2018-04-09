@@ -4,29 +4,51 @@ Created on Wed Mar 28 11:22:58 2018
 
 @author: cyriac.azefack
 """
+import base64
 from collections import defaultdict
 from pprint import pprint
 from subprocess import check_call
 
 import matplotlib.image as mpimg
 import networkx as nx
+import scipy
 
 from candidate_study import *
 from xED_algorithm import *
 
 
 def main():
-    dataset = pick_dataset('A', 'label')
-    labels = ["go to bed START", "use toilet END", "use toilet START"]
-    mu = dt.timedelta(hours=23, minutes=29)
-    sigma = dt.timedelta(hours=1, minutes=13)
-    description = {mu.total_seconds(): sigma.total_seconds()}
-    period = dt.timedelta(days=1)
+    letter = 'C'
+    dataset_type = 'label'
+    dataset = pick_dataset(letter, dataset_type)
 
-    graphs = patterns2graph(dataset, labels, description, period)
+    output = "output/K{} House/{}".format(letter, dataset_type)
+    patterns = pickle.load(open(output + '/patterns.pickle', 'rb'))
+
+    for _, pattern in patterns.iterrows():
+        labels = list(pattern['Episode'])
+        period = pattern['Period']
+        validity_start_date = pattern['Start Time'].to_pydatetime()
+        validity_end_date = pattern['End Time'].to_pydatetime()
+        validity_duration = validity_end_date - validity_start_date
+        nb_periods = validity_duration.total_seconds() / period.total_seconds()
+        description = pattern['Description']
+        output_folder = output + "/Patterns_Graph/" + "_".join(labels) + "/"
+
+        if not os.path.exists(os.path.dirname(output_folder)):
+            try:
+                os.makedirs(os.path.dirname(output_folder))
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+        Mp_dict, Mwait_dict = patterns2graph(data=dataset, labels=labels, description=description, period=period,
+                                             start_date=validity_start_date, end_date=validity_end_date,
+                                             output_folder=output_folder)
 
 
-def patterns2graph(data, labels, description, period, tolerance_ratio=2, Tep=30):
+def patterns2graph(data, labels, description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
+                   output_folder='./'):
     '''
     :param data: Input dataset
     :param labels: list of labels included in the pattern
@@ -52,6 +74,8 @@ def patterns2graph(data, labels, description, period, tolerance_ratio=2, Tep=30)
 
         # Find pattern occurrences
         occurrences = find_occurrences(data, tuple(labels), Tep)
+        occurrences = occurrences.loc[(occurrences.date >= start_date) & (occurrences.date <= end_date)].copy()
+
         # Compute relative dates
         occurrences.loc[:, "relative_date"] = occurrences.date.apply(
             lambda x: modulo_datetime(x.to_pydatetime(), period))
@@ -60,18 +84,21 @@ def patterns2graph(data, labels, description, period, tolerance_ratio=2, Tep=30)
             lambda x: is_occurence_expected(x, {mu: sigma}, period, tolerance_ratio))
         occurrences.dropna(inplace=True, axis=0)
 
+        if len(occurrences) == 0:
+            continue
+
         events = find_events_occurrences(data, labels, occurrences, period, Tep)
 
         nb_periods = events.period_id.max() + 1
-        nb_periods_with_occurrences = len(events.period_id.unique())
-        nb_occurrences_label = np.zeros(n)
+
+        nb_occurrences_per_label = np.zeros(n)
         # START Node
-        nb_occurrences_label[0] = nb_periods
-        nb_occurrences_label[n - 1] = nb_periods
+        nb_occurrences_per_label[0] = nb_periods
+        nb_occurrences_per_label[n - 1] = nb_periods
         for i in range(n - 2):
             label = nodes[i + 1]
             # count the label occurrences
-            nb_occurrences_label[i + 1] = len(events.loc[events.label == label])
+            nb_occurrences_per_label[i + 1] = len(events.loc[events.label == label])
 
         start_date = occurrences.date.min().to_pydatetime()
         first_period_start_date = start_date - dt.timedelta(
@@ -80,12 +107,12 @@ def patterns2graph(data, labels, description, period, tolerance_ratio=2, Tep=30)
         # We always have the EDGE END --> START
         # TODO : EDGE END ----> START is putted as 1 (for check purporses)
         Mp[n - 1, 0] = 1
-        # Mwait[n-1][0].append(0)
+
 
         # Missing occurrences, #START --> END directly (waiting time = Period)
         # TODO : Totally missing occurrences
         Mp[0, n - 1] += (nb_periods - len(events.period_id.unique())) / nb_periods
-        Mwait[0][n - 1].append(period.total_seconds())
+        # Mwait[0][n - 1].append(period.total_seconds())
         for period_id in events.period_id.unique():
             period_start_date = first_period_start_date + period_id * period
             period_end_date = period_start_date + period
@@ -105,32 +132,44 @@ def patterns2graph(data, labels, description, period, tolerance_ratio=2, Tep=30)
                         sorting_id = period_events.loc[period_events.date > row['date']].date.argmin()
                         sorting_label = period_events.loc[[sorting_id]].label.values[0]
                         sorting_label_date = period_events.loc[[sorting_id]].date.min().to_pydatetime()
-                        Mp[nodes.index(label), nodes.index(sorting_label)] += 1 / nb_occurrences_label[
+                        Mp[nodes.index(label), nodes.index(sorting_label)] += 1 / nb_occurrences_per_label[
                             nodes.index(label)]
                         Mwait[nodes.index(label)][nodes.index(sorting_label)].append(
                             modulo_datetime(sorting_label_date, period) - modulo_datetime(row['date'].to_pydatetime(),
                                                                                           period))
                     else:
                         # last label of the occurrence, Label --> END PERIOD
-                        Mp[nodes.index(label), n - 1] += 1 / nb_occurrences_label[nodes.index(label)]
-                        Mwait[nodes.index(label)][n - 1].append(
-                            period.total_seconds() - modulo_datetime(row['date'].to_pydatetime(), period))
+                        Mp[nodes.index(label), n - 1] += 1 / nb_occurrences_per_label[nodes.index(label)]
+
 
             # First label
             first_id = period_events.date.argmin()
             first_label = period_events.loc[[first_id]].label.values[0]
+            first_label_date = period_events.loc[[first_id]].date.min().to_pydatetime()
             Mp[0, nodes.index(first_label)] += 1 / nb_periods
+            Mwait[0][nodes.index(first_label)].append(modulo_datetime(first_label_date, period))
 
         # Checking of all the rows and columns
         tol = 0.0001
-
         for i in range(n):
             # Row
             s_row = Mp[i, :].sum()
             if abs(s_row - 1) > tol:
-                raise ValueError('The sum of the row {} is : {}'.format(i, s_row))
+                raise ValueError('The sum of the row {} is not 1 : {}'.format(i, s_row))
         Mp_dict[mu] = Mp
-    draw_directed_graph(nodes=nodes, matrix=Mp, filename="test", show_image=True)
+
+        # Find the best fitting probability distribution law for all the waiting times
+        for i in range(n - 1):
+            for j in range(n - 1):
+                array = Mwait[i][j]
+                if len(array) > 4:
+                    array = np.asarray(array)
+                    # dist_law = find_best_fitting_dist (array)
+
+        # FIXME : The file should have a readable name including the time description
+        filename = 'directed_graph_'
+        filename = base64.urlsafe_b64encode(filename.encode('ascii', 'strict')).decode('ascii', 'strict')
+        draw_directed_graph(nodes=nodes, matrix=Mp, filename=output_folder + filename, show_image=False)
 
     return Mp_dict, Mwait_dict
 
@@ -142,6 +181,7 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
     :param labels: labels of the pattern
     :param occurrences: Occurrences of the pattern
     :param period: Frequency of the pattern
+    :param Tep: is the time duration max between labels in the same occurrence
     :return: A Dataframe of events included in the occurrences. Columns : ['date', 'label', 'period_id']
     '''
 
@@ -183,13 +223,22 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
 
 
 def draw_directed_graph(nodes, matrix, filename, show_image=False):
+    '''
+    Draw the directed graph corresponding and save the image
+    :param nodes: Nodes of the graph
+    :param matrix: Transition matrix
+    :param filename: File path where the graph image is saved
+    :param show_image: If True, plot the image
+    :return:
+    '''
     Q = pd.DataFrame(matrix)
     Q.columns = nodes
     Q.index = nodes
     edges_wts = _get_markov_edges(Q)
 
     # create graph object
-    G = nx.MultiDiGraph()
+    # TODO : Add a title to the graph
+    G = nx.MultiDiGraph(label='qsdqsd')
 
     # nodes correspond to states
     G.add_nodes_from(nodes)
@@ -237,6 +286,18 @@ def _get_markov_edges(Q):
                 edges[(idx, col)] = round(Q.loc[idx, col], 3)
     return edges
 
+
+def find_best_fitting_dist(array):
+    dist_names = ['norm']
+    plt.figure()
+    plt.hist(array)
+    for dist_name in dist_names:
+        dist = getattr(scipy.stats, dist_name)
+        param = dist.fit(array)
+        pdf_fitted = dist.pdf(array, np.mean(array), np.std(array))
+        plt.plot(array, pdf_fitted, '-o', label=dist_name)
+    plt.legend(loc='upper right')
+    plt.show()
 
 if __name__ == '__main__':
     main()
