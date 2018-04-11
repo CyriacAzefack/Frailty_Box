@@ -31,58 +31,79 @@ def main():
     """
     The dataframe should have 1 index (date as datetime) and 1 feature (label)
     """
+    NB_TRIES = 1
 
     letters = ['C']
-    dataset_type = 'label'
+    dataset_types = ['label']
+    support_dict = {
+        'A': 3,
+        'B': 2,
+        'C': 2
+    }
 
     for letter in letters :
-        dataset = pick_dataset(letter, dataset_type)
+        for dataset_type in dataset_types:
+            dataset = pick_dataset(letter, dataset_type)
 
-        start_time = t.process_time()
+            start_time = t.process_time()
 
-        patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=30, support_min=2,
-                                                             tolerance_ratio=2)
-        ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
+            best_ratio_data_treated = 0
+            best_patterns = None
+            best_patterns_string = None
+            best_data_left = None
 
-        elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
+            # Find the best case among different tries
+            for _ in range(NB_TRIES):
+                patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=30,
+                                                                     support_min=support_dict[letter],
+                                                                     tolerance_ratio=2)
+                ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
 
+                if ratio_data_treated > best_ratio_data_treated:
+                    best_ratio_data_treated = ratio_data_treated
+                    best_patterns = patterns
+                    best_patterns_string = patterns_string
+                    best_data_left = data_left
 
-        print("\n")
-        print("###############################")
-        print("Time to process all the dataset : {}".format(elapsed_time))
-        print("{}% of K{}_{}_dataset data explained by xED patterns".format(ratio_data_treated, letter, dataset_type))
-        print("##############################")
-        print("\n")
+            elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
 
-        dirname = "output/K{} House/{}".format(letter, dataset_type)
-        log_filename = dirname + "/log.txt"
-        if not os.path.exists(os.path.dirname(log_filename)):
-            try:
-                os.makedirs(os.path.dirname(log_filename))
-            except OSError as exc:  # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
+            print("\n")
+            print("###############################")
+            print("Time to process all the dataset : {}".format(elapsed_time))
+            print("{}% of K{}_{}_dataset data explained by xED patterns".format(best_ratio_data_treated, letter,
+                                                                                dataset_type))
+            print("##############################")
+            print("\n")
 
-        with open(log_filename, 'w+') as file:
-            file.write("Time to process all the dataset : {}\n".format(elapsed_time))
-            file.write("{}% of K{}_{}_dataset data explained by xED patterns\n".format(ratio_data_treated, letter,
-                                                                                       dataset_type))
-            file.write("{} Patterns found\n".format(len(patterns)))
+            dirname = "output/K{} House/{}".format(letter, dataset_type)
+            log_filename = dirname + "/log.txt"
+            if not os.path.exists(os.path.dirname(log_filename)):
+                try:
+                    os.makedirs(os.path.dirname(log_filename))
+                except OSError as exc:  # Guard against race condition
+                    if exc.errno != errno.EEXIST:
+                        raise
 
-        # Dump the results in pickle files to re-use them later
-        pickle.dump(patterns, open(dirname + "/patterns.pickle", 'wb'))
-        pickle.dump(data_left, open(dirname + "/data_left.pickle", 'wb'))
+            with open(log_filename, 'w+') as file:
+                file.write("Time to process all the dataset : {}\n".format(elapsed_time))
+                file.write("{}% of K{}_{}_dataset data explained by xED patterns\n".format(ratio_data_treated, letter,
+                                                                                           dataset_type))
+                file.write("{} Patterns found\n".format(len(best_patterns)))
 
-        # Write readable results in csv file
-        patterns_string.to_csv(dirname + "/patterns.csv", sep=";", index=False)
-        data_left.to_csv(dirname + "/data_left.csv", sep=";", index=False)
+            # Dump the results in pickle files to re-use them later
+            pickle.dump(best_patterns, open(dirname + "/patterns.pickle", 'wb'))
+            pickle.dump(best_data_left, open(dirname + "/data_left.pickle", 'wb'))
 
-        # Write all the results in differents excel sheets
-        writer = pd.ExcelWriter(dirname + "/all_results.xlsx")
-        dataset.to_excel(writer, sheet_name="Input Data", index=False)
-        patterns_string.to_excel(writer, sheet_name="Patterns", index=False)
-        data_left.to_excel(writer, sheet_name="Non treated Data", index=False)
-        writer.save()
+            # Write readable results in csv file
+            best_patterns_string.to_csv(dirname + "/patterns.csv", sep=";", index=False)
+            best_data_left.to_csv(dirname + "/data_left.csv", sep=";", index=False)
+
+            # Write all the results in differents excel sheets
+            writer = pd.ExcelWriter(dirname + "/all_results.xlsx")
+            dataset.to_excel(writer, sheet_name="Input Data", index=False)
+            best_patterns_string.to_excel(writer, sheet_name="Patterns", index=False)
+            best_data_left.to_excel(writer, sheet_name="Non treated Data", index=False)
+            writer.save()
 
 
 def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
@@ -320,7 +341,9 @@ def pick_dataset(letter, dataset_type = None) :
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
 
     else :
-        dataset = pd.read_csv("input/K{} House/K{}_{}_dataset.csv".format(letter, letter, dataset_type), delimiter=';')
+
+        filename = "input/K{} House/K{}_{}_dataset.csv".format(letter, letter, dataset_type)
+        dataset = pd.read_csv(filename, delimiter=';')
         dataset['date'] = pd.to_datetime(dataset['date'])
 
     return dataset

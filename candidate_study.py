@@ -219,11 +219,12 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
             
             if Nb_expected_occurrences == 0:
                 continue
-            accuracy = Nb_occurrences_happening_as_expected / Nb_expected_occurrences
+            accuracy = min(Nb_occurrences_happening_as_expected / Nb_expected_occurrences, 1)
             
              # Raise an error if the accuracy is more than 1
             if accuracy > 1:
-                raise ValueError('The accuray should not exceed 1.00 !!', episode, Nb_occurrences_happening_as_expected, Nb_expected_occurrences) 
+                raise ValueError('The accuracy should not exceed 1.00 !!', episode,
+                                 Nb_occurrences_happening_as_expected, Nb_expected_occurrences)
             
             if (accuracy >= accuracy_min) & (accuracy > best_accuracy):
                 #sns.distplot(data_points, norm_hist=False, rug=False, kde=True)
@@ -291,6 +292,7 @@ def find_occurrences(data, episode, Tep):
     Tep = dt.timedelta(minutes=Tep)
 
     data = data.loc[data.label.isin(episode)].copy()
+    data.sort_values(by=['date'], inplace=True)
     occurrences = pd.DataFrame(columns = ["date"])
     
     

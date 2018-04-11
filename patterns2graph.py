@@ -5,49 +5,50 @@ Created on Wed Mar 28 11:22:58 2018
 @author: cyriac.azefack
 """
 from collections import defaultdict
-from pprint import pprint
-from subprocess import check_call
 
-import matplotlib.image as mpimg
-import networkx as nx
-import scipy
+import scipy.stats as st
 
+from Pattern_Graph import Pattern_Graph
 from candidate_study import *
 from xED_algorithm import *
 
 
 def main():
-    letter = 'C'
+    letters = ['A', 'C']
     dataset_type = 'label'
-    dataset = pick_dataset(letter, dataset_type)
 
-    output = "output/K{} House/{}".format(letter, dataset_type)
-    patterns = pickle.load(open(output + '/patterns.pickle', 'rb'))
+    for letter in letters:
+        dataset = pick_dataset(letter, dataset_type)
 
-    for _, pattern in patterns.iterrows():
-        labels = list(pattern['Episode'])
-        period = pattern['Period']
-        validity_start_date = pattern['Start Time'].to_pydatetime()
-        validity_end_date = pattern['End Time'].to_pydatetime()
-        validity_duration = validity_end_date - validity_start_date
-        nb_periods = validity_duration.total_seconds() / period.total_seconds()
-        description = pattern['Description']
-        output_folder = output + "/Patterns_Graph/" + "_".join(labels) + "/"
+        output = "output/K{} House/{}".format(letter, dataset_type)
+        patterns = pickle.load(open(output + '/patterns.pickle', 'rb'))
 
-        if not os.path.exists(os.path.dirname(output_folder)):
-            try:
-                os.makedirs(os.path.dirname(output_folder))
-            except OSError as exc:  # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
+        pattern_graph_list = []
+        for _, pattern in patterns.iterrows():
+            labels = list(pattern['Episode'])
+            period = pattern['Period']
+            validity_start_date = pattern['Start Time'].to_pydatetime()
+            validity_end_date = pattern['End Time'].to_pydatetime()
+            validity_duration = validity_end_date - validity_start_date
+            nb_periods = validity_duration.total_seconds() / period.total_seconds()
+            description = pattern['Description']
+            output_folder = output + "/Patterns_Graph/" + "_".join(labels) + "/"
 
-        Mp_dict, Mwait_dict = patterns2graph(data=dataset, labels=labels, description=description, period=period,
-                                             start_date=validity_start_date, end_date=validity_end_date,
-                                             output_folder=output_folder)
+            if not os.path.exists(os.path.dirname(output_folder)):
+                try:
+                    os.makedirs(os.path.dirname(output_folder))
+                except OSError as exc:  # Guard against race condition
+                    if exc.errno != errno.EEXIST:
+                        raise
 
+            mini_list = patterns2graph(data=dataset, labels=labels, description=description, period=period,
+                                       start_date=validity_start_date, end_date=validity_end_date,
+                                       output_folder=output_folder, debug=False)
+
+            pattern_graph_list += mini_list
 
 def patterns2graph(data, labels, description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
-                   output_folder='./'):
+                   output_folder='./', debug=False):
     '''
     :param data: Input dataset
     :param labels: list of labels included in the pattern
@@ -57,8 +58,7 @@ def patterns2graph(data, labels, description, period, start_date, end_date, tole
     :return: A transition probability matrix and a transition waiting time matrix for each component of the description
     '''
 
-    Mp_dict = {}
-    Mwait_dict = {}
+    pattern_graph_list = []
     nodes = ['START PERIOD'] + labels + ['END PERIOD']
     n = len(nodes)
     for mu, sigma in description.items():
@@ -155,26 +155,26 @@ def patterns2graph(data, labels, description, period, start_date, end_date, tole
             s_row = Mp[i, :].sum()
             if abs(s_row - 1) > tol:
                 raise ValueError('The sum of the row {} is not 1 : {}'.format(i, s_row))
-        Mp_dict[mu] = Mp
+
 
         # Find the best fitting probability distribution law for all the waiting times
         for i in range(n - 1):
             for j in range(n - 1):
-                array = Mwait[i][j]
-                if len(array) > 4:
-                    array = np.asarray(array)
-                    # dist_law = find_best_fitting_dist (array)
+                array = np.asarray(Mwait[i][j])
+                if len(array) > 3:
+                    Mwait[i][j] = best_fit_distribution(array)
+                elif len(array) > 0:
+                    # Normal distribution by default
+                    Mwait[i][j] = ('norm', (np.mean(array), np.std(array)))
+                else:
+                    Mwait[i][j] = None
 
-        # FIXME : The file should have a readable name including the time description
-        td = dt.timedelta(seconds=mu)
-        filename = 'directed_graph_{}_{}_{}'.format(td.days, td.seconds // 3600, (td.seconds // 60) % 60)
+        pattern_graph = Pattern_Graph(nodes, period, mu, sigma, Mp, Mwait)
+        pattern_graph_list.append(pattern_graph)
 
-        title = 'Period : ' + str(period) + '\n'
-        title += 'Mean Time : ' + str(td) + '  ---   Std Time : ' + str(dt.timedelta(seconds=sigma))
+        pattern_graph.display(output_folder=output_folder, debug=debug)
 
-        draw_directed_graph(nodes=nodes, matrix=Mp, filename=output_folder + filename, title=title, show_image=False)
-
-    return Mp_dict, Mwait_dict
+    return pattern_graph_list
 
 
 def find_events_occurrences(data, labels, occurrences, period, Tep):
@@ -225,86 +225,46 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
     return events
 
 
-def draw_directed_graph(nodes, matrix, filename, title, show_image=False):
-    '''
-    Draw the directed graph corresponding and save the image
-    :param nodes: Nodes of the graph
-    :param matrix: Transition matrix
-    :param filename: File path where the graph image is saved
-    :param show_image: If True, plot the image
-    :return:
-    '''
-    Q = pd.DataFrame(matrix)
-    Q.columns = nodes
-    Q.index = nodes
-    edges_wts = _get_markov_edges(Q)
+def best_fit_distribution(data, bins=200, ax=None):
+    dist_list = ['norm', 'expon', 'lognorm', 'triang', 'beta']
 
-    # create graph object
-    # TODO : Add a title to the graph
-    G = nx.MultiDiGraph()
+    y, x = np.histogram(data, bins=200, density=True)
+    x = (x + np.roll(x, -1))[:-1] / 2.0
 
-    # nodes correspond to states
-    G.add_nodes_from(nodes)
-    print(f'Nodes:\n{G.nodes()}\n')
+    best_distribution = 'norm'
+    best_params = (0.0, 1.0)
+    best_sse = np.inf
 
-    G.graph['graph'] = {'label': title, 'labelloc': 't', 'fontsize': '20 ', 'fontcolor': 'blue',
-                        'fontname': 'times-bold'}  # default
-    # edges represent transition probabilities
-    for k, v in edges_wts.items():
-        tmp_origin, tmp_destination = k[0], k[1]
-        if tmp_origin == "START PERIOD" or tmp_origin == "END PERIOD":
-            G.add_node(tmp_origin, color='black', style='filled', fillcolor='red')
-        else:
-            G.add_node(tmp_origin, color='green')
+    for dist_name in dist_list:
+        dist = getattr(st, dist_name)
+        param = dist.fit(data)  # distribution fitting
 
-        if tmp_destination == "START PERIOD" or tmp_destination == "END PERIOD":
-            G.add_node(tmp_destination, color='black', style='filled', fillcolor='red')
-        else:
-            G.add_node(tmp_destination, color='green')
-        G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
-                   color='blue' if v > 0.5 else 'black')
-    print(f'Edges:')
-    pprint(G.edges(data=True))
-    # pprint(G.graph.get('graph', {}))
+        # Separate parts of parameters
+        arg = param[:-2]
+        loc = param[-2]
+        scale = param[-1]
 
-    pos = nx.drawing.nx_pydot.graphviz_layout(G, prog='dot')
-    nx.draw_networkx(G, pos)
+        param = list(param)
 
-    # create edge labels for jupyter plot but is not necessary
-    edge_labels = {(n1, n2): d['label'] for n1, n2, d in G.edges(data=True)}
+        # Calculate fitted PDF and error with fit in distribution
+        pdf = dist.pdf(x, loc=loc, scale=scale, *arg)
+        sse = np.sum(np.power(y - pdf, 2.0))
 
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+        # if axis pass in add to plot
+        try:
+            if ax:
+                pd.Series(pdf, x).plot(ax=ax, legend=True, label=dist_name)
+        except Exception:
+            pass
 
-    nx.drawing.nx_pydot.write_dot(G, filename + '.dot')
-    check_call(['dot', '-Tpng', filename + '.dot', '-o', filename + '.png'])
-    if show_image:
-        plt.clf()
-        plt.axis('off')
-        img = mpimg.imread(filename + '.png')
-        plt.imshow(img)
-        plt.show()
+        # identify if this distribution is better
+        if best_sse > sse > 0:
+            best_distribution = dist_name
+            best_params = param
+            best_sse = sse
 
+    return (best_distribution, best_params)
 
-def _get_markov_edges(Q):
-    edges = {}
-    for col in Q.columns:
-        for idx in Q.index:
-            if Q.loc[idx, col] != 0:
-                edges[(idx, col)] = round(Q.loc[idx, col], 3)
-    return edges
-
-
-def find_best_fitting_dist(array):
-    dist_names = ['norm']
-    plt.figure()
-    plt.hist(array)
-    for dist_name in dist_names:
-        dist = getattr(scipy.stats, dist_name)
-        param = dist.fit(array)
-        pdf_fitted = dist.pdf(array, np.mean(array), np.std(array))
-        plt.plot(array, pdf_fitted, '-o', label=dist_name)
-    plt.legend(loc='upper right')
-    plt.show()
 
 if __name__ == '__main__':
     main()
