@@ -4,39 +4,76 @@ Created on Wed Mar 28 11:07 2018
 
 @author: cyriac.azefack
 """
+import datetime as dt
 import errno
 import os
+import time as t
 
 import pandas as pd
 
-import patterns2graph as p2g
-import xED_algorithm as xED
+import xED_Algorithm.xED_Algorithm as xED
+from Graph_Model import Pattern2Graph as p2g
 
+NB_REPLICATIONS = 1
 
 def main():
-    letters = ['A', 'B', 'C']
-    dataset_type = 'label'
+    names = ['KA', ]
 
     support_dict = {
-        'A': 3,
-        'B': 2,
-        'C': 2
+        'KA': 3,
+        'KB': 2,
+        'KC': 2,
+        'aruba': 4
     }
 
+    for name in names:
 
-    for letter in letters:
-        dataset = xED.pick_dataset(letter, dataset_type)
+        # READ THE INPUT DATASET
+        dataset = xED.pick_dataset(name)
 
-        dirname = "output/K{} House/{}".format(letter, dataset_type)
+        dirname = "output/{}/Simulation Replications".format(name)
 
-        sim_model = build_simulation_model(data=dataset, support_min=support_dict[letter], output_folder=dirname)
+        simulation_results = {}
 
-        start_date = dataset.date.min().to_pydatetime()
-        end_date = dataset.date.max().to_pydatetime()
+        for id_replication in range(NB_REPLICATIONS):
+            print("\n")
+            print("###############################")
+            print("SIMULATION REPLICAION N° {0:0=2d}".format(id_replication + 1))
+            print("##############################")
+            print("\n")
 
-        simulated_data = simulation(data=dataset, simulation_model=sim_model, start_date=start_date, end_date=end_date)
+            # BUILD THE SIMULATION MODEL
+            sim_model = build_simulation_model(data=dataset, support_min=support_dict[name], output_folder=dirname)
 
-        simulated_data.to_csv(dirname + "/simulated_data.csv", index=False, sep=';')
+            start_date = dataset.date.min().to_pydatetime()
+            end_date = dataset.date.max().to_pydatetime()
+
+            start_time = t.process_time()
+            # START THE SIMULATION
+            simulated_data = simulation(data=dataset, simulation_model=sim_model, start_date=start_date,
+                                        end_date=end_date)
+
+            elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
+
+            print("\n")
+            print("###############################")
+            print("REPLICATION N°{}  -  Time to process the dataset : {}".format(id_replication + 1, elapsed_time))
+            print("##############################")
+            print("\n")
+            simulation_results[id_replication] = simulated_data
+
+            # SAVE THE SIMULATION RESULTS
+            simulated_data.to_csv(dirname + "/dataset_simulation_{0:0=2d}.csv".format(id_replication + 1), index=False,
+                                  sep=';')
+
+        # TODO : Replace the reading csv file by using directly the data
+
+
+
+
+
+
+
 
 
 def build_simulation_model(data, Tep=30, support_min=2, accuracy_min=0.5,
@@ -80,9 +117,9 @@ def build_simulation_model(data, Tep=30, support_min=2, accuracy_min=0.5,
                 if exc.errno != errno.EEXIST:
                     raise
 
-        patterns_graph_list = p2g.patterns2graph(data=data, labels=labels, description=description, period=period,
-                                                 start_date=validity_start_date, end_date=validity_end_date,
-                                                 output_folder=output_folder)
+        patterns_graph_list = p2g.pattern2graph(data=data, labels=labels, description=description, period=period,
+                                                start_date=validity_start_date, end_date=validity_end_date,
+                                                output_folder=output_folder)
 
         simulation_model += patterns_graph_list
 

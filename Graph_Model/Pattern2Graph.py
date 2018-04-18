@@ -8,9 +8,9 @@ from collections import defaultdict
 
 import scipy.stats as st
 
-from Pattern_Graph import Pattern_Graph
-from candidate_study import *
-from xED_algorithm import *
+from Graph_Model.Graph_Pattern import Graph_Pattern
+from xED_Algorithm.Candidate_Study import *
+from xED_Algorithm.xED_Algorithm import *
 
 
 def main():
@@ -25,6 +25,7 @@ def main():
 
         pattern_graph_list = []
         for _, pattern in patterns.iterrows():
+
             labels = list(pattern['Episode'])
             period = pattern['Period']
             validity_start_date = pattern['Start Time'].to_pydatetime()
@@ -41,15 +42,17 @@ def main():
                     if exc.errno != errno.EEXIST:
                         raise
 
-            mini_list = patterns2graph(data=dataset, labels=labels, description=description, period=period,
-                                       start_date=validity_start_date, end_date=validity_end_date,
-                                       output_folder=output_folder, debug=False)
+            mini_list = pattern2graph(data=dataset, labels=labels, description=description, period=period,
+                                      start_date=validity_start_date, end_date=validity_end_date,
+                                      output_folder=output_folder, debug=False)
 
             pattern_graph_list += mini_list
 
-def patterns2graph(data, labels, description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
-                   output_folder='./', debug=False):
+
+def pattern2graph(data, labels, description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
+                  output_folder='./', debug=False):
     '''
+    Turn a pattern to a graph
     :param data: Input dataset
     :param labels: list of labels included in the pattern
     :param description: description of the pattern {mu1 : sigma1, mu2 : sigma2, ...}
@@ -169,10 +172,11 @@ def patterns2graph(data, labels, description, period, start_date, end_date, tole
                 else:
                     Mwait[i][j] = None
 
-        pattern_graph = Pattern_Graph(nodes, period, mu, sigma, Mp, Mwait)
+        pattern_graph = Graph_Pattern(nodes, period, mu, sigma, Mp, Mwait)
         pattern_graph_list.append(pattern_graph)
 
-        pattern_graph.display(output_folder=output_folder, debug=debug)
+        if debug:
+            pattern_graph.display(output_folder=output_folder, debug=debug)
 
     return pattern_graph_list
 

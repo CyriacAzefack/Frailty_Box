@@ -250,10 +250,10 @@ def find_frequent_patterns(transactions, support_threshold):
     over the specified support threshold.
     """
     no_duplicate_transactions = []
-    
+
     for transaction in transactions:
         no_duplicate_transactions.append(list(set(transaction)))
-    
+
     tree = FPTree(no_duplicate_transactions, support_threshold, None, None)
     return tree.mine_patterns(support_threshold)
 
@@ -283,44 +283,45 @@ def generate_association_rules(patterns, confidence_threshold):
     return rules
 
 
-def find_frequent_episodes (data, support_min, Tep):
+def find_frequent_episodes(data, support_min, Tep):
     """
     Find all the frequent episodes in the dataset
     
     """
-    
+
     transactions = extract_transactions_itemsets(data, Tep)
-    
+
     return find_frequent_patterns(transactions, support_min)
 
-def extract_transactions_itemsets (data, Tep):
+
+def extract_transactions_itemsets(data, Tep):
     """
     Convert the event sequence into a list of transactions itemsets
     """
-    
+
     Tep = dt.timedelta(minutes=Tep)
-    
+
     data['trans_id'] = 0
-    
+
     current_start_time = min(data.date)
     current_trans_id = 0
-    
+
     transactions = []
-    
+
     while True:
         current_end_time = current_start_time + Tep
-        
+
         date_condition = (data.date >= current_start_time) & (data.date < current_end_time)
 
         transactions.append(list(set(data.loc[date_condition, "label"].values)))  # list of set to avoid doublons
         data.loc[date_condition, 'trans_id'] = current_trans_id
-        
-        if len(data.loc[data.date > current_end_time]) > 0 :
+
+        if len(data.loc[data.date > current_end_time]) > 0:
             current_start_time = min(data.loc[data.date > current_end_time, "date"])
-        else :
+        else:
             break
         current_trans_id += 1
-    
+
     data.drop(['trans_id'], axis=1, inplace=True)
-    
+
     return transactions

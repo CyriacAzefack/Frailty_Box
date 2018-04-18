@@ -1,19 +1,20 @@
+# -*- coding: utf-8 -*-
 import datetime as dt
 from pprint import pprint
 from random import random
 from subprocess import check_call
 
 import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
 import scipy.stats as st
 
-from candidate_study import modulo_datetime
+from xED_Algorithm.Candidate_Study import modulo_datetime
 
 
-class Pattern_Graph:
+class Graph_Pattern:
     ID = 0
     START_NODE = "START PERIOD"
     END_NODE = "END PERIOD"
@@ -34,8 +35,8 @@ class Pattern_Graph:
         self.sigma = sigma
         self.prob_matrix = prob_matrix
         self.wait_matrix = wait_matrix
-        self.ID = Pattern_Graph.ID
-        Pattern_Graph.ID += 1
+        self.ID = Graph_Pattern.ID
+        Graph_Pattern.ID += 1
 
     def display(self, output_folder, debug=False):
         td = dt.timedelta(seconds=self.mu)
@@ -65,13 +66,12 @@ class Pattern_Graph:
         edges_wts = self.get_markov_edges(Q)
 
         # create graph object
-        # TODO : Add a title to the graph
         G = nx.MultiDiGraph()
 
         # nodes correspond to states
         G.add_nodes_from(self.nodes)
         if debug:
-            print(f'Nodes:\n{G.nodes()}\n')
+            print('Nodes:\n{}\n'.format(G.nodes()))
 
         G.graph['graph'] = {'label': title, 'labelloc': 't', 'fontsize': '20 ', 'fontcolor': 'blue',
                             'fontname': 'times-bold'}  # default
@@ -96,7 +96,7 @@ class Pattern_Graph:
                 G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
                            color='blue' if v > 0.5 else 'black')
         if debug:
-            print(f'Edges:')
+            print('Edges:')
             pprint(G.edges(data=True))
         # pprint(G.graph.get('graph', {}))
 
@@ -133,7 +133,7 @@ class Pattern_Graph:
         if start_date_rel != 0:
             start_date = start_date + dt.timedelta(seconds=self.period.total_seconds() - start_date_rel)
 
-        current_state = Pattern_Graph.START_NODE
+        current_state = Graph_Pattern.START_NODE
         current_date = start_date
 
         while current_date < end_date:
@@ -152,11 +152,11 @@ class Pattern_Graph:
 
             destination_state = self.nodes[destination_index]
 
-            if destination_state == Pattern_Graph.END_NODE:
+            if destination_state == Graph_Pattern.END_NODE:
                 # We go to the end of the current period
                 destination_date = current_date + dt.timedelta(
                     seconds=self.period.total_seconds() - modulo_datetime(current_date, self.period))
-            elif destination_state == Pattern_Graph.START_NODE:
+            elif destination_state == Graph_Pattern.START_NODE:
                 destination_date = current_date
             else:
                 # Now we have to compute the waiting time to get to the destination state
@@ -168,13 +168,20 @@ class Pattern_Graph:
                 arg = param[:-2]
                 loc = param[-2]
                 scale = param[-1]
-                waiting_time = int(dist.rvs(loc=loc, scale=scale, *arg))
 
-                # Compute the destination date
-                destination_date = current_date + dt.timedelta(seconds=waiting_time)
+                while True:
+                    try:
+                        waiting_time = int(dist.rvs(loc=loc, scale=scale, *arg))
+                        # Compute the destination date
+                        destination_date = current_date + dt.timedelta(seconds=waiting_time)
+                        # Add the event to the result
+                        result.loc[len(result)] = [destination_date, destination_state]
+                        break
+                    except:
+                        print("OOOps ! Date Overflow. Let's try again...")
 
-                # Add the event to the result
-                result.loc[len(result)] = [destination_date, destination_state]
+
+
 
             current_state = destination_state
             current_date = destination_date

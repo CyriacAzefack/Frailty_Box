@@ -13,11 +13,10 @@ import sys
 import time as t
 
 import numpy as np
-# import matplotlib
 import pandas as pd
 
-import FP_growth
-import candidate_study
+import xED_Algorithm.Candidate_Study as Candidate_Study
+import xED_Algorithm.FP_growth as FP_growth
 
 
 # matplotlib.style.use("seaborn")
@@ -33,7 +32,7 @@ def main():
     """
     NB_TRIES = 1
 
-    letters = ['C']
+    letters = ['KA']
     dataset_types = ['label']
     support_dict = {
         'A': 3,
@@ -65,7 +64,9 @@ def main():
                     best_patterns_string = patterns_string
                     best_data_left = data_left
 
+
             elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
+
 
             print("\n")
             print("###############################")
@@ -154,12 +155,14 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
         for episode in frequent_episodes.keys():
             episode_index += 1
             #Build the description of the episode if interesting enough (Accuracy > Accuracy_min)
-            description = candidate_study.periodicity_search(data, episode,
+            description = Candidate_Study.periodicity_search(data, episode,
                                                              delta_Tmax_ratio=delta_Tmax_ratio,
                                                              support_min=support_min,
                                                              std_max=std_max,
                                                              accuracy_min=accuracy_min,
-                                                             tolerance_ratio=tolerance_ratio, Tep=Tep)
+                                                             tolerance_ratio=tolerance_ratio, Tep=Tep,
+                                                             candidate_periods=[dt.timedelta(days=1),
+                                                                                dt.timedelta(days=7)])
             if description is not None:
                 #print("\nInteresting periodicity found for the episode", episode)
                 periodicities[episode] = description
@@ -208,6 +211,7 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
                 mini_factorised_events = mini_factorised_events.append(mini_data, ignore_index=True)
 
             factorised_events = factorised_events.append(mini_factorised_events, ignore_index=True)
+            factorised_events.sort_values(by=['date'], ascending=True, inplace=True)
             count_duplicates = factorised_events.duplicated(['date', 'label']).sum()
             if count_duplicates != 0 :
                 # Current periodicity involves events in factorized_events
@@ -227,7 +231,7 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
             data.reset_index(inplace=True, drop=True)
 
             # Add the periodicity to the results
-            natural_periodicity = candidate_study.translate_description(periodicity)
+            natural_periodicity = Candidate_Study.translate_description(periodicity)
 
             final_periodicities.loc[len(final_periodicities)] = [episode, periodicity["period"],
                                                                  periodicity["description"],
@@ -268,11 +272,11 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
 
     occ_start_time = occurrences.date.min().to_pydatetime()
     start_period_date = occ_start_time + dt.timedelta(
-        seconds=(period.total_seconds() - candidate_study.modulo_datetime(occ_start_time, period)))
+        seconds=(period.total_seconds() - Candidate_Study.modulo_datetime(occ_start_time, period)))
 
     occ_end_time = occurrences.date.max().to_pydatetime()
     end_period_date = occ_end_time - dt.timedelta(
-        seconds=candidate_study.modulo_datetime(occ_end_time, period))
+        seconds=Candidate_Study.modulo_datetime(occ_end_time, period))
 
     # Deal with the periods
     current_period_start_date = start_period_date
@@ -307,9 +311,9 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
 
     # Now the bord effects
     for mu, sigma in description.items():
-        if mu < candidate_study.modulo_datetime(occ_start_time, period):
+        if mu < Candidate_Study.modulo_datetime(occ_start_time, period):
             continue
-        if mu > candidate_study.modulo_datetime(occ_end_time, period):
+        if mu > Candidate_Study.modulo_datetime(occ_end_time, period):
             continue
 
         comp_start_date = current_period_start_date + dt.timedelta(seconds=(mu - tolerance_ratio * sigma))
@@ -333,16 +337,25 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
     return missing_events_df
 
 
-def pick_dataset(letter, dataset_type = None) :
+def pick_dataset(name, dataset_type='label'):
     dataset = None
-    if letter == 'toy':
+    if name == 'toy':
         dataset = pd.read_csv("input/toy_dataset.txt", delimiter=';')
         date_format = '%Y-%d-%m %H:%M'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
 
-    else :
+    elif name == 'aruba':
+        dataset = pd.read_csv("input/aruba/dataset.csv", delimiter=';')
+        date_format = '%Y-%m-%d %H:%M:%S.%f'
+        dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
 
-        filename = "input/K{} House/K{}_{}_dataset.csv".format(letter, letter, dataset_type)
+        # We only take 30 days
+        start_date = dataset.date.min().to_pydatetime()
+        end_date = start_date + dt.timedelta(days=30)
+        dataset = dataset.loc[(dataset.date >= start_date) & (dataset.date < end_date)].copy()
+
+    else :
+        filename = "input/{} House/{}_{}_dataset.csv".format(name, name, dataset_type)
         dataset = pd.read_csv(filename, delimiter=';')
         dataset['date'] = pd.to_datetime(dataset['date'])
 
