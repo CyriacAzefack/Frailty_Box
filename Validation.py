@@ -3,8 +3,7 @@ import datetime as dt
 import glob
 import math
 
-# import matplotlib.pyplot as plt
-# import seaborn as sns
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -12,8 +11,8 @@ from scipy import stats
 from xED_Algorithm.xED_Algorithm import pick_dataset
 
 
-# sns.set_style("whitegrid")
-
+# sns.set_style("darkgrid")
+# plt.xkcd()
 
 def main():
     print("\n")
@@ -22,20 +21,20 @@ def main():
     print("##############################")
     print("\n")
 
-    dirname = "./output/KA/Simulation Replications/*.csv"
+    dirname = "./output/KA/20_rep/*.csv"
 
     list_files = glob.glob(dirname)
 
-    nb_replications = len(list_files)
+    confidence_error = 0.90
 
     activity = ["leave house START", "leave house END"]
 
     # Original data
     original_dataset = pick_dataset('KA')
 
-    # Plot a simple histogram with binsize determined automatically
-    f, ax = plt.subplots(1, 1)
-    # plot
+    if len(list_files) == 0:
+        raise FileNotFoundError("'{}' does not contains *.csv files".format(dirname))
+
 
     evaluation_sim_results = {}
     for filename in list_files:
@@ -46,41 +45,74 @@ def main():
         evaluation_result = compute_activity_time(data=dataset, start_label=activity[0], end_label=activity[1],
                                                   time_step_in_days=1)
         if not evaluation_result.empty:
-            plt.plot_date(evaluation_result.index, evaluation_result.duration.cumsum(),
-                          label="Simulation N°{}/{}".format(list_files.index(filename) + 1, nb_replications),
-                          linestyle="-")
+            evaluation_sim_results[filename] = evaluation_result
 
-        evaluation_sim_results[list_files.index(filename)] = evaluation_result
-
-    base_result = compute_activity_time(data=original_dataset, start_label=activity[0], end_label=activity[1],
+    original_data_evaluation = compute_activity_time(data=original_dataset, start_label=activity[0],
+                                                     end_label=activity[1],
                                         start_date=evaluation_result.index[0])
 
-    plt.plot_date(base_result.index, base_result.duration.cumsum(), label="Original Data", linestyle=":")
-
-    plt.title("Duration of the Activity [{} -- {}]".format(activity[0], activity[1]))
-    ax.legend()
-    plt.gcf().autofmt_xdate()
-    plt.show()
-
     # Build a large Dataframe with a date range index
-    start_date = base_result.index[0]
-    end_date = base_result.index[-1]
+    start_date = original_data_evaluation.index[0]
+    end_date = original_data_evaluation.index[-1]
     big_df = pd.DataFrame(index=pd.date_range(start=start_date, end=end_date, freq='D'))
 
-    for i in range(len(list_files)):
-        evaluation_result = evaluation_sim_results[i]
+    for filename, evaluation_result in evaluation_sim_results.items():
+        i = list_files.index(filename)
         evaluation_result.columns = ["simulation_{}".format(i)]
 
         big_df = pd.concat([big_df, evaluation_result[["simulation_{}".format(i)]]], axis=1)
 
+    # Compute the Stochastic Mean & Error
+
+    big_df['stoc_results'] = big_df.apply(compute_stochastic_error, args=(confidence_error,), axis=1)
+    big_df['stoc_mean'] = big_df.stoc_results.apply(lambda x: x[0])
+    big_df['stoc_lower'] = big_df.stoc_results.apply(lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
+    big_df['stoc_upper'] = big_df.stoc_results.apply(lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
+
+    big_df.drop(['stoc_results'], axis=1, inplace=True)
+
+    # big_df[big_df.apply(lambda row: row.fillna(row.mean()), axis=1)
+
+    big_df = pd.concat([big_df, original_data_evaluation['duration']], axis=1)
     big_df = big_df.loc[(big_df.index >= start_date) & (big_df.index <= end_date)].copy()
+    big_df.fillna(0, inplace=True)
 
-    big_df['stoc_error'] = big_df.apply(compute_stochastic_error, axis=1)
+    # Turn the seconds into hours
+    big_df = big_df / 3600
 
-    print("")
+    ####################
+    # DISPLAY RESULTS  #
+    ####################
+    fig, (ax1, ax2) = plt.subplots(2)
+
+    # TIME STEP PLOT
+    ax1.plot_date(big_df.index, big_df.duration, label="Original Data", linestyle="-")
+
+    ax1.plot(big_df.index, big_df.stoc_mean, label="MEAN simulation", linestyle="-")
+
+    ax1.fill_between(big_df.index, big_df.stoc_lower, big_df.stoc_upper,
+                     label='{0:.0f}% Confidence Error'.format(confidence_error * 100), color='y', alpha=.3)
+
+    # CUMSUM PLOT
+    ax2.plot_date(big_df.index, big_df.duration.cumsum(), label="Original Data", linestyle="-")
+
+    ax2.plot(big_df.index, big_df.stoc_mean.cumsum(), label="MEAN simulation", linestyle="-")
+
+    ax2.fill_between(big_df.index, big_df.stoc_lower.cumsum(), big_df.stoc_upper.cumsum(),
+                     label='{0:.0f}% Confidence Error'.format(confidence_error * 100), color='k', alpha=.3)
+
+    ax1.title.set_text("Activity [{} -- {}]".format(activity[0], activity[1]))
+    ax1.set_ylabel('Duration (hours)')
+    ax2.set_ylabel('Duration (hours)')
+    ax2.set_xlabel('Date')
+    ax2.set_title('Cumulative Evolution')
+    ax1.legend(loc="upper left")
+    ax2.legend(loc="upper left")
+    plt.gcf().autofmt_xdate()
+    plt.show()
 
 
-def compute_stochastic_error(row):
+def compute_stochastic_error(row, error_confidence=0.9):
     '''
     Compute the stochastic error given by the array
     :param array: an array of numbers
@@ -97,7 +129,7 @@ def compute_stochastic_error(row):
 
     n = len(array)
     # We find the t-distribution value of the student law
-    t_sdt = stats.t.ppf(q=0.9, df=n - 1)
+    t_sdt = stats.t.ppf(q=error_confidence, df=n - 1)
     error = t_sdt * (std / math.sqrt(n))
 
     return mean, error
@@ -163,7 +195,7 @@ def compute_activity_time(data, start_label, end_label, start_date=None, end_dat
     except:
         print("Error happenned!!")
 
-    return result
+    return result[['duration']]
 
 
 if __name__ == "__main__":

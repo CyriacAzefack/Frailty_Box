@@ -6,7 +6,9 @@ Created on Wed Mar 28 11:07 2018
 """
 import datetime as dt
 import errno
+import getopt
 import os
+import sys
 import time as t
 
 import pandas as pd
@@ -14,10 +16,21 @@ import pandas as pd
 import xED_Algorithm.xED_Algorithm as xED
 from Graph_Model import Pattern2Graph as p2g
 
-NB_REPLICATIONS = 1
 
-def main():
-    names = ['KA', ]
+def main(argv):
+    dataset_name = ''
+    id_replication = ''
+    try:
+        opts, args = getopt.getopt(argv, "h")
+    except getopt.GetoptError:
+        print('Simulation_Model.py <dataset_name> <id_replication>')
+        sys.exit(2)
+
+    dataset_name = args[0]
+    id_replication = int(args[1])
+
+    print("Dataset Name : {}".format(dataset_name))
+    print("ID Replication : {}".format(id_replication))
 
     support_dict = {
         'KA': 3,
@@ -26,47 +39,41 @@ def main():
         'aruba': 4
     }
 
-    for name in names:
+    # READ THE INPUT DATASET
+    dataset = xED.pick_dataset(dataset_name)
 
-        # READ THE INPUT DATASET
-        dataset = xED.pick_dataset(name)
+    dirname = "output/{}/Simulation Replications".format(dataset_name)
 
-        dirname = "output/{}/Simulation Replications".format(name)
+    print("\n")
+    print("###############################")
+    print("SIMULATION REPLICAION N° {0:0=2d}".format(id_replication + 1))
+    print("##############################")
+    print("\n")
 
-        simulation_results = {}
+    # BUILD THE SIMULATION MODEL
+    sim_model = build_simulation_model(data=dataset, support_min=support_dict[dataset_name], output_folder=dirname)
 
-        for id_replication in range(NB_REPLICATIONS):
-            print("\n")
-            print("###############################")
-            print("SIMULATION REPLICAION N° {0:0=2d}".format(id_replication + 1))
-            print("##############################")
-            print("\n")
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime()
 
-            # BUILD THE SIMULATION MODEL
-            sim_model = build_simulation_model(data=dataset, support_min=support_dict[name], output_folder=dirname)
+    start_time = t.process_time()
+    # START THE SIMULATION
+    simulated_data = simulation(data=dataset, simulation_model=sim_model, start_date=start_date,
+                                end_date=end_date)
 
-            start_date = dataset.date.min().to_pydatetime()
-            end_date = dataset.date.max().to_pydatetime()
+    elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
 
-            start_time = t.process_time()
-            # START THE SIMULATION
-            simulated_data = simulation(data=dataset, simulation_model=sim_model, start_date=start_date,
-                                        end_date=end_date)
+    print("\n")
+    print("###############################")
+    print("REPLICATION N°{}  -  Time to process the dataset : {}".format(id_replication + 1, elapsed_time))
+    print("##############################")
+    print("\n")
 
-            elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
+    # SAVE THE SIMULATION RESULTS
+    simulated_data.to_csv(dirname + "/dataset_simulation_{0:0=3d}.csv".format(id_replication + 1), index=False,
+                          sep=';')
 
-            print("\n")
-            print("###############################")
-            print("REPLICATION N°{}  -  Time to process the dataset : {}".format(id_replication + 1, elapsed_time))
-            print("##############################")
-            print("\n")
-            simulation_results[id_replication] = simulated_data
-
-            # SAVE THE SIMULATION RESULTS
-            simulated_data.to_csv(dirname + "/dataset_simulation_{0:0=2d}.csv".format(id_replication + 1), index=False,
-                                  sep=';')
-
-        # TODO : Replace the reading csv file by using directly the data
+    # TODO : Replace the reading csv file by using directly the data
 
 
 
@@ -150,4 +157,4 @@ def simulation(data, simulation_model, start_date, end_date):
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
