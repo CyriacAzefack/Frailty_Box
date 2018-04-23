@@ -6,22 +6,23 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from scipy import stats
 
 from xED_Algorithm.xED_Algorithm import pick_dataset
 
-
-# sns.set_style("darkgrid")
+sns.set_style("darkgrid")
 # plt.xkcd()
 
 def main():
+    dataset_name = 'KA'
     print("\n")
     print("###############################")
-    print("EVALUATION OF THE MODEL on the KA HOUSE Dataset")
+    print("EVALUATION OF THE MODEL on the {} HOUSE Dataset".format(dataset_name))
     print("##############################")
     print("\n")
 
-    dirname = "./output/KA/20_rep/*.csv"
+    dirname = "./output/{}/Simulation Replications/*.csv".format(dataset_name)
 
     list_files = glob.glob(dirname)
 
@@ -30,11 +31,10 @@ def main():
     activity = ["leave house START", "leave house END"]
 
     # Original data
-    original_dataset = pick_dataset('KA')
+    original_dataset = pick_dataset(dataset_name)
 
     if len(list_files) == 0:
         raise FileNotFoundError("'{}' does not contains *.csv files".format(dirname))
-
 
     evaluation_sim_results = {}
     for filename in list_files:
@@ -48,37 +48,48 @@ def main():
             evaluation_sim_results[filename] = evaluation_result
 
     original_data_evaluation = compute_activity_time(data=original_dataset, start_label=activity[0],
-                                                     end_label=activity[1],
-                                        start_date=evaluation_result.index[0])
+                                                     end_label=activity[1])
 
     # Build a large Dataframe with a date range index
     start_date = original_data_evaluation.index[0]
     end_date = original_data_evaluation.index[-1]
-    big_df = pd.DataFrame(index=pd.date_range(start=start_date, end=end_date, freq='D'))
+    group_all_simulations = pd.DataFrame(index=pd.date_range(start=start_date, end=end_date, freq='D'))
 
     for filename, evaluation_result in evaluation_sim_results.items():
         i = list_files.index(filename)
         evaluation_result.columns = ["simulation_{}".format(i)]
 
-        big_df = pd.concat([big_df, evaluation_result[["simulation_{}".format(i)]]], axis=1)
+        group_all_simulations = pd.concat([group_all_simulations, evaluation_result[["simulation_{}".format(i)]]],
+                                          axis=1)
+
+    # Check size of "group_all_simulations"
+    if group_all_simulations.empty:
+        print("Not enough simulations to compute results")
+        return
+
 
     # Compute the Stochastic Mean & Error
+    group_all_simulations['stoc_results'] = group_all_simulations.apply(compute_stochastic_error,
+                                                                        args=(confidence_error,), axis=1)
+    group_all_simulations['stoc_mean'] = group_all_simulations.stoc_results.apply(lambda x: x[0])
+    group_all_simulations['stoc_lower'] = group_all_simulations.stoc_results.apply(
+        lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
+    group_all_simulations['stoc_upper'] = group_all_simulations.stoc_results.apply(
+        lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
 
-    big_df['stoc_results'] = big_df.apply(compute_stochastic_error, args=(confidence_error,), axis=1)
-    big_df['stoc_mean'] = big_df.stoc_results.apply(lambda x: x[0])
-    big_df['stoc_lower'] = big_df.stoc_results.apply(lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
-    big_df['stoc_upper'] = big_df.stoc_results.apply(lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
+    group_all_simulations.drop(['stoc_results'], axis=1, inplace=True)
 
-    big_df.drop(['stoc_results'], axis=1, inplace=True)
+    # group_all_simulations[group_all_simulations.apply(lambda row: row.fillna(row.mean()), axis=1)
+    # Add Original Data Evaluation results
+    group_all_simulations = pd.concat([group_all_simulations, original_data_evaluation['duration']], axis=1)
 
-    # big_df[big_df.apply(lambda row: row.fillna(row.mean()), axis=1)
-
-    big_df = pd.concat([big_df, original_data_evaluation['duration']], axis=1)
-    big_df = big_df.loc[(big_df.index >= start_date) & (big_df.index <= end_date)].copy()
-    big_df.fillna(0, inplace=True)
+    # Filter by date
+    group_all_simulations = group_all_simulations.loc[
+        (group_all_simulations.index >= start_date) & (group_all_simulations.index <= end_date)].copy()
+    group_all_simulations.fillna(0, inplace=True)
 
     # Turn the seconds into hours
-    big_df = big_df / 3600
+    group_all_simulations = group_all_simulations / 3600
 
     ####################
     # DISPLAY RESULTS  #
@@ -86,22 +97,25 @@ def main():
     fig, (ax1, ax2) = plt.subplots(2)
 
     # TIME STEP PLOT
-    ax1.plot_date(big_df.index, big_df.duration, label="Original Data", linestyle="-")
+    ax1.plot_date(group_all_simulations.index, group_all_simulations.duration, label="Original Data", linestyle="-")
 
-    ax1.plot(big_df.index, big_df.stoc_mean, label="MEAN simulation", linestyle="-")
+    ax1.plot(group_all_simulations.index, group_all_simulations.stoc_mean, label="MEAN simulation", linestyle="-")
 
-    ax1.fill_between(big_df.index, big_df.stoc_lower, big_df.stoc_upper,
+    ax1.fill_between(group_all_simulations.index, group_all_simulations.stoc_lower, group_all_simulations.stoc_upper,
                      label='{0:.0f}% Confidence Error'.format(confidence_error * 100), color='y', alpha=.3)
 
     # CUMSUM PLOT
-    ax2.plot_date(big_df.index, big_df.duration.cumsum(), label="Original Data", linestyle="-")
+    ax2.plot_date(group_all_simulations.index, group_all_simulations.duration.cumsum(), label="Original Data",
+                  linestyle="-")
 
-    ax2.plot(big_df.index, big_df.stoc_mean.cumsum(), label="MEAN simulation", linestyle="-")
+    ax2.plot(group_all_simulations.index, group_all_simulations.stoc_mean.cumsum(), label="MEAN simulation",
+             linestyle="--")
 
-    ax2.fill_between(big_df.index, big_df.stoc_lower.cumsum(), big_df.stoc_upper.cumsum(),
+    ax2.fill_between(group_all_simulations.index, group_all_simulations.stoc_lower.cumsum(),
+                     group_all_simulations.stoc_upper.cumsum(),
                      label='{0:.0f}% Confidence Error'.format(confidence_error * 100), color='k', alpha=.3)
 
-    ax1.title.set_text("Activity [{} -- {}]".format(activity[0], activity[1]))
+    ax1.title.set_text("{} House Dataset\nActivity [{} -- {}]".format(dataset_name, activity[0], activity[1]))
     ax1.set_ylabel('Duration (hours)')
     ax2.set_ylabel('Duration (hours)')
     ax2.set_xlabel('Date')
@@ -112,10 +126,11 @@ def main():
     plt.show()
 
 
-def compute_stochastic_error(row, error_confidence=0.9):
+def compute_stochastic_error(row, confidence_error=0.9):
     '''
     Compute the stochastic error given by the array
-    :param array: an array of numbers
+    :param row: an array of numbers
+    :param confidence_error Student Confidence error
     :return: mean and the error
     '''
 
@@ -129,7 +144,7 @@ def compute_stochastic_error(row, error_confidence=0.9):
 
     n = len(array)
     # We find the t-distribution value of the student law
-    t_sdt = stats.t.ppf(q=error_confidence, df=n - 1)
+    t_sdt = stats.t.ppf(q=confidence_error, df=n - 1)
     error = t_sdt * (std / math.sqrt(n))
 
     return mean, error
@@ -190,10 +205,7 @@ def compute_activity_time(data, start_label, end_label, start_date=None, end_dat
     result.set_index('date', inplace=True)
     result['date'] = result.index
 
-    try:
-        result = result.groupby(pd.Grouper(key='date', freq='{}D'.format(time_step_in_days))).sum()
-    except:
-        print("Error happenned!!")
+    result = result.groupby(pd.Grouper(key='date', freq='{}D'.format(time_step_in_days))).sum()
 
     return result[['duration']]
 

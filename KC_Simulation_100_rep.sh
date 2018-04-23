@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=KA_Simulation_100_rep
+#SBATCH --job-name=KC_Simulation_100_rep
 #SBATCH --mail-user=cyriac.azefack@emse.fr
 #SBATCH --mail-type=ALL
 #SBATCH --array=0-99
@@ -40,7 +40,7 @@ echo ------------------------------------------------------
 
 echo Transferring result files from compute nodes to frontend
 #srun -n$SLURM_NNODES cp -rvf $SCRATCH  $SLURM_SUBMIT_DIR   || exit $?
-srun -n$SLURM_NNODES cp -rf $SCRATCH/output/*  $SLURM_SUBMIT_DIR/output/* 2> /dev/null
+srun -n$SLURM_NNODES cp -rf $SCRATCH/output/*  $SLURM_SUBMIT_DIR/output 2> /dev/null
 echo ------------------------------------------------------
 echo Deleting scratch...
 #srun -n$SLURM_NNODES rm -rvf $SCRATCH  || exit 0

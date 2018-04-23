@@ -36,7 +36,7 @@ def main(argv):
         'KA': 3,
         'KB': 2,
         'KC': 2,
-        'aruba': 4
+        'aruba': 10
     }
 
     # READ THE INPUT DATASET
@@ -84,11 +84,20 @@ def main(argv):
 
 
 def build_simulation_model(data, Tep=30, support_min=2, accuracy_min=0.5,
-                           std_max=0.1, tolerance_ratio=2, delta_Tmax_ratio=3, output_folder='./', verbose=True):
+                           std_max=0.1, tolerance_ratio=2, delta_Tmax_ratio=3, output_folder='./',
+                           verbose=True, nb_tries=10):
     '''
-    Build the entire simulation model
-    :param data:
+    Build the somulation model from scratch.
+    :param data: Input sequence
+    :param Tep: Duration Max between event in an occurrence
+    :param support_min:
+    :param accuracy_min:
+    :param std_max:
     :param tolerance_ratio:
+    :param delta_Tmax_ratio:
+    :param output_folder:
+    :param verbose:
+    :param nb_tries: Number of tries for the model. We take the one with the best data_explained_ratio
     :return:
     '''
 

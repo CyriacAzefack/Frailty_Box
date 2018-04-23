@@ -2,7 +2,7 @@
 #SBATCH --job-name=KA_Simulation_100_rep
 #SBATCH --mail-user=cyriac.azefack@emse.fr
 #SBATCH --mail-type=ALL
-#SBATCH --array=0-1
+#SBATCH --array=0-99
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=01:00:00
