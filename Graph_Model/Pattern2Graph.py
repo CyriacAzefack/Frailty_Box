@@ -116,7 +116,7 @@ def pattern2graph(data, labels, description, period, start_date, end_date, toler
         Mp[0, n - 1] += (nb_periods - len(events.period_id.unique())) / nb_periods
         # Mwait[0][n - 1].append(period.total_seconds())
         for period_id in events.period_id.unique():
-            period_start_date = first_period_start_date + period_id * period
+            period_start_date = first_period_start_date + int(period_id) * period
             period_end_date = period_start_date + period
             date_condition = (events.date >= period_start_date) \
                              & (events.date < period_end_date)

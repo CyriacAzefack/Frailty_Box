@@ -688,14 +688,13 @@
       <change afterPath="$PROJECT_DIR$/output/KC House/label/Patterns_Graph/use toilet downstairs START/directed_graph_6_11_12.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/KC House/label/Patterns_Graph/use toilet downstairs START/directed_graph_6_6_47.dot" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/KC House/label/Patterns_Graph/use toilet downstairs START/directed_graph_6_6_47.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/aruba/Simulation Replications/dataset_simulation_01.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/KA_Simulation_100_rep.sh" beforeDir="false" afterPath="$PROJECT_DIR$/KA_Simulation_100_rep.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/KC_Simulation_100_rep.sh" beforeDir="false" afterPath="$PROJECT_DIR$/KC_Simulation_100_rep.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Simulation_Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation_Model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/toy_dataset.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" beforeDir="false" afterPath="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" beforeDir="false" afterPath="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -717,8 +716,8 @@
       <file leaf-file-name="xED_Algorithm.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="20" column="7" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
+            <state relative-caret-position="351">
+              <caret line="370" column="26" selection-start-line="370" selection-start-column="26" selection-end-line="370" selection-end-column="26" />
               <folding>
                 <element signature="e#94#115#0" expanded="true" />
               </folding>
@@ -726,11 +725,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Validation.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Validation.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Validation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="128" column="39" lean-forward="true" selection-start-line="128" selection-start-column="39" selection-end-line="128" selection-end-column="39" />
+            <state relative-caret-position="459">
+              <caret line="36" selection-start-line="36" selection-end-line="36" />
               <folding>
                 <element signature="e#24#45#0" expanded="true" />
               </folding>
@@ -741,20 +740,20 @@
       <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
+            <state relative-caret-position="374">
               <caret line="23" selection-start-line="23" selection-end-line="23" />
-              <folding>
-                <element signature="e#1#22#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Simulation_Model.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Simulation_Model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" selection-start-line="6" selection-end-line="6" />
+            <state relative-caret-position="-2015">
+              <caret line="33" column="8" lean-forward="true" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="8" />
+              <folding>
+                <element signature="e#90#111#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -771,8 +770,8 @@
       <file leaf-file-name="Candidate_Study.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="15" selection-start-line="15" selection-end-line="15" />
+            <state relative-caret-position="4199">
+              <caret line="255" column="81" selection-start-line="255" selection-start-column="81" selection-end-line="255" selection-end-column="81" />
               <folding>
                 <element signature="e#93#114#0" expanded="true" />
               </folding>
@@ -783,8 +782,8 @@
       <file leaf-file-name="Pattern2Graph.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="21" selection-start-line="21" selection-end-line="21" />
+            <state relative-caret-position="1938">
+              <caret line="120" column="65" lean-forward="true" selection-start-line="120" selection-start-column="65" selection-end-line="120" selection-end-column="65" />
             </state>
           </provider>
         </entry>
@@ -871,17 +870,17 @@
         <option value="$PROJECT_DIR$/Graph_Model/Pattern_Graph.py" />
         <option value="$PROJECT_DIR$/Graph_Model/patterns2graph.py" />
         <option value="$PROJECT_DIR$/simulation_model.py" />
-        <option value="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" />
         <option value="$PROJECT_DIR$/Evaluation.py" />
         <option value="$PROJECT_DIR$/xED_Algorithm/__init__.py" />
-        <option value="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" />
         <option value="$PROJECT_DIR$/xED_Algorithm/xED_algorithm.py" />
         <option value="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" />
-        <option value="$PROJECT_DIR$/Simulation_Model.py" />
         <option value="$PROJECT_DIR$/xED_Algorithm/test.py" />
-        <option value="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" />
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/Validation.py" />
+        <option value="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" />
+        <option value="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" />
+        <option value="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" />
+        <option value="$PROJECT_DIR$/Simulation_Model.py" />
       </list>
     </option>
   </component>
@@ -959,7 +958,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Validation">
+  <component name="RunManager" selected="Python.Simulation Aruba">
     <configuration name="Simulation Aruba" type="PythonConfigurationType" factoryName="Python" activateToolWindowBeforeRun="false" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -973,7 +972,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation_Model.py" />
-      <option name="PARAMETERS" value="aruba 1" />
+      <option name="PARAMETERS" value="-n aruba -r 0 --days 10" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -1078,11 +1077,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Simulation Aruba" />
         <item itemvalue="Python.Validation" />
         <item itemvalue="Python.Validation" />
         <item itemvalue="Python.test (1)" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.Simulation Aruba" />
       </list>
     </recent_temporary>
   </component>
@@ -1186,20 +1185,20 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.46058732" visible="true" weight="0.21496312" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.45784885" visible="true" weight="0.21496312" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32883817" />
-      <window_info active="true" anchor="bottom" id="Messages" order="9" visible="true" weight="0.32883817" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5068493" side_tool="true" weight="0.32780084" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.24896266" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49789253" weight="0.32883817" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49315068" weight="0.32780084" />
-      <window_info id="Structure" order="1" sideWeight="0.5394127" side_tool="true" visible="true" weight="0.21496312" />
+      <window_info id="Structure" order="1" sideWeight="0.54215115" side_tool="true" visible="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3205394" />
       <window_info id="Favorites" order="2" sideWeight="0.5154321" side_tool="true" weight="0.2850369" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" weight="0.28630707" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" visible="true" weight="0.28630707" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" visible="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info active="true" anchor="bottom" id="Messages" order="9" visible="true" weight="0.32883817" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -1264,11 +1263,6 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py</url>
-          <line>198</line>
-          <option name="timeStamp" value="167" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py</url>
           <line>225</line>
           <option name="timeStamp" value="168" />
         </line-breakpoint>
@@ -1282,6 +1276,11 @@
           <line>51</line>
           <option name="timeStamp" value="214" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Validation.py</url>
+          <line>36</line>
+          <option name="timeStamp" value="227" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -1293,11 +1292,41 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="226" />
+      <option name="time" value="230" />
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>first_period_start_date + int(period_id) * period</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>first_period_start_date + period_id * period</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>original_dataset.date.idxmax()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>original_dataset.date.argmax()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>original_dataset.date.idxmin()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>original_dataset.date.argmin()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>date.to_pydatetime()</expression-string>
         <language-id>Python</language-id>
@@ -1313,46 +1342,9 @@
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>np.asarray(param[0])</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>np.asarray(param)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>param</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>tuple[0],</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>tuple[0]</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>tuple(0)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -1568,56 +1560,63 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
+    <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        <state relative-caret-position="374">
+          <caret line="23" selection-start-line="23" selection-end-line="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Validation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        <state relative-caret-position="4199">
+          <caret line="255" column="81" selection-start-line="255" selection-start-column="81" selection-end-line="255" selection-end-column="81" />
           <folding>
             <element signature="e#93#114#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
+    <entry file="file://$PROJECT_DIR$/KA_Simulation_100_rep.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        <state relative-caret-position="221">
+          <caret line="13" column="24" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
+    <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="23" selection-start-line="23" selection-end-line="23" />
-          <folding>
-            <element signature="e#1#22#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1938">
+          <caret line="120" column="65" lean-forward="true" selection-start-line="120" selection-start-column="65" selection-end-line="120" selection-end-column="65" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="20" column="7" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
+        <state relative-caret-position="351">
+          <caret line="370" column="26" selection-start-line="370" selection-start-column="26" selection-end-line="370" selection-end-column="26" />
           <folding>
             <element signature="e#94#115#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Validation.py">
+    <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="128" column="39" lean-forward="true" selection-start-line="128" selection-start-column="39" selection-end-line="128" selection-end-column="39" />
+        <state relative-caret-position="-2015">
+          <caret line="33" column="8" lean-forward="true" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="8" />
           <folding>
-            <element signature="e#24#45#0" expanded="true" />
+            <element signature="e#90#111#0" expanded="true" />
           </folding>
         </state>
       </provider>

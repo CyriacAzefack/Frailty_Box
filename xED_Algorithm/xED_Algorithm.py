@@ -351,7 +351,7 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
     return missing_events_df
 
 
-def pick_dataset(name, dataset_type='label'):
+def pick_dataset(name, nb_days=-1):
     dataset = None
     if name == 'toy':
         dataset = pd.read_csv("input/toy_dataset.txt", delimiter=';')
@@ -363,15 +363,16 @@ def pick_dataset(name, dataset_type='label'):
         date_format = '%Y-%m-%d %H:%M:%S.%f'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
 
-        # We only take 90 days
-        # start_date = dataset.date.min().to_pydatetime()
-        # end_date = start_date + dt.timedelta(days=90)
-        # dataset = dataset.loc[(dataset.date >= start_date) & (dataset.date < end_date)].copy()
-
     else :
-        filename = "input/{} House/{}_{}_dataset.csv".format(name, name, dataset_type)
+        filename = "input/{} House/{}_label_dataset.csv".format(name, name)
         dataset = pd.read_csv(filename, delimiter=';')
         dataset['date'] = pd.to_datetime(dataset['date'])
+
+    # We only take nb_days
+    if nb_days > 0:
+        start_date = dataset.date.min().to_pydatetime()
+        end_date = start_date + dt.timedelta(days=nb_days)
+        dataset = dataset.loc[(dataset.date >= start_date) & (dataset.date < end_date)].copy()
 
     return dataset
 

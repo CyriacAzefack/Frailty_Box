@@ -253,7 +253,7 @@ def find_occurrences(data, episode, Tep):
         # TODO: can be improved
         indexes = []
         for s in episode:
-            i = data.loc[(data.date >= occ_time) & (data.label == s)].date.argmin()
+            i = data.loc[(data.date >= occ_time) & (data.label == s)].date.idxmin()
             indexes.append(int(i))
 
         data.loc[data.index.isin(indexes), 'occurrence'] = False

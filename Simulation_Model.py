@@ -18,20 +18,7 @@ from Graph_Model import Pattern2Graph as p2g
 
 
 def main(argv):
-    dataset_name = ''
-    id_replication = ''
-    try:
-        opts, args = getopt.getopt(argv, "h")
-    except getopt.GetoptError:
-        print('Simulation_Model.py <dataset_name> <id_replication>')
-        sys.exit(2)
-
-    dataset_name = args[0]
-    id_replication = int(args[1])
-
-    print("Dataset Name : {}".format(dataset_name))
-    print("ID Replication : {}".format(id_replication))
-
+    # Default Minimun supports
     support_dict = {
         'KA': 3,
         'KB': 2,
@@ -39,8 +26,42 @@ def main(argv):
         'aruba': 10
     }
 
+    dataset_name = ''
+    id_replication = ''
+    nb_days = -1
+    support_min = None
+    try:
+        opts, args = getopt.getopt(argv, "hn:r:", ["name=", "replication=", "days=", "support_min="])
+    except getopt.GetoptError:
+        print('Command Error :')
+        print('Simulation_Model.py -n <dataset_name> -r <replication_id> [--days <number_days>] '
+              '[--support_min <minimum support>]')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('How to use the command :')
+            print('Simulation_Model.py -n <dataset name> -r <replication index> [--days <number of days>] '
+                  '[--support_min <minimum support>]')
+            sys.exit()
+        elif opt in ("-n", "--name"):
+            dataset_name = arg
+        elif opt in ("-r", "--replication"):
+            id_replication = int(arg)
+        elif opt in ("--days"):
+            nb_days = int(arg)
+        elif opt in ("--support_min"):
+            support_min = int(arg)
+
+    if not support_min:
+        support_min = support_dict[dataset_name]
+
+    print("Dataset Name : {}".format(dataset_name.upper()))
+    print("ID Replication : {}".format(id_replication))
+    print("Number of days selected : {}".format(nb_days))
+
+
     # READ THE INPUT DATASET
-    dataset = xED.pick_dataset(dataset_name)
+    dataset = xED.pick_dataset(name=dataset_name, nb_days=nb_days)
 
     dirname = "output/{}/Simulation Replications".format(dataset_name)
 
@@ -51,7 +72,7 @@ def main(argv):
     print("\n")
 
     # BUILD THE SIMULATION MODEL
-    sim_model = build_simulation_model(data=dataset, support_min=support_dict[dataset_name], output_folder=dirname)
+    sim_model = build_simulation_model(data=dataset, support_min=support_min, output_folder=dirname)
 
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime()
@@ -72,14 +93,6 @@ def main(argv):
     # SAVE THE SIMULATION RESULTS
     simulated_data.to_csv(dirname + "/dataset_simulation_{0:0=3d}.csv".format(id_replication + 1), index=False,
                           sep=';')
-
-    # TODO : Replace the reading csv file by using directly the data
-
-
-
-
-
-
 
 
 
