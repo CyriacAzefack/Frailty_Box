@@ -690,12 +690,7 @@
       <change afterPath="$PROJECT_DIR$/output/KC House/label/Patterns_Graph/use toilet downstairs START/directed_graph_6_6_47.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation_Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation_Model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/toy_dataset.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" beforeDir="false" afterPath="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" beforeDir="false" afterPath="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -718,9 +713,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="351">
               <caret line="370" column="26" selection-start-line="370" selection-start-column="26" selection-end-line="370" selection-end-column="26" />
-              <folding>
-                <element signature="e#94#115#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -729,10 +721,7 @@
         <entry file="file://$PROJECT_DIR$/Validation.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="459">
-              <caret line="36" selection-start-line="36" selection-end-line="36" />
-              <folding>
-                <element signature="e#24#45#0" expanded="true" />
-              </folding>
+              <caret line="35" selection-start-line="35" selection-end-line="35" />
             </state>
           </provider>
         </entry>
@@ -749,8 +738,8 @@
       <file leaf-file-name="Simulation_Model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2015">
-              <caret line="33" column="8" lean-forward="true" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="8" />
+            <state relative-caret-position="408">
+              <caret line="24" column="16" lean-forward="true" selection-start-line="24" selection-start-column="16" selection-end-line="24" selection-end-column="16" />
               <folding>
                 <element signature="e#90#111#0" expanded="true" />
               </folding>
@@ -772,9 +761,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="4199">
               <caret line="255" column="81" selection-start-line="255" selection-start-column="81" selection-end-line="255" selection-end-column="81" />
-              <folding>
-                <element signature="e#93#114#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -1169,7 +1155,14 @@
       <option name="project" value="LOCAL" />
       <updated>1524131951072</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Add 'days' and 'support_min' as Simulation_Model main arguments">
+      <created>1524559493536</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1524559493536</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -1248,7 +1241,8 @@
     <MESSAGE value="Code refactoring from Python 3.6 to Python 3.4.5 (for the cluster)" />
     <MESSAGE value="Slurm Jobs Working on Centaure Cluster" />
     <MESSAGE value="Fixed Validation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed Validation" />
+    <MESSAGE value="Add 'days' and 'support_min' as Simulation_Model main arguments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add 'days' and 'support_min' as Simulation_Model main arguments" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -1278,7 +1272,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>36</line>
+          <line>35</line>
           <option name="timeStamp" value="227" />
         </line-breakpoint>
       </breakpoints>
@@ -1349,9 +1343,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
-          <folding>
-            <element signature="e#93#114#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1570,10 +1561,7 @@
     <entry file="file://$PROJECT_DIR$/Validation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
-          <caret line="36" selection-start-line="36" selection-end-line="36" />
-          <folding>
-            <element signature="e#24#45#0" expanded="true" />
-          </folding>
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
         </state>
       </provider>
     </entry>
@@ -1581,9 +1569,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4199">
           <caret line="255" column="81" selection-start-line="255" selection-start-column="81" selection-end-line="255" selection-end-column="81" />
-          <folding>
-            <element signature="e#93#114#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1605,16 +1590,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="351">
           <caret line="370" column="26" selection-start-line="370" selection-start-column="26" selection-end-line="370" selection-end-column="26" />
-          <folding>
-            <element signature="e#94#115#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2015">
-          <caret line="33" column="8" lean-forward="true" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="8" />
+        <state relative-caret-position="408">
+          <caret line="24" column="16" lean-forward="true" selection-start-line="24" selection-start-column="16" selection-end-line="24" selection-end-column="16" />
           <folding>
             <element signature="e#90#111#0" expanded="true" />
           </folding>

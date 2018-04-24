@@ -1,14 +1,16 @@
 #!/bin/bash
-#SBATCH --job-name=KC_Simulation_100_rep
+#SBATCH --job-name=ARUBA_Simulation_20_rep_90_days
 #SBATCH --mail-user=cyriac.azefack@emse.fr
 #SBATCH --mail-type=ALL
-#SBATCH --array=0-99
+#SBATCH --array=0-20
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --time=01:00:00
+#SBATCH --time=12:00:00
+#SBATCH --exclude=compute-0-15
+
 unset SLURM_GTIDS
 
-DATASET_NAME=KC
+DATASET_NAME=aruba
 
 echo ------------------------------------------------------
 echo SLURM_NNODES: $SLURM_NNODES
@@ -35,7 +37,7 @@ echo ------------------------------------------------------
 echo Run Python program...
 module purge
 cd $SCRATCH
-python3 Simulation_Model.py $DATASET_NAME ${SLURM_ARRAY_TASK_ID}
+python3 Simulation_Model.py -n $DATASET_NAME -r ${SLURM_ARRAY_TASK_ID} --days=90 --support_min=30
 echo ------------------------------------------------------
 
 echo Transferring result files from compute nodes to frontend
