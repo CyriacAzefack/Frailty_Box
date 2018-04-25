@@ -13,12 +13,13 @@ import time as t
 
 import pandas as pd
 
-import xED_Algorithm.xED_Algorithm as xED
+sys.path.append(os.path.join(os.path.dirname(__file__)))
+from Pattern_Discovery import Pattern_Discovery as pattern_discovery
 from Graph_Model import Pattern2Graph as p2g
 
 
 def main(argv):
-    # Default Minimun supports
+    # Default Minimum supports
     support_dict = {
         'KA': 3,
         'KB': 2,
@@ -29,13 +30,11 @@ def main(argv):
     dataset_name = ''
     id_replication = ''
     nb_days = -1
-    support_min = None
     try:
-        opts, args = getopt.getopt(argv, "hn:r:", ["name=", "replication=", "days=", "support_min="])
+        opts, args = getopt.getopt(argv, "hn:r:", ["name=", "replication=", "days="])
     except getopt.GetoptError:
         print('Command Error :')
-        print('Simulation_Model.py -n <dataset_name> -r <replication_id> [--days <number_days>] '
-              '[--support_min <minimum support>]')
+        print('Simulation_Model.py -n <dataset_name> -r <replication_id> [--days <number_days>]')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
@@ -49,35 +48,32 @@ def main(argv):
             id_replication = int(arg)
         elif opt in ("--days"):
             nb_days = int(arg)
-        elif opt in ("--support_min"):
-            support_min = int(arg)
-
-    if not support_min:
-        support_min = support_dict[dataset_name]
 
     print("Dataset Name : {}".format(dataset_name.upper()))
     print("ID Replication : {}".format(id_replication))
     print("Number of days selected : {}".format(nb_days))
 
 
-    # READ THE INPUT DATASET
-    dataset = xED.pick_dataset(name=dataset_name, nb_days=nb_days)
 
-    dirname = "output/{}/Simulation Replications".format(dataset_name)
+    # READ THE INPUT DATASET
+    dataset = pattern_discovery.pick_dataset(name=dataset_name, nb_days=nb_days)
+
+    dirname = "output/{}".format(dataset_name)
 
     print("\n")
     print("###############################")
-    print("SIMULATION REPLICAION N° {0:0=2d}".format(id_replication + 1))
+    print("SIMULATION REPLICATION N° {0:0=2d}".format(id_replication + 1))
     print("##############################")
     print("\n")
 
+    start_time = t.process_time()
     # BUILD THE SIMULATION MODEL
-    sim_model = build_simulation_model(data=dataset, support_min=support_min, output_folder=dirname)
+    sim_model = build_simulation_model(data=dataset, output_directory=dirname)
 
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime()
 
-    start_time = t.process_time()
+
     # START THE SIMULATION
     simulated_data = simulation(data=dataset, simulation_model=sim_model, start_date=start_date,
                                 end_date=end_date)
@@ -90,45 +86,35 @@ def main(argv):
     print("##############################")
     print("\n")
 
+    simulated_data_filename = dirname + "/Simulation Replications/dataset_simulation_{0:0=3d}.csv".format(
+        id_replication + 1)
+    if not os.path.exists(os.path.dirname(simulated_data_filename)):
+        try:
+            os.makedirs(os.path.dirname(simulated_data_filename))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
     # SAVE THE SIMULATION RESULTS
-    simulated_data.to_csv(dirname + "/dataset_simulation_{0:0=3d}.csv".format(id_replication + 1), index=False,
-                          sep=';')
+    simulated_data.to_csv(simulated_data_filename, index=False, sep=';')
 
 
-
-def build_simulation_model(data, Tep=30, support_min=2, accuracy_min=0.5,
-                           std_max=0.1, tolerance_ratio=2, delta_Tmax_ratio=3, output_folder='./',
-                           verbose=True, nb_tries=10):
+def build_simulation_model(data, output_directory='.'):
     '''
     Build the somulation model from scratch.
     :param data: Input sequence
     :param Tep: Duration Max between event in an occurrence
-    :param support_min:
-    :param accuracy_min:
-    :param std_max:
-    :param tolerance_ratio:
-    :param delta_Tmax_ratio:
-    :param output_folder:
+    :param output_directory: Directory to find the 'patterns.pickle' file
     :param verbose:
-    :param nb_tries: Number of tries for the model. We take the one with the best data_explained_ratio
     :return:
     '''
 
-    # TODO : Find a way to compute the ideal support
 
     # Unpack the patterns from the dataset
-    patterns, patterns_string, data_left = xED.xED_algorithm(data=data, Tep=Tep, support_min=support_min,
-                                                             accuracy_min=accuracy_min,
-                                                             std_max=std_max, tolerance_ratio=tolerance_ratio,
-                                                             delta_Tmax_ratio=delta_Tmax_ratio, verbose=verbose)
-
-    ratio_data_treated = round((1 - len(data_left) / len(data)) * 100, 2)
-
-    print("{}% of the dataset data explained by xED patterns".format(ratio_data_treated))
+    patterns = pd.read_pickle(output_directory + '/patterns.pickle')
 
     # Build All the graphs associated with the patterns
     simulation_model = []
-    output = output_folder
+    output = output_directory
     for _, pattern in patterns.iterrows():
         labels = list(pattern['Episode'])
         period = pattern['Period']
@@ -137,18 +123,18 @@ def build_simulation_model(data, Tep=30, support_min=2, accuracy_min=0.5,
         validity_duration = validity_end_date - validity_start_date
         nb_periods = validity_duration.total_seconds() / period.total_seconds()
         description = pattern['Description']
-        output_folder = output + "/Patterns_Graph/" + "_".join(labels) + "/"
+        output_directory = output + "/Patterns_Graph/" + "_".join(labels) + "/"
 
-        if not os.path.exists(os.path.dirname(output_folder)):
+        if not os.path.exists(os.path.dirname(output_directory)):
             try:
-                os.makedirs(os.path.dirname(output_folder))
+                os.makedirs(os.path.dirname(output_directory))
             except OSError as exc:  # Guard against race condition
                 if exc.errno != errno.EEXIST:
                     raise
 
-        patterns_graph_list = p2g.pattern2graph(data=data, labels=labels, description=description, period=period,
+        patterns_graph_list = p2g.pattern2graph(data=data, labels=labels, time_description=description, period=period,
                                                 start_date=validity_start_date, end_date=validity_end_date,
-                                                output_folder=output_folder)
+                                                output_dir=output_directory, draw_graphs=False)
 
         simulation_model += patterns_graph_list
 

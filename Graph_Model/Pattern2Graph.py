@@ -4,13 +4,17 @@ Created on Wed Mar 28 11:22:58 2018
 
 @author: cyriac.azefack
 """
+import os
+import sys
 from collections import defaultdict
 
 import scipy.stats as st
 
+sys.path.append(os.path.join(os.path.dirname(__file__)))
+
 from Graph_Model.Graph_Pattern import Graph_Pattern
-from xED_Algorithm.Candidate_Study import *
-from xED_Algorithm.xED_Algorithm import *
+from Pattern_Discovery.Candidate_Study import *
+from Pattern_Discovery.Pattern_Discovery import *
 
 
 def main():
@@ -42,29 +46,31 @@ def main():
                     if exc.errno != errno.EEXIST:
                         raise
 
-            mini_list = pattern2graph(data=dataset, labels=labels, description=description, period=period,
+            mini_list = pattern2graph(data=dataset, labels=labels, time_description=description, period=period,
                                       start_date=validity_start_date, end_date=validity_end_date,
-                                      output_folder=output_folder, debug=False)
+                                      output_dir=output_folder, draw_graphs=False)
 
             pattern_graph_list += mini_list
 
 
-def pattern2graph(data, labels, description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
-                  output_folder='./', debug=False):
+def pattern2graph(data, labels, time_description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
+                  output_dir='./', draw_graphs=True):
     '''
     Turn a pattern to a graph
     :param data: Input dataset
     :param labels: list of labels included in the pattern
-    :param description: description of the pattern {mu1 : sigma1, mu2 : sigma2, ...}
+    :param time_description: description of the pattern {mu1 : sigma1, mu2 : sigma2, ...}
+    :param start_date: 
     :param tolerance_ratio: tolerance ratio to get the expectect occurrences
     :param Tep : [in Minutes] Maximal time interval between events in an episode occurrence. Should correspond to the maximal duration of the ADLs.
+    :param output_dir Output Directory to save graphs images
     :return: A transition probability matrix and a transition waiting time matrix for each component of the description
     '''
 
     pattern_graph_list = []
     nodes = ['START PERIOD'] + labels + ['END PERIOD']
     n = len(nodes)
-    for mu, sigma in description.items():
+    for mu, sigma in time_description.items():
         # n x n edges for probabilities transition
         Mp = np.zeros((n, n))
 
@@ -175,8 +181,8 @@ def pattern2graph(data, labels, description, period, start_date, end_date, toler
         pattern_graph = Graph_Pattern(nodes, period, mu, sigma, Mp, Mwait)
         pattern_graph_list.append(pattern_graph)
 
-        if debug:
-            pattern_graph.display(output_folder=output_folder, debug=debug)
+        if draw_graphs:
+            pattern_graph.display(output_folder=output_dir, debug=draw_graphs)
 
     return pattern_graph_list
 

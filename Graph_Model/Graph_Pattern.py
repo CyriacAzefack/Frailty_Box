@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime as dt
+import os
+import sys
 from pprint import pprint
 from random import random
 from subprocess import check_call
@@ -11,7 +13,8 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 
-from xED_Algorithm.Candidate_Study import modulo_datetime
+sys.path.append(os.path.join(os.path.dirname(__file__)))
+from Pattern_Discovery.Candidate_Study import modulo_datetime
 
 
 class Graph_Pattern:
