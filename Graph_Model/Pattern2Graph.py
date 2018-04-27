@@ -42,29 +42,29 @@ def main():
                     if exc.errno != errno.EEXIST:
                         raise
 
-            mini_list = pattern2graph(data=dataset, labels=labels, description=description, period=period,
+            mini_list = pattern2graph(data=dataset, labels=labels, time_description=description, period=period,
                                       start_date=validity_start_date, end_date=validity_end_date,
-                                      output_folder=output_folder, debug=False)
+                                      output_directory=output_folder, debug=False)
 
             pattern_graph_list += mini_list
 
 
-def pattern2graph(data, labels, description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
-                  output_folder='./', debug=False):
+def pattern2graph(data, labels, time_description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
+                  output_directory='./', debug=False):
     '''
     Turn a pattern to a graph
     :param data: Input dataset
     :param labels: list of labels included in the pattern
-    :param description: description of the pattern {mu1 : sigma1, mu2 : sigma2, ...}
-    :param tolerance_ratio: tolerance ratio to get the expectect occurrences
+    :param time_description: time description of the pattern {mu1 : sigma1, mu2 : sigma2, ...}
+    :param tolerance_ratio: tolerance ratio to get the expected occurrences
     :param Tep : [in Minutes] Maximal time interval between events in an episode occurrence. Should correspond to the maximal duration of the ADLs.
-    :return: A transition probability matrix and a transition waiting time matrix for each component of the description
+    :return: A list of <i>Graph_Pattern</i> (one for each time component)
     '''
 
     pattern_graph_list = []
     nodes = ['START PERIOD'] + labels + ['END PERIOD']
     n = len(nodes)
-    for mu, sigma in description.items():
+    for mu, sigma in time_description.items():
         # n x n edges for probabilities transition
         Mp = np.zeros((n, n))
 
@@ -131,7 +131,7 @@ def pattern2graph(data, labels, description, period, start_date, end_date, toler
                 for _, row in label_events.iterrows():
                     # SORTING EDGES
                     if len(period_events.loc[period_events.date > row['date']]) > 0:
-                        sorting_id = period_events.loc[period_events.date > row['date']].date.argmin()
+                        sorting_id = period_events.loc[period_events.date > row['date']].date.idxmin()
                         sorting_label = period_events.loc[[sorting_id]].label.values[0]
                         sorting_label_date = period_events.loc[[sorting_id]].date.min().to_pydatetime()
                         Mp[nodes.index(label), nodes.index(sorting_label)] += 1 / nb_occurrences_per_label[
@@ -145,14 +145,14 @@ def pattern2graph(data, labels, description, period, start_date, end_date, toler
 
 
             # First label
-            first_id = period_events.date.argmin()
+            first_id = period_events.date.idxmin()
             first_label = period_events.loc[[first_id]].label.values[0]
             first_label_date = period_events.loc[[first_id]].date.min().to_pydatetime()
             Mp[0, nodes.index(first_label)] += 1 / nb_periods
             Mwait[0][nodes.index(first_label)].append(modulo_datetime(first_label_date, period))
 
         # Checking of all the rows and columns
-        tol = 0.0001
+        tol = 0.1
         for i in range(n):
             # Row
             s_row = Mp[i, :].sum()
@@ -164,9 +164,7 @@ def pattern2graph(data, labels, description, period, start_date, end_date, toler
         for i in range(n - 1):
             for j in range(n - 1):
                 array = np.asarray(Mwait[i][j])
-                if len(array) > 3:
-                    Mwait[i][j] = best_fit_distribution(array)
-                elif len(array) > 0:
+                if len(array) > 0:
                     # Normal distribution by default
                     Mwait[i][j] = ('norm', (np.mean(array), np.std(array)))
                 else:
@@ -176,7 +174,7 @@ def pattern2graph(data, labels, description, period, start_date, end_date, toler
         pattern_graph_list.append(pattern_graph)
 
         if debug:
-            pattern_graph.display(output_folder=output_folder, debug=debug)
+            pattern_graph.display(output_folder=output_directory, debug=debug)
 
     return pattern_graph_list
 
@@ -193,7 +191,10 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
     '''
 
     Tep = dt.timedelta(minutes=Tep)
+
+    # Result dataframe
     events = pd.DataFrame(columns=["date", "label", "period_id"])
+
     start_time = occurrences.date.min().to_pydatetime()
     start_date_first_period = start_time - dt.timedelta(
         seconds=modulo_datetime(start_time, period))
@@ -210,7 +211,7 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
     while start_date_current_period <= start_date_last_period:
         end_date_current_period = start_date_current_period + period
 
-        date_filter = (occurrences.date > start_date_current_period) \
+        date_filter = (occurrences.date >= start_date_current_period) \
                       & (occurrences.date < end_date_current_period)
 
         occurrence_happened = len(occurrences.loc[date_filter]) > 0
