@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/Simulation_Model.py" line="20" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Rollback on 1 simulation model per replication" />
-    <list id="41ef0259-09cb-457f-ac89-27a559d692b2" name="Rollback on 1 simulation model per replication" comment="">
+    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Rollback on 1 simulation model per replication">
       <change afterPath="$PROJECT_DIR$/input/aruba/README.txt" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/aruba/aruba.jpg" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/aruba/data.txt" afterDir="false" />
@@ -14,16 +16,11 @@
       <change afterPath="$PROJECT_DIR$/input/hh102/rawdata.txt" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/hh102/sensormap.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/toy_dataset.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xED_Algorithm/FP_growth.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xED_Algorithm/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ARUBA_Simulation_20_rep.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Simulation_Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation_Model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" beforeDir="false" afterPath="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" beforeDir="false" afterPath="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -44,10 +41,58 @@
       <file leaf-file-name="Simulation_Model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1173">
-              <caret line="69" column="30" selection-start-line="69" selection-start-column="30" selection-end-line="69" selection-end-column="30" />
+            <state relative-caret-position="255">
+              <caret line="113" column="84" selection-start-line="113" selection-start-column="7" selection-end-line="113" selection-end-column="84" />
               <folding>
                 <element signature="e#90#111#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Validation.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Validation.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="510">
+              <caret line="114" column="3" selection-start-line="114" selection-start-column="3" selection-end-line="116" selection-end-column="41" />
+              <folding>
+                <element signature="e#24#45#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Pattern2Graph.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="12" selection-start-line="20" selection-start-column="15" selection-end-line="20" selection-end-column="67" />
+              <folding>
+                <element signature="e#93#128#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Graph_Pattern.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="290">
+              <caret line="78" lean-forward="true" selection-start-line="78" selection-end-line="78" />
+              <folding>
+                <element signature="e#24#45#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FP_growth.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/xED_Algorithm/FP_growth.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="5338">
+              <caret line="315" column="59" selection-start-line="315" selection-start-column="59" selection-end-line="315" selection-end-column="59" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -56,17 +101,20 @@
       <file leaf-file-name="Candidate_Study.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="662">
-              <caret line="255" column="81" selection-start-line="255" selection-start-column="81" selection-end-line="255" selection-end-column="81" />
+            <state relative-caret-position="204">
+              <caret line="12" selection-start-line="12" selection-end-line="12" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="xED_Algorithm.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="xED_Algorithm.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="201" column="19" lean-forward="true" selection-start-line="201" selection-start-column="19" selection-end-line="201" selection-end-column="19" />
+            <state relative-caret-position="561">
+              <caret line="110" column="47" selection-start-line="110" selection-start-column="37" selection-end-line="110" selection-end-column="47" />
+              <folding>
+                <element signature="e#94#115#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -83,9 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>values</find>
-      <find>arg</find>
-      <find>min</find>
       <find>support_min</find>
       <find>activity</find>
       <find>activit</find>
@@ -113,6 +158,9 @@
       <find>candidate_study</find>
       <find>mean</find>
       <find>os</find>
+      <find>mod</find>
+      <find>big_df</find>
+      <find>self.nodes</find>
     </findStrings>
     <replaceStrings>
       <replace>labels</replace>
@@ -139,7 +187,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/pattern2graph.py" />
-        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_2.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/Test Fitting.ipynb" />
@@ -156,21 +203,22 @@
         <option value="$PROJECT_DIR$/Evaluation.py" />
         <option value="$PROJECT_DIR$/xED_Algorithm/__init__.py" />
         <option value="$PROJECT_DIR$/xED_Algorithm/xED_algorithm.py" />
-        <option value="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" />
         <option value="$PROJECT_DIR$/xED_Algorithm/test.py" />
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/Validation.py" />
         <option value="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" />
-        <option value="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" />
-        <option value="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" />
         <option value="$PROJECT_DIR$/Simulation_Model.py" />
+        <option value="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" />
+        <option value="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
+        <option value="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="953" />
+    <option name="x" value="946" />
     <option name="width" value="974" />
-    <option name="height" value="1087" />
+    <option name="height" value="1080" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -180,36 +228,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="output" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="xED_Algorithm" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-              <item name="Scratches" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <expand>
@@ -241,9 +259,42 @@
           <select />
         </subPane>
       </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="Graph_Model" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="output" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="output" type="462c0819:PsiDirectoryNode" />
+              <item name="KA" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="xED_Algorithm" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$2/Languages" value="Python" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/Simulation_Model.py" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
@@ -271,7 +322,43 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Simulation Aruba">
+  <component name="RunManager" selected="Python.scratch">
+    <configuration name="Graph_Pattern" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Graph_Model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="Pattern2Graph" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Graph_Model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="Simulation Aruba" type="PythonConfigurationType" factoryName="Python" activateToolWindowBeforeRun="false" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -285,7 +372,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation_Model.py" />
-      <option name="PARAMETERS" value="-n aruba -r 0 --days 10" />
+      <option name="PARAMETERS" value="-n aruba -r 0 --days 90 --support_min 30 --graph_plot" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -308,7 +395,25 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="test (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="scratch" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="xED_algorithm ARUBA" type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -317,84 +422,30 @@
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/xED_Algorithm" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="xED_Algorithm" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/xED_Algorithm" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="xED_algorithm" type="PythonConfigurationType" factoryName="Python">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\xED_Algorithm\xED_Algorithm.py" />
-      <option name="PARAMETERS" value="" />
+      <option name="PARAMETERS" value="--name aruba --days 120 --support_min 40" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <list>
-      <item itemvalue="Python.xED_algorithm" />
-      <item itemvalue="Python.xED_Algorithm" />
+      <item itemvalue="Python.xED_algorithm ARUBA" />
       <item itemvalue="Python.Simulation Aruba" />
       <item itemvalue="Python.Validation" />
-      <item itemvalue="Python.test" />
-      <item itemvalue="Python.test (1)" />
+      <item itemvalue="Python.Pattern2Graph" />
+      <item itemvalue="Python.Graph_Pattern" />
+      <item itemvalue="Python.scratch" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.scratch" />
+        <item itemvalue="Python.Pattern2Graph" />
+        <item itemvalue="Python.Graph_Pattern" />
+        <item itemvalue="Python.Validation" />
         <item itemvalue="Python.Simulation Aruba" />
-        <item itemvalue="Python.Validation" />
-        <item itemvalue="Python.Validation" />
-        <item itemvalue="Python.test (1)" />
-        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -496,7 +547,35 @@
       <option name="project" value="LOCAL" />
       <updated>1524667920210</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Rollback on 1 simulation model per replication">
+      <created>1524668411008</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1524668411008</updated>
+    </task>
+    <task id="LOCAL-00014" summary="'Norm' distribution for every edges">
+      <created>1524822416653</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1524822416653</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Add argument '--graph_plot'">
+      <created>1524829301493</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1524829301493</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Plot Probability matrix time evolution">
+      <created>1525268498773</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1525268498773</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -512,35 +591,24 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4558011" visible="true" weight="0.21496312" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.45131376" visible="true" weight="0.21496312" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32883817" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50790304" side_tool="true" weight="0.32780084" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.32883817" />
-      <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49578503" visible="true" weight="0.24896266" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5068493" side_tool="true" weight="0.32780084" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" sideWeight="0.49947312" visible="true" weight="0.32883817" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.24896266" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49789253" weight="0.32883817" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49209693" weight="0.32780084" />
-      <window_info id="Structure" order="1" sideWeight="0.5441989" side_tool="true" visible="true" weight="0.21496312" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49315068" weight="0.32780084" />
+      <window_info id="Structure" order="1" sideWeight="0.54868627" side_tool="true" visible="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3205394" />
-      <window_info id="Favorites" order="2" sideWeight="0.5154321" side_tool="true" weight="0.2850369" />
+      <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" weight="0.28630707" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" visible="true" weight="0.25" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.24896266" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.45784885" visible="true" weight="0.21496312" />
-      <window_info id="Structure" order="1" sideWeight="0.54215115" side_tool="true" visible="true" weight="0.21496312" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32883817" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49315068" weight="0.32780084" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.32883817" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" visible="true" weight="0.28630707" />
       <window_info active="true" anchor="bottom" id="Messages" order="9" visible="true" weight="0.32883817" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5068493" side_tool="true" weight="0.32780084" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info id="Favorites" order="2" sideWeight="0.5154321" side_tool="true" weight="0.2850369" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.3205394" />
-      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49789253" weight="0.32883817" />
     </layout>
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -598,40 +666,16 @@
     <MESSAGE value="Fixed Validation" />
     <MESSAGE value="Add 'days' and 'support_min' as Simulation_Model main arguments" />
     <MESSAGE value="Rollback on 1 simulation model per replication" />
-    <option name="LAST_COMMIT_MESSAGE" value="Rollback on 1 simulation model per replication" />
+    <MESSAGE value="'Norm' distribution for every edges" />
+    <MESSAGE value="Add argument '--graph_plot'" />
+    <MESSAGE value="Plot Probability matrix time evolution" />
+    <option name="LAST_COMMIT_MESSAGE" value="Plot Probability matrix time evolution" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/data/transform_data.py</url>
-          <line>41</line>
-          <option name="timeStamp" value="44" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py</url>
-          <line>224</line>
-          <option name="timeStamp" value="168" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py</url>
-          <line>28</line>
-          <option name="timeStamp" value="173" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py</url>
-          <line>51</line>
-          <option name="timeStamp" value="214" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>35</line>
-          <option name="timeStamp" value="227" />
-        </line-breakpoint>
-      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
@@ -642,11 +686,21 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="230" />
+      <option name="time" value="255" />
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>pickle.dump(pattern_graph, open(output_folder + &quot;/{}_PatG.pkl&quot;.format(pattern_graph.ID), 'wb'))</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pattern_graph.ID</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>first_period_start_date + int(period_id) * period</expression-string>
         <language-id>Python</language-id>
@@ -682,19 +736,53 @@
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string />
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>tuple[1:][0]</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="16" column="19" lean-forward="true" selection-start-line="16" selection-start-column="19" selection-end-line="16" selection-end-column="19" />
+          <folding>
+            <element signature="e#94#115#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2652">
+          <caret line="162" column="86" lean-forward="true" selection-start-line="162" selection-start-column="86" selection-end-line="162" selection-end-column="86" />
+          <folding>
+            <element signature="e#93#128#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1003">
+          <caret line="69" column="30" selection-start-line="69" selection-start-column="30" selection-end-line="69" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4199">
+          <caret line="255" column="81" selection-start-line="255" selection-start-column="81" selection-end-line="255" selection-end-column="81" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3264">
+          <caret line="201" column="19" lean-forward="true" selection-start-line="201" selection-start-column="19" selection-end-line="201" selection-end-column="19" />
+          <folding>
+            <element signature="e#94#115#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/xED_implementation.py" />
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -857,106 +945,109 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="40" column="11" selection-start-line="40" selection-start-column="11" selection-end-line="40" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test.py" />
-    <entry file="file://$PROJECT_DIR$/KA_Simulation_100_rep.sh">
+    <entry file="file://$PROJECT_DIR$/KA_Simulation_100_rep.sh" />
+    <entry file="file://$PROJECT_DIR$/Pattern_Discovery/Candidate_Study.py" />
+    <entry file="file://$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py" />
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/643000325/_collections.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="24" selection-start-line="13" selection-start-column="24" selection-end-line="13" selection-end-column="24" />
+        <state relative-caret-position="206">
+          <caret line="45" column="8" selection-start-line="45" selection-start-column="8" selection-end-line="45" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
+    <entry file="file://$PROJECT_DIR$/xED_Algorithm/FP_growth.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="901">
-          <caret line="67" column="18" selection-start-line="67" selection-start-column="18" selection-end-line="67" selection-end-column="18" />
+        <state relative-caret-position="5338">
+          <caret line="315" column="59" selection-start-line="315" selection-start-column="59" selection-end-line="315" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Pattern_Discovery/Candidate_Study.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/site-packages/pandas/core/generic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="36" column="79" selection-start-line="36" selection-start-column="79" selection-end-line="36" selection-end-column="79" />
+        <state relative-caret-position="206">
+          <caret line="2743" selection-start-line="2743" selection-end-line="2743" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py">
+    <entry file="file://$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-255">
-          <caret line="55" column="23" lean-forward="true" selection-start-line="55" selection-start-column="23" selection-end-line="55" selection-end-column="23" />
+        <state relative-caret-position="204">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Validation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="114" column="3" selection-start-line="114" selection-start-column="3" selection-end-line="116" selection-end-column="41" />
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/643000325/_pickle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-746">
+          <caret line="53" column="4" selection-start-line="53" selection-start-column="4" selection-end-line="53" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/pickle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="1567" column="11" selection-start-line="1567" selection-start-column="11" selection-end-line="1567" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="561">
+          <caret line="110" column="47" selection-start-line="110" selection-start-column="37" selection-end-line="110" selection-end-column="47" />
           <folding>
             <element signature="e#94#115#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Validation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1477">
-          <caret line="38" column="17" selection-start-line="38" selection-start-column="17" selection-end-line="38" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/aruba/aruba.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/aruba/data.txt">
-      <provider selected="true" editor-type-id="LargeFileEditor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/aruba/dataset.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/aruba/README.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/hh102/ann.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/hh102/dataset.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/hh102/hh.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/hh102/rawdata.txt">
-      <provider selected="true" editor-type-id="LargeFileEditor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/toy_dataset.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/hh102/sensormap.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/input/hh102/README.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1173">
-          <caret line="69" column="30" selection-start-line="69" selection-start-column="30" selection-end-line="69" selection-end-column="30" />
+        <state relative-caret-position="255">
+          <caret line="113" column="84" selection-start-line="113" selection-start-column="7" selection-end-line="113" selection-end-column="84" />
           <folding>
             <element signature="e#90#111#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="662">
-          <caret line="255" column="81" selection-start-line="255" selection-start-column="81" selection-end-line="255" selection-end-column="81" />
+        <state relative-caret-position="68">
+          <caret line="4" column="49" selection-start-line="4" selection-start-column="49" selection-end-line="4" selection-end-column="49" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py">
+    <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="201" column="19" lean-forward="true" selection-start-line="201" selection-start-column="19" selection-end-line="201" selection-end-column="19" />
+        <state relative-caret-position="187">
+          <caret line="12" selection-start-line="20" selection-start-column="15" selection-end-line="20" selection-end-column="67" />
+          <folding>
+            <element signature="e#93#128#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="78" lean-forward="true" selection-start-line="78" selection-end-line="78" />
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

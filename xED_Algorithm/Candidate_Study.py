@@ -7,10 +7,8 @@ Created on Thu Mar 15 09:41:33 2018
 import datetime as dt
 import math
 
-# import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-# import seaborn as sns
 from sklearn.cluster import DBSCAN
 from sklearn.mixture import GaussianMixture
 
@@ -220,6 +218,8 @@ def modulo_datetime(date, period):
 def find_occurrences(data, episode, Tep):
     """
     Find the occurences of the  episode
+    :param data : Input event sequence
+    :param episode : labels to search
     :param Tep : Maximum duration of an occurrence
     :return : A dataframe of occurrences with one date column
     """
@@ -231,7 +231,7 @@ def find_occurrences(data, episode, Tep):
 
     def sliding_window(row):
         """
-        return true if there is an occurence of the episode starting at this timestamp
+        return true if there is an occurrence of the episode starting at this timestamp
         """
         start_time = row.date
         end_time = row.date + Tep

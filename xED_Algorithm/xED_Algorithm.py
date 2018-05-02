@@ -25,44 +25,46 @@ import FP_growth
 
 
 def main(argv):
-    ########################################
-    # DATA PREPROCESSING
-    ########################################
-
-    """
-    The dataframe should have 1 index (date as datetime) and 1 feature (label)
-    """
-    dataset_name = ''
-    NB_TRIES = ''
-    output_dir = None
-
-    try:
-        opts, args = getopt.getopt(argv, "ho:", ["ofile="])
-    except getopt.GetoptError:
-        print('xED_Algorithm.py <dataset_name> <NB_TRIES> -o <output_dir>')
-        sys.exit(2)
-
-    for opt, arg in opts:
-        if opt == '-h':
-            print('xED_Algorithm.py <dataset_name> <NB_TRIES> -o <output_directory>')
-            sys.exit()
-        elif opt in ("-o", "--output_dir"):
-            output_dir = arg
-
-    dataset_name = args[0]
-    NB_TRIES = int(args[1])
-
-    if not output_dir:
-        output_dir = "output/{}".format(dataset_name)
-
+    # Default minimum supports
     support_dict = {
-        'A': 3,
-        'B': 2,
-        'C': 2
+        'KA': 3,
+        'KB': 2,
+        'KC': 2,
+        'aruba': 10
     }
 
-    dataset = pick_dataset(dataset_name)
+    dataset_name = ''
+    nb_days = -1
+    support_min = None
+    nb_tries = 1
 
+
+    try:
+        opts, args = getopt.getopt(argv, "hn:",
+                                   ["name=", "days=", "support_min="])
+    except getopt.GetoptError:
+        print('Command Error :')
+        print(
+            'xED_Algorithm.py -n <dataset name> [--days <number of days to select>] [--support_min <minimum support>]')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('How to use the command :')
+            print('xED_Algorithm.py -n <dataset_name> [--days <number_days>] [--support_min <minimum support>')
+            sys.exit()
+        elif opt in ("-n", "--name"):
+            dataset_name = arg
+        elif opt in ("--days"):
+            nb_days = int(arg)
+        elif opt in ("--support_min"):
+            support_min = int(arg)
+
+    if support_min is None:
+        support_min = support_dict[dataset_name]
+
+    dataset = pick_dataset(name=dataset_name, nb_days=nb_days)
+
+    output_dir = '../output/{}'.format(dataset_name)
     start_time = t.process_time()
 
     best_ratio_data_treated = 0
@@ -71,9 +73,9 @@ def main(argv):
     best_data_left = None
 
     # Find the best case among different tries
-    for _ in range(NB_TRIES):
+    for _ in range(nb_tries):
         patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=30,
-                                                             support_min=support_dict[dataset_name],
+                                                             support_min=support_min,
                                                              tolerance_ratio=2)
         ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
 
@@ -114,11 +116,11 @@ def main(argv):
     best_data_left.to_csv(output_dir + "/data_left.csv", sep=";", index=False)
 
     # Write all the results in differents excel sheets
-    writer = pd.ExcelWriter(output_dir + "/all_results.xlsx")
-    dataset.to_excel(writer, sheet_name="Input Data", index=False)
-    best_patterns_string.to_excel(writer, sheet_name="Patterns", index=False)
-    best_data_left.to_excel(writer, sheet_name="Non treated Data", index=False)
-    writer.save()
+    # writer = pd.ExcelWriter(output_dir + "/all_results.xlsx")
+    # dataset.to_excel(writer, sheet_name="Input Data", index=False)
+    # best_patterns_string.to_excel(writer, sheet_name="Patterns", index=False)
+    # best_data_left.to_excel(writer, sheet_name="Non treated Data", index=False)
+    # writer.save()
 
 
 def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
@@ -355,19 +357,21 @@ def pick_dataset(name, nb_days=-1):
 
     dataset = None
     if name == 'toy':
-        # path = os.path.join(my_path, "../data/test.csv")
-        dataset = pd.read_csv("input/toy_dataset.txt", delimiter=';')
+        path = os.path.join(my_path, "../input/toy_dataset.csv")
+        dataset = pd.read_csv(path, delimiter=';')
         date_format = '%Y-%d-%m %H:%M'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
 
     elif name == 'aruba':
-        dataset = pd.read_csv("input/aruba/dataset.csv", delimiter=';')
+        path = os.path.join(my_path, "../input/aruba/dataset.csv")
+        dataset = pd.read_csv(path, delimiter=';')
         date_format = '%Y-%m-%d %H:%M:%S.%f'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
 
     else:
-        filename = "input/{} House/{}_label_dataset.csv".format(name, name)
-        dataset = pd.read_csv(filename, delimiter=';')
+        filename = "../input/{} House/{}_label_dataset.csv".format(name, name)
+        path = os.path.join(my_path, filename)
+        dataset = pd.read_csv(path, delimiter=';')
         dataset['date'] = pd.to_datetime(dataset['date'])
 
     # We only take nb_days
