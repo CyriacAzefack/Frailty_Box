@@ -6,51 +6,47 @@ Created on Wed Mar 28 11:22:58 2018
 """
 import os
 import sys
-from collections import defaultdict
 
 import scipy.stats as st
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 
-from Graph_Model.Graph_Pattern import Graph_Pattern
 from Pattern_Discovery.Candidate_Study import *
 from Pattern_Discovery.Pattern_Discovery import *
 
 
 def main():
-    letters = ['A', 'C']
-    dataset_type = 'label'
+    dataset_name = 'KA'
 
-    for letter in letters:
-        dataset = pick_dataset(letter, dataset_type)
+    dataset = pick_dataset(dataset_name)
 
-        output = "output/K{} House/{}".format(letter, dataset_type)
-        patterns = pickle.load(open(output + '/patterns.pickle', 'rb'))
+    output = "../output/{}".format(dataset_name)
+    patterns = pickle.load(open(output + '/patterns.pickle', 'rb'))
 
-        pattern_graph_list = []
-        for _, pattern in patterns.iterrows():
+    pattern_graph_list = []
+    for _, pattern in patterns.iterrows():
 
-            labels = list(pattern['Episode'])
-            period = pattern['Period']
-            validity_start_date = pattern['Start Time'].to_pydatetime()
-            validity_end_date = pattern['End Time'].to_pydatetime()
-            validity_duration = validity_end_date - validity_start_date
-            nb_periods = validity_duration.total_seconds() / period.total_seconds()
-            description = pattern['Description']
-            output_folder = output + "/Patterns_Graph/" + "_".join(labels) + "/"
+        labels = list(pattern['Episode'])
+        period = pattern['Period']
+        validity_start_date = pattern['Start Time'].to_pydatetime()
+        validity_end_date = pattern['End Time'].to_pydatetime()
+        validity_duration = validity_end_date - validity_start_date
+        nb_periods = validity_duration.total_seconds() / period.total_seconds()
+        description = pattern['Description']
+        output_folder = output + "/Patterns_Graph/" + "_".join(labels) + "/"
 
-            if not os.path.exists(os.path.dirname(output_folder)):
-                try:
-                    os.makedirs(os.path.dirname(output_folder))
-                except OSError as exc:  # Guard against race condition
-                    if exc.errno != errno.EEXIST:
-                        raise
+        if not os.path.exists(os.path.dirname(output_folder)):
+            try:
+                os.makedirs(os.path.dirname(output_folder))
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
 
-            mini_list = pattern2graph(data=dataset, labels=labels, time_description=description, period=period,
-                                      start_date=validity_start_date, end_date=validity_end_date,
-                                      output_dir=output_folder, draw_graphs=False)
+        mini_list = pattern2graph(data=dataset, labels=labels, time_description=description, period=period,
+                                  start_date=validity_start_date, end_date=validity_end_date,
+                                  output_dir=output_folder, draw_graphs=True)
 
-            pattern_graph_list += mini_list
+        pattern_graph_list += mini_list
 
 
 def pattern2graph(data, labels, time_description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
@@ -68,18 +64,8 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
     '''
 
     pattern_graph_list = []
-    nodes = ['START PERIOD'] + labels + ['END PERIOD']
-    n = len(nodes)
+
     for mu, sigma in time_description.items():
-        # n x n edges for probabilities transition
-        Mp = np.zeros((n, n))
-
-        # n-1 x n-1 edges for waiting time transition laws (no wait time to END NODE)
-        Mwait = defaultdict(lambda: defaultdict(list))
-        for i in range(n - 1):
-            for j in range(n - 1):
-                Mwait[i][j] = []
-
         # Find pattern occurrences
         occurrences = find_occurrences(data, tuple(labels), Tep)
         occurrences = occurrences.loc[(occurrences.date >= start_date) & (occurrences.date <= end_date)].copy()
@@ -88,6 +74,7 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
         occurrences.loc[:, "relative_date"] = occurrences.date.apply(
             lambda x: modulo_datetime(x.to_pydatetime(), period))
 
+        # Drop unexpected occurrences
         occurrences["expected"] = occurrences["relative_date"].apply(
             lambda x: is_occurence_expected(x, {mu: sigma}, period, tolerance_ratio))
         occurrences.dropna(inplace=True, axis=0)
@@ -97,92 +84,20 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
 
         events = find_events_occurrences(data, labels, occurrences, period, Tep)
 
-        nb_periods = events.period_id.max() + 1
+        # Find the numbers of columns needed for the graphs
+        # Find the number max of events in a occurrence
 
-        nb_occurrences_per_label = np.zeros(n)
-        # START Node
-        nb_occurrences_per_label[0] = nb_periods
-        nb_occurrences_per_label[n - 1] = nb_periods
-        for i in range(n - 2):
-            label = nodes[i + 1]
-            # count the label occurrences
-            nb_occurrences_per_label[i + 1] = len(events.loc[events.label == label])
+        period_ids = events['period_id'].unique()
 
-        start_date = occurrences.date.min().to_pydatetime()
-        first_period_start_date = start_date - dt.timedelta(
-            seconds=modulo_datetime(start_date, period))
-        # Build the transition probability matrix
-        # We always have the EDGE END --> START
-        # TODO : EDGE END ----> START is putted as 1 (for check purporses)
-        Mp[n - 1, 0] = 1
+        events_occurrences_lists = []
+
+        for period_id in period_ids:
+            events_occurrences_lists.append(events.loc[events.period_id == period_id, 'label'].tolist())
+
+        nodes, prob_matrix = build_probability_acyclic_graph(labels, events_occurrences_lists)
 
 
-        # Missing occurrences, #START --> END directly (waiting time = Period)
-        # TODO : Totally missing occurrences
-        Mp[0, n - 1] += (nb_periods - len(events.period_id.unique())) / nb_periods
-        # Mwait[0][n - 1].append(period.total_seconds())
-        for period_id in events.period_id.unique():
-            period_start_date = first_period_start_date + int(period_id) * period
-            period_end_date = period_start_date + period
-            date_condition = (events.date >= period_start_date) \
-                             & (events.date < period_end_date)
 
-            period_events = events.loc[date_condition].copy()
-
-            for label in labels:
-                # Entering edge
-                label_events = period_events.loc[period_events.label == label]
-                nb_label = len(label_events)
-
-                for _, row in label_events.iterrows():
-                    # SORTING EDGES
-                    if len(period_events.loc[period_events.date > row['date']]) > 0:
-                        sorting_id = period_events.loc[period_events.date > row['date']].date.argmin()
-                        sorting_label = period_events.loc[[sorting_id]].label.values[0]
-                        sorting_label_date = period_events.loc[[sorting_id]].date.min().to_pydatetime()
-                        Mp[nodes.index(label), nodes.index(sorting_label)] += 1 / nb_occurrences_per_label[
-                            nodes.index(label)]
-                        Mwait[nodes.index(label)][nodes.index(sorting_label)].append(
-                            modulo_datetime(sorting_label_date, period) - modulo_datetime(row['date'].to_pydatetime(),
-                                                                                          period))
-                    else:
-                        # last label of the occurrence, Label --> END PERIOD
-                        Mp[nodes.index(label), n - 1] += 1 / nb_occurrences_per_label[nodes.index(label)]
-
-
-            # First label
-            first_id = period_events.date.argmin()
-            first_label = period_events.loc[[first_id]].label.values[0]
-            first_label_date = period_events.loc[[first_id]].date.min().to_pydatetime()
-            Mp[0, nodes.index(first_label)] += 1 / nb_periods
-            Mwait[0][nodes.index(first_label)].append(modulo_datetime(first_label_date, period))
-
-        # Checking of all the rows and columns
-        tol = 0.0001
-        for i in range(n):
-            # Row
-            s_row = Mp[i, :].sum()
-            if abs(s_row - 1) > tol:
-                raise ValueError('The sum of the row {} is not 1 : {}'.format(i, s_row))
-
-
-        # Find the best fitting probability distribution law for all the waiting times
-        for i in range(n - 1):
-            for j in range(n - 1):
-                array = np.asarray(Mwait[i][j])
-                if len(array) > 3:
-                    Mwait[i][j] = best_fit_distribution(array)
-                elif len(array) > 0:
-                    # Normal distribution by default
-                    Mwait[i][j] = ('norm', (np.mean(array), np.std(array)))
-                else:
-                    Mwait[i][j] = None
-
-        pattern_graph = Graph_Pattern(nodes, period, mu, sigma, Mp, Mwait)
-        pattern_graph_list.append(pattern_graph)
-
-        if draw_graphs:
-            pattern_graph.display(output_folder=output_dir, debug=draw_graphs)
 
     return pattern_graph_list
 
@@ -275,6 +190,62 @@ def best_fit_distribution(data, bins=200, ax=None):
 
     return (best_distribution, best_params)
 
+
+def build_probability_acyclic_graph(labels, occurrence_list):
+    '''
+    Build the acyclic graph
+    :param labels: Pattern labels
+    :param occurrence_list: List of list of ordered events per occurrence
+    :return: List of the graph nodes and the probability transition matrix
+    '''
+
+    list_length = [len(l) for l in occurrence_list]
+    nb_max_events = max(list_length)
+
+    nodes = ['START PERIOD']
+    for i in range(nb_max_events):
+        for label in labels:
+            nodes.append(label + "_" + str(i))
+
+    n = len(nodes)  # Size of the transition matrix
+
+    prob_matrix = np.zeros((n, n))
+
+    # Deal with the beginning of the graph
+    single_list = []
+    for list in occurrence_list:
+        single_list.append(list[0])
+
+    for label in set(single_list):
+        prob_matrix[0][nodes.index(label + "_0")] = single_list.count(label) / len(single_list)
+
+    for i in range(n - 2):
+        tuple_list = []
+        single_list = []
+        for list in occurrence_list:
+            if len(list) > i + 1:
+                tuple_list.append(list[i:i + 2])
+                single_list.append(list[i])
+
+        for label_1 in set(single_list):
+            # Count the number of tuple_list starting by 'label_1'
+            nb_max = sum([1 if list[0] == label_1 else 0 for list in tuple_list])
+            for label_2 in labels:
+                # Count the number of tuple_list starting by 'label_1' and finishing by 'label_2'
+                nb = sum([1 if list == [label_1, label_2] else 0 for list in tuple_list])
+                prob_matrix[nodes.index(label_1 + '_' + str(i))][nodes.index(label_2 + '_' + str(i + 1))] = nb / nb_max
+
+    # Checking the validity of the transition (sum output = 1 OR 0)
+
+    tol = 0.001  # Error tolerance
+    for i in range(n):
+        # Row
+        s_row = prob_matrix[i, :].sum()
+        if abs(s_row - 1) > tol and s_row != 0:
+            raise ValueError(
+                'The sum of the probabilities transition from {} is neither 1 nor 0: {}'.format(nodes[i], s_row))
+
+    return nodes, prob_matrix
 
 if __name__ == '__main__':
     main()
