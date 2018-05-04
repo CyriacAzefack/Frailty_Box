@@ -7,7 +7,7 @@ from random import random
 from subprocess import check_call
 
 import matplotlib.image as mpimg
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -20,7 +20,6 @@ from Pattern_Discovery.Candidate_Study import modulo_datetime
 class Graph_Pattern:
     ID = 0
     START_NODE = "START PERIOD"
-    END_NODE = "END PERIOD"
 
     def __init__(self, nodes, period, mu, sigma, prob_matrix, wait_matrix):
         '''
@@ -41,7 +40,7 @@ class Graph_Pattern:
         self.ID = Graph_Pattern.ID
         Graph_Pattern.ID += 1
 
-    def display(self, output_folder, debug=False):
+    def display(self, output_folder, debug=True):
         td = dt.timedelta(seconds=self.mu)
         filename = 'directed_graph_{}_{}_{}'.format(td.days, td.seconds // 3600, (td.seconds // 60) % 60)
 
@@ -72,7 +71,7 @@ class Graph_Pattern:
         G = nx.MultiDiGraph()
 
         # nodes correspond to states
-        G.add_nodes_from(self.nodes)
+        # G.add_nodes_from(self.nodes)
         if debug:
             print('Nodes:\n{}\n'.format(G.nodes()))
 
@@ -81,22 +80,24 @@ class Graph_Pattern:
         # edges represent transition probabilities
         for k, v in edges_wts.items():
             tmp_origin, tmp_destination = k[0], k[1]
-            if tmp_origin == "START PERIOD" or tmp_origin == "END PERIOD":
+
+            # Add Origin Node
+            if tmp_origin == Graph_Pattern.START_NODE:
                 G.add_node(tmp_origin, color='black', style='filled', fillcolor='red')
             else:
                 G.add_node(tmp_origin, color='green')
 
-            if tmp_destination == "START PERIOD" or tmp_destination == "END PERIOD":
-                G.add_node(tmp_destination, color='black', style='filled', fillcolor='red')
-            else:
-                G.add_node(tmp_destination, color='green')
+            # Add Destination Node
+            G.add_node(tmp_destination, color='green')
 
-            if tmp_origin != "END_PERIOD" or tmp_destination != "END_PERIOD":
-                G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
-                           color='blue' if v > 0.5 else 'black',
-                           headlabel=self.wait_matrix[self.nodes.index(tmp_origin)][self.nodes.index(tmp_destination)])
-            else:
-                G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
+            # if tmp_origin != "END_PERIOD" or tmp_destination != "END_PERIOD":
+            #     G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
+            #                color='blue' if v > 0.5 else 'black',
+            #                headlabel=self.wait_matrix[self.nodes.index(tmp_origin)][self.nodes.index(tmp_destination)])
+            # else:
+
+            # Add Edge
+            G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
                            color='blue' if v > 0.5 else 'black')
         if debug:
             print('Edges:')
@@ -120,7 +121,13 @@ class Graph_Pattern:
             plt.imshow(img)
             plt.show()
 
+
     def get_markov_edges(self, Q):
+        '''
+        Return the edges of the graph
+        :param Q:
+        :return:
+        '''
         edges = {}
         for col in Q.columns:
             for idx in Q.index:
