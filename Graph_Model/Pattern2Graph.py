@@ -133,11 +133,16 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
                     start_node = nodes[i]
                     end_node = nodes[j]
                     time_df = events.loc[(events.label == start_node) & (events.next_label == end_node)]
+                    if len(time_df) == 0 and end_node.endswith('_0'):
+                        time_df = events.loc[events.next_label == end_node]
                     durations = time_df.duration.values
                     if len(durations) < 3:
                         time_matrix[i][j] = ('norm', [np.mean(durations), np.std(durations)])
                     else:
                         time_matrix[i][j] = best_fit_distribution(durations)
+
+        # Fill the time_matrix for the first edges
+
 
         pattern_graph = Graph_Pattern.Graph_Pattern(nodes, period, mu, sigma, prob_matrix, time_matrix)
         pattern_graph_list.append(pattern_graph)
