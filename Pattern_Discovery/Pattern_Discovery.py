@@ -39,8 +39,8 @@ def main(argv):
         'aruba': 10
     }
 
-    dataset_name = ''
     nb_tries = 1
+    dataset_name = ''
     output_dir = None
     nb_days = -1
     support_min = None
@@ -48,20 +48,18 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hn:t:o:", ["name=", "tries=", "output_dir=", "days=", "support_min="])
     except getopt.GetoptError:
-        print('Pattern_Discovery.py -n <dataset name> -t <number of tries> -o <output dir> [--days <number of days>]'
+        print('Pattern_Discovery.py -n <dataset name> -o <output dir> [--days <number of days>]'
               ' [--support_min <minimum support>]')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
             print(
-                'Pattern_Discovery.py -n <dataset name> -t <number of tries> -o <output dir> [--days <number of days>]'
-                ' [--support_min <minimum support>]')
+                'Pattern_Discovery.py -n <dataset name> -o <output dir> [--days <number of days>] '
+                '[--support_min <minimum support>]')
             sys.exit()
         elif opt in ("-n", "--name"):
             dataset_name = arg
-        elif opt in ("-t", "--tries"):
-            nb_tries = int(arg)
         elif opt in ("-o", "--output_dir"):
             output_dir = arg
         elif opt == '--days':
@@ -74,7 +72,6 @@ def main(argv):
         support_min = support_dict[dataset_name]
 
     print("Dataset Name : {}".format(dataset_name.upper()))
-    print("Number of tries : {}".format(nb_tries))
     print("Output Directory : {}".format(output_dir))
     print("Number of days selected : {}".format(nb_days))
     print("Support Minimum : {}".format(support_min))
@@ -98,7 +95,7 @@ def main(argv):
         print("##############################")
 
         patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=30,
-                                                             support_min=support_dict[dataset_name],
+                                                             support_min=support_min,
                                                              tolerance_ratio=2)
         ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
 
@@ -117,8 +114,8 @@ def main(argv):
     print("\n")
     print("###############################")
     print("Time to process all the tries : {}".format(elapsed_time))
-    print("{}% of the {} dataset data explained by pattern_discovery patterns".format(best_ratio_data_treated,
-                                                                                      dataset_name))
+    print(
+        "{}% of the {} dataset data explained by the patterns discovered".format(best_ratio_data_treated, dataset_name))
     print("##############################")
     print("\n")
 
@@ -145,11 +142,11 @@ def main(argv):
     best_data_left.to_csv(output_dir + "/data_left.csv", sep=";", index=False)
 
     # Write all the results in differents excel sheets
-    writer = pd.ExcelWriter(output_dir + "/all_results.xlsx")
-    dataset.to_excel(writer, sheet_name="Input Data", index=False)
-    best_patterns_string.to_excel(writer, sheet_name="Patterns", index=False)
-    best_data_left.to_excel(writer, sheet_name="Non treated Data", index=False)
-    writer.save()
+    # writer = pd.ExcelWriter(output_dir + "/all_results.xlsx")
+    # dataset.to_excel(writer, sheet_name="Input Data", index=False)
+    # best_patterns_string.to_excel(writer, sheet_name="Patterns", index=False)
+    # best_data_left.to_excel(writer, sheet_name="Non treated Data", index=False)
+    # writer.save()
 
 
 def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
@@ -178,9 +175,9 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
 
         if verbose:
             print("\n")
-            print("#########################")
-            print("#    COMPRESSION N°%d   #" % comp_iter)
-            print("#########################")
+            print("###############################")
+            print("#    COMPRESSION N°%d START   #" % comp_iter)
+            print("##############################")
             print("\n")
 
         compressed = False
@@ -383,6 +380,7 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
 
 def pick_dataset(name, nb_days=-1):
     my_path = os.path.abspath(os.path.dirname(__file__))
+
     dataset = None
     if name == 'toy':
         path = os.path.join(my_path, "../input/toy_dataset.csv")
