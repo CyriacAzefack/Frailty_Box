@@ -44,9 +44,27 @@ def main():
                 if exc.errno != errno.EEXIST:
                     raise
 
+        start_time = t.process_time()
         mini_list = pattern2graph(data=dataset, labels=labels, time_description=description, period=period,
                                   start_date=validity_start_date, end_date=validity_end_date,
-                                  output_directory=output_folder, display_graph=True)
+                                  output_directory=output_folder, display_graph=False)
+        elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
+
+        print("\n")
+        print("###############################")
+        print("Patterns turned into graphs. Elapsed time : {}".format(elapsed_time))
+        print("##############################")
+        print("\n")
+
+        start_date = dataset.date.max().to_pydatetime()
+        end_date = start_date + dt.timedelta(days=5)
+        # Compute Time Evolution
+        for pattern_graph in mini_list:
+            pattern_graph.compute_time_evolution(dataset)
+            filename = output_folder + "/Graph_Pattern_Object.pkl".format(pattern_graph.ID)
+            with open(filename, 'wb') as f:
+                pickle.dump(pattern_graph, f, protocol=pickle.HIGHEST_PROTOCOL)
+            sim = pattern_graph.simulate(start_date, end_date)
 
         pattern_graph_list += mini_list
 
@@ -57,9 +75,11 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
     Turn a pattern to a graph
     :param data: Input dataset
     :param labels: list of labels included in the pattern
-    :param time_description: description of the pattern {mu1 : sigma1, mu2 : sigma2, ...}
-    :param start_date: 
-    :param tolerance_ratio: tolerance ratio to get the expectect occurrences
+    :param time_description: time description of the pattern {mu1 : sigma1, mu2 : sigma2, ...}
+    :param tolerance_ratio: tolerance ratio to get the expected occurrences
+    :param period : Periodicity of the time description
+    :param start_date :
+    :param end_date :
     :param Tep : [in Minutes] Maximal time interval between events in an episode occurrence. Should correspond to the maximal duration of the ADLs.
     :param output_directory Output Directory to save graphs images
     :return: A transition probability matrix and a transition waiting time matrix for each component of the description
@@ -165,7 +185,10 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
     '''
 
     Tep = dt.timedelta(minutes=Tep)
+
+    # Result dataframe
     events = pd.DataFrame(columns=["date", "label", "period_id"])
+
     start_time = occurrences.date.min().to_pydatetime()
     start_date_first_period = start_time - dt.timedelta(
         seconds=modulo_datetime(start_time, period))
@@ -182,7 +205,7 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
     while start_date_current_period <= start_date_last_period:
         end_date_current_period = start_date_current_period + period
 
-        date_filter = (occurrences.date > start_date_current_period) \
+        date_filter = (occurrences.date >= start_date_current_period) \
                       & (occurrences.date < end_date_current_period)
 
         occurrence_happened = len(occurrences.loc[date_filter]) > 0

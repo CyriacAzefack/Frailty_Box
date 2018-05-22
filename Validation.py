@@ -9,7 +9,7 @@ import pandas as pd
 import seaborn as sns
 from scipy import stats
 
-from Pattern_Discovery.Pattern_Discovery import pick_dataset
+from xED_Algorithm.xED_Algorithm import pick_dataset
 
 sns.set_style("darkgrid")
 # plt.xkcd()
@@ -26,12 +26,20 @@ def main():
 
     list_files = glob.glob(dirname)
 
-    confidence_error = 0.90
+    confidence_error = 0.80
 
-    activity = ["eating_begin", "relax_end"]
+    activity = ["sleeping_begin", "sleeping_end"]
 
     # Original data
-    original_dataset = pick_dataset(dataset_name, nb_days=90)
+    original_dataset = pick_dataset(dataset_name)
+
+    original_data_evaluation = compute_activity_time(data=original_dataset, start_label=activity[0],
+                                                     end_label=activity[1])
+
+    plt.plot_date(original_data_evaluation.index, original_data_evaluation.duration / 3600, label="Original Data",
+                  linestyle="-")
+    plt.show()
+
 
     if len(list_files) == 0:
         raise FileNotFoundError("'{}' does not contains *.csv files".format(dirname))
@@ -50,7 +58,7 @@ def main():
 
     original_data_evaluation = compute_activity_time(data=original_dataset, start_label=activity[0],
                                                      end_label=activity[1],
-                                                     time_step_in_days=1)
+                                                     end_date=evaluation_result.index[-1])
 
     # Build a large Dataframe with a date range index
     start_date = original_data_evaluation.index[0]
