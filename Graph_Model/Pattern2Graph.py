@@ -47,7 +47,7 @@ def main():
         start_time = t.process_time()
         mini_list = pattern2graph(data=dataset, labels=labels, time_description=description, period=period,
                                   start_date=validity_start_date, end_date=validity_end_date,
-                                  output_directory=output_folder, display_graph=False)
+                                  output_directory=output_folder, display_graph=True)
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
 
         print("\n")
@@ -59,12 +59,19 @@ def main():
         start_date = dataset.date.max().to_pydatetime()
         end_date = start_date + dt.timedelta(days=5)
         # Compute Time Evolution
+        start_time = t.process_time()
         for pattern_graph in mini_list:
             pattern_graph.compute_time_evolution(dataset)
             filename = output_folder + "/Graph_Pattern_Object.pkl".format(pattern_graph.ID)
             with open(filename, 'wb') as f:
                 pickle.dump(pattern_graph, f, protocol=pickle.HIGHEST_PROTOCOL)
             sim = pattern_graph.simulate(start_date, end_date)
+        elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
+        print("\n")
+        print("###############################")
+        print("Patterns Simulated. Elapsed time : {}".format(elapsed_time))
+        print("##############################")
+        print("\n")
 
         pattern_graph_list += mini_list
 
@@ -133,38 +140,37 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
         for period_id in period_ids:
             events_occurrences_lists.append(events.loc[events.period_id == period_id, 'label'].tolist())
 
-        nodes, prob_matrix = build_probability_acyclic_graph(graph_nodes_labels, events_occurrences_lists)
+        nodes, prob_matrix = build_probability_acyclic_graph(labels, graph_nodes_labels, events_occurrences_lists)
 
         # TODO : Add the correlation between the time series
         # events['ts'] = events['date'].apply(lambda x: x.timestamp())
-        events['next_label'] = events['label'].shift(-1)
+        events['next_label'] = events['label'].shift(-1).fillna('_nan').apply(Graph_Pattern.Graph.node2label)
         events['next_date'] = events['date'].shift(-1)
         events['duration'] = events['next_date'] - events['date']
         events['duration'] = events['duration'].apply(lambda x: x.total_seconds())
 
-        n = len(nodes)
+        n = len(nodes)  # Nb rows of the prob matrix
+        l = len(labels)  # Nb columns of the prob matrix
 
-        # n-1 x n-1 edges for waiting time transition laws (no wait time to END NODE)
-        time_matrix = [[[] for j in range(n)] for i in range(n)]  # Empty lists, [[mean_time, std_time], ...]
+        # n x l edges for waiting time transition laws
+        time_matrix = [[[] for j in range(l)] for i in range(n)]  # Empty lists, [[mean_time, std_time], ...]
 
         for i in range(n):
-            for j in range(n):
+            for j in range(l):
                 if prob_matrix[i][j] != 0:  # Useless to compute time for never happening transition
                     start_node = nodes[i]
-                    end_node = nodes[j]
+                    end_node = labels[j]
                     time_df = events.loc[(events.label == start_node) & (events.next_label == end_node)]
-                    if len(time_df) == 0 and end_node.endswith('_0'):
+                    if len(time_df) == 0 and start_node == Graph_Pattern.Graph.START_NODE:  # START_NODE transitions
                         time_df = events.loc[events.next_label == end_node]
                     durations = time_df.duration.values
-                    if len(durations) < 3:
-                        time_matrix[i][j] = ('norm', [np.mean(durations), np.std(durations)])
-                    else:
-                        time_matrix[i][j] = best_fit_distribution(durations)
+
+                    # TODO : Manage with other distribution than 'norm'
+                    time_matrix[i][j] = ('norm', [np.mean(durations), np.std(durations)])
 
         # Fill the time_matrix for the first edges
 
-
-        pattern_graph = Graph_Pattern.Graph_Pattern(nodes, period, mu, sigma, prob_matrix, time_matrix)
+        pattern_graph = Graph_Pattern.Graph(nodes, labels, period, mu, sigma, prob_matrix, time_matrix)
         pattern_graph_list.append(pattern_graph)
 
         if display_graph:
@@ -262,50 +268,56 @@ def best_fit_distribution(data, bins=200, ax=None):
             best_params = param
             best_sse = sse
 
-    return (best_distribution, best_params)
+    return best_distribution, best_params
 
 
-def build_probability_acyclic_graph(graph_nodes_labels, occurrence_list):
+def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list):
     '''
     Build the acyclic graph
+    :param labels: Labels of the pattern
     :param graph_nodes_labels: Pattern labels
     :param occurrence_list: List of list of ordered events per occurrence
-    :return: List of the graph nodes and the probability transition matrix
+    :return: Probability transition matrix size = nb(nodes) x nb(labels)
     '''
 
     list_length = [len(l) for l in occurrence_list]
     nb_max_events = max(list_length)
 
-    nodes = [Graph_Pattern.Graph_Pattern.START_NODE]
+    nodes = [Graph_Pattern.Graph.START_NODE]
     nodes += graph_nodes_labels
 
     n = len(nodes)  # Size of the transition matrix
+    l = len(labels)
 
-    prob_matrix = np.zeros((n, n))
+    prob_matrix = np.zeros((n, l))
 
     # Deal with the beginning of the graph
     single_list = []
     for list in occurrence_list:
         single_list.append(list[0])
 
-    for label in set(single_list):
-        prob_matrix[0][nodes.index(label)] = single_list.count(label) / len(single_list)
+    for node in set(single_list):
+        label = Graph_Pattern.Graph.node2label(node)
+        prob_matrix[0][labels.index(label)] = single_list.count(node) / len(single_list)
 
     for i in range(n - 2):
         tuple_list = []
         single_list = []
         for list in occurrence_list:
             if len(list) > i + 1:
-                tuple_list.append(list[i:i + 2])
+                tuple_list.append(list[i: i + 2])
                 single_list.append(list[i])
 
-        for label_1 in set(single_list):
+        for node_1 in set(single_list):
             # Count the number of tuple_list starting by 'label_1'
-            nb_max = sum([1 if list[0] == label_1 else 0 for list in tuple_list])
-            for label_2 in graph_nodes_labels:
+            nb_max = sum([1 if list[0] == node_1 else 0 for list in tuple_list])
+            for node_2 in graph_nodes_labels:
                 # Count the number of tuple_list starting by 'label_1' and finishing by 'label_2'
-                nb = sum([1 if list == [label_1, label_2] else 0 for list in tuple_list])
-                prob_matrix[nodes.index(label_1)][nodes.index(label_2)] = nb / nb_max
+                nb = sum([1 if list == [node_1, node_2] else 0 for list in tuple_list])
+                label_2 = Graph_Pattern.Graph.node2label(node_2)
+                p = nb / nb_max
+                if p != 0:
+                    prob_matrix[nodes.index(node_1)][labels.index(label_2)] = p
 
     # Checking the validity of the transition (sum output = 1 OR 0)
 

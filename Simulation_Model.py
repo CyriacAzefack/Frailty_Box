@@ -13,7 +13,7 @@ import time as t
 
 import pandas as pd
 
-import xED_Algorithm.xED_Algorithm as xED
+import Pattern_Discovery.Pattern_Discovery as pattern_discovery
 from Graph_Model import Pattern2Graph as p2g
 
 
@@ -73,9 +73,9 @@ def main(argv):
 
 
     # READ THE INPUT DATASET
-    dataset = xED.pick_dataset(name=dataset_name, nb_days=nb_days)
+    dataset = pattern_discovery.pick_dataset(name=dataset_name, nb_days=nb_days)
 
-    dirname = "./output/{}/Simulation Replications".format(dataset_name)
+    dirname = "output/{}".format(dataset_name)
 
     print("\n")
     print("###############################")
@@ -86,8 +86,7 @@ def main(argv):
     # BUILD THE SIMULATION MODEL
     start_time = t.process_time()
 
-    sim_model = build_simulation_model(data=dataset, support_min=support_min, output_folder=dirname,
-                                       display_graph=graph_plot)
+    sim_model = build_simulation_model(data=dataset, output_directory=dirname)
 
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime()
@@ -101,7 +100,7 @@ def main(argv):
     print("\n")
 
     # START THE SIMULATION
-
+    dirname += "/Simulation Replications"
     for sim_id in range(nb_sim):
         start_time = t.process_time()
 
@@ -119,9 +118,7 @@ def main(argv):
         print("##############################")
 
 
-def build_simulation_model(data, Tep=30, support_min=2, accuracy_min=0.5,
-                           std_max=0.1, tolerance_ratio=2, delta_Tmax_ratio=3, output_folder='./',
-                           verbose=True, display_graph=False):
+def build_simulation_model(data, output_directory='.'):
     '''
     Build the somulation model from scratch.
     :param data: Input sequence
@@ -140,19 +137,26 @@ def build_simulation_model(data, Tep=30, support_min=2, accuracy_min=0.5,
     # TODO : Find a way to compute the ideal support
 
     # Unpack the patterns from the dataset
-    patterns, patterns_string, data_left = xED.xED_algorithm(data=data, Tep=Tep, support_min=support_min,
-                                                             accuracy_min=accuracy_min, std_max=std_max,
-                                                             tolerance_ratio=tolerance_ratio,
-                                                             delta_Tmax_ratio=delta_Tmax_ratio, verbose=verbose)
+    # patterns, patterns_string, data_left = pattern_discovery.xED_algorithm(data=data, Tep=Tep, support_min=support_min,
+    #                                                           accuracy_min=accuracy_min, std_max=std_max,
+    #                                                           tolerance_ratio=tolerance_ratio,
+    #                                                           delta_Tmax_ratio=delta_Tmax_ratio, verbose=verbose)
+    #
+    # ratio_data_treated = round((1 - len(data_left) / len(data)) * 100, 2)
+    #
+    # print("{}% of the dataset data explained by pattern_discovery patterns".format(ratio_data_treated))
 
-    ratio_data_treated = round((1 - len(data_left) / len(data)) * 100, 2)
-
-    print("{}% of the dataset data explained by xED patterns".format(ratio_data_treated))
+    patterns = pd.read_pickle(output_directory + '/patterns.pickle')
 
     # Build All the graphs associated with the patterns
     simulation_model = []
-    output = output_folder
-    for _, pattern in patterns.iterrows():
+    output = output_directory
+    print("\n")
+    print("###############################")
+    print("Start building Graphs from patterns")
+    print("##############################")
+    print("\n")
+    for index, pattern in patterns.iterrows():
         labels = list(pattern['Episode'])
         period = pattern['Period']
         validity_start_date = pattern['Start Time'].to_pydatetime()
@@ -172,9 +176,23 @@ def build_simulation_model(data, Tep=30, support_min=2, accuracy_min=0.5,
         patterns_graph_list = p2g.pattern2graph(data=data, labels=labels, time_description=time_description,
                                                 period=period,
                                                 start_date=validity_start_date, end_date=validity_end_date,
-                                                output_directory=output_folder, debug=display_graph)
-
+                                                output_directory=output_folder, display_graph=False)
         simulation_model += patterns_graph_list
+
+        sys.stdout.write("\r%.2f %% of patterns converted to graphs!!" % (100 * (index + 1) / len(patterns)))
+        sys.stdout.flush()
+    sys.stdout.write("\n")
+
+    print("\n")
+    print("###############################")
+    print("All Graphs Built  -  Starting Time evolution")
+    print("##############################")
+    print("\n")
+
+    for pattern_graph in simulation_model:
+        print("### Computing Time Evolution for Graph N° {}/{}".format(simulation_model.index(pattern_graph) + 1,
+                                                                       len(simulation_model)))
+        pattern_graph.compute_time_evolution(data, len(simulation_model))
 
     return simulation_model
 

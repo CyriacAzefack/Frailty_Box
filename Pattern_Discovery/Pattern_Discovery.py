@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
-import Candidate_Study
-import FP_growth
+from Pattern_Discovery import Candidate_Study
+from Pattern_Discovery import FP_growth
 
 
 # matplotlib.style.use("seaborn")

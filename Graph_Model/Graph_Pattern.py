@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 import datetime as dt
-import os, sys
+import os
+import sys
 from pprint import pprint
-from random import uniform, random
+from random import random
 from subprocess import check_call
 
-import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
 import Pattern2Graph
+import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import scipy.stats as st
+import seaborn as sns
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 from Pattern_Discovery.Candidate_Study import modulo_datetime
@@ -37,6 +37,8 @@ class Graph:
         :param wait_matrix:
         '''
 
+        Graph.ID += 1
+        
         self.nodes = nodes  # len(nodes) = n
         self.labels = labels # len(labels) = l
         self.period = period
@@ -50,7 +52,7 @@ class Graph:
         self.time_evo_prob_matrix = None
         self.time_evo_time_matrix = None
 
-        Graph.ID += 1
+
 
     def __repr__(self):
         '''
@@ -237,7 +239,7 @@ class Graph:
 
         return result
 
-    def compute_time_evolution(self, data):
+    def compute_time_evolution(self, data, nb_patterns):
         '''
         Compute the pattern time evolution by sliding a time window through the original data
         :param data:
@@ -257,6 +259,9 @@ class Graph:
         # We take the time window into account for the end_date
         end_date = end_date - self.sliding_time_window
 
+        nb_periods = int((end_date - start_date).total_seconds() / self.period.total_seconds()) + 1
+
+        period_index = 0
         current_start_date = start_date
 
         # Build the list of Pattern labels from the nodes
@@ -265,7 +270,7 @@ class Graph:
 
         for i in range(len(labels)) :
             labels[i] = labels[i][0: labels[i].rindex('_')]  # We remove everything after the last '_'
-        labels = set(labels) # Remove duplicates
+        labels = list(set(labels))  # Remove duplicates
 
         while current_start_date < end_date:
             current_end_date = current_start_date + self.sliding_time_window
@@ -285,23 +290,28 @@ class Graph:
 
             # Fill time_evo_prob_matrix and time_evo_time_matrix
             for mini_node_i in mini_nodes:
-                for mini_node_j in mini_nodes:
+                for label in self.labels:
                     mini_i = mini_nodes.index(mini_node_i)
-                    mini_j = mini_nodes.index(mini_node_j)
                     big_i = self.nodes.index(mini_node_i)
-                    big_j = self.nodes.index(mini_node_j)
+                    j = self.labels.index(label)
 
-                    prob_df = time_evo_prob_matrix[big_i][big_j]
-                    prob_df.loc[current_start_date] = [mini_prob_matrix[mini_i, mini_j]]
+                    prob_df = time_evo_prob_matrix[big_i][j]
+                    prob_df.loc[current_start_date] = [mini_prob_matrix[mini_i, j]]
 
-                    if mini_time_matrix[mini_i][mini_j]:
-                        time_df = time_evo_time_matrix[big_i][big_j]
+                    if mini_time_matrix[mini_i][j]:
+                        time_df = time_evo_time_matrix[big_i][j]
 
                         # TODO : Manage with other distribution than 'norm'
-                        time_df.loc[current_start_date] = [mini_time_matrix[mini_i][mini_j][1][0],
-                                                           mini_time_matrix[mini_i][mini_j][1][1]]
+                        time_df.loc[current_start_date] = [mini_time_matrix[mini_i][j][1][0],
+                                                           mini_time_matrix[mini_i][j][1][1]]
 
             current_start_date += self.period
+            evolution_percentage = round(100 * (period_index + 1) / nb_periods, 2)
+            sys.stdout.write("\r{} %% of time evolution computed for the GRAPH N°{}/{}!!".format(evolution_percentage,
+                                                                                                 self.ID, nb_patterns))
+            sys.stdout.flush()
+            period_index += 1
+        sys.stdout.write("\n")
 
         self.time_evo_prob_matrix = time_evo_prob_matrix
         self.time_evo_time_matrix = time_evo_time_matrix

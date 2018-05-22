@@ -16,9 +16,10 @@ from sklearn.mixture import GaussianMixture
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 
+import Pattern_Discovery
 
 def main():
-    data = pick_dataset('toy')
+    data = Pattern_Discovery.pick_dataset('toy')
     episodes = []
     # episodes.append(("go to bed END", "use toilet START", "use toilet START"))
     # episodes.append(["take shower start", "take shower end", "leave house start"])
