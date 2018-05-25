@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
-from Pattern_Discovery import Candidate_Study
-from Pattern_Discovery import FP_growth
+import Candidate_Study
+import FP_growth
 
 
 # matplotlib.style.use("seaborn")
@@ -39,16 +39,18 @@ def main(argv):
         'aruba': 10
     }
 
-    nb_tries = 1
+    replication_id = None
     dataset_name = ''
     output_dir = None
     nb_days = -1
     support_min = None
+    weekly_habits = False
 
     try:
-        opts, args = getopt.getopt(argv, "hn:t:o:", ["name=", "tries=", "output_dir=", "days=", "support_min="])
+        opts, args = getopt.getopt(argv, "hn:r:o:",
+                                   ["name=", "replication=", "output_dir=", "days=", "support_min=", "weekly_habits"])
     except getopt.GetoptError:
-        print('Pattern_Discovery.py -n <dataset name> -o <output dir> [--days <number of days>]'
+        print('Pattern_Discovery.py -n <dataset name> -n <replication index> -o <output dir> [--days <number of days>]'
               ' [--support_min <minimum support>]')
         sys.exit(2)
 
@@ -60,62 +62,51 @@ def main(argv):
             sys.exit()
         elif opt in ("-n", "--name"):
             dataset_name = arg
+        elif opt in ("-r", "--replication"):
+            replication_id = int(arg)
         elif opt in ("-o", "--output_dir"):
             output_dir = arg
         elif opt == '--days':
             nb_days = int(arg)
         elif opt == '--support_min':
             support_min = int(arg)
+        elif opt == '--weekly_habits':
+            weekly_habits = True
 
     # TODO : Find a way to compute the ideal support
     if not support_min:
         support_min = support_dict[dataset_name]
 
+    if not output_dir:
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        output_dir = os.path.join(my_path, "../output/{}/ID_{}".format(dataset_name, replication_id))
+
     print("Dataset Name : {}".format(dataset_name.upper()))
+    print("Replication ID : {}".format(replication_id))
     print("Output Directory : {}".format(output_dir))
     print("Number of days selected : {}".format(nb_days))
     print("Support Minimum : {}".format(support_min))
+    print("Discover Weekly Habits : {}".format(weekly_habits))
 
-    if not output_dir:
-        output_dir = "output/{}".format(dataset_name)
+
 
     dataset = pick_dataset(name=dataset_name, nb_days=nb_days)
 
+    # Find the best case among different tries:
+
     start_time = t.process_time()
-
-    best_ratio_data_treated = 0
-    best_patterns = None
-    best_patterns_string = None
-    best_data_left = None
-
-    # Find the best case among different tries
-    for i in range(nb_tries):
-        print("###############################")
-        print("#    TEST N°%d START   #" % (i + 1))
-        print("##############################")
-
-        patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=30,
-                                                             support_min=support_min,
-                                                             tolerance_ratio=2)
-        ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
-
-        if ratio_data_treated > best_ratio_data_treated:
-            best_ratio_data_treated = ratio_data_treated
-            best_patterns = patterns
-            best_patterns_string = patterns_string
-            best_data_left = data_left
-
-        print("###########################")
-        print("#    TEST N°%d FINISHED   #" % (i + 1))
-        print("###########################")
+    patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=30,
+                                                         support_min=support_min,
+                                                         tolerance_ratio=2, weekly_habits=weekly_habits)
+    ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
 
     elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
 
     print("\n")
     print("###############################")
-    print("Time to process all the tries : {}".format(elapsed_time))
+    print("Time to discover the patterns : {}".format(elapsed_time))
     print(
-        "{}% of the {} dataset data explained by the patterns discovered".format(best_ratio_data_treated, dataset_name))
+        "{}% of the {} dataset data explained by the patterns discovered".format(ratio_data_treated, dataset_name))
     print("##############################")
     print("\n")
 
@@ -129,17 +120,17 @@ def main(argv):
 
     with open(log_filename, 'w+') as file:
         file.write("Time to process all the tries : {}\n".format(elapsed_time))
-        file.write("{}% of the {} dataset explained by the patterns discovered\n".format(best_ratio_data_treated,
+        file.write("{}% of the {} dataset explained by the patterns discovered\n".format(ratio_data_treated,
                                                                                          dataset_name))
-        file.write("{} Patterns found\n".format(len(best_patterns)))
+        file.write("{} Patterns found\n".format(len(patterns)))
 
     # Dump the results in pickle files to re-use them later
-    pickle.dump(best_patterns, open(output_dir + "/patterns.pickle", 'wb'))
-    pickle.dump(best_data_left, open(output_dir + "/data_left.pickle", 'wb'))
+    pickle.dump(patterns, open(output_dir + "/patterns.pickle", 'wb'))
+    pickle.dump(data_left, open(output_dir + "/data_left.pickle", 'wb'))
 
     # Write readable results in csv file
-    best_patterns_string.to_csv(output_dir + "/patterns.csv", sep=";", index=False)
-    best_data_left.to_csv(output_dir + "/data_left.csv", sep=";", index=False)
+    patterns_string.to_csv(output_dir + "/patterns.csv", sep=";", index=False)
+    data_left.to_csv(output_dir + "/data_left.csv", sep=";", index=False)
 
     # Write all the results in differents excel sheets
     # writer = pd.ExcelWriter(output_dir + "/all_results.xlsx")
@@ -150,7 +141,7 @@ def main(argv):
 
 
 def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
-                  std_max=0.1, tolerance_ratio=2, delta_Tmax_ratio=3, verbose=True):
+                  std_max=0.1, tolerance_ratio=2, delta_Tmax_ratio=3, verbose=True, weekly_habits=False):
     """
     Implementation of the extended Discovery Algorithm designed by Julie Soulas U{https://hal.archives-ouvertes.fr/tel-01356217/}
 
@@ -170,6 +161,11 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
     final_periodicities_string = pd.DataFrame(columns=["Episode", "Period", "Description", "Validity Duration",
                                                        "Start Time", "End Time", "Compression Power", "Accuracy"])
     comp_iter = 0
+
+    candidate_periods = [dt.timedelta(days=1), ]
+
+    if weekly_habits:
+        candidate_periods.append(dt.timedelta(days=7))
     while compressed:
         comp_iter += 1
 
@@ -203,8 +199,7 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
                                                              std_max=std_max,
                                                              accuracy_min=accuracy_min,
                                                              tolerance_ratio=tolerance_ratio, Tep=Tep,
-                                                             candidate_periods=[dt.timedelta(days=1),
-                                                                                dt.timedelta(days=7)])
+                                                             candidate_periods=candidate_periods)
             if description is not None:
                 # print("\nInteresting periodicity found for the episode", episode)
                 periodicities[episode] = description

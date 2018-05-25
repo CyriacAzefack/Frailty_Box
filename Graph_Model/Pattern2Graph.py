@@ -13,27 +13,29 @@ sys.path.append(os.path.join(os.path.dirname(__file__)))
 
 import Graph_Pattern
 
+
 from Pattern_Discovery.Candidate_Study import *
 from Pattern_Discovery.Pattern_Discovery import *
 
 
 def main():
-    dataset_name = 'aruba'
+    dataset_name = 'KA'
 
-    dataset = pick_dataset(dataset_name, nb_days=120)
+    dataset = pick_dataset(dataset_name, nb_days=20)
 
     output = "../output/{}".format(dataset_name)
     patterns = pickle.load(open(output + '/patterns.pickle', 'rb'))
+
+    patterns = patterns[:1]
+
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime()
 
     pattern_graph_list = []
     for _, pattern in patterns.iterrows():
 
         labels = list(pattern['Episode'])
         period = pattern['Period']
-        validity_start_date = pattern['Start Time'].to_pydatetime()
-        validity_end_date = pattern['End Time'].to_pydatetime()
-        validity_duration = validity_end_date - validity_start_date
-        nb_periods = validity_duration.total_seconds() / period.total_seconds()
         description = pattern['Description']
         output_folder = output + "/Patterns_Graph/" + "_".join(labels) + "/"
 
@@ -46,8 +48,8 @@ def main():
 
         start_time = t.process_time()
         mini_list = pattern2graph(data=dataset, labels=labels, time_description=description, period=period,
-                                  start_date=validity_start_date, end_date=validity_end_date,
-                                  output_directory=output_folder, display_graph=True)
+                                  start_date=start_date, end_date=end_date, output_directory=output_folder,
+                                  display_graph=True)
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
 
         print("\n")
@@ -56,16 +58,15 @@ def main():
         print("##############################")
         print("\n")
 
-        start_date = dataset.date.max().to_pydatetime()
-        end_date = start_date + dt.timedelta(days=5)
+        # end_date = start_date + dt.timedelta(days=5)
         # Compute Time Evolution
         start_time = t.process_time()
         for pattern_graph in mini_list:
-            pattern_graph.compute_time_evolution(dataset)
-            filename = output_folder + "/Graph_Pattern_Object.pkl".format(pattern_graph.ID)
-            with open(filename, 'wb') as f:
-                pickle.dump(pattern_graph, f, protocol=pickle.HIGHEST_PROTOCOL)
+            pattern_graph.compute_time_evolution(dataset, len(mini_list))
             sim = pattern_graph.simulate(start_date, end_date)
+            filename = output + "/dataset_simulation.csv"
+            sim.to_csv(filename, index=False, sep=';')
+
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
         print("\n")
         print("###############################")
@@ -118,6 +119,8 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
 
         period_ids = events['period_id'].unique()
 
+        accuracy = len(period_ids) / (max(period_ids) + 1)
+
         # Build a list of occurrences events list to build the graph
         events_occurrences_lists = []
 
@@ -140,7 +143,8 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
         for period_id in period_ids:
             events_occurrences_lists.append(events.loc[events.period_id == period_id, 'label'].tolist())
 
-        nodes, prob_matrix = build_probability_acyclic_graph(labels, graph_nodes_labels, events_occurrences_lists)
+        nodes, prob_matrix = build_probability_acyclic_graph(labels, graph_nodes_labels, events_occurrences_lists,
+                                                             accuracy)
 
         # TODO : Add the correlation between the time series
         # events['ts'] = events['date'].apply(lambda x: x.timestamp())
@@ -160,13 +164,16 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
                 if prob_matrix[i][j] != 0:  # Useless to compute time for never happening transition
                     start_node = nodes[i]
                     end_node = labels[j]
-                    time_df = events.loc[(events.label == start_node) & (events.next_label == end_node)]
-                    if len(time_df) == 0 and start_node == Graph_Pattern.Graph.START_NODE:  # START_NODE transitions
-                        time_df = events.loc[events.next_label == end_node]
-                    durations = time_df.duration.values
 
+                    if start_node == Graph_Pattern.Graph.START_NODE:  # START_NODE transitions
+                        time_matrix[i][j] = ('norm', [mu, sigma])
+                        continue
+
+                    time_df = events.loc[(events.label == start_node) & (events.next_label == end_node)]
+                    durations = time_df.duration.values
                     # TODO : Manage with other distribution than 'norm'
-                    time_matrix[i][j] = ('norm', [np.mean(durations), np.std(durations)])
+                    if len(durations) > 0:
+                        time_matrix[i][j] = ('norm', [np.mean(durations), np.std(durations)])
 
         # Fill the time_matrix for the first edges
 
@@ -271,7 +278,7 @@ def best_fit_distribution(data, bins=200, ax=None):
     return best_distribution, best_params
 
 
-def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list):
+def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list, accuracy):
     '''
     Build the acyclic graph
     :param labels: Labels of the pattern
@@ -298,7 +305,7 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list)
 
     for node in set(single_list):
         label = Graph_Pattern.Graph.node2label(node)
-        prob_matrix[0][labels.index(label)] = single_list.count(node) / len(single_list)
+        prob_matrix[0][labels.index(label)] = accuracy * single_list.count(node) / len(single_list)
 
     for i in range(n - 2):
         tuple_list = []
@@ -322,7 +329,7 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list)
     # Checking the validity of the transition (sum output = 1 OR 0)
 
     tol = 0.001  # Error tolerance
-    for i in range(n):
+    for i in range(1, n):
         # Row
         s_row = prob_matrix[i, :].sum()
         if abs(s_row - 1) > tol and s_row != 0:

@@ -15,14 +15,16 @@ import pandas as pd
 import scipy.stats as st
 import seaborn as sns
 
+sns.set_style("darkgrid")
+
+
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 from Pattern_Discovery.Candidate_Study import modulo_datetime
 
-sns.set_style("darkgrid")
 
 class Graph:
     ID = 0
-    NB_PERIODS_SLIDING_WINDOW = 5
+    NB_PERIODS_SLIDING_WINDOW = dt.timedelta(days=10)
     START_NODE = "START PERIOD"
 
     def __init__(self, nodes, labels, period, mu, sigma, prob_matrix, wait_matrix):
@@ -38,11 +40,11 @@ class Graph:
         '''
 
         Graph.ID += 1
-        
+
         self.nodes = nodes  # len(nodes) = n
         self.labels = labels # len(labels) = l
         self.period = period
-        self.sliding_time_window = Graph.NB_PERIODS_SLIDING_WINDOW * period
+        self.sliding_time_window = Graph.NB_PERIODS_SLIDING_WINDOW
         self.mu = mu
         self.sigma = sigma
         self.prob_matrix = prob_matrix  # size = (n x l)
@@ -123,15 +125,15 @@ class Graph:
             # Add Destination Node
             G.add_node(tmp_destination, color='green')
 
-            # if tmp_origin != "END_PERIOD" or tmp_destination != "END_PERIOD":
-            #     G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
-            #                color='blue' if v > 0.5 else 'black',
-            #                headlabel=self.wait_matrix[self.nodes.index(tmp_origin)][self.nodes.index(tmp_destination)])
-            # else:
-
             # Add Edge
+            destination_label = Graph.node2label(tmp_destination)
             G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
                            color='blue' if v > 0.5 else 'black')
+
+            # Add Edge with waiting time label
+            # G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
+            #                 color='blue' if v > 0.5 else 'black',
+            #                 headlabel=self.time_matrix[self.nodes.index(tmp_origin)][self.labels.index(destination_label)])
         if debug:
             print('Edges:')
             pprint(G.edges(data=True))
@@ -175,8 +177,17 @@ class Graph:
         return edges
 
     def simulate(self, start_date, end_date):
+        """
+        Simulate the current graph for the given period of time
+        :param start_date:
+        :param end_date:
+        :return:
+        """
+        # self.extrapolate_time_evolution(start_date)
+        prob_matrix, _ = self.get_date_status(start_date)
+        time_matrix = self.time_matrix
 
-        self.extrapolate_time_evolution(start_date, end_date)
+        # prob_matrix, time_matrix = self.prob_matrix, self.time_matrix
 
         result = pd.DataFrame(columns=["date", "label"])
 
@@ -190,30 +201,35 @@ class Graph:
 
         while current_date < end_date:
             state_index = self.nodes.index(current_state)
-            row = self.prob_matrix[state_index, :]
+            row = prob_matrix[state_index, :]
             cs_row = np.cumsum(row)
 
             # Pick a random number between 0 -- 1
             rand = random()
             destination_index = None
 
-            for index in range(len(self.nodes)):
+            for index in range(len(self.labels)):
                 if rand <= cs_row[index]:
                     destination_index = index
                     break
 
-            if not destination_index: # We reached one end of the graph
+            if destination_index is None:  # We reached one end of the graph
                 destination_state = Graph.START_NODE # Come back to the beginning
 
                 # We move to the start of the next period
                 destination_date = current_date + dt.timedelta(
                     seconds=self.period.total_seconds() - modulo_datetime(current_date, self.period))
 
-            else :
-                destination_state = self.nodes[destination_index]
+            else:
+
+                # Turn the column label to a node name
+                lvl = 0
+                if current_state != Graph.START_NODE:
+                    lvl = int(current_state[current_state.rindex('_') + 1:]) + 1
+                destination_state = self.labels[destination_index] + '_' + str(lvl)
 
                 # Now we have to compute the waiting time to get to the destination state
-                tuple = self.time_matrix[state_index][destination_index]
+                tuple = time_matrix[state_index][destination_index]
                 dist_name = tuple[0]
                 param = tuple[1:][0]
                 dist = getattr(st, dist_name)
@@ -231,8 +247,9 @@ class Graph:
                         destination_label = destination_state[0 : destination_state.rindex('_')] # We remove everything after the last '_'
                         result.loc[len(result)] = [destination_date, destination_label]
                         break
-                    except:
+                    except ValueError:
                         print("OOOps ! Date Overflow. Let's try again...")
+                        print("Unexpected error:", sys.exc_info()[0])
 
             current_state = destination_state
             current_date = destination_date
@@ -247,15 +264,25 @@ class Graph:
         '''
 
         n = len(self.nodes)
-        time_evo_prob_matrix = [[pd.DataFrame(columns=['probability']) for j in range(n)] for i in
-                                range(n)]  # Date as index
-        time_evo_time_matrix = [[pd.DataFrame(columns=['mean_time', 'sigma_time']) for j in range(n)] for i in
-                                range(n)]  # Date as index
+        l = len(self.labels)
+        nb_days_per_periods = self.period.days
+
+
 
         start_date = data.date.min().to_pydatetime()
         # We start at the beginning of the first period
         start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
         end_date = data.date.max().to_pydatetime()
+
+        time_evo_prob_matrix = [
+            [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + 'D'),
+                          columns=['probability']).fillna(0) for j in range(l)] for i in range(n)]  # Date as index
+
+        time_evo_time_matrix = [
+            [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + 'D'),
+                          columns=['mean_time', 'sigma_time']).fillna(0) for j in range(l)] for i in
+            range(n)]  # Date as index
+
         # We take the time window into account for the end_date
         end_date = end_date - self.sliding_time_window
 
@@ -264,18 +291,10 @@ class Graph:
         period_index = 0
         current_start_date = start_date
 
-        # Build the list of Pattern labels from the nodes
-        labels = self.nodes[:]
-        labels.remove(Graph.START_NODE)
-
-        for i in range(len(labels)) :
-            labels[i] = labels[i][0: labels[i].rindex('_')]  # We remove everything after the last '_'
-        labels = list(set(labels))  # Remove duplicates
-
         while current_start_date < end_date:
             current_end_date = current_start_date + self.sliding_time_window
             time_description = {self.mu: self.sigma}
-            mini_graph_pattern = Pattern2Graph.pattern2graph(data, labels=labels, time_description=time_description,
+            mini_graph_pattern = Pattern2Graph.pattern2graph(data, labels=self.labels, time_description=time_description,
                                                              period=self.period, start_date=current_start_date,
                                                              end_date=current_end_date, display_graph=False)
 
@@ -296,7 +315,7 @@ class Graph:
                     j = self.labels.index(label)
 
                     prob_df = time_evo_prob_matrix[big_i][j]
-                    prob_df.loc[current_start_date] = [mini_prob_matrix[mini_i, j]]
+                    prob_df.loc[current_start_date] = mini_prob_matrix[mini_i, j]
 
                     if mini_time_matrix[mini_i][j]:
                         time_df = time_evo_time_matrix[big_i][j]
@@ -316,7 +335,27 @@ class Graph:
         self.time_evo_prob_matrix = time_evo_prob_matrix
         self.time_evo_time_matrix = time_evo_time_matrix
 
-    def extrapolate_time_evolution(self, start_date, end_date):
+    def get_date_status(self, start_date):
+        # We start at the beginning of the first period
+        start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
+
+        n = len(self.nodes)
+        l = len(self.labels)
+
+        prob_matrix = [[self.time_evo_prob_matrix[i][j].loc[start_date, "probability"] for j in range(l)] for i in
+                       range(n)]
+        prob_matrix = np.array(prob_matrix)
+        prob_matrix.reshape((n, l))
+
+        time_matrix = [[self.time_evo_time_matrix[i][j].loc[start_date, ["mean_time", "sigma_time"]].values
+                        for j in range(l)] for i in range(n)]
+        for i in range(n):
+            for j in range(l):
+                time_matrix[i][j] = ('norm', time_matrix[i][j])
+
+        return prob_matrix, time_matrix
+
+    def extrapolate_time_evolution(self, start_date):
         '''
         Compute the probability transition matrix and the waiting time transition matrix by extrapolating time evolution
         :param start_date:
@@ -325,19 +364,25 @@ class Graph:
         '''
 
         n = len(self.nodes)
-        extr_prob_matrix = np.zeros((n, n))
-        extr_time_matrix = [[[] for j in range(n - 1)] for i in range(n - 1)]  # Empty lists
+        l = len(self.labels)
+        extr_prob_matrix = np.zeros((n, l))
+        extr_time_matrix = [[[] for j in range(l)] for i in range(n)]  # Empty lists
 
         for i in range(n):
-            fig, ax = plt.subplots()
-            for j in range(n):
+            fig, (ax1, ax2) = plt.subplots(2)
+            for j in range(l):
+                txt = "--> [{}]".format(self.labels[j])
                 df = self.time_evo_prob_matrix[i][j]
-                txt = "--> [{}]".format(self.nodes[j])
-                ax.plot_date(df.index, df.probability, label=txt, linestyle="-")
-            ax.set_ylabel('Transition probability')
-            ax.set_xlabel('Date')
-            ax.set_title('From Node [{}]'.format(self.nodes[i]))
-            ax.legend()
+                ax1.plot_date(df.index, df.probability, label=txt, linestyle="-")
+                df = self.time_evo_time_matrix[i][j]
+                ax2.plot_date(df.index, df.mean_time / 60, label=txt, linestyle="-")
+            ax1.title.set_text('From Node [{}]\nProbability transition'.format(self.nodes[i]))
+            ax1.set_ylabel('Transition probability')
+            ax2.set_ylabel('Mean Time (min)')
+            ax2.set_xlabel('Date')
+            ax2.set_title('Waiting Time transition')
+            ax1.legend(loc="upper left")
+            ax2.legend(loc="upper left")
             plt.gcf().autofmt_xdate()
             plt.show()
 

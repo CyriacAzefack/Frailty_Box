@@ -75,7 +75,9 @@ def main(argv):
     # READ THE INPUT DATASET
     dataset = pattern_discovery.pick_dataset(name=dataset_name, nb_days=nb_days)
 
-    dirname = "output/{}".format(dataset_name)
+    my_path = os.path.abspath(os.path.dirname(__file__))
+    dirname = os.path.join(my_path, "./output/{}/ID_{}".format(dataset_name, id_replication))
+    # dirname = "./output/{}".format(dataset_name)
 
     print("\n")
     print("###############################")
@@ -100,7 +102,15 @@ def main(argv):
     print("\n")
 
     # START THE SIMULATION
-    dirname += "/Simulation Replications"
+    dirname += "/Simulation Replications/"
+
+    # Create the folder if it doesn't exist
+    if not os.path.exists(os.path.dirname(dirname)):
+        try:
+            os.makedirs(os.path.dirname(dirname))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
     for sim_id in range(nb_sim):
         start_time = t.process_time()
 
@@ -108,12 +118,13 @@ def main(argv):
                                     end_date=end_date)
 
         # SAVE THE SIMULATION RESULTS
-        filename = dirname + "/dataset_simulation_{}_{}.csv".format(id_replication + 1, sim_id)
+        filename = dirname + "dataset_simulation_{}_{}.csv".format(id_replication + 1, sim_id + 1)
         simulated_data.to_csv(filename, index=False, sep=';')
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
 
         print("###############################")
-        print("# Simulation REPLICATION N°{}  -  Time for the simulation {}".format(sim_id + 1, elapsed_time))
+        print("# Simulation REPLICATION N°{}/{} done -  Time for the simulation {}".format(sim_id + 1, nb_sim,
+                                                                                           elapsed_time))
         print("# Results save in '{}'".format(filename))
         print("##############################")
 
@@ -122,29 +133,9 @@ def build_simulation_model(data, output_directory='.'):
     '''
     Build the somulation model from scratch.
     :param data: Input sequence
-    :param Tep: Duration Max between event in an occurrence
-    :param support_min:
-    :param accuracy_min:
-    :param std_max:
-    :param tolerance_ratio:
-    :param delta_Tmax_ratio:
-    :param output_folder:
-    :param verbose:
-    :param nb_tries: Number of tries for the model. We take the one with the best data_explained_ratio
+    :param output_directory: Location of the 'patterns.pickle' file
     :return:
     '''
-
-    # TODO : Find a way to compute the ideal support
-
-    # Unpack the patterns from the dataset
-    # patterns, patterns_string, data_left = pattern_discovery.xED_algorithm(data=data, Tep=Tep, support_min=support_min,
-    #                                                           accuracy_min=accuracy_min, std_max=std_max,
-    #                                                           tolerance_ratio=tolerance_ratio,
-    #                                                           delta_Tmax_ratio=delta_Tmax_ratio, verbose=verbose)
-    #
-    # ratio_data_treated = round((1 - len(data_left) / len(data)) * 100, 2)
-    #
-    # print("{}% of the dataset data explained by pattern_discovery patterns".format(ratio_data_treated))
 
     patterns = pd.read_pickle(output_directory + '/patterns.pickle')
 
@@ -156,13 +147,16 @@ def build_simulation_model(data, output_directory='.'):
     print("Start building Graphs from patterns")
     print("##############################")
     print("\n")
+
+    validity_start_date = data.date.min().to_pydatetime()
+    validity_end_date = data.date.max().to_pydatetime()
+
     for index, pattern in patterns.iterrows():
         labels = list(pattern['Episode'])
         period = pattern['Period']
-        validity_start_date = pattern['Start Time'].to_pydatetime()
-        validity_end_date = pattern['End Time'].to_pydatetime()
-        validity_duration = validity_end_date - validity_start_date
-        nb_periods = validity_duration.total_seconds() / period.total_seconds()
+        # validity_start_date = pattern['Start Time'].to_pydatetime()
+        # validity_end_date = pattern['End Time'].to_pydatetime()
+
         time_description = pattern['Description']
         output_folder = output + "/Patterns_Graph/" + "_".join(labels) + "/"
 
@@ -176,7 +170,7 @@ def build_simulation_model(data, output_directory='.'):
         patterns_graph_list = p2g.pattern2graph(data=data, labels=labels, time_description=time_description,
                                                 period=period,
                                                 start_date=validity_start_date, end_date=validity_end_date,
-                                                output_directory=output_folder, display_graph=False)
+                                                output_directory=output_folder, display_graph=True)
         simulation_model += patterns_graph_list
 
         sys.stdout.write("\r%.2f %% of patterns converted to graphs!!" % (100 * (index + 1) / len(patterns)))
@@ -214,6 +208,10 @@ def simulation(simulation_model, start_date, end_date):
         simulated_data = pd.concat([simulated_data, pattern_simulation_data]).drop_duplicates(subset=['date', 'label'],
                                                                                               keep='first')
         simulated_data.reset_index(inplace=True, drop=True)
+        sys.stdout.write("\r%.2f %% of patterns simulated!!" %
+                         (100 * (simulation_model.index(pattern_graph) + 1) / len(simulation_model)))
+        sys.stdout.flush()
+    sys.stdout.write("\n")
 
     simulated_data.sort_values(["date"], inplace=True, ascending=True)
 

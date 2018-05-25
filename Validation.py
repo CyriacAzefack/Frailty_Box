@@ -9,13 +9,13 @@ import pandas as pd
 import seaborn as sns
 from scipy import stats
 
-from xED_Algorithm.xED_Algorithm import pick_dataset
+from Pattern_Discovery.Pattern_Discovery import pick_dataset
 
 sns.set_style("darkgrid")
 # plt.xkcd()
 
 def main():
-    dataset_name = 'aruba'
+    dataset_name = 'KA'
     print("\n")
     print("###############################")
     print("EVALUATION OF THE MODEL on the {} HOUSE Dataset".format(dataset_name))
@@ -26,16 +26,16 @@ def main():
 
     list_files = glob.glob(dirname)
 
-    confidence_error = 0.80
+    confidence_error = 0.9
 
-    activity = ["sleeping_begin", "sleeping_end"]
+    activity = ["prepare Breakfast START", "prepare Breakfast END"]
 
     # Original data
     original_dataset = pick_dataset(dataset_name)
 
     original_data_evaluation = compute_activity_time(data=original_dataset, start_label=activity[0],
                                                      end_label=activity[1])
-
+    original_data_evaluation.fillna(0, inplace=True)
     plt.plot_date(original_data_evaluation.index, original_data_evaluation.duration / 3600, label="Original Data",
                   linestyle="-")
     plt.show()
@@ -55,10 +55,10 @@ def main():
                                                   time_step_in_days=1)
         if not evaluation_result.empty:
             evaluation_sim_results[filename] = evaluation_result
+            end_drawing_date = evaluation_result.index[-1]
 
     original_data_evaluation = compute_activity_time(data=original_dataset, start_label=activity[0],
-                                                     end_label=activity[1],
-                                                     end_date=evaluation_result.index[-1])
+                                                     end_label=activity[1], end_date=end_drawing_date)
 
     # Build a large Dataframe with a date range index
     start_date = original_data_evaluation.index[0]
