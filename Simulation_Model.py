@@ -170,7 +170,7 @@ def build_simulation_model(data, output_directory='.'):
         patterns_graph_list = p2g.pattern2graph(data=data, labels=labels, time_description=time_description,
                                                 period=period,
                                                 start_date=validity_start_date, end_date=validity_end_date,
-                                                output_directory=output_folder, display_graph=True)
+                                                output_directory=output_folder, display_graph=False)
         simulation_model += patterns_graph_list
 
         sys.stdout.write("\r%.2f %% of patterns converted to graphs!!" % (100 * (index + 1) / len(patterns)))

@@ -2,16 +2,22 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/Simulation_Model.py" line="20" />
+    <bookmark url="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" line="306" />
+    <bookmark url="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/Visualization.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Discrete_Event_Simulation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Graph_Model/Build_Graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pattern_Discovery/Candidate_Study.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Discovery/Candidate_Study.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Simulation_Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation_Model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/Visualization.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -29,25 +35,46 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Simulation_Model.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
+      <file leaf-file-name="Discrete_Event_Simulation.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Discrete_Event_Simulation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="155" column="34" lean-forward="true" selection-start-line="155" selection-start-column="34" selection-end-line="155" selection-end-column="34" />
+            <state relative-caret-position="510">
+              <caret line="51" selection-start-line="51" selection-end-line="51" />
               <folding>
-                <element signature="e#90#111#0" expanded="true" />
+                <element signature="e#1#61#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Validation.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Visualization.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Visualization.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="15" column="11" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Validation.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Validation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="304">
-              <caret line="168" column="63" selection-start-line="168" selection-start-column="4" selection-end-line="168" selection-end-column="63" />
+            <state relative-caret-position="510">
+              <caret line="30" column="29" lean-forward="true" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
               <folding>
                 <element signature="e#24#45#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Acyclic_Graph.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="467">
+              <caret line="265" column="74" selection-start-line="264" selection-start-column="19" selection-end-line="265" selection-end-column="74" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -56,44 +83,8 @@
       <file leaf-file-name="Pattern_Discovery.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="83" column="53" selection-start-line="83" selection-start-column="53" selection-end-line="83" selection-end-column="53" />
-              <folding>
-                <element signature="e#94#115#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Pattern2Graph.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="731">
-              <caret line="127" column="36" lean-forward="true" selection-start-line="127" selection-start-column="36" selection-end-line="127" selection-end-column="36" />
-              <folding>
-                <element signature="e#93#102#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Graph_Pattern.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-6016">
-              <caret line="12" column="18" lean-forward="true" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Visualization.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Visualization.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="17" column="25" selection-start-line="17" selection-start-column="25" selection-end-line="17" selection-end-column="25" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="433">
+              <caret line="388" column="44" selection-start-line="388" selection-start-column="8" selection-end-line="388" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -110,36 +101,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>labels</find>
-      <find>activi</find>
-      <find>to_py</find>
-      <find>iloc</find>
-      <find>duplicate</find>
-      <find>iterro</find>
-      <find>datetime</find>
-      <find>filn</find>
-      <find>filen</find>
-      <find>title</find>
-      <find>filenam</find>
-      <find>norm</find>
-      <find>name</find>
-      <find>samp</find>
-      <find>plot</find>
-      <find>pd.DataFrame()</find>
-      <find>pd.DataFrame</find>
-      <find>ss</find>
-      <find>None</find>
-      <find>hist</find>
-      <find>candidate_study</find>
-      <find>mean</find>
-      <find>os</find>
-      <find>mod</find>
-      <find>big_df</find>
-      <find>self.nodes</find>
       <find>write</find>
       <find>legend</find>
       <find>data</find>
+      <find>accuracy</find>
+      <find>self.labels</find>
+      <find>period_id</find>
+      <find>to_csv</find>
+      <find>pd.Da</find>
+      <find>delta</find>
+      <find>delta_t</find>
       <find>concat</find>
+      <find>True</find>
+      <find>While</find>
+      <find>rows</find>
+      <find>prev</find>
+      <find>previous</find>
+      <find>nan</find>
+      <find>Ac</find>
+      <find>pickle</find>
+      <find>fillna</find>
+      <find>relative</find>
+      <find>modul</find>
+      <find>modu</find>
+      <find>floor</find>
+      <find>Acyclic_Graph</find>
+      <find>Graph_Pattern</find>
+      <find>self.sigm</find>
+      <find>5</find>
+      <find>period</find>
+      <find>duration</find>
     </findStrings>
     <replaceStrings>
       <replace>labels</replace>
@@ -158,9 +149,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="7ac22ca421f00c1e5839b15001b980674909f131" />
       </map>
     </option>
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -187,13 +179,16 @@
         <option value="$PROJECT_DIR$/xED_Algorithm/Candidate_Study.py" />
         <option value="$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
-        <option value="$PROJECT_DIR$/Pattern_Discovery/Candidate_Study.py" />
-        <option value="$PROJECT_DIR$/Validation.py" />
-        <option value="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" />
-        <option value="$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py" />
-        <option value="$PROJECT_DIR$/Visualization.py" />
         <option value="$PROJECT_DIR$/Simulation_Model.py" />
+        <option value="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" />
         <option value="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" />
+        <option value="$PROJECT_DIR$/Graph_Model/Build_Graph.py" />
+        <option value="$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py" />
+        <option value="$PROJECT_DIR$/Pattern_Discovery/Candidate_Study.py" />
+        <option value="$PROJECT_DIR$/Visualization.py" />
+        <option value="$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py" />
+        <option value="$PROJECT_DIR$/Discrete_Event_Simulation.py" />
+        <option value="$PROJECT_DIR$/Validation.py" />
       </list>
     </option>
   </component>
@@ -249,6 +244,16 @@
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
               <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="Graph_Model" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="Pattern_Discovery" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -284,8 +289,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Simulation KA">
-    <configuration name="Pattern2Graph" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.Validation">
+    <configuration name="Build_Graph" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -297,7 +302,25 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Graph_Model/Build_Graph.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="Discrete_Event_Simulation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Discrete_Event_Simulation.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -316,7 +339,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py" />
-      <option name="PARAMETERS" value="--name aruba --days 120 --support_min 40" />
+      <option name="PARAMETERS" value="--name aruba -r 1 --days 210 --support_min 30 --weekly_habits" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -334,25 +357,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py" />
-      <option name="PARAMETERS" value="--name KA --replication 0 --days 24 --support_min 3 --weekly_habits" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="Simulation Aruba" type="PythonConfigurationType" factoryName="Python" activateToolWindowBeforeRun="false" temporary="true">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation_Model.py" />
-      <option name="PARAMETERS" value="-n aruba -r 0 --days 120 --support_min 40 --graph_plot" />
+      <option name="PARAMETERS" value="--name KA --replication 0 --days 60 --support_min 3 --weekly_habits" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -370,7 +375,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation_Model.py" />
-      <option name="PARAMETERS" value="-n KA -r 0 --days 24 --support_min 3 --nbsim 10" />
+      <option name="PARAMETERS" value="-n KA -r 0 --days 30 --support_min 3 --nbsim 10" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -414,18 +419,18 @@
     <list>
       <item itemvalue="Python.Pattern_Discovery_KA" />
       <item itemvalue="Python.Simulation KA" />
-      <item itemvalue="Python.Simulation Aruba" />
       <item itemvalue="Python.Pattern_Discovery_Aruba" />
-      <item itemvalue="Python.Validation" />
-      <item itemvalue="Python.Pattern2Graph" />
       <item itemvalue="Python.Visualization" />
+      <item itemvalue="Python.Build_Graph" />
+      <item itemvalue="Python.Discrete_Event_Simulation" />
+      <item itemvalue="Python.Validation" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Visualization" />
-        <item itemvalue="Python.Pattern2Graph" />
         <item itemvalue="Python.Validation" />
-        <item itemvalue="Python.Simulation Aruba" />
+        <item itemvalue="Python.Discrete_Event_Simulation" />
+        <item itemvalue="Python.Visualization" />
+        <item itemvalue="Python.Build_Graph" />
         <item itemvalue="Python.Pattern_Discovery_Aruba" />
       </list>
     </recent_temporary>
@@ -579,17 +584,16 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.44753087" visible="true" weight="0.21496312" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.43055555" visible="true" weight="0.14805058" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32883817" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5068493" side_tool="true" weight="0.32780084" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.32883817" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49315068" visible="true" weight="0.32780084" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.24896266" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49789253" weight="0.32883817" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49315068" visible="true" weight="0.32780084" />
-      <window_info id="Structure" order="1" sideWeight="0.55246913" side_tool="true" visible="true" weight="0.21496312" />
+      <window_info id="Structure" order="1" sideWeight="0.5694444" side_tool="true" visible="true" weight="0.14805058" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3205394" />
-      <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" weight="0.28630707" />
+      <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" visible="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -597,6 +601,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.32883817" />
     </layout>
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -666,25 +671,65 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py</url>
+          <line>224</line>
+          <option name="timeStamp" value="302" />
+        </line-breakpoint>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py</url>
+          <line>294</line>
+          <option name="timeStamp" value="321" />
+        </line-breakpoint>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Visualization.py</url>
+          <line>74</line>
+          <option name="timeStamp" value="329" />
+        </line-breakpoint>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py</url>
+          <line>216</line>
+          <option name="timeStamp" value="364" />
+        </line-breakpoint>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py</url>
+          <line>230</line>
+          <option name="timeStamp" value="365" />
+        </line-breakpoint>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py</url>
+          <line>287</line>
+          <option name="timeStamp" value="366" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py</url>
-          <line>250</line>
-          <option name="timeStamp" value="281" />
+          <line>447</line>
+          <option name="timeStamp" value="383" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py</url>
+          <line>253</line>
+          <option name="timeStamp" value="391" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py</url>
-          <line>201</line>
-          <option name="timeStamp" value="282" />
+          <line>296</line>
+          <option name="timeStamp" value="392" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Visualization.py</url>
-          <line>108</line>
-          <option name="timeStamp" value="293" />
+          <url>file://$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py</url>
+          <line>283</line>
+          <option name="timeStamp" value="395" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Visualization.py</url>
-          <line>101</line>
-          <option name="timeStamp" value="300" />
+          <url>file://$PROJECT_DIR$/Graph_Model/Build_Graph.py</url>
+          <line>27</line>
+          <option name="timeStamp" value="439" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Discrete_Event_Simulation.py</url>
+          <line>51</line>
+          <option name="timeStamp" value="462" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -697,91 +742,103 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="301" />
+      <option name="time" value="463" />
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
+    <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>df['date'].groupby(df['date']).dt.hour)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df['date'].groupby(df['date']).dt.hour</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df['date'].groupby(df['date'])</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df['date'].groupby(df['date']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>df['date'].groupby(df['date'].dt.hour).count()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pd.concat([all_occurrences, occurrences[[&quot;date&quot;, &quot;end_date&quot;, &quot;label&quot;, &quot;period_id&quot;]]])</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+    </expressions>
+    <expressions id="watch">
+      <expression>
+        <expression-string>Graph.ACTIVITIES</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Graph.COMPATIBILITY_MATRIX</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>pickle.dump(pattern_graph, open(output_folder + &quot;/{}_PatG.pkl&quot;.format(pattern_graph.ID), 'wb'))</expression-string>
+        <expression-string>data[(data.date &gt;= start_date) &amp; (data.date &lt;= end_date)]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>pattern_graph.ID</expression-string>
+        <expression-string>data[(data.date &gt;= start_date)]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>first_period_start_date + int(period_id) * period</expression-string>
+        <expression-string>all_activities_tuples.index(choosen_episode)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>first_period_start_date + period_id * period</expression-string>
+        <expression-string>dataset[dataset.label=='resperate']</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>original_dataset.date.idxmax()</expression-string>
+        <expression-string>period_ids = period_ids.astype(int)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>original_dataset.date.argmax()</expression-string>
+        <expression-string>period_ids</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>original_dataset.date.idxmin()</expression-string>
+        <expression-string>range(min(period_ids), max(period_ids)+1)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>original_dataset.date.argmin()</expression-string>
+        <expression-string>period_ids.astype(int)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>date.to_pydatetime()</expression-string>
+        <expression-string>max(count_candidate_episodes)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/transform_data.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/cluster/dbscan_.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1088">
-          <caret line="71" column="17" selection-start-line="71" selection-start-column="4" selection-end-line="71" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pattern2graph.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/-1728110072/numpy/core/multiarray.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="53" column="4" selection-start-line="53" selection-start-column="4" selection-end-line="53" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_2.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/codecs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="310" selection-start-line="310" selection-end-line="310" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/networkx/drawing/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -932,13 +989,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/xED_Algorithm/xED_Algorithm.py" />
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
-    <entry file="file://$PROJECT_DIR$/Pattern_Discovery/Candidate_Study.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/643000325/builtins.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="682">
@@ -957,16 +1007,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="206">
           <caret line="2743" selection-start-line="2743" selection-end-line="2743" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Validation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="168" column="63" selection-start-line="168" selection-start-column="4" selection-end-line="168" selection-end-column="63" />
-          <folding>
-            <element signature="e#24#45#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -991,49 +1031,125 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/site-packages/pandas/io/parsers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="83" column="53" selection-start-line="83" selection-start-column="53" selection-end-line="83" selection-end-column="53" />
-          <folding>
-            <element signature="e#94#115#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Visualization.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="25" selection-start-line="17" selection-start-column="25" selection-end-line="17" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="220">
+          <caret line="1507" selection-start-line="1507" selection-end-line="1507" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="155" column="34" lean-forward="true" selection-start-line="155" selection-start-column="34" selection-end-line="155" selection-end-column="34" />
+        <state relative-caret-position="3094">
+          <caret line="192" selection-start-line="192" selection-end-line="192" />
           <folding>
             <element signature="e#90#111#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/site-packages/networkx/classes/tests/test_graph.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6016">
-          <caret line="12" column="18" lean-forward="true" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
+        <state relative-caret-position="220">
+          <caret line="452" column="13" selection-start-line="452" selection-start-column="13" selection-end-line="452" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/site-packages/sklearn/cluster/dbscan_.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="206">
+          <caret line="265" selection-start-line="265" selection-end-line="265" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/site-packages/pandas/core/series.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="206">
+          <caret line="2745" column="4" selection-start-line="2745" selection-start-column="4" selection-end-line="2745" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="254">
+          <caret line="306" selection-start-line="306" selection-end-line="306" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="731">
-          <caret line="127" column="36" lean-forward="true" selection-start-line="127" selection-start-column="36" selection-end-line="127" selection-end-column="36" />
+        <state relative-caret-position="2057">
+          <caret line="126" column="49" selection-start-line="126" selection-start-column="49" selection-end-line="126" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graph_Model/Build_Graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="59">
+          <caret line="377" selection-start-line="377" selection-end-line="377" />
           <folding>
-            <element signature="e#93#102#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="318">
+          <caret line="366" column="30" selection-start-line="363" selection-start-column="11" selection-end-line="366" selection-end-column="30" />
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pattern_Discovery/Candidate_Study.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-298">
+          <caret line="238" selection-start-line="238" selection-end-line="238" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="433">
+          <caret line="388" column="44" selection-start-line="388" selection-start-column="8" selection-end-line="388" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Visualization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="15" column="11" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="467">
+          <caret line="265" column="74" selection-start-line="264" selection-start-column="19" selection-end-line="265" selection-end-column="74" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Discrete_Event_Simulation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="51" selection-start-line="51" selection-end-line="51" />
+          <folding>
+            <element signature="e#1#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Validation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="30" column="29" lean-forward="true" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
           </folding>
         </state>
       </provider>

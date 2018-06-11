@@ -16,23 +16,25 @@ color_mapper = np.vectorize(lambda x: {10: 'red', 40: 'blue'}.get(x))
 def main():
     dataset_name = 'aruba'
 
-    dataset = pick_dataset(dataset_name, nb_days=40)
-    # sim_id = 0
-    # replication_id = 6
-    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/ID_{}/Simulation Replications/dataset_simulation_{}_{}.csv".format(
-    #     dataset_name, sim_id, sim_id + 1, replication_id)
-    # dataset = pd.read_csv(path, delimiter=';')
-    # date_format = '%Y-%m-%d %H:%M:%S.%f'
-    # dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+    dataset = pick_dataset(dataset_name)
+    sim_id = 0
+    replication_id = 9
+    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/ID_{}/Simulation Replications/dataset_simulation_{}_{}.csv".format(
+        dataset_name, sim_id, sim_id + 1, replication_id)
+    path = "dataset_simulation.csv"
+    dataset = pd.read_csv(path, delimiter=';')
+    date_format = '%Y-%m-%d %H:%M:%S'
+    dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+    dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
 
     start_date = dataset.date.min().to_pydatetime()
-    end_date = start_date + dt.timedelta(days=10)
+    end_date = start_date + dt.timedelta(days=300)
 
     visualize(dataset, start_date=start_date, end_date=end_date)
     # visualize(dataset, start_date=start_date, end_date=end_date, start_suffix='_begin', end_suffix='_end')
 
 
-def visualize(data, start_date, end_date, start_suffix=' START', end_suffix=' END'):
+def visualize(data, start_date, end_date):
     """
     Visualize the log dataset
     :param data:
@@ -46,14 +48,13 @@ def visualize(data, start_date, end_date, start_suffix=' START', end_suffix=' EN
     data = data[(data.date >= start_date) & (data.date <= end_date)].copy()
     # Turn the dataset into an activity dataset
 
-    # 1. List the set of activities
-    data['activity'] = ''
-    data.loc[data.label.str.endswith(start_suffix), "activity"] = data.loc[
-        data.label.str.endswith(start_suffix), "label"].apply(lambda x: x[0: x.rindex(start_suffix)])
-    data.loc[data.label.str.endswith(end_suffix), "activity"] = data.loc[
-        data.label.str.endswith(end_suffix), "label"].apply(lambda x: x[0: x.rindex(end_suffix)])
+    data['duration'] = data['end_date'] - data['date']
+    data['duration'] = data['duration'].apply(lambda x: x.total_seconds())
 
-    activities = list(data.activity.unique())
+    activities = list(data.groupby(['label'], as_index=False).agg({'duration': 'sum'}).sort_values("duration",
+                                                                                                   ascending=False).label.values)
+
+    # activities = list(data.label.unique())
 
     df_data = pd.DataFrame(columns=['activity', 'start', 'end', 'level'])
 
@@ -64,45 +65,21 @@ def visualize(data, start_date, end_date, start_suffix=' START', end_suffix=' EN
     ax = ax.xaxis_date()
 
     for activity in activities:
-        start_label = activity + start_suffix
-        end_label = activity + end_suffix
+        lvl = activities.index(activity) * 5
+        data_activity = data[data.label == activity].copy()
+        data_activity['level'] = lvl
 
-        lvl = activities.index(activity)
-        data_activity = data[data.label.isin([start_label, end_label])].copy()
-        result = pd.DataFrame(columns=['activity', 'start', 'end', 'level'])
+        date = data_activity.date.min().to_pydatetime()
 
-        last_label = None
-        last_date = None
-        for index, row in data_activity.iterrows():
-            label = row['label']
-            date = row['date'].to_pydatetime()
-            if not last_label:
-                last_label = label
-                last_date = date
-                continue
-
-            if last_label == label:
-                last_date = date
-            else:
-                if label == end_label:
-                    # mean_ts = (date.timestamp() + last_date.timestamp()) / 2
-                    # mean_date = dt.datetime.fromtimestamp(mean_ts).date()
-                    # mean_date = dt.datetime.combine(mean_date, dt.datetime.min.time())
-                    result.loc[len(result)] = [activity, last_date, date, lvl]
-
-            last_label = label
-            last_date = date
-        if result.empty:
-            print("Activity '{}' is not complete in the dataset".format(activity))
-            continue
-        result.start = pd.to_datetime(result.start).astype(datetime)
-        result.end = pd.to_datetime(result.end).astype(datetime)
+        data_activity.date = pd.to_datetime(data_activity.date).astype(datetime)
+        data_activity.end_date = pd.to_datetime(data_activity.end_date).astype(datetime)
 
         color = random.rand(3, 1)
         plt.text(dat.date2num(date), lvl, activity, fontsize=14)
-        ax = plt.hlines(result.level, dat.date2num(result.start), dat.date2num(result.end), label=activity,
+        ax = plt.hlines(data_activity.level, dat.date2num(data_activity.date), dat.date2num(data_activity.end_date),
+                        label=activity,
                         linewidth=75, color=color)
-        df_data = pd.concat([df_data, result], axis=0)
+        # df_data = pd.concat([df_data, result], axis=0)
     # plt.legend()
 
     plt.show()

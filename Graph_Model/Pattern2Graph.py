@@ -12,8 +12,7 @@ import scipy.stats as st
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 
 import Graph_Pattern
-
-
+import Acyclic_Graph
 from Pattern_Discovery.Candidate_Study import *
 from Pattern_Discovery.Pattern_Discovery import *
 
@@ -21,17 +20,21 @@ from Pattern_Discovery.Pattern_Discovery import *
 def main():
     dataset_name = 'KA'
 
-    dataset = pick_dataset(dataset_name, nb_days=20)
+    dataset = pick_dataset(dataset_name, nb_days=40)
 
-    output = "../output/{}".format(dataset_name)
+    activities, matrix = compute_activity_compatibility_matrix(dataset)
+    Graph_Pattern.Graph.set_compatibility_matrix(activities, matrix)
+
+    output = "../output/{}/ID_0".format(dataset_name)
     patterns = pickle.load(open(output + '/patterns.pickle', 'rb'))
 
-    patterns = patterns[:1]
+    patterns = patterns[:2]
 
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime()
 
-    pattern_graph_list = []
+    simulation_result = pd.DataFrame(columns=['date', 'end_date', 'label'])
+    all_pattern_graphs = []
     for _, pattern in patterns.iterrows():
 
         labels = list(pattern['Episode'])
@@ -46,10 +49,10 @@ def main():
                 if exc.errno != errno.EEXIST:
                     raise
 
-        start_time = t.process_time()
-        mini_list = pattern2graph(data=dataset, labels=labels, time_description=description, period=period,
-                                  start_date=start_date, end_date=end_date, output_directory=output_folder,
-                                  display_graph=True)
+        start_time = t.process_time()  # To compute time spent building the graph
+        pattern_graphs = pattern2graph(data=dataset, labels=labels, time_description=description, period=period,
+                                       start_date=start_date, end_date=end_date, output_directory=output_folder,
+                                       display_graph=True)
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
 
         print("\n")
@@ -60,12 +63,12 @@ def main():
 
         # end_date = start_date + dt.timedelta(days=5)
         # Compute Time Evolution
-        start_time = t.process_time()
-        for pattern_graph in mini_list:
-            pattern_graph.compute_time_evolution(dataset, len(mini_list))
-            sim = pattern_graph.simulate(start_date, end_date)
-            filename = output + "/dataset_simulation.csv"
-            sim.to_csv(filename, index=False, sep=';')
+        start_time = t.process_time()  # To compute time spent building the graph
+        for pattern_graph in pattern_graphs:
+            #     # pattern_graph.compute_time_evolution(dataset, len(mini_list))
+            sim = pattern_graph.simulate(simulation_result, start_date, end_date)
+            simulation_result = pd.concat([simulation_result, sim], ignore_index=True)
+        #
 
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
         print("\n")
@@ -74,8 +77,11 @@ def main():
         print("##############################")
         print("\n")
 
-        pattern_graph_list += mini_list
+        all_pattern_graphs += pattern_graphs
 
+        simulation_result.sort_values(['date'], ascending=True, inplace=True)
+        filename = output + "/dataset_simulation.csv"
+        simulation_result.to_csv(filename, index=False, sep=';')
 
 def pattern2graph(data, labels, time_description, period, start_date, end_date, tolerance_ratio=2, Tep=30,
                   output_directory='./', display_graph=False):
@@ -93,33 +99,31 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
     :return: A transition probability matrix and a transition waiting time matrix for each component of the description
     '''
 
-    pattern_graph_list = []
+    data = data.loc[(data.date >= start_date) & (data.date <= end_date)].copy()
+    built_graphs = []
 
-    for mu, sigma in time_description.items():
-        # Find pattern occurrences
-        occurrences = find_occurrences(data, tuple(labels), Tep)
-        occurrences = occurrences.loc[(occurrences.date >= start_date) & (occurrences.date <= end_date)].copy()
+    for mu_time, sigma_time in time_description.items():
+        # Find pattern events
+        events = data.loc[data.label.isin(labels)].copy()
 
+        # Filter events in the pattern time interval
         # Compute relative dates
-        occurrences.loc[:, "relative_date"] = occurrences.date.apply(
+        events.loc[:, "relative_date"] = events.date.apply(
             lambda x: modulo_datetime(x.to_pydatetime(), period))
 
-        # Drop unexpected occurrences
-        occurrences["expected"] = occurrences["relative_date"].apply(
-            lambda x: is_occurence_expected(x, {mu: sigma}, period, tolerance_ratio))
-        occurrences.dropna(inplace=True, axis=0)
+        # Drop events outside time intervale
+        events["expected"] = events["relative_date"].apply(
+            lambda x: is_occurence_expected(x, {mu_time: sigma_time}, period, tolerance_ratio))
 
-        if len(occurrences) == 0:
+        events.dropna(inplace=True, axis=0)
+
+        if len(events) == 0:
             continue
 
-        events = find_events_occurrences(data, labels, occurrences, period, Tep)
-
-        # Find the numbers of columns needed for the graphs
-        # Find the number max of events in a occurrence
-
+        # Elements to build the graph
+        # TODO : Make it work for weekly periods
+        events['period_id'] = events['date'].apply(lambda x: x.timetuple().tm_yday)
         period_ids = events['period_id'].unique()
-
-        accuracy = len(period_ids) / (max(period_ids) + 1)
 
         # Build a list of occurrences events list to build the graph
         events_occurrences_lists = []
@@ -137,104 +141,95 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
             graph_nodes_labels += period_list
             events_occurrences_lists.append(period_list)
 
-        # Set of nodes for the graphs
+        # Set of graph_nodes for the graphs
         graph_nodes_labels = set(graph_nodes_labels)
 
-        for period_id in period_ids:
+        for period_id in range(min(period_ids), max(period_ids) + 1):
             events_occurrences_lists.append(events.loc[events.period_id == period_id, 'label'].tolist())
 
-        nodes, prob_matrix = build_probability_acyclic_graph(labels, graph_nodes_labels, events_occurrences_lists,
-                                                             accuracy)
+        graph_nodes, graph_labels, prob_matrix = build_probability_acyclic_graph(labels, graph_nodes_labels,
+                                                                                 events_occurrences_lists)
 
-        # TODO : Add the correlation between the time series
-        # events['ts'] = events['date'].apply(lambda x: x.timestamp())
-        events['next_label'] = events['label'].shift(-1).fillna('_nan').apply(Graph_Pattern.Graph.node2label)
+        # Build the time matrix
+        events['is_last_event'] = events['period_id'] != events['period_id'].shift(-1)
+        events['is_first_event'] = events['period_id'] != events['period_id'].shift(1)
+        events['next_label'] = events['label'].shift(-1).fillna('_nan').apply(Acyclic_Graph.Acyclic_Graph.node2label)
         events['next_date'] = events['date'].shift(-1)
-        events['duration'] = events['next_date'] - events['date']
-        events['duration'] = events['duration'].apply(lambda x: x.total_seconds())
+        events['inter_event_duration'] = events['next_date'] - events['date']
+        events['inter_event_duration'] = events['inter_event_duration'].apply(lambda x: x.total_seconds())
+        # events = events[events.is_last_event == False]
 
-        n = len(nodes)  # Nb rows of the prob matrix
-        l = len(labels)  # Nb columns of the prob matrix
+        n = len(graph_nodes)  # Nb rows of the prob matrix
+        l = len(graph_labels)  # Nb columns of the prob matrix
 
         # n x l edges for waiting time transition laws
-        time_matrix = [[[] for j in range(l)] for i in range(n)]  # Empty lists, [[mean_time, std_time], ...]
+        time_matrix = [[[] for j in range(l)] for i in
+                       range(n)]  # Empty lists, [[mean_time, std_time], ...] transition durations
 
         for i in range(n):
-            for j in range(l):
+            for j in range(l - 1):  # We dont need the "END NODE"
                 if prob_matrix[i][j] != 0:  # Useless to compute time for never happening transition
-                    start_node = nodes[i]
-                    end_node = labels[j]
+                    from_node = graph_nodes[i]
+                    to_label = graph_labels[j]
 
-                    if start_node == Graph_Pattern.Graph.START_NODE:  # START_NODE transitions
-                        time_matrix[i][j] = ('norm', [mu, sigma])
-                        continue
+                    if from_node == Acyclic_Graph.Acyclic_Graph.START_NODE:  # START_NODE transitions
+                        time_df = events.loc[(events.next_label == to_label) & (events.is_first_event == True)]
 
-                    time_df = events.loc[(events.label == start_node) & (events.next_label == end_node)]
-                    durations = time_df.duration.values
-                    # TODO : Manage with other distribution than 'norm'
-                    if len(durations) > 0:
-                        time_matrix[i][j] = ('norm', [np.mean(durations), np.std(durations)])
+                        inter_events_durations = time_df.relative_date.values
 
-        # Fill the time_matrix for the first edges
+                    else:
+                        time_df = events.loc[(events.label == from_node) & (events.next_label == to_label)]
+                        inter_events_durations = time_df.inter_event_duration.values
 
-        pattern_graph = Graph_Pattern.Graph(nodes, labels, period, mu, sigma, prob_matrix, time_matrix)
-        pattern_graph_list.append(pattern_graph)
+                    # We remove NaN from the values
+                    inter_events_durations = inter_events_durations[~np.isnan(inter_events_durations)]
+                    inter_events_durations = clean_data_arrays(inter_events_durations)
+                    time_matrix[i][j] = ('norm', [np.mean(inter_events_durations), np.std(inter_events_durations)])
+
+        events['activity_duration'] = events['end_date'] - events['date']
+        events['activity_duration'] = events['activity_duration'].apply(lambda x: x.total_seconds())
+
+        duration_matrix = [[] for i in range(n)]  # Empty lists, [[mean_time, std_time], ...] Activity duration
+        for i in range(n):
+            node = graph_nodes[i]
+            if node != Acyclic_Graph.Acyclic_Graph.START_NODE:
+                time_df = events.loc[events.label == node]
+                activity_durations = time_df.activity_duration.values
+                # We remove NaN from the values
+                activity_durations = activity_durations[~np.isnan(activity_durations)]
+                if len(activity_durations) > 0:
+                    activity_durations = clean_data_arrays(activity_durations)
+                    # plt.figure()
+                    # sns.distplot(activity_durations)
+                    # plt.show()
+                    duration_matrix[i] = ('norm', [np.mean(activity_durations), np.std(activity_durations)])
+
+        pattern_graph = Graph_Pattern.Graph(graph_nodes, labels, period, mu_time, sigma_time, prob_matrix, time_matrix,
+                                            duration_matrix)
+
+        built_graphs.append(pattern_graph)
 
         if display_graph:
             pattern_graph.display(output_folder=output_directory, debug=True)
+    return built_graphs
 
-    return pattern_graph_list
 
+def clean_data_arrays(data_array):
+    """
+    Clean the data by removing the outliers
+    :param data_array:
+    :return:
+    """
+    if len(data_array) < 2:
+        return data_array
 
-def find_events_occurrences(data, labels, occurrences, period, Tep):
-    '''
-    Find the events included in the pattern occurrences
-    :param data: Input Sequence
-    :param labels: labels of the pattern
-    :param occurrences: Occurrences of the pattern
-    :param period: Frequency of the pattern
-    :param Tep: is the time duration max between labels in the same occurrence
-    :return: A Dataframe of events included in the occurrences. Columns : ['date', 'label', 'period_id']
-    '''
+    eps = np.std(data_array) / 2
+    db = DBSCAN(eps=eps, min_samples=2, p=1).fit(
+        np.asarray(data_array).reshape(-1, 1))
+    if len(db.components_) > 0:
+        data_array = db.components_
 
-    Tep = dt.timedelta(minutes=Tep)
-
-    # Result dataframe
-    events = pd.DataFrame(columns=["date", "label", "period_id"])
-
-    start_time = occurrences.date.min().to_pydatetime()
-    start_date_first_period = start_time - dt.timedelta(
-        seconds=modulo_datetime(start_time, period))
-
-    end_time = occurrences.date.max().to_pydatetime()
-    start_date_last_period = end_time - dt.timedelta(
-        seconds=modulo_datetime(end_time, period))
-
-    data = data.loc[data.label.isin(labels)]
-
-    start_date_current_period = start_date_first_period
-
-    period_id = 0
-    while start_date_current_period <= start_date_last_period:
-        end_date_current_period = start_date_current_period + period
-
-        date_filter = (occurrences.date >= start_date_current_period) \
-                      & (occurrences.date < end_date_current_period)
-
-        occurrence_happened = len(occurrences.loc[date_filter]) > 0
-        if occurrence_happened:  # Occurrence happened
-            # Fill events Dataframe
-            occ_date = occurrences.loc[date_filter].date.min().to_pydatetime()
-            occ_end_date = occ_date + Tep
-            occ_events = data.loc[(data.date >= occ_date) & (data.date <= occ_end_date)].copy()
-            occ_events['period_id'] = period_id
-            events = pd.concat([events, occ_events]).drop_duplicates(keep=False)
-            events.reset_index(inplace=True, drop=True)
-
-        period_id += 1
-        start_date_current_period = end_date_current_period
-
-    return events
+    return data_array
 
 
 def best_fit_distribution(data, bins=200, ax=None):
@@ -278,13 +273,13 @@ def best_fit_distribution(data, bins=200, ax=None):
     return best_distribution, best_params
 
 
-def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list, accuracy):
+def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list):
     '''
     Build the acyclic graph
-    :param labels: Labels of the pattern
+    :param graph_labels: Labels of the pattern
     :param graph_nodes_labels: Pattern labels
     :param occurrence_list: List of list of ordered events per occurrence
-    :return: Probability transition matrix size = nb(nodes) x nb(labels)
+    :return: Probability transition matrix size = nb(graph_nodes) x nb(labels)
     '''
 
     list_length = [len(l) for l in occurrence_list]
@@ -293,19 +288,27 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list,
     nodes = [Graph_Pattern.Graph.START_NODE]
     nodes += graph_nodes_labels
 
+    graph_labels = labels + [Graph_Pattern.Graph.NONE_NODE]
+
     n = len(nodes)  # Size of the transition matrix
-    l = len(labels)
+    l = len(graph_labels)
 
     prob_matrix = np.zeros((n, l))
 
     # Deal with the beginning of the graph
     single_list = []
+    non_occurrences = 0
     for list in occurrence_list:
-        single_list.append(list[0])
+        if list:
+            single_list.append(list[0])
+        else:
+            non_occurrences += 1
 
     for node in set(single_list):
         label = Graph_Pattern.Graph.node2label(node)
-        prob_matrix[0][labels.index(label)] = accuracy * single_list.count(node) / len(single_list)
+        prob_matrix[0][graph_labels.index(label)] = single_list.count(node) / len(occurrence_list)
+
+    prob_matrix[0][l - 1] = non_occurrences / len(occurrence_list)
 
     for i in range(n - 2):
         tuple_list = []
@@ -324,19 +327,50 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list,
                 label_2 = Graph_Pattern.Graph.node2label(node_2)
                 p = nb / nb_max
                 if p != 0:
-                    prob_matrix[nodes.index(node_1)][labels.index(label_2)] = p
+                    prob_matrix[nodes.index(node_1)][graph_labels.index(label_2)] = p
 
     # Checking the validity of the transition (sum output = 1 OR 0)
 
     tol = 0.001  # Error tolerance
-    for i in range(1, n):
+    for i in range(n):
         # Row
         s_row = prob_matrix[i, :].sum()
         if abs(s_row - 1) > tol and s_row != 0:
             raise ValueError(
                 'The sum of the probabilities transition from {} is neither 1 nor 0: {}'.format(nodes[i], s_row))
 
-    return nodes, prob_matrix
+    return nodes, graph_labels, prob_matrix
+
+
+def compute_activity_compatibility_matrix(data):
+    activities = list(data.label.unique())
+    n = len(activities)
+
+    compatibility_matrix = np.zeros(shape=(n, n))
+
+    for activity in activities:
+        activ_df = data.loc[data.label == activity]
+        non_activ_df = data.loc[data.label != activity]
+        for _, activ_row in activ_df.iterrows():
+            start_date = activ_row.date
+            end_date = activ_row.end_date
+            date_filter = ((non_activ_df.date < start_date) & (non_activ_df.end_date > start_date)) | (
+                    (non_activ_df.end_date > end_date) & (non_activ_df.date < end_date)) | (
+                                  (non_activ_df.date > start_date) & (non_activ_df.end_date < end_date))
+
+            result = non_activ_df.loc[date_filter]
+            if not result.empty:
+                result_activities = result.label.unique()
+                for result_activity in result_activities:
+                    compatibility_matrix[activities.index(activity)][activities.index(result_activity)] += 1
+
+    for i in range(n):
+        for j in range(n):
+            if compatibility_matrix[i][j] < 5:
+                compatibility_matrix[i][j] = 0
+            else:
+                compatibility_matrix[i][j] = 1
+    return activities, compatibility_matrix
 
 if __name__ == '__main__':
     main()

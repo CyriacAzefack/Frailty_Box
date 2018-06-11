@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime as dt
 import glob
 import math
 
@@ -15,30 +14,30 @@ sns.set_style("darkgrid")
 # plt.xkcd()
 
 def main():
-    dataset_name = 'KA'
+    dataset_name = 'aruba'
     print("\n")
     print("###############################")
     print("EVALUATION OF THE MODEL on the {} HOUSE Dataset".format(dataset_name))
     print("##############################")
     print("\n")
 
-    dirname = "./output/{}/Simulation Replications/*.csv".format(dataset_name)
+    dirname = "./output/Simulation results/*.csv"
 
     list_files = glob.glob(dirname)
 
     confidence_error = 0.9
 
-    activity = ["prepare Breakfast START", "prepare Breakfast END"]
+    activity = "housekeeping"
 
     # Original data
     original_dataset = pick_dataset(dataset_name)
 
-    original_data_evaluation = compute_activity_time(data=original_dataset, start_label=activity[0],
-                                                     end_label=activity[1])
-    original_data_evaluation.fillna(0, inplace=True)
-    plt.plot_date(original_data_evaluation.index, original_data_evaluation.duration / 3600, label="Original Data",
-                  linestyle="-")
-    plt.show()
+    # original_data_evaluation = compute_activity_time(data=original_dataset, label=activity)
+    #
+    # original_data_evaluation.fillna(0, inplace=True)
+    # plt.plot_date(original_data_evaluation.index, original_data_evaluation.duration / 3600, label="Original Data",
+    #               linestyle="-")
+    # plt.show()
 
 
     if len(list_files) == 0:
@@ -50,15 +49,14 @@ def main():
         dataset = pd.read_csv(filename, delimiter=";")
         date_format = '%Y-%m-%d %H:%M:%S'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+        dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
 
-        evaluation_result = compute_activity_time(data=dataset, start_label=activity[0], end_label=activity[1],
-                                                  time_step_in_days=1)
+        evaluation_result = compute_activity_time(data=dataset, label=activity, time_step_in_days=1)
         if not evaluation_result.empty:
             evaluation_sim_results[filename] = evaluation_result
             end_drawing_date = evaluation_result.index[-1]
 
-    original_data_evaluation = compute_activity_time(data=original_dataset, start_label=activity[0],
-                                                     end_label=activity[1], end_date=end_drawing_date)
+    original_data_evaluation = compute_activity_time(data=original_dataset, label=activity, end_date=end_drawing_date)
 
     # Build a large Dataframe with a date range index
     start_date = original_data_evaluation.index[0]
@@ -110,7 +108,7 @@ def main():
     ax2.fill_between(big_df.index, big_df.stoc_lower.cumsum(), big_df.stoc_upper.cumsum(),
                      label='{0:.0f}% Confidence Error'.format(confidence_error * 100), color='k', alpha=.3)
 
-    ax1.title.set_text("{} House Dataset\nActivity [{} -- {}]".format(dataset_name, activity[0], activity[1]))
+    ax1.title.set_text("{} House Dataset\nActivity [{}]".format(dataset_name, activity))
     ax1.set_ylabel('Duration (hours)')
     ax2.set_ylabel('Duration (hours)')
     ax2.set_xlabel('Date')
@@ -144,7 +142,7 @@ def compute_stochastic_error(row, error_confidence=0.9):
     return mean, error
 
 
-def compute_activity_time(data, start_label, end_label, start_date=None, end_date=None, time_step_in_days=1):
+def compute_activity_time(data, label, start_date=None, end_date=None, time_step_in_days=1):
     '''
     Compute the Average time between start_label and end_label (in seconds) time into the data
     :param data:
@@ -160,42 +158,17 @@ def compute_activity_time(data, start_label, end_label, start_date=None, end_dat
     if not end_date:
         end_date = data.date.max().to_pydatetime()
 
-    labels = [start_label, end_label]
 
     # Filter the interesting data
-    data = data[(data.date >= start_date) & (data.date <= end_date) & (data.label.isin(labels))].copy()
-    data.reset_index(inplace=True, drop=True)
+    result = data[(data.date >= start_date) & (data.date <= end_date) & (data.label == label)].copy()
+
+    result['duration'] = result.end_date - result.date
+    result['duration'] = result['duration'].apply(
+        lambda x: x.total_seconds())
+    result.reset_index(inplace=True, drop=True)
     # Sort data by date
-    data.sort_values(by=['date'], ascending=True, inplace=True)
-
-    result = pd.DataFrame(columns=['date', 'duration'])
-
-    last_label = None
-    last_date = None
-    for index, row in data.iterrows():
-        label = row['label']
-        date = row['date'].to_pydatetime()
-        if not last_label:
-            last_label = label
-            last_date = date
-            continue
-
-        if last_label == label:
-            last_date = date
-        else:
-            if label == end_label:
-                mean_ts = (date.timestamp() + last_date.timestamp()) / 2
-                mean_date = dt.datetime.fromtimestamp(mean_ts).date()
-                mean_date = dt.datetime.combine(mean_date, dt.datetime.min.time())
-                result.loc[len(result)] = [mean_date, (date - last_date).total_seconds()]
-
-        last_label = label
-        last_date = date
-
-    if result.empty:
-        return result
-
     result.sort_values(by=['date'], ascending=True, inplace=True)
+
     result.set_index('date', inplace=True)
     result['date'] = result.index
 

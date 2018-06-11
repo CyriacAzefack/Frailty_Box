@@ -75,7 +75,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 
     for T in candidate_periods:
         delta_Tmax = delta_Tmax_ratio * T
-        period_occ = pd.DataFrame()
+
         period_occ = occurrences.copy()
 
         # Compute intervals between occurrences
@@ -232,8 +232,15 @@ def find_occurrences(data, episode, Tep):
 
     data = data.loc[data.label.isin(episode)].copy()
     data.sort_values(by=['date'], inplace=True)
-    occurrences = pd.DataFrame(columns=["date"])
 
+    if len(episode) == 1:
+        return data[['date', 'end_date']]
+
+    data['identical_next_label'] = data['label'].shift(-1) == data['label']
+
+    data['enough_time'] = (data['date'].shift(-1) - data['date']) <= Tep
+
+    occurrences = pd.DataFrame(columns=["date", "end_date"])
     def sliding_window(row):
         """
         return true if there is an occurrence of the episode starting at this timestamp
@@ -247,12 +254,14 @@ def find_occurrences(data, episode, Tep):
 
         return set(episode).issubset(next_labels)
 
-    data.loc[:, "occurrence"] = data.apply(sliding_window, axis=1)
+    data.loc[:, "occurrence"] = data[(data.identical_next_label == False) & (data.enough_time == True)].apply(
+        sliding_window, axis=1)
+
+    data.fillna(False, inplace=True)
 
     while (len(data.loc[data.occurrence == True]) > 0):
         # Add a new occurrence
         occ_time = min(data.loc[data.occurrence == True].date)
-        occurrences.loc[len(occurrences)] = [occ_time]
 
         # Marked the occurrences treated as "False"
         # TODO: can be improved
@@ -260,8 +269,11 @@ def find_occurrences(data, episode, Tep):
         for s in episode:
             i = data.loc[(data.date >= occ_time) & (data.label == s)].date.idxmin()
             indexes.append(int(i))
-
         data.loc[data.index.isin(indexes), 'occurrence'] = False
+
+        end_occ_time = max(data.loc[data.index.isin(indexes)].end_date)
+        occurrences.loc[len(occurrences)] = [occ_time, end_occ_time]
+
     occurrences.sort_values(by=['date'], ascending=True, inplace=True)
     return occurrences
 
