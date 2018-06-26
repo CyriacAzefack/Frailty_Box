@@ -220,7 +220,7 @@ def modulo_datetime(date, period):
     return remainder.total_seconds()
 
 
-def find_occurrences(data, episode, Tep):
+def find_occurrences(data, episode, Tep=30):
     """
     Find the occurences of the  episode
     :param data: Event log data

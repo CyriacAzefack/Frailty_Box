@@ -403,7 +403,7 @@ def pick_dataset(name, nb_days=-1):
         end_date = start_date + dt.timedelta(days=nb_days)
         dataset = dataset.loc[(dataset.date >= start_date) & (dataset.date < end_date)].copy()
 
-    dataset.drop_duplicates(['date'], keep='last', inplace=True)
+    dataset.drop_duplicates(['date', 'label'], keep='last', inplace=True)
     # dataset['id_patient'] = dataset['date'].apply(lambda x : x.timetuple().tm_yday)
     # dataset['duree'] = 0
     # dataset['evt'] = dataset['label']
@@ -415,6 +415,21 @@ def pick_dataset(name, nb_days=-1):
     #
     # dataset.to_csv('./{}_hugo_dataset.csv'.format(name), index=False, sep=";")
 
+    return dataset
+
+
+def pick_custom_dataset(path, nb_days=-1):
+    dataset = pd.read_csv(path, delimiter=';')
+    dataset['date'] = pd.to_datetime(dataset['date'])
+    dataset['end_date'] = pd.to_datetime(dataset['end_date'])
+
+    # We only take nb_days
+    if nb_days > 0:
+        start_date = dataset.date.min().to_pydatetime()
+        end_date = start_date + dt.timedelta(days=nb_days)
+        dataset = dataset.loc[(dataset.date >= start_date) & (dataset.date < end_date)].copy()
+
+    dataset.drop_duplicates(['date', 'label'], keep='last', inplace=True)
 
 
     return dataset

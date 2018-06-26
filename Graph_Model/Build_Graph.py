@@ -364,7 +364,7 @@ def find_events_occurrences(data, labels, occurrences, period, Tep):
 
 
 def best_fit_distribution(data, bins=200, ax=None):
-    dist_list = ['norm', 'expon', 'lognorm', 'triang', 'beta']
+    dist_list = ['norm', 'expon', 'lognorm', 'triang', 'beta', 'gaussian_kde']
 
     y, x = np.histogram(data, bins=200, density=True)
     x = (x + np.roll(x, -1))[:-1] / 2.0
