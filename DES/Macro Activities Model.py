@@ -9,7 +9,7 @@ from random import random
 import numpy as np
 import pandas as pd
 
-from DES import Activity
+from DES import Activity, MacroActivity
 from xED.Candidate_Study import find_occurrences, modulo_datetime
 from xED.Pattern_Discovery import pick_dataset
 
@@ -27,7 +27,8 @@ def main():
     dataset_name = 'aruba'
 
     period = dt.timedelta(days=1)
-    freq = dt.timedelta(minutes=60)
+    freq = dt.timedelta(minutes=15)
+    Tep = 30
     nb_replications = 20
 
     dataset = pick_dataset(dataset_name)
@@ -40,17 +41,48 @@ def main():
 
     all_activities = []
 
-    output = "../output/{}/Simple Model Simulation results 60mn/".format(dataset_name)
+    output = "../output/{}/Macro Activities Simulation results 15mn/".format(dataset_name)
 
     train_dataset = dataset.copy()
 
-    single_episodes = list(dataset.label.unique())
+    input = "../output/{}/ID_{}/patterns.pickle".format(dataset_name, 0)
 
-    # single_activities = single_activities[:2]
+    patterns = pd.read_pickle(input)
 
-    for episode in single_episodes:
-        occurrences = find_occurrences(data=dataset, episode=(episode,))
-        activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=freq)
+    for index, pattern in patterns.iterrows():
+        episode = list(pattern['Episode'])
+
+        occurrences = find_occurrences(data=train_dataset, episode=episode)
+
+        if occurrences.empty:
+            continue
+
+        activity = MacroActivity.MacroActivity(episode=episode, dataset=train_dataset, occurrences=occurrences,
+                                               period=period, time_step=freq)
+        all_activities.append(activity)
+
+        # Find the events corresponding to the expected occurrences
+        mini_factorised_events = pd.DataFrame(columns=["date", "label"])
+        for index, occurrence in occurrences.iterrows():
+            occ_start_date = occurrence["date"]
+            end_date = occ_start_date + dt.timedelta(minutes=Tep)
+            mini_data = train_dataset.loc[(train_dataset.label.isin(episode))
+                                          & (train_dataset.date >= occ_start_date)
+                                          & (train_dataset.date < end_date)].copy()
+            mini_data.sort_values(["date"], ascending=True, inplace=True)
+            mini_data.drop_duplicates(["label"], keep='first', inplace=True)
+            mini_factorised_events = mini_factorised_events.append(mini_data, ignore_index=True)
+
+        train_dataset = pd.concat([train_dataset, mini_factorised_events], sort=True).drop_duplicates(keep=False)
+
+    # Mining of Single activities
+
+    single_episodes = list(train_dataset.label.unique())
+
+    for activity in single_episodes:
+        activity = (activity,)
+        occurrences = find_occurrences(data=train_dataset, episode=activity)
+        activity = Activity.Activity(label=activity, occurrences=occurrences, period=period, time_step=freq)
         all_activities.append(activity)
 
     print('All Activities Created !!')
@@ -63,7 +95,6 @@ def main():
 
     # current_sim_date = end_date + period - dt.timedelta(seconds=modulo_datetime(end_date, period))
     current_sim_date = start_date + period - dt.timedelta(seconds=modulo_datetime(start_date, period))
-
 
     simulation_duration = nb_periods * period
 
@@ -90,12 +121,12 @@ def main():
             count_candidate_activities = []
 
             current_date = current_sim_date + dt.timedelta(seconds=time_in_period)
-            for episode in all_activities:
+            for activity in all_activities:
                 # stats = activity.get_stats_from_date(date=current_date, time_step_id=time_step_id)
-                stats = episode.get_stats(time_step_id=time_step_id)
+                stats = activity.get_stats(time_step_id=time_step_id)
                 count = stats['hist_count']
                 if count > 0:
-                    candidate_activities.append(episode)
+                    candidate_activities.append(activity)
                     count_candidate_activities.append(count)
 
             if len(candidate_activities) == 0:  # No candidates found
@@ -116,9 +147,9 @@ def main():
             rand = random()
             chosen_activity = None
 
-            for episode in candidate_activities:
-                if rand <= count_candidate_activities[candidate_activities.index(episode)]:
-                    chosen_activity = episode
+            for activity in candidate_activities:
+                if rand <= count_candidate_activities[candidate_activities.index(activity)]:
+                    chosen_activity = activity
                     break
 
             if chosen_activity is None:
@@ -144,6 +175,7 @@ def main():
         simulation_result.to_csv(filename, index=False, sep=';')
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - time_start, 1))
         print("Time elapsed for the simulation : {}".format(elapsed_time))
+
 
 if __name__ == '__main__':
     main()

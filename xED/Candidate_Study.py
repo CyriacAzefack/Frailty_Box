@@ -16,10 +16,10 @@ from sklearn.mixture import GaussianMixture
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 
-import Pattern_Discovery
+import xED
 
 def main():
-    data = Pattern_Discovery.pick_dataset('toy')
+    data = xED.pick_dataset('toy')
     episodes = []
     # episodes.append(("go to bed END", "use toilet START", "use toilet START"))
     # episodes.append(["take shower start", "take shower end", "leave house start"])
@@ -73,8 +73,8 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 
     best_accuracy = 0
 
-    for T in candidate_periods:
-        delta_Tmax = delta_Tmax_ratio * T
+    for period_T in candidate_periods:
+        delta_Tmax = delta_Tmax_ratio * period_T
 
         period_occ = occurrences.copy()
 
@@ -86,7 +86,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 
         # Compute relative dates
         period_occ.loc[:, "relative_date"] = period_occ.date.apply(
-            lambda x: modulo_datetime(x.to_pydatetime(), T))
+            lambda x: modulo_datetime(x.to_pydatetime(), period_T))
 
         # Display relative times histogram
 
@@ -116,12 +116,13 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
                 continue
 
             # For midnight-morning issue
-            data_points_2 = [x + T.total_seconds() for x in data_points]
+            data_points_2 = [x + period_T.total_seconds() for x in data_points]
 
             big_data_points = np.asarray(list(data_points) + list(data_points_2)).reshape(-1, 1)
 
             # print("EPSILON DBSCAN :", dt.timedelta(seconds = std_max*T.total_seconds()))
-            Nb_clusters, interesting_points = find_number_clusters(big_data_points, eps=std_max * T.total_seconds(),
+            Nb_clusters, interesting_points = find_number_clusters(big_data_points,
+                                                                   eps=std_max * period_T.total_seconds(),
                                                                    min_samples=support_min)
 
             # if no clusters found then switch to the next group
@@ -140,15 +141,15 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
                 mu = GMM.means_[i][0]
                 sigma = math.ceil(np.sqrt(GMM.covariances_[i]))
 
-                if sigma > std_max * T.total_seconds():
+                if sigma > std_max * period_T.total_seconds():
                     continue
                 lower_limit = mu - tolerance_ratio * sigma
                 upper_limit = mu + tolerance_ratio * sigma
 
-                if (lower_limit < 0) or (lower_limit > T.total_seconds()):
+                if (lower_limit < 0) or (lower_limit > period_T.total_seconds()):
                     continue
 
-                mu = mu % T.total_seconds()
+                mu = mu % period_T.total_seconds()
                 GMM_descr[mu] = sigma
 
                 if plot_graphs:
@@ -161,7 +162,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 
             # Compute the time description accuracy
 
-            accuracy, expected_occurrences = compute_pattern_accuracy(occurrences=group_occurrences, period=T,
+            accuracy, expected_occurrences = compute_pattern_accuracy(occurrences=group_occurrences, period=period_T,
                                                                       time_description=GMM_descr)
 
             if not accuracy:
@@ -173,7 +174,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 
                 best_periodicity = {
                     "description": GMM_descr,
-                    "period": T,
+                    "period": period_T,
                     "accuracy": accuracy,
                     "compression_power": len(expected_occurrences) * len(episode),
                     "expected_occurrences": expected_occurrences,
@@ -241,6 +242,7 @@ def find_occurrences(data, episode, Tep=30):
     data['enough_time'] = (data['date'].shift(-1) - data['date']) <= Tep
 
     occurrences = pd.DataFrame(columns=["date", "end_date"])
+
     def sliding_window(row):
         """
         return true if there is an occurrence of the episode starting at this timestamp

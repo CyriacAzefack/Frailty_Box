@@ -13,7 +13,7 @@ import time as t
 
 import pandas as pd
 
-import Pattern_Discovery.Pattern_Discovery as pattern_discovery
+import xED.Pattern_Discovery as pattern_discovery
 from Graph_Model import Pattern2Graph as p2g
 
 

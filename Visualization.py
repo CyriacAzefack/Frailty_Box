@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from numpy import random
 
-from Pattern_Discovery.Pattern_Discovery import *
+from xED.Pattern_Discovery import *
 
 sns.set_style('darkgrid')
 
@@ -19,16 +19,12 @@ def main():
     dataset = pick_dataset(dataset_name)
     sim_id = 0
     replication_id = 1
-    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/ID_{}/Simulation Replications/dataset_simulation_{}_{}.csv".format(
-    #     dataset_name, sim_id, sim_id + 1, replication_id)
-    path = "./output/Simulation results/dataset_simulation_rep_1.csv"
-    dataset = pd.read_csv(path, delimiter=';')
-    date_format = '%Y-%m-%d %H:%M:%S'
-    dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
-    dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
+    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Macro Activities Simulation results 15mn/dataset_simulation_rep_1.csv".format(
+        dataset_name)
+    dataset = pick_custom_dataset(path)
 
     start_date = dataset.date.min().to_pydatetime()
-    end_date = start_date + dt.timedelta(days=10)
+    end_date = start_date + dt.timedelta(days=5)
 
     visualize(dataset, start_date=start_date, end_date=end_date)
     # visualize(dataset, start_date=start_date, end_date=end_date, start_suffix='_begin', end_suffix='_end')

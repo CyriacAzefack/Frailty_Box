@@ -10,8 +10,8 @@ import pandas as pd
 import seaborn as sns
 from scipy import stats
 
-from Pattern_Discovery.Candidate_Study import modulo_datetime
-from Pattern_Discovery.Pattern_Discovery import pick_dataset, pick_custom_dataset
+from xED.Candidate_Study import modulo_datetime
+from xED.Pattern_Discovery import pick_dataset, pick_custom_dataset
 
 sns.set_style("whitegrid")
 # plt.xkcd()
@@ -27,42 +27,50 @@ def main():
     print("##############################")
     print("\n")
 
+    period = dt.timedelta(days=1)
+    freq = dt.timedelta(minutes=5)
+
     #####################
     #  COMPARE MODELS   #
     #####################
-    model_A_dirname = "./output/{}/Simple Model Simulation results 5mn/".format(dataset_name)
-    model_A_name = "Aruba 5mn"
+    # model_A_lab = '15mn'
+    # model_A_dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, model_A_lab)
+    # model_A_name = "{} Macro time step {}".format(dataset_name, model_A_lab)
 
-    model_B_dirname = "./output/{}/Simple Model Simulation results 15mn/".format(dataset_name)
-    model_B_name = "Aruba 15mn"
+    model_A_lab = '5mn'
+    model_A_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_A_lab)
+    model_A_name = "{} time step {}".format(dataset_name, model_A_lab)
 
-    confidence = 0.9
-
-    period = dt.timedelta(days=1)
-    freq = dt.timedelta(minutes=10)
+    model_B_lab = '30mn'
+    model_B_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_B_lab)
+    model_B_name = "{} time step {}".format(dataset_name, model_B_lab)
 
     compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
                    model_B_dir=model_B_dirname, period=period, time_step=freq)
-    plt.show()
 
-    dirname = "./output/{}/Simple Model Simulation results/"
+    # label = '15mn'
+    #
+    # dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, label)
+    #
+    # activity = "relax"
+    #
+    # confidence = 0.9
+    # # Occurrence time validation
+    # auc_original, mean_absolute_error, lower_auc, upper_auc = auc_validation(activity, original_dataset, dirname,
+    #                                                                          period, freq, confidence)
+    #
+    # print("Original Dataset AUC = {}".format(round(auc_original, 4)))
+    # print("Absolute ERROR AUC = {} ({}% of the original AUC)".format(round(mean_absolute_error, 4),
+    #                                                                  round(100 * mean_absolute_error / auc_original,
+    #                                                                        4)))
+    # print("{}% Confidence Interval : [{} ; {}]".format(confidence * 100, round(lower_auc, 4), round(upper_auc, 4)))
+    #
+    # # Duration Validation
+    # activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence)
+    #
+    # all_activities_validation(original_dataset, dirname, period, freq)
 
-    activity = "get drink"
 
-    # Occurrence time validation
-    auc_original, mean_absolute_error, lower_auc, upper_auc = auc_validation(activity, original_dataset, dirname,
-                                                                             period, freq, confidence)
-
-    print("Original Dataset AUC = {}".format(round(auc_original, 4)))
-    print("Absolute ERROR AUC = {} ({}% of the original AUC)".format(round(mean_absolute_error, 4),
-                                                                     round(100 * mean_absolute_error / auc_original,
-                                                                           4)))
-    print("{}% Confidence Interval : [{} ; {}]".format(confidence * 100, round(lower_auc, 4), round(upper_auc, 4)))
-
-    # Duration Validation
-    activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence)
-
-    all_activities_validation(original_dataset, dirname, period, freq)
 
     plt.show()
 
@@ -178,7 +186,6 @@ def area_under_hist(data, label, period=dt.timedelta(days=1), time_step=dt.timed
     occurrences['time_step_id'] = occurrences['relative_date'] / time_step.total_seconds()
     occurrences['time_step_id'] = occurrences['time_step_id'].apply(math.floor)
 
-    index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
 
     hist = occurrences.groupby(['time_step_id']).count()['date']
     start_date = occurrences.date.min().to_pydatetime()
@@ -299,10 +306,10 @@ def activity_duration_validation(label, original_dataset, replications_directory
         # TIME STEP PLOT
         ax1.plot_date(big_df.index, big_df.duration, label="Original Data", linestyle="-")
 
-        ax1.plot(big_df.index, big_df.stoc_mean, label="MEAN simulation", linestyle="-")
+        ax1.plot(big_df.index, big_df.stoc_mean, label="MEAN simulation", linestyle="--")
 
         ax1.fill_between(big_df.index, big_df.stoc_lower, big_df.stoc_upper,
-                         label='{0:.0f}% Confidence Error'.format(confidence * 100), color='y', alpha=.3)
+                         label='{0:.0f}% Confidence Error'.format(confidence * 100), color='y', alpha=.35)
 
         # CUMSUM PLOT
         ax2.plot_date(big_df.index, big_df.duration.cumsum(), label="Original Data", linestyle="-")
@@ -310,7 +317,7 @@ def activity_duration_validation(label, original_dataset, replications_directory
         ax2.plot(big_df.index, big_df.stoc_mean.cumsum(), label="MEAN simulation", linestyle="--")
 
         ax2.fill_between(big_df.index, big_df.stoc_lower.cumsum(), big_df.stoc_upper.cumsum(),
-                         label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.3)
+                         label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
 
         ax1.title.set_text("{} House Dataset\nActivity [{}]".format(dataset_name, label))
         ax1.set_ylabel('Duration (hours)')
@@ -322,7 +329,7 @@ def activity_duration_validation(label, original_dataset, replications_directory
         plt.gcf().autofmt_xdate()
 
 
-def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, model_B_dir, period=dt.timedelta(1),
+def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, model_B_dir, period=dt.timedelta(days=1),
                    time_step=dt.timedelta(minutes=10)):
     """
     Compare 2 simulation models

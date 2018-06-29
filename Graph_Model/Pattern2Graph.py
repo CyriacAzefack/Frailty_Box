@@ -13,8 +13,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__)))
 
 import Graph_Pattern
 import Acyclic_Graph
-from Pattern_Discovery.Candidate_Study import *
-from Pattern_Discovery.Pattern_Discovery import *
+from xED.Candidate_Study import *
+from xED.Pattern_Discovery import *
 
 
 def main():
@@ -111,7 +111,7 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
         events.loc[:, "relative_date"] = events.date.apply(
             lambda x: modulo_datetime(x.to_pydatetime(), period))
 
-        # Drop events outside time intervale
+        # Drop events outside time intervals
         events["expected"] = events["relative_date"].apply(
             lambda x: is_occurence_expected(x, {mu_time: sigma_time}, period, tolerance_ratio))
 

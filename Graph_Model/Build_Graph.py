@@ -7,8 +7,8 @@ from Graph_Model import Acyclic_Graph
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 
-from Pattern_Discovery.Candidate_Study import *
-from Pattern_Discovery.Pattern_Discovery import *
+from xED.Candidate_Study import *
+from xED.Pattern_Discovery import *
 
 
 def main():

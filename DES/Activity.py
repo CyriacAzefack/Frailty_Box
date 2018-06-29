@@ -10,8 +10,8 @@ from fbprophet import Prophet
 from pylab import exp, sqrt, diag, plot, legend, plt
 from scipy.optimize import curve_fit
 
-from Pattern_Discovery.Candidate_Study import modulo_datetime, find_occurrences
-from Pattern_Discovery.Pattern_Discovery import pick_dataset
+from xED.Candidate_Study import modulo_datetime, find_occurrences
+from xED.Pattern_Discovery import pick_dataset
 
 sns.set_style('darkgrid')
 
@@ -22,30 +22,32 @@ def main():
     # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/Simulation results 1/dataset_simulation_10.csv"
     # dataset = pick_custom_dataset(path)
 
-    label = ['sleeping']
+    label = ('meal_preparation',)
     period = dt.timedelta(days=1)
-    time_step = dt.timedelta(minutes=5)
-    occurrences = find_occurrences(data=dataset, episode=tuple(label))
+    time_step = dt.timedelta(minutes=15)
+    occurrences = find_occurrences(data=dataset, episode=label)
 
-    activity = Activity(activity=label[0], occurrences=occurrences, period=period, time_step=time_step)
+    print('{} occurrences of the episode {}'.format(len(occurrences), label))
+    activity = Activity(label=label, occurrences=occurrences, period=period, time_step=time_step,
+                        display_histogram=True)
 
-    start_date = occurrences.date.min().to_pydatetime()
-    future_date = start_date + dt.timedelta(days=30)
-
-    stats = activity.get_stats(time_step_id=8)
-
-    print(stats)
+    # start_date = occurrences.date.min().to_pydatetime()
+    # future_date = start_date + dt.timedelta(days=30)
+    #
+    # stats = activity.get_stats(8)
+    #
+    # print(stats)
     # pickle.dump(activity.occurrences, open("occurrences.pickle", 'wb'))
 
 
 class Activity:
     ID = 0
-    SLIDING_WINDOW = dt.timedelta(days=15)
+    SLIDING_WINDOW = dt.timedelta(days=30)
 
-    def __init__(self, activity, occurrences, period, time_step):
+    def __init__(self, label, occurrences, period, time_step, forecast_precomputing=False, display_histogram=False):
         '''
         Creation of an activity
-        :param activity: label of the activity
+        :param label: label of the activity
         :param occurrences: Dataframe representing the occurrences of the activity
         :param period: [dt.timedelta] Frequency of the analysis
         :param time_step: [dt.timedelta] discret time step for the simulation
@@ -53,18 +55,20 @@ class Activity:
 
         print('\n')
         print("####################################")
-        print(" Creation of the Activity '{}'".format(activity))
+        print(" Creation of the Activity '{}'".format(label))
         print("####################################")
         print('\n')
-        self.label = activity
+        self.label = label
         self.period = period
         self.time_step = time_step
         self.index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
         self.occurrences = self.preprocessing(occurrences)
-        self.histogram = self.build_histogram(occurrences)
+        self.histogram = self.build_histogram(occurrences, display=display_histogram)
         self.activity_duration_model = self.build_activity_duration_model(occurrences)
         # self.time_evo_per_index = self.compute_time_evolution()
-        # self.forecasters_per_index = self.build_forecaster()
+
+        if forecast_precomputing:
+            self.forecasters_per_index = self.build_forecaster()
 
         # evo = self.time_evo_per_index[3]
         # plt.plot(evo.index, evo.mean_duration)
@@ -104,8 +108,9 @@ class Activity:
         hist.fillna(0, inplace=True)
 
         if display:
-            hist.plot(kind="bar", label=self.label)
-            plt.legend()
+            hist.plot(kind="bar")
+            plt.title('--'.join(self.label))
+
             plt.show()
 
         return hist
@@ -117,14 +122,14 @@ class Activity:
         :return:
         '''
 
-        aggregagtion = {
+        aggregation = {
             'activity_duration': {
                 'mean_duration': 'mean',
                 'std_duration': 'std'
             }
         }
         activity_duration = occurrences[['time_step_id', 'activity_duration']].groupby(['time_step_id']).agg(
-            aggregagtion)
+            aggregation)
         activity_duration = activity_duration.reindex(self.index)
         activity_duration.fillna(0, inplace=True)
         activity_duration.columns = activity_duration.columns.droplevel(level=0)
@@ -155,6 +160,9 @@ class Activity:
                 df_indicator.columns = ['ds', 'y']
 
                 with suppress_stdout_stderr():
+                    if df_indicator.empty:
+                        time_step_forecaster[indicator_name] = None
+                        continue
                     time_step_forecaster[indicator_name] = Prophet().fit(df_indicator)
 
             evolution = (time_step_id + 1) / len(self.index)
@@ -187,10 +195,10 @@ class Activity:
         date = date.date()
         time_step_forecaster = self.forecasters_per_index[time_step_id]
 
-        future_start_date = self.time_evo_per_index[time_step_id].index.min().to_pydatetime()
+        # future_start_date = self.time_evo_per_index[time_step_id].index.max().to_pydatetime()
         future_end_date = date
-        future = pd.date_range(future_start_date, future_end_date, freq='1D')
-        future = pd.DataFrame(np.array(future.to_pydatetime(), dtype=np.datetime64))
+        # future = pd.date_range(future_start_date, future_end_date, freq='1D')
+        future = pd.DataFrame(np.array([future_end_date], dtype=np.datetime64))
 
         future.columns = ['ds']
 
@@ -276,6 +284,36 @@ class Activity:
 
         return time_evo_per_index
 
+    def simulate(self, date, time_step_id):
+        '''
+        Generate the events for the activity
+        :param date:
+        :param time_step_id:
+        :return:
+        '''
+
+        # stats = chosen_activity.get_stats_from_date(date=current_date, time_step_id=time_step_id, hist=False)
+        stats = self.get_stats(time_step_id=time_step_id)
+        mean_duration = stats['mean_duration']
+        std_duration = stats['std_duration']
+
+        simulation_result = pd.DataFrame(columns=['date', 'end_date', 'label'])
+        while True:
+            generated_duration = -1
+            while generated_duration < 0:
+                generated_duration = np.random.normal(mean_duration, std_duration)
+
+            try:
+                event_start_date = date
+                event_end_date = event_start_date + dt.timedelta(seconds=generated_duration)
+                simulation_result.loc[len(simulation_result)] = [event_start_date, event_end_date,
+                                                                 '--'.join(self.label)]
+                break
+            except ValueError as er:
+                print("OOOps ! Date Overflow. Let's try again...")
+
+        return simulation_result, generated_duration
+
     def fit_bimodal_distribution(self, x, y, index):
 
         def gauss(x, mu, sigma, A):
@@ -310,12 +348,11 @@ class suppress_stdout_stderr(object):
     exited (at least, I think that is why it lets exceptions through).
 
     '''
-
     def __init__(self):
         # Open a pair of null files
         self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
         # Save the actual stdout (1) and stderr (2) file descriptors.
-        self.save_fds = (os.dup(1), os.dup(2))
+        self.save_fds = [os.dup(1), os.dup(2)]
 
     def __enter__(self):
         # Assign the null pointers to stdout and stderr.
@@ -327,8 +364,8 @@ class suppress_stdout_stderr(object):
         os.dup2(self.save_fds[0], 1)
         os.dup2(self.save_fds[1], 2)
         # Close the null files
-        os.close(self.null_fds[0])
-        os.close(self.null_fds[1])
+        for fd in self.null_fds + self.save_fds:
+            os.close(fd)
 
 
 if __name__ == '__main__':

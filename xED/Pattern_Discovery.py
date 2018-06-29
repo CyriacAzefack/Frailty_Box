@@ -4,7 +4,6 @@ Created on Wed Mar 14 10:22:14 2018
 
 @author: cyriac.azefack
 """
-
 import datetime as dt
 import errno
 import getopt
@@ -16,18 +15,17 @@ import time as t
 import numpy as np
 import pandas as pd
 
-sys.path.append(os.path.join(os.path.dirname(__file__)))
-import Candidate_Study
-import FP_growth
+from xED import Candidate_Study
+from xED import FP_growth
 
 
 # matplotlib.style.use("seaborn")
 
 
 def main(argv):
-    ########################################
-    # DATA PREPROCESSING
-    ########################################
+    ######################
+    # DATA PREPROCESSING #
+    ######################
 
     """
     The dataframe should have 1 index (date as datetime) and 1 feature (label)
@@ -50,14 +48,14 @@ def main(argv):
         opts, args = getopt.getopt(argv, "hn:r:o:",
                                    ["name=", "replication=", "output_dir=", "days=", "support_min=", "weekly_habits"])
     except getopt.GetoptError:
-        print('Pattern_Discovery.py -n <dataset name> -n <replication index> -o <output dir> [--days <number of days>]'
+        print('xED.py -n <dataset name> -n <replication index> -o <output dir> [--days <number of days>]'
               ' [--support_min <minimum support>]')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
             print(
-                'Pattern_Discovery.py -n <dataset name> -o <output dir> [--days <number of days>] '
+                'xED.py -n <dataset name> -o <output dir> [--days <number of days>] '
                 '[--support_min <minimum support>]')
             sys.exit()
         elif opt in ("-n", "--name"):
@@ -95,9 +93,9 @@ def main(argv):
     # Find the best case among different tries:
 
     start_time = t.process_time()
-    patterns, patterns_string, data_left = xED_algorithm(data=dataset, Tep=60,
-                                                         support_min=support_min,
-                                                         tolerance_ratio=2, weekly_habits=weekly_habits)
+    patterns, patterns_string, data_left = pattern_discovery(data=dataset, Tep=30,
+                                                             support_min=support_min,
+                                                             tolerance_ratio=2, weekly_habits=weekly_habits)
     ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
 
     elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
@@ -140,8 +138,8 @@ def main(argv):
     # writer.save()
 
 
-def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
-                  std_max=0.1, tolerance_ratio=2, delta_Tmax_ratio=3, verbose=True, weekly_habits=False):
+def pattern_discovery(data, Tep=30, support_min=2, accuracy_min=0.5,
+                      std_max=0.1, tolerance_ratio=2, delta_Tmax_ratio=3, verbose=True, weekly_habits=False):
     """
     Implementation of the extended Discovery Algorithm designed by Julie Soulas U{https://hal.archives-ouvertes.fr/tel-01356217/}
 
@@ -255,7 +253,7 @@ def xED_algorithm(data, Tep=30, support_min=2, accuracy_min=0.5,
                 break
 
             # Factorize DATA
-            data = pd.concat([data, mini_factorised_events]).drop_duplicates(keep=False)
+            data = pd.concat([data, mini_factorised_events], sort=True).drop_duplicates(keep=False)
 
             # Add missing events
             # FIXME : Do we add missing events or not?
@@ -393,7 +391,7 @@ def pick_dataset(name, nb_days=-1):
     else:
         filename = "../input/{} House/{}_dataset.csv".format(name, name)
         path = os.path.join(my_path, filename)
-        dataset = pd.read_csv(path, delimiter='\\t')
+        dataset = pd.read_csv(path, delimiter='\\t', engine='python')
         dataset['date'] = pd.to_datetime(dataset['date'])
         dataset['end_date'] = pd.to_datetime(dataset['end_date'])
 

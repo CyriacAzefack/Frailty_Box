@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 
-from Pattern_Discovery.Candidate_Study import modulo_datetime
+from xED.Candidate_Study import modulo_datetime
 
 
 # from Graph_Model import Build_Graph
@@ -165,15 +165,15 @@ class Acyclic_Graph:
     def get_nodes(self):
         return self.graph_nodes
 
-    def simulate(self, previous_data, start_date, end_date):
+    def simulate(self, start_date, end_date):
         """
         Simulate the current graph for the given period of time
         :param start_date:
         :param end_date:
-        :return:
+        :return: simulation results
         """
         # self.extrapolate_time_evolution(start_date)
-        prob_matrix, time_matrix = self.get_date_status(start_date)
+        # prob_matrix, time_matrix = self.get_date_status(start_date)
         # time_matrix = self.time_matrix
 
         prob_matrix, time_matrix, activities_duration = self.prob_matrix, self.time_matrix, self.activities_duration
@@ -182,11 +182,6 @@ class Acyclic_Graph:
         n = len(self.graph_nodes)
 
         simulation_results = pd.DataFrame(columns=["date", "end_date", "label"])
-
-        # The real 'start_date' is the beginning of the next period
-        start_date_rel = modulo_datetime(start_date, self.period)
-        if start_date_rel != 0:
-            start_date = start_date + dt.timedelta(seconds=self.period.total_seconds() - start_date_rel)
 
         current_state = Acyclic_Graph.START_NODE
         current_date = start_date
@@ -242,14 +237,6 @@ class Acyclic_Graph:
 
                 # Compute time intervals to avoid concurrency
 
-                min_date = current_date
-                parallel_df = previous_data.loc[
-                    (previous_data.date < current_date) & (previous_data.end_date > current_date)]
-                if len(parallel_df) > 0:
-                    min_date = parallel_df.end_date.max().to_pydatetime()
-
-                count_ite = 10
-                create_event = True
                 while True:
 
                     waiting_time = int(waiting_dist.rvs(loc=waiting_loc, scale=waiting_scale, *waiting_arg))
@@ -259,19 +246,12 @@ class Acyclic_Graph:
                         activity_start_date = current_date + dt.timedelta(seconds=waiting_time)
                         activity_end_date = activity_start_date + dt.timedelta(seconds=duration_time)
 
-                        if (activity_start_date > min_date):
-                            break
+                        break
                     except ValueError as er:
                         print("OOOps ! Date Overflow. Let's try again...")
 
-                    count_ite -= 1
-                    if count_ite < 0:
-                        create_event = False
-                        break
-
-                if create_event:
-                    simulation_results.loc[len(simulation_results)] = [activity_start_date, activity_end_date,
-                                                                       destination_label]
+                simulation_results.loc[len(simulation_results)] = [activity_start_date, activity_end_date,
+                                                                   destination_label]
                 destination_date = activity_end_date
 
             current_state = destination_state
