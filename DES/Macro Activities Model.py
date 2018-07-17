@@ -24,10 +24,10 @@ def main():
     #   - Training Dataset : the Whole Original dataset
     #   - Test Dataset : The Whole Original dataset
 
-    dataset_name = 'aruba'
+    dataset_name = 'KA'
 
     period = dt.timedelta(days=1)
-    freq = dt.timedelta(minutes=15)
+    freq = dt.timedelta(minutes=5)
     Tep = 30
     nb_replications = 20
 
@@ -41,7 +41,7 @@ def main():
 
     all_activities = []
 
-    output = "../output/{}/Macro Activities Simulation results 15mn/".format(dataset_name)
+    output = "../output/{}/Macro Activities Simulation results 5mn/".format(dataset_name)
 
     train_dataset = dataset.copy()
 
@@ -57,8 +57,12 @@ def main():
         if occurrences.empty:
             continue
 
-        activity = MacroActivity.MacroActivity(episode=episode, dataset=train_dataset, occurrences=occurrences,
-                                               period=period, time_step=freq)
+        if len(episode) > 1:
+            activity = MacroActivity.MacroActivity(episode=episode, dataset=train_dataset, occurrences=occurrences,
+                                                   period=period, time_step=freq)
+        else:
+            activity = Activity.Activity(label=episode[0], occurrences=occurrences, period=period, time_step=freq)
+
         all_activities.append(activity)
 
         # Find the events corresponding to the expected occurrences
@@ -73,7 +77,7 @@ def main():
             mini_data.drop_duplicates(["label"], keep='first', inplace=True)
             mini_factorised_events = mini_factorised_events.append(mini_data, ignore_index=True)
 
-        train_dataset = pd.concat([train_dataset, mini_factorised_events], sort=True).drop_duplicates(keep=False)
+        train_dataset = pd.concat([train_dataset, mini_factorised_events], sort=False).drop_duplicates(keep=False)
 
     # Mining of Single activities
 
@@ -95,6 +99,7 @@ def main():
 
     # current_sim_date = end_date + period - dt.timedelta(seconds=modulo_datetime(end_date, period))
     current_sim_date = start_date + period - dt.timedelta(seconds=modulo_datetime(start_date, period))
+
 
     simulation_duration = nb_periods * period
 
@@ -175,7 +180,6 @@ def main():
         simulation_result.to_csv(filename, index=False, sep=';')
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - time_start, 1))
         print("Time elapsed for the simulation : {}".format(elapsed_time))
-
 
 if __name__ == '__main__':
     main()

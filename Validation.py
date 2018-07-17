@@ -32,43 +32,42 @@ def main():
 
     #####################
     #  COMPARE MODELS   #
-    #####################
+    ####################
     # model_A_lab = '15mn'
     # model_A_dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, model_A_lab)
     # model_A_name = "{} Macro time step {}".format(dataset_name, model_A_lab)
 
-    model_A_lab = '5mn'
-    model_A_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_A_lab)
-    model_A_name = "{} time step {}".format(dataset_name, model_A_lab)
+    # model_A_lab = '15mn'
+    # model_A_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_A_lab)
+    # model_A_name = "{} time step {}".format(dataset_name, model_A_lab)
+    #
+    # model_B_lab = '30mn'
+    # model_B_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_B_lab)
+    # model_B_name = "{} time step {}".format(dataset_name, model_B_lab)
+    #
+    # compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
+    #                model_B_dir=model_B_dirname, period=period, time_step=freq)
 
-    model_B_lab = '30mn'
-    model_B_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_B_lab)
-    model_B_name = "{} time step {}".format(dataset_name, model_B_lab)
+    activity = "leave_home"
 
-    compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
-                   model_B_dir=model_B_dirname, period=period, time_step=freq)
+    label = '15mn'
 
-    # label = '15mn'
-    #
-    # dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, label)
-    #
-    # activity = "relax"
-    #
-    # confidence = 0.9
-    # # Occurrence time validation
-    # auc_original, mean_absolute_error, lower_auc, upper_auc = auc_validation(activity, original_dataset, dirname,
-    #                                                                          period, freq, confidence)
-    #
-    # print("Original Dataset AUC = {}".format(round(auc_original, 4)))
-    # print("Absolute ERROR AUC = {} ({}% of the original AUC)".format(round(mean_absolute_error, 4),
-    #                                                                  round(100 * mean_absolute_error / auc_original,
-    #                                                                        4)))
-    # print("{}% Confidence Interval : [{} ; {}]".format(confidence * 100, round(lower_auc, 4), round(upper_auc, 4)))
-    #
-    # # Duration Validation
-    # activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence)
-    #
-    # all_activities_validation(original_dataset, dirname, period, freq)
+    # dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, label)
+    dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, label)
+
+    confidence = 0.9
+    # Occurrence time validation
+    auc_original, mean_absolute_error, lower_auc, upper_auc = auc_validation(activity, original_dataset, dirname,
+                                                                             period, freq, confidence, display=True)
+    print("Original Dataset AUC = {}".format(round(auc_original, 4)))
+    print("Absolute ERROR AUC = {} ({}% of the original AUC)".format(round(mean_absolute_error, 4),
+                                                                     round(100 * mean_absolute_error / auc_original,
+                                                                           4)))
+    print("{}% Confidence Interval : [{} ; {}]".format(confidence * 100, round(lower_auc, 4), round(upper_auc, 4)))
+
+    # Duration Validation
+    activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence)
+
 
 
 
@@ -309,7 +308,7 @@ def activity_duration_validation(label, original_dataset, replications_directory
         ax1.plot(big_df.index, big_df.stoc_mean, label="MEAN simulation", linestyle="--")
 
         ax1.fill_between(big_df.index, big_df.stoc_lower, big_df.stoc_upper,
-                         label='{0:.0f}% Confidence Error'.format(confidence * 100), color='y', alpha=.35)
+                         label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
 
         # CUMSUM PLOT
         ax2.plot_date(big_df.index, big_df.duration.cumsum(), label="Original Data", linestyle="-")
@@ -343,11 +342,24 @@ def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, mo
     model_A_validation_df = all_activities_validation(original_dataset, model_A_dir, period, time_step, display=False)
     model_B_validation_df = all_activities_validation(original_dataset, model_B_dir, period, time_step, display=False)
 
+    diff_df = model_B_validation_df.join(model_A_validation_df, lsuffix='_B', rsuffix='_A')
+    diff_df['error_lost'] = diff_df.mae_percentage_B - diff_df.mae_percentage_A
+    diff_df.sort_values(['error_lost'], ascending=False, inplace=True)
+
+    fig, ax = plt.subplots()
+    sns.set_color_codes("pastel")
+    sns.barplot(x="error_lost", y="label_A", data=diff_df, label="Error lost", color="b")
+
+    # Add a legend and informative axis label
+    ax.legend(ncol=2, loc="lower right", frameon=True)
+    ax.set(ylabel="", xlabel="Points of Errors lost")
+    sns.despine(left=True, bottom=True)
+    plt.title("From Model '{}' --> Model '{}'".format(model_B_name, model_A_name))
+
+    fig, ax = plt.subplots()
     y = list(model_A_validation_df.mae_percentage.values)
     x = list(model_A_validation_df.original_auc.values)
     labels = list(model_A_validation_df.label.values)
-
-    fig, ax = plt.subplots()
 
     ax.scatter(x, y, color='b', label=model_A_name)
 
@@ -365,7 +377,6 @@ def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, mo
 
     plt.xlabel('Area Under the Histogram')
     plt.ylabel('Mean Absolute Error (%)')
-    plt.title('Activities Validation')
     plt.legend()
 
 

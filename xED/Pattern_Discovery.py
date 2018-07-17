@@ -391,7 +391,7 @@ def pick_dataset(name, nb_days=-1):
     else:
         filename = "../input/{} House/{}_dataset.csv".format(name, name)
         path = os.path.join(my_path, filename)
-        dataset = pd.read_csv(path, delimiter='\\t', engine='python')
+        dataset = pd.read_csv(path, delimiter=';')
         dataset['date'] = pd.to_datetime(dataset['date'])
         dataset['end_date'] = pd.to_datetime(dataset['end_date'])
 
@@ -402,6 +402,7 @@ def pick_dataset(name, nb_days=-1):
         dataset = dataset.loc[(dataset.date >= start_date) & (dataset.date < end_date)].copy()
 
     dataset.drop_duplicates(['date', 'label'], keep='last', inplace=True)
+
     # dataset['id_patient'] = dataset['date'].apply(lambda x : x.timetuple().tm_yday)
     # dataset['duree'] = 0
     # dataset['evt'] = dataset['label']

@@ -22,7 +22,7 @@ def main():
     # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/Simulation results 1/dataset_simulation_10.csv"
     # dataset = pick_custom_dataset(path)
 
-    label = ('meal_preparation',)
+    label = ('sleeping',)
     period = dt.timedelta(days=1)
     time_step = dt.timedelta(minutes=15)
     occurrences = find_occurrences(data=dataset, episode=label)
@@ -109,8 +109,9 @@ class Activity:
 
         if display:
             hist.plot(kind="bar")
-            plt.title('--'.join(self.label))
-
+            plt.title(
+                '--'.join(self.label) + '\nTime step : {} min'.format(round(self.time_step.total_seconds() / 60, 1)))
+            plt.ylabel('Count')
             plt.show()
 
         return hist

@@ -1,5 +1,5 @@
 from DES.Activity import Activity
-from Graph_Model.Acyclic_Graph import Acyclic_Graph
+from Graph_Model import Acyclic_Graph
 from Graph_Model.Pattern2Graph import *
 from xED.Candidate_Study import modulo_datetime, find_occurrences
 from xED.Pattern_Discovery import pick_dataset
@@ -23,7 +23,7 @@ def main():
     date = dataset.date.min().to_pydatetime()
     simulation, duration = activity.simulate(date, 8)
     print(simulation)
-    pass
+
 
 
 class MacroActivity(Activity):
@@ -38,7 +38,7 @@ class MacroActivity(Activity):
         :param display_histogram:
         '''
         Activity.__init__(self, episode, occurrences, period, time_step, display_histogram=display)
-
+        self.Tep = dt.timedelta(minutes=30)
         # Find the events corresponding to the occurrences
         events = pd.DataFrame(columns=["date", "label", 'occ_id'])
         for index, occurrence in occurrences.iterrows():
@@ -53,6 +53,7 @@ class MacroActivity(Activity):
             events = events.append(mini_data, ignore_index=True)
 
         self.activities = {}  # key: label, value: Activity
+
 
         for label in episode:
             label_events = events.loc[events.label == label].copy()
@@ -70,11 +71,12 @@ class MacroActivity(Activity):
         :param time_step_id:
         :return: simulations results, macro-activity duration
         '''
-        simulation_result = self.graph.simulate(date, date + self.period / 2)
+        simulation_result = self.graph.simulate(date, date + self.Tep)
 
         duration = (simulation_result.end_date.max().to_pydatetime() - date).total_seconds()
 
         return simulation_result, duration
+
 
     def build_activities_graph(self, episode, events, period, display=False):
         '''
@@ -116,7 +118,7 @@ class MacroActivity(Activity):
             lambda x: modulo_datetime(x.to_pydatetime(), period))
         events['is_last_event'] = events['occ_id'] != events['occ_id'].shift(-1)
         events['is_first_event'] = events['occ_id'] != events['occ_id'].shift(1)
-        events['next_label'] = events['label'].shift(-1).fillna('_nan').apply(Acyclic_Graph.node2label)
+        events['next_label'] = events['label'].shift(-1).fillna('_nan').apply(Acyclic_Graph.Acyclic_Graph.node2label)
         events['next_date'] = events['date'].shift(-1)
         events['inter_event_duration'] = events['next_date'] - events['date']
         events['inter_event_duration'] = events['inter_event_duration'].apply(lambda x: x.total_seconds())
@@ -135,7 +137,7 @@ class MacroActivity(Activity):
                     from_node = graph_nodes[i]
                     to_label = graph_labels[j]
 
-                    if from_node == Acyclic_Graph.START_NODE:  # START_NODE transitions
+                    if from_node == Acyclic_Graph.Acyclic_Graph.START_NODE:  # START_NODE transitions
                         time_matrix[i][j] = ('norm', [0, 0])
                         continue
 
@@ -153,7 +155,7 @@ class MacroActivity(Activity):
         duration_matrix = [[] for i in range(n)]  # Empty lists, [[mean_time, std_time], ...] Activity duration
         for i in range(n):
             node = graph_nodes[i]
-            if node != Acyclic_Graph.START_NODE:
+            if node != Acyclic_Graph.Acyclic_Graph.START_NODE:
                 time_df = events.loc[events.label == node]
                 activity_durations = time_df.activity_duration.values
                 # We remove NaN from the values
@@ -165,8 +167,9 @@ class MacroActivity(Activity):
                     # plt.show()
                     duration_matrix[i] = ('norm', [np.mean(activity_durations), np.std(activity_durations)])
 
-        acyclic_graph = Acyclic_Graph(nodes=graph_nodes, labels=list(episode), period=period, prob_matrix=prob_matrix,
-                                      wait_matrix=time_matrix, activities_duration=duration_matrix)
+        acyclic_graph = Acyclic_Graph.Acyclic_Graph(nodes=graph_nodes, labels=list(episode), period=period,
+                                                    prob_matrix=prob_matrix,
+                                                    wait_matrix=time_matrix, activities_duration=duration_matrix)
 
         if display:
             acyclic_graph.display(output_folder='./', debug=True)

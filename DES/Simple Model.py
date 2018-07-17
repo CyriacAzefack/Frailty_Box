@@ -24,10 +24,10 @@ def main():
     #   - Training Dataset : the Whole Original dataset
     #   - Test Dataset : The Whole Original dataset
 
-    dataset_name = 'aruba'
+    dataset_name = 'KA'
 
     period = dt.timedelta(days=1)
-    freq = dt.timedelta(minutes=60)
+    freq = dt.timedelta(minutes=5)
     nb_replications = 20
 
     dataset = pick_dataset(dataset_name)
@@ -40,9 +40,9 @@ def main():
 
     all_activities = []
 
-    output = "../output/{}/Simple Model Simulation results 60mn/".format(dataset_name)
+    output = "../output/{}/Simple Model Simulation results 5mn/".format(dataset_name)
 
-    train_dataset = dataset.copy()
+
 
     single_episodes = list(dataset.label.unique())
 
