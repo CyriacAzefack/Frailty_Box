@@ -14,17 +14,17 @@ color_mapper = np.vectorize(lambda x: {10: 'red', 40: 'blue'}.get(x))
 
 
 def main():
-    dataset_name = 'aruba'
+    dataset_name = 'KA'
 
     dataset = pick_dataset(dataset_name)
     sim_id = 0
     replication_id = 1
-    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Macro Activities Simulation results 15mn/dataset_simulation_rep_1.csv".format(
+    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Macro Activities Simulation results 5mn/dataset_simulation_rep_1.csv".format(
         dataset_name)
     dataset = pick_custom_dataset(path)
 
     start_date = dataset.date.min().to_pydatetime()
-    end_date = start_date + dt.timedelta(days=5)
+    end_date = start_date + dt.timedelta(days=20)
 
     visualize(dataset, start_date=start_date, end_date=end_date)
     # visualize(dataset, start_date=start_date, end_date=end_date, start_suffix='_begin', end_suffix='_end')

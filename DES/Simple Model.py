@@ -49,7 +49,8 @@ def main():
     # single_activities = single_activities[:2]
 
     for episode in single_episodes:
-        occurrences = find_occurrences(data=dataset, episode=(episode,))
+        episode = (episode,)
+        occurrences = find_occurrences(data=dataset, episode=episode)
         activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=freq)
         all_activities.append(activity)
 

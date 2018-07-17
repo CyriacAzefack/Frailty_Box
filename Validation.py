@@ -17,7 +17,7 @@ sns.set_style("whitegrid")
 # plt.xkcd()
 
 def main():
-    dataset_name = 'aruba'
+    dataset_name = 'KA'
     # Original data
     original_dataset = pick_dataset(dataset_name)
 
@@ -33,24 +33,24 @@ def main():
     #####################
     #  COMPARE MODELS   #
     ####################
-    # model_A_lab = '15mn'
+    # model_A_lab = '5mn'
     # model_A_dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, model_A_lab)
     # model_A_name = "{} Macro time step {}".format(dataset_name, model_A_lab)
-
-    # model_A_lab = '15mn'
-    # model_A_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_A_lab)
-    # model_A_name = "{} time step {}".format(dataset_name, model_A_lab)
     #
-    # model_B_lab = '30mn'
+    # # model_A_lab = '5mn'
+    # # model_A_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_A_lab)
+    # # model_A_name = "{} time step {}".format(dataset_name, model_A_lab)
+    #
+    # model_B_lab = '5mn'
     # model_B_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_B_lab)
     # model_B_name = "{} time step {}".format(dataset_name, model_B_lab)
     #
     # compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
     #                model_B_dir=model_B_dirname, period=period, time_step=freq)
 
-    activity = "leave_home"
+    activity = "take shower"
 
-    label = '15mn'
+    label = '5mn'
 
     # dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, label)
     dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, label)
@@ -67,9 +67,6 @@ def main():
 
     # Duration Validation
     activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence)
-
-
-
 
     plt.show()
 
@@ -181,10 +178,12 @@ def area_under_hist(data, label, period=dt.timedelta(days=1), time_step=dt.timed
     '''
 
     occurrences = data[data.label == label].copy()
+
+    if occurrences.empty:
+        raise ValueError('The label "{}" does not exist in the dataset'.format(label))
     occurrences['relative_date'] = occurrences.date.apply(lambda x: modulo_datetime(x.to_pydatetime(), period))
     occurrences['time_step_id'] = occurrences['relative_date'] / time_step.total_seconds()
     occurrences['time_step_id'] = occurrences['time_step_id'].apply(math.floor)
-
 
     hist = occurrences.groupby(['time_step_id']).count()['date']
     start_date = occurrences.date.min().to_pydatetime()

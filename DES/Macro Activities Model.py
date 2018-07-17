@@ -61,7 +61,7 @@ def main():
             activity = MacroActivity.MacroActivity(episode=episode, dataset=train_dataset, occurrences=occurrences,
                                                    period=period, time_step=freq)
         else:
-            activity = Activity.Activity(label=episode[0], occurrences=occurrences, period=period, time_step=freq)
+            activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=freq)
 
         all_activities.append(activity)
 
@@ -84,9 +84,9 @@ def main():
     single_episodes = list(train_dataset.label.unique())
 
     for activity in single_episodes:
-        activity = (activity,)
-        occurrences = find_occurrences(data=train_dataset, episode=activity)
-        activity = Activity.Activity(label=activity, occurrences=occurrences, period=period, time_step=freq)
+        episode = (activity,)
+        occurrences = find_occurrences(data=train_dataset, episode=episode)
+        activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=freq)
         all_activities.append(activity)
 
     print('All Activities Created !!')
