@@ -6,15 +6,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Add basic Time Series Forecasting">
-      <change afterPath="$PROJECT_DIR$/DES/Digital Twin Model.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/aruba/Simple Model &amp; TS Model Simulation results 5mn/all_activities.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DES/Activity.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Activity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DES/Macro Activities Model.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DES/MacroActivity.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DES/Simple Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Simple Model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/Visualization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DES/Digital Twin Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Digital Twin Model.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -35,7 +29,7 @@
       <file leaf-file-name="scratch.py" pinned="false" current-in-tab="false">
         <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1224">
+            <state relative-caret-position="1360">
               <caret line="80" column="71" selection-start-line="79" selection-start-column="4" selection-end-line="80" selection-end-column="71" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
@@ -47,11 +41,8 @@
       <file leaf-file-name="Simple Model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DES/Simple Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="491">
+            <state relative-caret-position="663">
               <caret line="53" column="21" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -68,7 +59,7 @@
       <file leaf-file-name="Simulation_Model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2499">
+            <state relative-caret-position="2669">
               <caret line="157" column="27" selection-start-line="157" selection-start-column="10" selection-end-line="157" selection-end-column="27" />
               <folding>
                 <element signature="e#90#111#0" expanded="true" />
@@ -89,8 +80,8 @@
       <file leaf-file-name="Digital Twin Model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="202">
-              <caret line="51" column="12" lean-forward="true" selection-start-line="51" selection-start-column="12" selection-end-line="51" selection-end-column="12" />
+            <state>
+              <caret line="31" column="51" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -101,11 +92,8 @@
       <file leaf-file-name="Validation.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Validation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="333">
+            <state relative-caret-position="646">
               <caret line="50" column="24" selection-start-line="50" selection-start-column="24" selection-end-line="50" selection-end-column="24" />
-              <folding>
-                <element signature="e#24#45#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -113,11 +101,8 @@
       <file leaf-file-name="Activity.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DES/Activity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="644">
-              <caret line="459" column="63" selection-start-line="459" selection-start-column="63" selection-end-line="459" selection-end-column="63" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="7531">
+              <caret line="451" column="63" selection-start-line="451" selection-start-column="63" selection-end-line="451" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -186,7 +171,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Only_the_beginning" />
+        <entry key="$PROJECT_DIR$" value="0349610222c9c6ddeec6df7c1d524dc4d4564df9" />
       </map>
     </option>
     <option name="RESET_MODE" value="HARD" />
@@ -240,6 +225,7 @@
         <option value="$PROJECT_DIR$/DES/Activity.py" />
         <option value="$PROJECT_DIR$/DES/Simple Model.py" />
         <option value="$PROJECT_DIR$/DES/Macro Activities Model.py" />
+        <option value="$PROJECT_DIR$/DES/Digital Twin Model.py" />
       </list>
     </option>
   </component>
@@ -363,7 +349,25 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Macro Activities Model">
+  <component name="RunManager" selected="Python.Digital Twin Model">
+    <configuration name="Digital Twin Model" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/DES" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/DES/Digital Twin Model.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="Macro Activities Model" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -490,41 +494,23 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="Visualization" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Visualization.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
     <list>
       <item itemvalue="Python.Pattern_Discovery_Aruba" />
       <item itemvalue="Python.Pattern_Discovery_KA" />
       <item itemvalue="Python.Simulation KA" />
-      <item itemvalue="Python.Visualization" />
       <item itemvalue="Python.Macro Activities Model" />
       <item itemvalue="Python.Validation" />
       <item itemvalue="Python.Simple Model" />
       <item itemvalue="Python.MacroActivity" />
+      <item itemvalue="Python.Digital Twin Model" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Macro Activities Model" />
+        <item itemvalue="Python.Digital Twin Model" />
+        <item itemvalue="Python.MacroActivity" />
         <item itemvalue="Python.Simple Model" />
         <item itemvalue="Python.Validation" />
-        <item itemvalue="Python.MacroActivity" />
-        <item itemvalue="Python.Visualization" />
+        <item itemvalue="Python.Macro Activities Model" />
       </list>
     </recent_temporary>
   </component>
@@ -696,7 +682,14 @@
       <option name="project" value="LOCAL" />
       <updated>1531818199551</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Refactoring of the Simulation Model in fewer files">
+      <created>1532252619302</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1532252619302</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -710,16 +703,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.38873994" visible="true" weight="0.2881981" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.38950276" visible="true" weight="0.2881981" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32883817" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50790304" side_tool="true" weight="0.22614108" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.32780084" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.24896266" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.24896266" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49789253" weight="0.32883817" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49209693" visible="true" weight="0.22614108" />
-      <window_info id="Structure" order="1" sideWeight="0.61126006" side_tool="true" visible="true" weight="0.2881981" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49209693" weight="0.22614108" />
+      <window_info id="Structure" order="1" sideWeight="0.61049724" side_tool="true" visible="true" weight="0.2881981" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3205394" />
       <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" weight="0.2852697" />
@@ -796,7 +788,8 @@
     <MESSAGE value="- DES Macro Activities Model finishes&#10;- Results looks good, significant improvement" />
     <MESSAGE value="Fix small datasets (KA) simulations errors" />
     <MESSAGE value="Add basic Time Series Forecasting" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add basic Time Series Forecasting" />
+    <MESSAGE value="Refactoring of the Simulation Model in fewer files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactoring of the Simulation Model in fewer files" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -821,12 +814,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DES/Activity.py</url>
-          <line>210</line>
+          <line>204</line>
           <option name="timeStamp" value="592" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>350</line>
+          <line>348</line>
           <option name="timeStamp" value="603" />
         </line-breakpoint>
       </breakpoints>
@@ -1189,16 +1182,6 @@
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1224">
-          <caret line="80" column="71" selection-start-line="79" selection-start-column="4" selection-end-line="80" selection-end-column="71" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/pickle.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
@@ -1220,13 +1203,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
+    <entry file="file://$PROJECT_DIR$/output/aruba/Simple Model &amp; TS Model Simulation results 5mn/all_activities.pkl">
+      <provider selected="true" editor-type-id="LargeFileEditor" />
+      <provider editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DES/MacroActivity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2499">
-          <caret line="157" column="27" selection-start-line="157" selection-start-column="10" selection-end-line="157" selection-end-column="27" />
+        <state relative-caret-position="34">
+          <caret line="2" selection-start-line="2" selection-end-line="2" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1360">
+          <caret line="80" column="71" selection-start-line="79" selection-start-column="4" selection-end-line="80" selection-end-column="71" />
           <folding>
-            <element signature="e#90#111#0" expanded="true" />
+            <element signature="e#0#19#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DES/Simple Model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="663">
+          <caret line="53" column="21" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
         </state>
       </provider>
     </entry>
@@ -1237,9 +1238,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/output/aruba/Simple Model &amp; TS Model Simulation results 5mn/all_activities.pkl">
-      <provider selected="true" editor-type-id="LargeFileEditor" />
-      <provider editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2669">
+          <caret line="157" column="27" selection-start-line="157" selection-start-column="10" selection-end-line="157" selection-end-column="27" />
+          <folding>
+            <element signature="e#90#111#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Visualization.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -1250,45 +1257,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Validation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="333">
+        <state relative-caret-position="646">
           <caret line="50" column="24" selection-start-line="50" selection-start-column="24" selection-end-line="50" selection-end-column="24" />
-          <folding>
-            <element signature="e#24#45#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DES/MacroActivity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" selection-start-line="2" selection-end-line="2" selection-end-column="39" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/DES/Activity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="644">
-          <caret line="459" column="63" selection-start-line="459" selection-start-column="63" selection-end-line="459" selection-end-column="63" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DES/Simple Model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="491">
-          <caret line="53" column="21" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="7531">
+          <caret line="451" column="63" selection-start-line="451" selection-start-column="63" selection-end-line="451" selection-end-column="63" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="51" column="12" lean-forward="true" selection-start-line="51" selection-start-column="12" selection-end-line="51" selection-end-column="12" />
+        <state>
+          <caret line="31" column="51" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
