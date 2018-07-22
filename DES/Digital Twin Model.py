@@ -25,13 +25,13 @@ def main():
     #   - Training Dataset : the Whole Original dataset
     #   - Test Dataset : The Whole Original dataset
 
-    dataset_name = 'aruba'
+    dataset_name = 'KA'
 
     period = dt.timedelta(days=1)
     time_step_min = 5
     time_step = dt.timedelta(minutes=time_step_min)
     nb_replications = 20
-    activities_generation_method = 'Simple'  # {'Simple', 'Macro'}
+    activities_generation_method = 'Macro'  # {'Simple', 'Macro'}
     duration_generation_method = 'Normal'  # {'Normal', 'Forecast Normal', 'TS Forecasting'}
     Tep = 30  # For Macro Activities (Duration max of a macro activity)
 

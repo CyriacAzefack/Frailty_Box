@@ -7,7 +7,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Add basic Time Series Forecasting">
       <change afterPath="$PROJECT_DIR$/output/aruba/Simple Model &amp; TS Model Simulation results 5mn/all_activities.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DES/Digital Twin Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Digital Twin Model.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -80,8 +79,8 @@
       <file leaf-file-name="Digital Twin Model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="31" column="51" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
+            <state relative-caret-position="561">
+              <caret line="33" column="41" selection-start-line="33" selection-start-column="41" selection-end-line="33" selection-end-column="41" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -689,7 +688,14 @@
       <option name="project" value="LOCAL" />
       <updated>1532252619302</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Add basic Time Series Forecasting">
+      <created>1532253214417</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1532253214417</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -703,15 +709,16 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.38950276" visible="true" weight="0.2881981" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.38873994" visible="true" weight="0.2881981" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32883817" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50790304" side_tool="true" weight="0.22614108" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.32780084" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.24896266" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.24896266" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49789253" weight="0.32883817" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49209693" weight="0.22614108" />
-      <window_info id="Structure" order="1" sideWeight="0.61049724" side_tool="true" visible="true" weight="0.2881981" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49209693" visible="true" weight="0.22614108" />
+      <window_info id="Structure" order="1" sideWeight="0.61126006" side_tool="true" visible="true" weight="0.2881981" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3205394" />
       <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" weight="0.2852697" />
@@ -787,9 +794,9 @@
     <MESSAGE value="- DES Simple Model Finished&#10;- Validation Upgraded : Compare Models, AUC histogram validation" />
     <MESSAGE value="- DES Macro Activities Model finishes&#10;- Results looks good, significant improvement" />
     <MESSAGE value="Fix small datasets (KA) simulations errors" />
-    <MESSAGE value="Add basic Time Series Forecasting" />
     <MESSAGE value="Refactoring of the Simulation Model in fewer files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring of the Simulation Model in fewer files" />
+    <MESSAGE value="Add basic Time Series Forecasting" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add basic Time Series Forecasting" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -1271,8 +1278,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="31" column="51" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
+        <state relative-caret-position="561">
+          <caret line="33" column="41" selection-start-line="33" selection-start-column="41" selection-end-line="33" selection-end-column="41" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
