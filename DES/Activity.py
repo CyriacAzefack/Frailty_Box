@@ -1,15 +1,10 @@
-import datetime as dt
-import math
-import os
-import sys
-
-import numpy as np
-import pandas as pd
 import seaborn as sns
 from fbprophet import Prophet
 from pylab import exp, sqrt, diag, plot, legend, plt
 from scipy.optimize import curve_fit
 
+from Graph_Model import Acyclic_Graph
+from Graph_Model.Pattern2Graph import *
 from xED.Candidate_Study import modulo_datetime, find_occurrences
 from xED.Pattern_Discovery import pick_dataset
 
@@ -44,7 +39,8 @@ class Activity:
     ID = 0
     SLIDING_WINDOW = dt.timedelta(days=30)
 
-    def __init__(self, label, occurrences, period, time_step, forecast_precomputing=False, display_histogram=False):
+    def __init__(self, label, occurrences, period, time_step, start_date, end_date, duration_gen='Normal',
+                 display_histogram=False):
         '''
         Creation of an activity
         :param label: label of the activity
@@ -61,14 +57,16 @@ class Activity:
         self.label = label
         self.period = period
         self.time_step = time_step
+        self.duration_gen = duration_gen
         self.index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
         self.occurrences = self.preprocessing(occurrences)
         self.histogram = self.build_histogram(occurrences, display=display_histogram)
         self.activity_duration_model = self.build_activity_duration_model(occurrences)
         # self.time_evo_per_index = self.compute_time_evolution()
 
-        if forecast_precomputing:
-            self.forecasters_per_index = self.build_forecaster()
+        if self.duration_gen == 'TS Forecast':
+            self.duration_forecasts = self.build_duration_forecaster(start_date, end_date)
+            # self.forecasters_per_index = self.build_time_step_forecasters()
 
         # evo = self.time_evo_per_index[3]
         # plt.plot(evo.index, evo.mean_duration)
@@ -93,10 +91,9 @@ class Activity:
 
     def build_histogram(self, occurrences, display=False):
         '''
-        Build the histogram on occurrences
+        Build the Time distribution histogram on occurrences
         :param occurrences:
-        :param period:
-        :param time_step:
+        :param display:
         :return:
         '''
 
@@ -137,7 +134,7 @@ class Activity:
 
         return activity_duration
 
-    def build_forecaster(self):
+    def build_time_step_forecasters(self):
         '''
         Build the time series forecasters_per_index
         :return: a dict like {'time_step_id' : {'hist_count': ..., 'mean_duration': ..., 'std_duration':...}, ...}
@@ -172,6 +169,40 @@ class Activity:
             sys.stdout.flush()
         print()
         return forecasters_per_index
+
+    def build_duration_forecaster(self, start_date, end_date):
+        '''
+        Build a Time Series Forecaster for activity duration
+        :return:
+        '''
+        df = self.occurrences[['date', 'activity_duration']]
+        df.columns = ['ds', 'y']
+
+        with suppress_stdout_stderr():
+            forecaster = Prophet().fit(df)
+
+        # TODO : Replace this by the actual future
+
+        start_date = start_date - self.period - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
+
+        end_date = end_date + self.period - dt.timedelta(seconds=modulo_datetime(end_date, self.period))
+
+        future = pd.date_range(start_date, end_date, freq='{}S'.format(self.time_step.total_seconds()))
+        future = pd.DataFrame({'ds': future})
+
+        forecast = forecaster.predict(future)
+
+        forecast = forecast[['ds', 'yhat']]
+        forecast.columns = ['date', 'pred_duration']
+
+        forecast['relative_date'] = forecast.date.apply(
+            lambda x: modulo_datetime(x.to_pydatetime(), self.period))
+        forecast['time_step_id'] = forecast['relative_date'] / self.time_step.total_seconds()
+        forecast['time_step_id'] = forecast['time_step_id'].apply(math.floor)
+
+        forecast['day_date'] = forecast.date.dt.date
+
+        return forecast
 
     def get_stats_from_date(self, date, time_step_id, hist=True):
         '''
@@ -218,10 +249,8 @@ class Activity:
         '''
         Get parameters at this time_step_id
         :param time_step_id:
-        :param hist:
         :return:
         '''
-
         stats = {
             'hist_count': None,
             'mean_duration': None,
@@ -237,7 +266,6 @@ class Activity:
     def compute_time_evolution(self):
         '''
         Compute the time evolution of each time_step_id
-        :param data:
         :return:
         '''
 
@@ -286,24 +314,24 @@ class Activity:
         return time_evo_per_index
 
     def simulate(self, date, time_step_id):
-        '''
+        """
         Generate the events for the activity
         :param date:
         :param time_step_id:
         :return:
-        '''
-
-        # stats = chosen_activity.get_stats_from_date(date=current_date, time_step_id=time_step_id, hist=False)
-        stats = self.get_stats(time_step_id=time_step_id)
-        mean_duration = stats['mean_duration']
-        std_duration = stats['std_duration']
+        """
 
         simulation_result = pd.DataFrame(columns=['date', 'end_date', 'label'])
-        while True:
-            generated_duration = -1
-            while generated_duration < 0:
-                generated_duration = np.random.normal(mean_duration, std_duration)
 
+        while True:  # To prevent cases where the date is OutOfDatetimeBounds
+
+            generated_duration = self.duration_generation(date, time_step_id, method=self.duration_gen)
+
+            if generated_duration == 0:
+                break
+
+            # print("Time spent for prediction: {}".format(
+            #     dt.timedelta(seconds=round(t.process_time() - start_time, 1))))
             try:
                 event_start_date = date
                 event_end_date = event_start_date + dt.timedelta(seconds=generated_duration)
@@ -316,6 +344,13 @@ class Activity:
         return simulation_result, generated_duration
 
     def fit_bimodal_distribution(self, x, y, index):
+        """
+        Fit the arrays into multi modal gaussian distributions
+        :param x:
+        :param y:
+        :param index:
+        :return:
+        """
 
         def gauss(x, mu, sigma, A):
             return A * exp(-(x - mu) ** 2 / 2 / sigma ** 2)
@@ -337,6 +372,215 @@ class Activity:
         legend()
         print(params, '\n', sigma)
         plt.show()
+
+    def duration_generation(self, date, ts_id, method='Normal'):
+        """
+        Generate the duration of the activity
+        :param date:
+        :param ts_id:
+        :param method:
+            'Normal' : Static normal distribution of the duration at each time step id
+            'Forecast Normal' : Static normal distribution of the duration at each time step id forecasted for this specific date
+            'TS Forecast' : Use a Time series forecasting model to predict the duration at this specific date (by one time step)
+        :return:
+        """
+        generated_duration = -1
+
+        if method == 'Normal':
+            stats = self.get_stats(time_step_id=ts_id)
+            mean_duration = stats['mean_duration']
+            std_duration = stats['std_duration']
+            generated_duration = np.random.normal(mean_duration, std_duration)
+
+        elif method == 'Forecast Normal':
+            stats = self.get_stats_from_date(date=date, time_step_id=ts_id, hist=False)
+            mean_duration = stats['mean_duration']
+            std_duration = stats['std_duration']
+            generated_duration = np.random.normal(mean_duration, std_duration)
+
+        elif method == 'TS Forecast':
+            day_date = date.date()
+            relative_date = modulo_datetime(date, self.period)
+            time_step_id = math.floor(relative_date / self.time_step.total_seconds())
+            row = self.duration_forecasts.loc[(self.duration_forecasts.day_date == day_date) & (
+                    self.duration_forecasts.time_step_id == time_step_id), 'pred_duration']
+            generated_duration = row.values[0]
+
+        if generated_duration < 0:
+            generated_duration = 0
+
+        return generated_duration
+
+
+class MacroActivity(Activity):
+
+    def __init__(self, episode, dataset, occurrences, period, time_step, start_date, end_date, duration_gen='Normal',
+                 display=False, Tep=30):
+        '''
+        Create a Macro Activity
+        :param episode:
+        :param dataset:
+        :param occurrences:
+        :param period:
+        :param time_step:
+        :param start_date:
+        :param end_date:
+        :param display:
+        :param Tep:
+        '''
+        Activity.__init__(self, episode, occurrences, period, time_step, start_date, end_date,
+                          duration_gen, display_histogram=display)
+        self.Tep = dt.timedelta(minutes=30)
+        # Find the events corresponding to the occurrences
+        events = pd.DataFrame(columns=["date", "label", 'occ_id'])
+        for index, occurrence in occurrences.iterrows():
+            occ_start_date = occurrence["date"]
+            occ_end_date = occ_start_date + dt.timedelta(minutes=Tep)
+            mini_data = dataset.loc[(dataset.label.isin(episode))
+                                    & (dataset.date >= occ_start_date)
+                                    & (dataset.date < occ_end_date)].copy()
+            mini_data.sort_values(["date"], ascending=True, inplace=True)
+            mini_data.drop_duplicates(["label"], keep='first', inplace=True)
+            mini_data['occ_id'] = index
+            events = events.append(mini_data, ignore_index=True)
+
+        self.activities = {}  # key: label, value: Activity
+
+        for label in episode:
+            label_events = events.loc[events.label == label].copy()
+            label_activity = Activity(label=(label,), occurrences=label_events, period=period,
+                                      duration_gen=duration_gen, time_step=time_step, start_date=start_date,
+                                      end_date=end_date)
+            self.activities[label] = label_activity
+
+        # TODO : Build a graph for every time_step_id
+        self.graph = self.build_activities_graph(episode=episode, events=events, period=period, display=display)
+
+    def simulate(self, date, time_step_id):
+        '''
+        Simulate the activities on the macro-activity
+        :param date:
+        :param time_step_id:
+        :return: simulations results, macro-activity duration
+        '''
+
+        # TODO : Fix this graph MESSSS
+        graph_sim = self.graph.simulate(date, date + self.Tep)
+
+        graph_sim['time_before_next_event'] = graph_sim['date'].shift(-1) - graph_sim['date']
+        graph_sim['time_before_next_event'] = graph_sim['time_before_next_event'].apply(lambda x: x.total_seconds())
+        graph_sim.fillna(0, inplace=True)
+
+        simulation_results = pd.DataFrame(columns=['label', 'date', 'end_date'])
+
+        for _, row in graph_sim.iterrows():
+            activity = self.activities[row.label]
+            _, activity_duration = activity.simulate(date, time_step_id)
+            end_date = date + dt.timedelta(seconds=activity_duration)
+            simulation_results.loc[len(simulation_results)] = [row.label, date, end_date]
+            date = date + dt.timedelta(seconds=row.time_before_next_event)
+
+        duration = (simulation_results.end_date.max().to_pydatetime() - date).total_seconds()
+
+        return simulation_results, duration
+
+    def build_activities_graph(self, episode, events, period, display=False):
+        '''
+        Create a graph for the Macro_Activities
+        :param episode:
+        :param events:
+        :param p:
+        '''
+
+        occurrence_ids = events['occ_id'].unique()
+
+        # Build a list of occurrences events list to build the graph
+        events_occurrences_lists = []
+
+        graph_nodes_labels = []
+        for occ_id in occurrence_ids:
+            occ_list = []
+            occ_df = events[events.occ_id == occ_id]
+            i = 0
+            for index, event_row in occ_df.iterrows():
+                new_label = event_row['label'] + '_' + str(i)
+                events.at[index, 'label'] = new_label
+                occ_list.append(new_label)
+                i += 1
+            graph_nodes_labels += occ_list
+            events_occurrences_lists.append(occ_list)
+
+        # Set of graph_nodes for the graphs
+        graph_nodes_labels = set(graph_nodes_labels)
+
+        for occ_id in range(min(occurrence_ids), max(occurrence_ids) + 1):
+            events_occurrences_lists.append(events.loc[events.occ_id == occ_id, 'label'].tolist())
+
+        graph_nodes, graph_labels, prob_matrix = build_probability_acyclic_graph(list(episode), graph_nodes_labels,
+                                                                                 events_occurrences_lists)
+
+        # Build the time matrix
+        events.loc[:, "relative_date"] = events.date.apply(
+            lambda x: modulo_datetime(x.to_pydatetime(), period))
+        events['is_last_event'] = events['occ_id'] != events['occ_id'].shift(-1)
+        events['is_first_event'] = events['occ_id'] != events['occ_id'].shift(1)
+        events['next_label'] = events['label'].shift(-1).fillna('_nan').apply(Acyclic_Graph.Acyclic_Graph.node2label)
+        events['next_date'] = events['date'].shift(-1)
+        events['inter_event_duration'] = events['next_date'] - events['date']
+        events['inter_event_duration'] = events['inter_event_duration'].apply(lambda x: x.total_seconds())
+        # events = events[events.is_last_event == False]
+
+        n = len(graph_nodes)  # Nb rows of the prob matrix
+        l = len(graph_labels)  # Nb columns of the prob matrix
+
+        # n x l edges for waiting time transition laws
+        time_matrix = [[[] for j in range(l)] for i in
+                       range(n)]  # Empty lists, [[mean_time, std_time], ...] transition durations
+
+        for i in range(n):
+            for j in range(l - 1):  # We dont need the "END NODE"
+                if prob_matrix[i][j] != 0:  # Useless to compute time for never happening transition
+                    from_node = graph_nodes[i]
+                    to_label = graph_labels[j]
+
+                    if from_node == Acyclic_Graph.Acyclic_Graph.START_NODE:  # START_NODE transitions
+                        time_matrix[i][j] = ('norm', [0, 0])
+                        continue
+
+                    time_df = events.loc[(events.label == from_node) & (events.next_label == to_label)]
+                    inter_events_durations = time_df.inter_event_duration.values
+
+                    # We remove NaN from the values
+                    inter_events_durations = inter_events_durations[~np.isnan(inter_events_durations)]
+                    inter_events_durations = clean_data_arrays(inter_events_durations)
+                    time_matrix[i][j] = ('norm', [np.mean(inter_events_durations), np.std(inter_events_durations)])
+
+        events['activity_duration'] = events['end_date'] - events['date']
+        events['activity_duration'] = events['activity_duration'].apply(lambda x: x.total_seconds())
+
+        duration_matrix = [[] for i in range(n)]  # Empty lists, [[mean_time, std_time], ...] Activity duration
+        for i in range(n):
+            node = graph_nodes[i]
+            if node != Acyclic_Graph.Acyclic_Graph.START_NODE:
+                time_df = events.loc[events.label == node]
+                activity_durations = time_df.activity_duration.values
+                # We remove NaN from the values
+                activity_durations = activity_durations[~np.isnan(activity_durations)]
+                if len(activity_durations) > 0:
+                    activity_durations = clean_data_arrays(activity_durations)
+                    # plt.figure()
+                    # sns.distplot(activity_durations)
+                    # plt.show()
+                    duration_matrix[i] = ('norm', [np.mean(activity_durations), np.std(activity_durations)])
+
+        acyclic_graph = Acyclic_Graph.Acyclic_Graph(nodes=graph_nodes, labels=list(episode), period=period,
+                                                    prob_matrix=prob_matrix,
+                                                    wait_matrix=time_matrix, activities_duration=duration_matrix)
+
+        if display:
+            acyclic_graph.display(output_folder='./', debug=True)
+
+        return acyclic_graph
 
 
 class suppress_stdout_stderr(object):

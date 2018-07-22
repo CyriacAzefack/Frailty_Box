@@ -14,12 +14,12 @@ color_mapper = np.vectorize(lambda x: {10: 'red', 40: 'blue'}.get(x))
 
 
 def main():
-    dataset_name = 'KA'
+    dataset_name = 'aruba'
 
     dataset = pick_dataset(dataset_name)
     sim_id = 0
     replication_id = 1
-    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Macro Activities Simulation results 5mn/dataset_simulation_rep_1.csv".format(
+    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simple Model & TS Model Simulation results 5mn/dataset_simulation_rep_1.csv".format(
         dataset_name)
     dataset = pick_custom_dataset(path)
 
@@ -31,15 +31,13 @@ def main():
 
 
 def visualize(data, start_date, end_date):
-    """
+    '''
     Visualize the log dataset
     :param data:
     :param start_date:
     :param end_date:
-    :param start_suffix:
-    :param end_suffix:
     :return:
-    """
+    '''
 
     data = data[(data.date >= start_date) & (data.date <= end_date)].copy()
     # Turn the dataset into an activity dataset

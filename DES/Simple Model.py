@@ -2,6 +2,7 @@ import datetime as dt
 import errno
 import math
 import os
+import pickle
 import sys
 import time as t
 from random import random
@@ -24,11 +25,13 @@ def main():
     #   - Training Dataset : the Whole Original dataset
     #   - Test Dataset : The Whole Original dataset
 
-    dataset_name = 'KA'
+    dataset_name = 'aruba'
 
     period = dt.timedelta(days=1)
-    freq = dt.timedelta(minutes=5)
+    time_step_min = 5
+    freq = dt.timedelta(minutes=time_step_min)
     nb_replications = 20
+    duration_generation_method = 'Normal'  # {'Normal', 'Forecast Normal', 'TS Forecasting'}
 
     dataset = pick_dataset(dataset_name)
 
@@ -40,21 +43,35 @@ def main():
 
     all_activities = []
 
-    output = "../output/{}/Simple Model Simulation results 5mn/".format(dataset_name)
-
-
+    output = "../output/{}/Simple Model - {} - Simulation results {}mn/".format(dataset_name,
+                                                                                duration_generation_method,
+                                                                                time_step_min)
+    if not os.path.exists(os.path.dirname(output)):
+        try:
+            os.makedirs(os.path.dirname(output))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
 
     single_episodes = list(dataset.label.unique())
 
     # single_activities = single_activities[:2]
 
     for episode in single_episodes:
+        start_time = t.process_time()
         episode = (episode,)
         occurrences = find_occurrences(data=dataset, episode=episode)
-        activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=freq)
+        activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=freq,
+                                     start_date=start_date, end_date=end_date)
         all_activities.append(activity)
+        print("Time spent for activity {}: {}".format(episode,
+                                                      dt.timedelta(seconds=round(t.process_time() - start_time, 1))))
 
-    print('All Activities Created !!')
+    pickle.dump(all_activities, open(output + "/all_activities.pkl", 'wb+'))
+    print('All Activities Created & Saved!!')
+
+    all_activities = pickle.load(open(output + '/all_activities.pkl', 'rb'))
+    print('All Activities Loaded !!')
 
     index = np.arange(int(period.total_seconds() / freq.total_seconds()) + 1)
 
@@ -136,12 +153,6 @@ def main():
         sys.stdout.write("\n")
         filename = output + "dataset_simulation_rep_{}.csv".format(replication + 1)
 
-        if not os.path.exists(os.path.dirname(filename)):
-            try:
-                os.makedirs(os.path.dirname(filename))
-            except OSError as exc:  # Guard against race condition
-                if exc.errno != errno.EEXIST:
-                    raise
         simulation_result.to_csv(filename, index=False, sep=';')
         elapsed_time = dt.timedelta(seconds=round(t.process_time() - time_start, 1))
         print("Time elapsed for the simulation : {}".format(elapsed_time))

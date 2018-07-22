@@ -17,7 +17,7 @@ sns.set_style("whitegrid")
 # plt.xkcd()
 
 def main():
-    dataset_name = 'KA'
+    dataset_name = 'aruba'
     # Original data
     original_dataset = pick_dataset(dataset_name)
 
@@ -33,22 +33,22 @@ def main():
     #####################
     #  COMPARE MODELS   #
     ####################
-    # model_A_lab = '5mn'
+    # model_A_lab = '15mn'
     # model_A_dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, model_A_lab)
     # model_A_name = "{} Macro time step {}".format(dataset_name, model_A_lab)
     #
-    # # model_A_lab = '5mn'
-    # # model_A_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_A_lab)
-    # # model_A_name = "{} time step {}".format(dataset_name, model_A_lab)
+    # model_A_lab = '5mn'
+    # model_A_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_A_lab)
+    # model_A_name = "{} Simple Model - time step {}".format(dataset_name, model_A_lab)
     #
     # model_B_lab = '5mn'
-    # model_B_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_B_lab)
-    # model_B_name = "{} time step {}".format(dataset_name, model_B_lab)
+    # model_B_dirname = "./output/{}/Simple Model & TS Model Simulation results {}/".format(dataset_name, model_B_lab)
+    # model_B_name = "{} TS Model - time step {}".format(dataset_name, model_B_lab)
     #
     # compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
     #                model_B_dir=model_B_dirname, period=period, time_step=freq)
 
-    activity = "take shower"
+    activity = "sleeping"
 
     label = '5mn'
 
@@ -204,14 +204,16 @@ def area_under_hist(data, label, period=dt.timedelta(days=1), time_step=dt.timed
 
 
 def auc_validation(label, original_dataset, replications_directory, period=dt.timedelta(days=1),
-                   time_step=dt.timedelta(minutes=10), confidence=0.9, display=True):
+                   time_step=dt.timedelta(minutes=10), confidence_error=0.9, display=True):
     '''
     Validation of the simulation replications using the Area Under the Curve of the label distribution
     :param label:
     :param original_dataset:
-    :param replication_directory:
+    :param replications_directory:
     :param period:
     :param time_step:
+    :param confidence_error: 
+    :param display:
     :return:
     '''
 
@@ -229,7 +231,7 @@ def auc_validation(label, original_dataset, replications_directory, period=dt.ti
         auc_replications.append(area_under_hist(data=dataset, label=label, period=period, time_step=time_step))
 
     auc_replications = np.asarray(auc_replications)
-    student_mean, student_error = compute_stochastic_error(auc_replications, confidence=confidence)
+    student_mean, student_error = compute_stochastic_error(auc_replications, confidence=confidence_error)
     upper_auc = student_mean + student_error
     lower_auc = student_mean - student_error
 
@@ -256,7 +258,7 @@ def activity_duration_validation(label, original_dataset, replications_directory
 
     evaluation_sim_results = {}
     for filename in list_files:
-        dataset = dataset = pick_custom_dataset(filename)
+        dataset = pick_custom_dataset(filename)
         evaluation_result = compute_activity_time(data=dataset, label=label, time_step_in_days=1)
         if not evaluation_result.empty:
             evaluation_sim_results[filename] = evaluation_result
@@ -341,19 +343,19 @@ def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, mo
     model_A_validation_df = all_activities_validation(original_dataset, model_A_dir, period, time_step, display=False)
     model_B_validation_df = all_activities_validation(original_dataset, model_B_dir, period, time_step, display=False)
 
-    diff_df = model_B_validation_df.join(model_A_validation_df, lsuffix='_B', rsuffix='_A')
-    diff_df['error_lost'] = diff_df.mae_percentage_B - diff_df.mae_percentage_A
-    diff_df.sort_values(['error_lost'], ascending=False, inplace=True)
+    model_A_validation_df['model_name'] = model_A_name
+    model_B_validation_df['model_name'] = model_B_name
 
-    fig, ax = plt.subplots()
-    sns.set_color_codes("pastel")
-    sns.barplot(x="error_lost", y="label_A", data=diff_df, label="Error lost", color="b")
+    df = pd.concat([model_A_validation_df, model_B_validation_df], sort=True)
 
-    # Add a legend and informative axis label
-    ax.legend(ncol=2, loc="lower right", frameon=True)
-    ax.set(ylabel="", xlabel="Points of Errors lost")
-    sns.despine(left=True, bottom=True)
-    plt.title("From Model '{}' --> Model '{}'".format(model_B_name, model_A_name))
+    # TODO : change the error lost between model graph (the bar plot thing)
+    # fig, ax = plt.subplots()
+    g = sns.catplot(data=df, x="model_name", y="mae_percentage", hue="label", capsize=.2, height=6, aspect=.75,
+                    kind="point")
+    plt.xlabel('Model Name')
+    plt.ylabel('AUC MAE Percentage')
+    g.despine(left=True)
+    plt.title('Error between models')
 
     fig, ax = plt.subplots()
     y = list(model_A_validation_df.mae_percentage.values)
