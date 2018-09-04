@@ -1,0 +1,3 @@
+Time to process all the tries : 0:03:26.600000
+4.13% of the aruba dataset explained by the patterns discovered
+4 Patterns found

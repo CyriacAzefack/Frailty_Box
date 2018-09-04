@@ -7,6 +7,7 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import scipy.stats as st
 import seaborn as sns
 from scipy import stats
 
@@ -28,68 +29,91 @@ def main():
     print("\n")
 
     period = dt.timedelta(days=1)
-    freq = dt.timedelta(minutes=5)
+    time_step = dt.timedelta(minutes=5)
 
     #####################
     #  COMPARE MODELS   #
     ####################
-    # model_A_lab = '15mn'
-    # model_A_dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, model_A_lab)
-    # model_A_name = "{} Macro time step {}".format(dataset_name, model_A_lab)
+    # model_A_activities_generation_method = 'Simple'
+    # model_A_duration_generation_method = 'Normal'
+    # model_A_time_step_min = 5
+    # model_A_name = "{} Activities Model - {} - Simulation results {}mn".format(model_A_activities_generation_method,
+    #                                                                                             model_A_duration_generation_method,
+    #                                                                                             model_A_time_step_min)
+    # model_A_dirname = "./output/{}/{}/".format(dataset_name, model_A_name)
     #
-    # model_A_lab = '5mn'
-    # model_A_dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, model_A_lab)
-    # model_A_name = "{} Simple Model - time step {}".format(dataset_name, model_A_lab)
-    #
-    # model_B_lab = '5mn'
-    # model_B_dirname = "./output/{}/Simple Model & TS Model Simulation results {}/".format(dataset_name, model_B_lab)
-    # model_B_name = "{} TS Model - time step {}".format(dataset_name, model_B_lab)
+    # model_B_activities_generation_method = 'Macro'
+    # model_B_duration_generation_method = 'Normal'
+    # model_B_time_step_min = 15
+    # model_B_name = "{} Activities Model - {} - Simulation results {}mn".format(model_B_activities_generation_method,
+    #                                                                            model_B_duration_generation_method,
+    #                                                                            model_B_time_step_min)
+    # model_B_dirname = "./output/{}/{}/".format(dataset_name, model_B_name)
     #
     # compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
-    #                model_B_dir=model_B_dirname, period=period, time_step=freq)
+    #                model_B_dir=model_B_dirname, period=period, time_step=time_step)
 
-    activity = "sleeping"
+    activity = "relax"
 
-    label = '5mn'
+    activities_generation_method = 'Macro'
+    duration_generation_method = 'Normal'
+    time_step_min = 15
 
-    # dirname = "./output/{}/Simple Model Simulation results {}/".format(dataset_name, label)
-    dirname = "./output/{}/Macro Activities Simulation results {}/".format(dataset_name, label)
+    dirname = "./output/{}/{} Activities Model - {} - Simulation results {}mn/".format(dataset_name,
+                                                                                       activities_generation_method,
+                                                                                       duration_generation_method,
+                                                                                       time_step_min)
 
-    confidence = 0.9
+    confidence_error = 0.9
     # Occurrence time validation
-    auc_original, mean_absolute_error, lower_auc, upper_auc = auc_validation(activity, original_dataset, dirname,
-                                                                             period, freq, confidence, display=True)
+    auc_original, sse_original, mean_absolute_error_auc, mean_absolute_error_sse = label_start_time_validation(activity,
+                                                                                                               original_dataset,
+                                                                                                               dirname,
+                                                                                                               period,
+                                                                                                               time_step,
+                                                                                                               display=True)
     print("Original Dataset AUC = {}".format(round(auc_original, 4)))
-    print("Absolute ERROR AUC = {} ({}% of the original AUC)".format(round(mean_absolute_error, 4),
-                                                                     round(100 * mean_absolute_error / auc_original,
+    print("Mean Absolute ERROR AUC = {} ({}% of the original AUC)".format(round(mean_absolute_error_auc, 4),
+                                                                          round(
+                                                                              100 * mean_absolute_error_auc / auc_original,
                                                                            4)))
-    print("{}% Confidence Interval : [{} ; {}]".format(confidence * 100, round(lower_auc, 4), round(upper_auc, 4)))
+
+    print("Mean Absolute ERROR SSE = {} ({}% of the original SSE)".format(round(mean_absolute_error_sse, 4),
+                                                                          round(
+                                                                              100 * mean_absolute_error_sse / sse_original,
+                                                                              4)))
+
 
     # Duration Validation
-    activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence)
+    activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence_error)
 
     plt.show()
 
 
 def all_activities_validation(original_dataset, dirname, period, time_step, display=True):
-    validation_df = pd.DataFrame(columns=['label', 'original_auc', 'mae_percentage'])
+    validation_df = pd.DataFrame(
+        columns=['label', 'original_auc', 'original_sse', 'mae_auc_percentage', 'mae_sse_percentage'])
 
     labels = original_dataset.label.unique()
 
     for label in labels:
-        original_auc, mean_absolute_error, lower_auc, upper_auc = auc_validation(label, original_dataset, dirname,
-                                                                                 period,
-                                                                                 time_step, display=False)
+        original_auc, original_sse, mae_auc, mae_sse = label_start_time_validation(label, original_dataset, dirname,
+                                                                                   period,
+                                                                                   time_step, display=False)
 
-        mae_percentage = round(100 * mean_absolute_error / original_auc, 2)
+        mae_auc_percentage = round(100 * mae_auc / original_auc, 2)
+        mae_sse_percentage = round(100 * mae_sse / original_sse, 2)
+        validation_df.loc[len(validation_df)] = [label, original_auc, original_sse, mae_auc_percentage,
+                                                 mae_sse_percentage]
 
-        validation_df.loc[len(validation_df)] = [label, original_auc, mae_percentage]
-
-    y = list(validation_df.mae_percentage.values)
+    y = list(validation_df.mae_auc_percentage.values)
     x = list(validation_df.original_auc.values)
     labels = list(validation_df.label.values)
 
     if display:
+        # AUC plot
+        y = list(validation_df.mae_auc_percentage.values)
+        x = list(validation_df.original_auc.values)
         fig, ax = plt.subplots()
         ax.scatter(x, y, color='r')
 
@@ -98,7 +122,20 @@ def all_activities_validation(original_dataset, dirname, period, time_step, disp
 
         plt.xlabel('Area Under the Histogram')
         plt.ylabel('Mean Absolute Error (%)')
-        plt.title('Activities Validation')
+        plt.title('Area Under Histogram')
+
+        # SSE plot
+        y = list(validation_df.mae_sse_percentage.values)
+        x = list(validation_df.original_sse.values)
+        fig, ax = plt.subplots()
+        ax.scatter(x, y, color='r')
+
+        for i, txt in enumerate(labels):
+            ax.annotate(txt, (x[i], y[i]))
+
+        plt.xlabel('SSE on the fitted distribution')
+        plt.ylabel('Mean Absolute Error (%)')
+        plt.title('SSE on the fitted distribution')
 
     return validation_df
 
@@ -167,7 +204,8 @@ def compute_activity_time(data, label, start_date=None, end_date=None, time_step
     return result[['duration']]
 
 
-def area_under_hist(data, label, period=dt.timedelta(days=1), time_step=dt.timedelta(minutes=5), display=False):
+def area_under_hist(data, label, period=dt.timedelta(days=1), time_step=dt.timedelta(minutes=5), display=False,
+                    display_label=None, fit_dist=False):
     '''
     Compute the area under the histogram curve
     :param data:
@@ -178,6 +216,7 @@ def area_under_hist(data, label, period=dt.timedelta(days=1), time_step=dt.timed
     '''
 
     occurrences = data[data.label == label].copy()
+    index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
 
     if occurrences.empty:
         raise ValueError('The label "{}" does not exist in the dataset'.format(label))
@@ -185,7 +224,11 @@ def area_under_hist(data, label, period=dt.timedelta(days=1), time_step=dt.timed
     occurrences['time_step_id'] = occurrences['relative_date'] / time_step.total_seconds()
     occurrences['time_step_id'] = occurrences['time_step_id'].apply(math.floor)
 
-    hist = occurrences.groupby(['time_step_id']).count()['date']
+    hist = pd.Series(0, index=index)
+
+    hist = hist.add(occurrences.groupby(['time_step_id']).count()['date'],
+                    fill_value=0)  # Way of getting all the time_step_id even if the value is 0
+
     start_date = occurrences.date.min().to_pydatetime()
     end_date = occurrences.date.max().to_pydatetime()
     nb_periods = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
@@ -195,16 +238,19 @@ def area_under_hist(data, label, period=dt.timedelta(days=1), time_step=dt.timed
 
     AUC = sum(hist * time_step.total_seconds() / period.total_seconds())
     if display:
-        plt.figure()
-        hist.plot(kind="bar")
-        plt.title('Activity : {}'.format(label))
+        # plt.figure()
+        plt.bar(hist.index, hist.values, label=display_label)
+        plt.xlim(xmin=0, xmax=index.max())
+        plt.title('Probability of occurrence of the activity : "{}"'.format(label))
+        plt.xlabel('Time step ID')
+        plt.ylabel('Probability')
         plt.legend()
 
-    return AUC
+    return AUC, occurrences['time_step_id'].values
 
 
-def auc_validation(label, original_dataset, replications_directory, period=dt.timedelta(days=1),
-                   time_step=dt.timedelta(minutes=10), confidence_error=0.9, display=True):
+def label_start_time_validation(label, original_dataset, replications_directory, period=dt.timedelta(days=1),
+                                time_step=dt.timedelta(minutes=10), display=True):
     '''
     Validation of the simulation replications using the Area Under the Curve of the label distribution
     :param label:
@@ -217,8 +263,10 @@ def auc_validation(label, original_dataset, replications_directory, period=dt.ti
     :return:
     '''
 
-    auc_original = area_under_hist(data=original_dataset, label=label, period=period, time_step=time_step,
+    auc_original, hist_data = area_under_hist(data=original_dataset, label=label, period=period, time_step=time_step,
                                    display=display)
+
+    best_dist, best_params, best_sse = best_fit_distribution(hist_data)
 
     list_files = glob.glob(replications_directory + '*.csv')
 
@@ -226,30 +274,42 @@ def auc_validation(label, original_dataset, replications_directory, period=dt.ti
         raise FileNotFoundError("'{}' does not contains csv files".format(replications_directory))
 
     auc_replications = []
+    sse_replications = []
     for filename in list_files:
+        # For when we want to display original data distribution on top of the replication distribution
+        plt.figure()
+        auc_original, hist_data = area_under_hist(data=original_dataset, label=label, period=period,
+                                                  time_step=time_step,
+                                                  display=True)
         dataset = pick_custom_dataset(filename)
-        auc_replications.append(area_under_hist(data=dataset, label=label, period=period, time_step=time_step))
+        auc_replication, hist_data = area_under_hist(data=dataset, label=label, period=period, time_step=time_step,
+                                                     display=True)
+        auc_replications.append(auc_replication)
+        sse = compute_dist_sse(best_dist, best_params, hist_data)
+        sse_replications.append(sse)
+        plt.show()
 
     auc_replications = np.asarray(auc_replications)
-    student_mean, student_error = compute_stochastic_error(auc_replications, confidence=confidence_error)
-    upper_auc = student_mean + student_error
-    lower_auc = student_mean - student_error
+    sse_replications = np.asarray(sse_replications)
 
-    mean_absolute_error = sum(abs(auc_replications - auc_original)) / len(auc_replications)
+    mean_absolute_error_auc = sum(abs(auc_replications - auc_original)) / len(auc_replications)
+    mean_absolute_error_sse = sum(abs(sse_replications - best_sse)) / len(sse_replications)
 
-    return auc_original, mean_absolute_error, lower_auc, upper_auc
+    return auc_original, best_sse, mean_absolute_error_auc, mean_absolute_error_sse
 
 
 def activity_duration_validation(label, original_dataset, replications_directory, dataset_name, confidence=0.9,
                                  display=True):
-    '''
+    """
     Validation of the simulation replications using the Duration of the activity throughout the data
     :param label:
     :param original_dataset:
     :param replications_directory:
+    :param dataset_name:
     :param confidence:
+    :param display:
     :return:
-    '''
+    """
 
     list_files = glob.glob(replications_directory + '*.csv')
 
@@ -348,17 +408,19 @@ def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, mo
 
     df = pd.concat([model_A_validation_df, model_B_validation_df], sort=True)
 
-    # TODO : change the error lost between model graph (the bar plot thing)
+    ################
+    # AUC
+    ################
     # fig, ax = plt.subplots()
-    g = sns.catplot(data=df, x="model_name", y="mae_percentage", hue="label", capsize=.2, height=6, aspect=.75,
+    g = sns.catplot(data=df, x="model_name", y="mae_auc_percentage", hue="label", capsize=.2, height=6, aspect=.75,
                     kind="point")
     plt.xlabel('Model Name')
     plt.ylabel('AUC MAE Percentage')
     g.despine(left=True)
-    plt.title('Error between models')
+    plt.title('AUC Mean Absolute Error')
 
     fig, ax = plt.subplots()
-    y = list(model_A_validation_df.mae_percentage.values)
+    y = list(model_A_validation_df.mae_auc_percentage.values)
     x = list(model_A_validation_df.original_auc.values)
     labels = list(model_A_validation_df.label.values)
 
@@ -367,7 +429,7 @@ def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, mo
     for i, txt in enumerate(labels):
         ax.annotate(txt, (x[i], y[i]))
 
-    y = list(model_B_validation_df.mae_percentage.values)
+    y = list(model_B_validation_df.mae_auc_percentage.values)
     x = list(model_B_validation_df.original_auc.values)
     labels = list(model_B_validation_df.label.values)
 
@@ -380,7 +442,104 @@ def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, mo
     plt.ylabel('Mean Absolute Error (%)')
     plt.legend()
 
+    ################
+    # SSE
+    ################
+    # fig, ax = plt.subplots()
+    g = sns.catplot(data=df, x="model_name", y="mae_sse_percentage", hue="label", capsize=.2, height=6, aspect=.75,
+                    kind="point")
+    plt.xlabel('Model Name')
+    plt.ylabel('SSE MAE Percentage')
+    g.despine(left=True)
+    plt.title('SSE on fitted distribution Mean Absolute Error')
 
+    fig, ax = plt.subplots()
+    y = list(model_A_validation_df.mae_sse_percentage.values)
+    x = list(model_A_validation_df.original_sse.values)
+    labels = list(model_A_validation_df.label.values)
+
+    ax.scatter(x, y, color='b', label=model_A_name)
+
+    for i, txt in enumerate(labels):
+        ax.annotate(txt, (x[i], y[i]))
+
+    y = list(model_B_validation_df.mae_sse_percentage.values)
+    x = list(model_B_validation_df.original_sse.values)
+    labels = list(model_B_validation_df.label.values)
+
+    ax.scatter(x, y, color='r', label=model_B_name)
+
+    for i, txt in enumerate(labels):
+        ax.annotate(txt, (x[i], y[i]))
+
+    plt.xlabel('SSE on fitted distribution')
+    plt.ylabel('Mean Absolute Error (%)')
+    plt.legend()
+
+
+def best_fit_distribution(data, bins=100, ax=None):
+    dist_list = ['norm', 'expon', 'lognorm', 'beta']
+
+    y, x = np.histogram(data, bins=bins, density=True)
+    x = (x + np.roll(x, -1))[:-1] / 2.0
+
+    best_distribution = 'norm'
+    best_params = (0.0, 1.0)
+    best_sse = np.inf
+
+    for dist_name in dist_list:
+        dist = getattr(st, dist_name)
+        param = dist.fit(data)  # distribution fitting
+
+        # Separate parts of parameters
+        arg = param[:-2]
+        loc = param[-2]
+        scale = param[-1]
+
+        param = list(param)
+
+        # Calculate fitted PDF and error with fit in distribution
+        pdf = dist.pdf(x, loc=loc, scale=scale, *arg)
+        sse = np.sum(np.power(y - pdf, 2.0))
+
+        # if axis pass in add to plot
+        try:
+            if ax:
+                ax.hist(data, bins, density=True, label='Time Distribution')
+                pd.Series(pdf, x).plot(ax=ax, label=dist_name)
+        except Exception:
+            pass
+
+        # identify if this distribution is better
+        if best_sse > sse > 0:
+            best_distribution = dist_name
+            best_params = param
+            best_sse = sse
+
+    plt.title("Best Dist {}".format(str(best_distribution)))
+    return best_distribution, best_params, best_sse
+
+
+def compute_dist_sse(dist_name, params, data, bins=100):
+    """
+    Compute Sum Squared Error of the data on the fitted distribution
+    :param distribution:
+    :param params:
+    :param data:
+    :return:
+    """
+
+    y, x = np.histogram(data, bins=bins, density=True)
+    x = (x + np.roll(x, -1))[:-1] / 2.0
+
+    dist = getattr(st, dist_name)
+    arg = params[:-2]
+    loc = params[-2]
+    scale = params[-1]
+    pdf = dist.pdf(x, loc=loc, scale=scale, *arg)
+    sse = np.sum(np.power(y - pdf, 2.0))
+
+    return sse
 
 if __name__ == "__main__":
     main()

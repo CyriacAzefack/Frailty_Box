@@ -25,14 +25,14 @@ def main():
     #   - Training Dataset : the Whole Original dataset
     #   - Test Dataset : The Whole Original dataset
 
-    dataset_name = 'KA'
+    dataset_name = 'aruba'
 
     period = dt.timedelta(days=1)
+    activities_generation_method = 'Simple'  # {'Simple', 'Macro'}
+    duration_generation_method = 'Normal'  # {'Normal', 'Forecast Normal', 'TS Forecasting'}
     time_step_min = 5
     time_step = dt.timedelta(minutes=time_step_min)
     nb_replications = 20
-    activities_generation_method = 'Macro'  # {'Simple', 'Macro'}
-    duration_generation_method = 'Normal'  # {'Normal', 'Forecast Normal', 'TS Forecasting'}
     Tep = 30  # For Macro Activities (Duration max of a macro activity)
 
     dataset = pick_dataset(dataset_name)
@@ -43,10 +43,10 @@ def main():
     # Compute the numbre of periods
     nb_periods = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
 
-    output = "../output/{}/{} Activities Model - {} - Simulation results {}mn/".format(dataset_name,
-                                                                                       activities_generation_method,
-                                                                                       duration_generation_method,
-                                                                                       time_step_min)
+    output = "../output/{}/{} Activities Model - {} - Time Step {}mn/".format(dataset_name,
+                                                                              activities_generation_method,
+                                                                              duration_generation_method,
+                                                                              time_step_min)
     # Create the folder if it does not exist yet
     if not os.path.exists(os.path.dirname(output)):
         try:

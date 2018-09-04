@@ -1,7 +1,6 @@
 import seaborn as sns
 from fbprophet import Prophet
-from pylab import exp, sqrt, diag, plot, legend, plt
-from scipy.optimize import curve_fit
+from pylab import plt
 
 from Graph_Model import Acyclic_Graph
 from Graph_Model.Pattern2Graph import *
@@ -343,35 +342,6 @@ class Activity:
 
         return simulation_result, generated_duration
 
-    def fit_bimodal_distribution(self, x, y, index):
-        """
-        Fit the arrays into multi modal gaussian distributions
-        :param x:
-        :param y:
-        :param index:
-        :return:
-        """
-
-        def gauss(x, mu, sigma, A):
-            return A * exp(-(x - mu) ** 2 / 2 / sigma ** 2)
-
-        def bimodal(x, mu1, sigma1, A1, mu2, sigma2, A2, mu3, sigma3, A3):
-            return gauss(x, mu1, sigma1, A1) + gauss(x, mu2, sigma2, A2) + gauss(x, mu3, sigma3, A3)
-
-        # expected = (1, .2, 250, 2, .2, 125)
-        m = np.min(index)
-        M = np.max(index)
-        mid = int((m + M) / 2)
-        expected = (m, 1, 1, mid, 1, 1, M, 1, 1)
-        bound_min = [-M, 0, 0, -M, 0, 0, -M, 0, 0]
-        bound_max = [2 * M, mid, np.inf, 2 * M, mid, np.inf, 2 * M, mid, np.inf]
-
-        params, cov = curve_fit(bimodal, x, y, None, bounds=(bound_min, bound_max))
-        sigma = sqrt(diag(cov))
-        plot(x, bimodal(x, *params), color='red', lw=3, label='model')
-        legend()
-        print(params, '\n', sigma)
-        plt.show()
 
     def duration_generation(self, date, ts_id, method='Normal'):
         """
