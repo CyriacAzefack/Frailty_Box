@@ -53,7 +53,7 @@ def main():
     # compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
     #                model_B_dir=model_B_dirname, period=period, time_step=time_step)
 
-    activity = "relax"
+    activity = "work"
 
     activities_generation_method = 'Macro'
     duration_generation_method = 'Normal'
@@ -66,22 +66,8 @@ def main():
 
     confidence_error = 0.9
     # Occurrence time validation
-    auc_original, sse_original, mean_absolute_error_auc, mean_absolute_error_sse = label_start_time_validation(activity,
-                                                                                                               original_dataset,
-                                                                                                               dirname,
-                                                                                                               period,
-                                                                                                               time_step,
-                                                                                                               display=True)
-    print("Original Dataset AUC = {}".format(round(auc_original, 4)))
-    print("Mean Absolute ERROR AUC = {} ({}% of the original AUC)".format(round(mean_absolute_error_auc, 4),
-                                                                          round(
-                                                                              100 * mean_absolute_error_auc / auc_original,
-                                                                           4)))
+    r = validation_periodic_time_distribution(activity, original_dataset, dirname, period, time_step, display=True)
 
-    print("Mean Absolute ERROR SSE = {} ({}% of the original SSE)".format(round(mean_absolute_error_sse, 4),
-                                                                          round(
-                                                                              100 * mean_absolute_error_sse / sse_original,
-                                                                              4)))
 
 
     # Duration Validation
@@ -204,98 +190,125 @@ def compute_activity_time(data, label, start_date=None, end_date=None, time_step
     return result[['duration']]
 
 
-def area_under_hist(data, label, period=dt.timedelta(days=1), time_step=dt.timedelta(minutes=5), display=False,
-                    display_label=None, fit_dist=False):
-    '''
-    Compute the area under the histogram curve
+def periodic_time_distribution(data, label, period, time_step, display=False):
+    """
+    Return the probability of the label occurring for each time step id
     :param data:
     :param label:
     :param period:
     :param time_step:
+    :param display:
     :return:
-    '''
+    """
 
     occurrences = data[data.label == label].copy()
     index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
-
     if occurrences.empty:
         raise ValueError('The label "{}" does not exist in the dataset'.format(label))
     occurrences['relative_date'] = occurrences.date.apply(lambda x: modulo_datetime(x.to_pydatetime(), period))
     occurrences['time_step_id'] = occurrences['relative_date'] / time_step.total_seconds()
     occurrences['time_step_id'] = occurrences['time_step_id'].apply(math.floor)
 
-    hist = pd.Series(0, index=index)
+    time_dist = occurrences.groupby(['time_step_id']).size().reset_index(name='prob')
+    time_dist['prob'] = time_dist['prob'] / len(occurrences)
 
-    hist = hist.add(occurrences.groupby(['time_step_id']).count()['date'],
-                    fill_value=0)  # Way of getting all the time_step_id even if the value is 0
+    time_dist.sort_values(['time_step_id'], ascending=True, inplace=True)
 
-    start_date = occurrences.date.min().to_pydatetime()
-    end_date = occurrences.date.max().to_pydatetime()
-    nb_periods = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
-
-    # Normalize the histogram
-    hist = hist / nb_periods
-
-    AUC = sum(hist * time_step.total_seconds() / period.total_seconds())
     if display:
-        # plt.figure()
-        plt.bar(hist.index, hist.values, label=display_label)
-        plt.xlim(xmin=0, xmax=index.max())
-        plt.title('Probability of occurrence of the activity : "{}"'.format(label))
-        plt.xlabel('Time step ID')
+        now = dt.date.today()
+        begin_day = dt.datetime.fromordinal(now.toordinal())
+        time_dist['date'] = time_dist['time_step_id'].apply(lambda x: begin_day + x * time_step)
+
+        fig, ax = plt.subplots()
+        sns.lineplot(x='date', y='prob', data=time_dist)
+        plt.title('Probability of occurrence of the label : \'{}\''.format(label))
+        plt.xlabel('Day hour')
         plt.ylabel('Probability')
-        plt.legend()
+        plt.gcf().autofmt_xdate()
+        plt.show()
+    return time_dist[['time_step_id', 'prob']]
 
-    return AUC, occurrences['time_step_id'].values
 
-
-def label_start_time_validation(label, original_dataset, replications_directory, period=dt.timedelta(days=1),
-                                time_step=dt.timedelta(minutes=10), display=True):
-    '''
-    Validation of the simulation replications using the Area Under the Curve of the label distribution
+def validation_periodic_time_distribution(label, original_dataset, replications_directory, period=dt.timedelta(days=1),
+                                          time_step=dt.timedelta(minutes=10), confidence=0.9, display=True):
+    """
+    Validation of the occurrence time of a specific label
     :param label:
     :param original_dataset:
     :param replications_directory:
     :param period:
     :param time_step:
-    :param confidence_error: 
+    :param confidence:
     :param display:
     :return:
-    '''
+    """
 
-    auc_original, hist_data = area_under_hist(data=original_dataset, label=label, period=period, time_step=time_step,
-                                   display=display)
+    # Original Dataset
+    original_time_dist = periodic_time_distribution(original_dataset, label, period, time_step, display=False)
 
-    best_dist, best_params, best_sse = best_fit_distribution(hist_data)
-
+    # Simulation replications
     list_files = glob.glob(replications_directory + '*.csv')
-
     if len(list_files) == 0:
         raise FileNotFoundError("'{}' does not contains csv files".format(replications_directory))
 
-    auc_replications = []
-    sse_replications = []
+    replications_time_dist = {}
     for filename in list_files:
-        # For when we want to display original data distribution on top of the replication distribution
-        plt.figure()
-        auc_original, hist_data = area_under_hist(data=original_dataset, label=label, period=period,
-                                                  time_step=time_step,
-                                                  display=True)
         dataset = pick_custom_dataset(filename)
-        auc_replication, hist_data = area_under_hist(data=dataset, label=label, period=period, time_step=time_step,
-                                                     display=True)
-        auc_replications.append(auc_replication)
-        sse = compute_dist_sse(best_dist, best_params, hist_data)
-        sse_replications.append(sse)
-        plt.show()
+        repl_time_dist = periodic_time_distribution(data=dataset, label=label, period=period, time_step=time_step,
+                                                    display=False)
+        replications_time_dist[filename] = repl_time_dist
 
-    auc_replications = np.asarray(auc_replications)
-    sse_replications = np.asarray(sse_replications)
+    big_df = pd.DataFrame()
+    for filename, repl_time_dist in replications_time_dist.items():
+        i = list_files.index(filename)
+        repl_time_dist.columns = ["time_step_id", "simulation_{}".format(i)]
+        if len(big_df) == 0:
+            big_df = pd.concat([big_df, repl_time_dist], axis=1)
+        else:
+            big_df = big_df.join(repl_time_dist.set_index('time_step_id'), on='time_step_id')
 
-    mean_absolute_error_auc = sum(abs(auc_replications - auc_original)) / len(auc_replications)
-    mean_absolute_error_sse = sum(abs(sse_replications - best_sse)) / len(sse_replications)
+    big_df.fillna(0, inplace=True)
+    big_df.set_index(['time_step_id'], inplace=True)
+    # big_df.drop(['time_step_id'], axis=1, inplace=True)
 
-    return auc_original, best_sse, mean_absolute_error_auc, mean_absolute_error_sse
+    # Compute the Stochastic Mean & Error
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        big_df['prob_results'] = big_df.apply(compute_stochastic, args=(confidence,), axis=1)
+        big_df['prob_mean'] = big_df.prob_results.apply(lambda x: x[0])
+        big_df['prob_lower'] = big_df.prob_results.apply(lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
+        big_df['prob_upper'] = big_df.prob_results.apply(lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
+
+    big_df.drop(['prob_results'], axis=1, inplace=True)
+    big_df = big_df.join(original_time_dist.set_index('time_step_id'), on='time_step_id')
+    big_df.fillna(0, inplace=True)
+
+    if display:
+        now = dt.date.today()
+        begin_day = dt.datetime.fromordinal(now.toordinal())
+        big_df['date'] = pd.Series({x: begin_day + x * time_step for x in big_df.index})
+
+        big_df.set_index(['date'], inplace=True)
+
+        fig, ax = plt.subplots()
+
+        # TIME STEP PLOT
+        ax.plot(big_df.index, big_df.prob, label="Original Data", linestyle="-")
+
+        ax.plot(big_df.index, big_df.prob_mean, label="MEAN simulation", linestyle="--")
+
+        ax.fill_between(big_df.index, big_df.prob_lower, big_df.prob_upper,
+                        label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
+
+        ax.set_ylabel('Probability')
+        ax.set_xlabel('Day hour')
+        ax.legend()
+        plt.title("Daily time distribution of the label '{}'".format(label))
+        plt.gcf().autofmt_xdate()
+
+    return None
+
+
 
 
 def activity_duration_validation(label, original_dataset, replications_directory, dataset_name, confidence=0.9,
@@ -334,7 +347,6 @@ def activity_duration_validation(label, original_dataset, replications_directory
     for filename, evaluation_result in evaluation_sim_results.items():
         i = list_files.index(filename)
         evaluation_result.columns = ["simulation_{}".format(i)]
-
         big_df = pd.concat([big_df, evaluation_result[["simulation_{}".format(i)]]], axis=1)
 
     # Compute the Stochastic Mean & Error
@@ -477,47 +489,6 @@ def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, mo
     plt.legend()
 
 
-def best_fit_distribution(data, bins=100, ax=None):
-    dist_list = ['norm', 'expon', 'lognorm', 'beta']
-
-    y, x = np.histogram(data, bins=bins, density=True)
-    x = (x + np.roll(x, -1))[:-1] / 2.0
-
-    best_distribution = 'norm'
-    best_params = (0.0, 1.0)
-    best_sse = np.inf
-
-    for dist_name in dist_list:
-        dist = getattr(st, dist_name)
-        param = dist.fit(data)  # distribution fitting
-
-        # Separate parts of parameters
-        arg = param[:-2]
-        loc = param[-2]
-        scale = param[-1]
-
-        param = list(param)
-
-        # Calculate fitted PDF and error with fit in distribution
-        pdf = dist.pdf(x, loc=loc, scale=scale, *arg)
-        sse = np.sum(np.power(y - pdf, 2.0))
-
-        # if axis pass in add to plot
-        try:
-            if ax:
-                ax.hist(data, bins, density=True, label='Time Distribution')
-                pd.Series(pdf, x).plot(ax=ax, label=dist_name)
-        except Exception:
-            pass
-
-        # identify if this distribution is better
-        if best_sse > sse > 0:
-            best_distribution = dist_name
-            best_params = param
-            best_sse = sse
-
-    plt.title("Best Dist {}".format(str(best_distribution)))
-    return best_distribution, best_params, best_sse
 
 
 def compute_dist_sse(dist_name, params, data, bins=100):
