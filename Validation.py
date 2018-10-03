@@ -14,11 +14,11 @@ from scipy import stats
 from xED.Candidate_Study import modulo_datetime
 from xED.Pattern_Discovery import pick_dataset, pick_custom_dataset
 
-sns.set_style("whitegrid")
+sns.set_style("darkgrid")
 # plt.xkcd()
 
 def main():
-    dataset_name = 'aruba'
+    dataset_name = 'hh102'
     # Original data
     original_dataset = pick_dataset(dataset_name)
 
@@ -57,44 +57,48 @@ def main():
 
     activities_generation_method = 'Macro'
     duration_generation_method = 'Normal'
-    time_step_min = 15
+    time_step_min = 5
 
-    dirname = "./output/{}/{} Activities Model - {} - Simulation results {}mn/".format(dataset_name,
+    dirname = "./output/{}/{} Activities Model - {} - Time Step {}mn/".format(dataset_name,
                                                                                        activities_generation_method,
                                                                                        duration_generation_method,
                                                                                        time_step_min)
 
-    confidence_error = 0.9
-    # Occurrence time validation
-    r = validation_periodic_time_distribution(activity, original_dataset, dirname, period, time_step, display=True)
 
+    # Occurrence time validation
+    # r = validation_periodic_time_distribution(activity, original_dataset, dirname, period, time_step, display=True)
+
+    all_activities_validation(original_dataset, dirname, period, time_step, display=False)
 
 
     # Duration Validation
-    activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence_error)
+    confidence_error = 0.9
+    #activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence_error)
 
     plt.show()
 
 
 def all_activities_validation(original_dataset, dirname, period, time_step, display=True):
-    validation_df = pd.DataFrame(
-        columns=['label', 'original_auc', 'original_sse', 'mae_auc_percentage', 'mae_sse_percentage'])
+    index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
+    validation_df = pd.DataFrame(index=index)
 
     labels = original_dataset.label.unique()
 
+    labels.sort()
     for label in labels:
-        original_auc, original_sse, mae_auc, mae_sse = label_start_time_validation(label, original_dataset, dirname,
-                                                                                   period,
-                                                                                   time_step, display=False)
+        label_validation_df = validation_periodic_time_distribution(label, original_dataset, dirname, period, time_step,
+                                                                    confidence=0.9, display=False)
+        errors = label_validation_df[['prob_error']]
+        errors.columns = [label]
+        validation_df = pd.concat([validation_df, errors], axis=1)
 
-        mae_auc_percentage = round(100 * mae_auc / original_auc, 2)
-        mae_sse_percentage = round(100 * mae_sse / original_sse, 2)
-        validation_df.loc[len(validation_df)] = [label, original_auc, original_sse, mae_auc_percentage,
-                                                 mae_sse_percentage]
+    validation_df = validation_df.T
+    f, ax = plt.subplots(figsize=(9, 6))
+    sns.heatmap(validation_df, annot=False, fmt="d", ax=ax, cmap="Blues", linewidths=0.3, vmax=1)
+    plt.title('Activities beginning time probability errors')
 
-    y = list(validation_df.mae_auc_percentage.values)
-    x = list(validation_df.original_auc.values)
-    labels = list(validation_df.label.values)
+
+
 
     if display:
         # AUC plot
@@ -203,8 +207,11 @@ def periodic_time_distribution(data, label, period, time_step, display=False):
 
     occurrences = data[data.label == label].copy()
     index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
+    index_df = pd.DataFrame(index, columns=['time_step_id'])
+
     if occurrences.empty:
-        raise ValueError('The label "{}" does not exist in the dataset'.format(label))
+        print('The label "{}" does not exist in the dataset'.format(label))
+        return None
     occurrences['relative_date'] = occurrences.date.apply(lambda x: modulo_datetime(x.to_pydatetime(), period))
     occurrences['time_step_id'] = occurrences['relative_date'] / time_step.total_seconds()
     occurrences['time_step_id'] = occurrences['time_step_id'].apply(math.floor)
@@ -213,6 +220,11 @@ def periodic_time_distribution(data, label, period, time_step, display=False):
     time_dist['prob'] = time_dist['prob'] / len(occurrences)
 
     time_dist.sort_values(['time_step_id'], ascending=True, inplace=True)
+
+    # time_dist = pd.concat([time_dist, index_df], axis=1)
+    time_dist = index_df.join(time_dist.set_index('time_step_id'))
+
+    time_dist.fillna(0, inplace=True)
 
     if display:
         now = dt.date.today()
@@ -229,8 +241,8 @@ def periodic_time_distribution(data, label, period, time_step, display=False):
     return time_dist[['time_step_id', 'prob']]
 
 
-def validation_periodic_time_distribution(label, original_dataset, replications_directory, period=dt.timedelta(days=1),
-                                          time_step=dt.timedelta(minutes=10), confidence=0.9, display=True):
+def validation_periodic_time_distribution(label, original_dataset, replications_directory, period, time_step,
+                                          confidence=0.9, display=True):
     """
     Validation of the occurrence time of a specific label
     :param label:
@@ -252,11 +264,24 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
         raise FileNotFoundError("'{}' does not contains csv files".format(replications_directory))
 
     replications_time_dist = {}
+    replications_errors = []
     for filename in list_files:
         dataset = pick_custom_dataset(filename)
         repl_time_dist = periodic_time_distribution(data=dataset, label=label, period=period, time_step=time_step,
                                                     display=False)
+        if repl_time_dist is None:
+            continue
         replications_time_dist[filename] = repl_time_dist
+        duo_df = original_time_dist.join(repl_time_dist.set_index('time_step_id'), on='time_step_id', rsuffix='_simul')
+        duo_df.fillna(0, inplace=True)
+        duo_df['error'] = (duo_df['prob_simul'] - duo_df['prob']) / duo_df['prob']
+        error = np.sqrt(np.sum(np.power(duo_df.error.values, 2)))  # Quadratic error
+
+        # error = duo_df.error.corr(duo_df.prob_simul)
+        replications_errors.append(error)
+
+    replications_errors = np.asarray(replications_errors)
+
 
     big_df = pd.DataFrame()
     for filename, repl_time_dist in replications_time_dist.items():
@@ -283,6 +308,8 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
     big_df = big_df.join(original_time_dist.set_index('time_step_id'), on='time_step_id')
     big_df.fillna(0, inplace=True)
 
+    big_df['prob_error'] = abs(big_df['prob'] - big_df['prob_mean'])
+
     if display:
         now = dt.date.today()
         begin_day = dt.datetime.fromordinal(now.toordinal())
@@ -295,18 +322,19 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
         # TIME STEP PLOT
         ax.plot(big_df.index, big_df.prob, label="Original Data", linestyle="-")
 
-        ax.plot(big_df.index, big_df.prob_mean, label="MEAN simulation", linestyle="--")
+        ax.plot(big_df.index, big_df.prob_mean, label="MEAN simulation", linestyle="-")
 
-        ax.fill_between(big_df.index, big_df.prob_lower, big_df.prob_upper,
-                        label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
+        # ax.fill_between(big_df.index, big_df.prob_lower, big_df.prob_upper,
+        #                 label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
 
         ax.set_ylabel('Probability')
         ax.set_xlabel('Day hour')
         ax.legend()
         plt.title("Daily time distribution of the label '{}'".format(label))
         plt.gcf().autofmt_xdate()
+        plt.show()
 
-    return None
+    return big_df[['prob', 'prob_mean', 'prob_error']]
 
 
 

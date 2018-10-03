@@ -25,10 +25,10 @@ def main():
     #   - Training Dataset : the Whole Original dataset
     #   - Test Dataset : The Whole Original dataset
 
-    dataset_name = 'aruba'
+    dataset_name = 'hh101'
 
     period = dt.timedelta(days=1)
-    activities_generation_method = 'Simple'  # {'Simple', 'Macro'}
+    activities_generation_method = 'Macro'  # {'Simple', 'Macro'}
     duration_generation_method = 'Normal'  # {'Normal', 'Forecast Normal', 'TS Forecasting'}
     time_step_min = 5
     time_step = dt.timedelta(minutes=time_step_min)
@@ -40,7 +40,7 @@ def main():
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime()
 
-    # Compute the numbre of periods
+    # Compute the number of periods
     nb_periods = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
 
     output = "../output/{}/{} Activities Model - {} - Time Step {}mn/".format(dataset_name,
@@ -56,8 +56,8 @@ def main():
                 raise
 
     digital_twin_model = generate_all_activities(dataset_name, dataset, period=period, time_step=time_step,
-                                                 output=output,
-                                                 model='Simple', duration_gen=duration_generation_method, Tep=Tep)
+                                                 output=output, model=activities_generation_method,
+                                                 duration_gen=duration_generation_method, Tep=Tep)
 
     # We can load them instead
     # all_activities = pickle.load(open(output + '/digital_twin_model.pkl', 'rb'))
@@ -179,6 +179,11 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, mo
 
         patterns = pd.read_pickle(input)
 
+        patterns['Validity Duration'] = patterns['Validity Duration'].apply(lambda x: x.total_seconds())
+
+        patterns['sort_key'] = patterns['Validity Duration'] * patterns['Accuracy']
+        patterns.sort_values(['sort_key'], ascending=False, inplace=True)
+
         for index, pattern in patterns.iterrows():  # Create one Macro/Single Activity per row
             start_time = t.process_time()
             episode = list(pattern['Episode'])
@@ -190,8 +195,9 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, mo
 
             if len(episode) > 1:
                 activity = Activity.MacroActivity(episode=episode, dataset=train_dataset, occurrences=occurrences,
-                                                  period=period, time_step=time_step, start_date=start_date,
-                                                  end_date=end_date)
+                                                  period=period, duration_gen=duration_gen, time_step=time_step,
+                                                  start_date=start_date, end_date=end_date, display=True)
+
             else:
                 activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=time_step,
                                              start_date=start_date, end_date=end_date)

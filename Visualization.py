@@ -19,8 +19,18 @@ def main():
     dataset = pick_dataset(dataset_name)
     sim_id = 0
     replication_id = 1
-    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simple Model & TS Model Simulation results 5mn/dataset_simulation_rep_1.csv".format(
-        dataset_name)
+
+    activities_generation_method = 'Macro'
+    duration_generation_method = 'Normal'
+    time_step_min = 5
+
+    path = "./output/{}/{} Activities Model - {} - Time Step {}mn//dataset_simulation_rep_{}.csv".format(dataset_name,
+                                                                                                         activities_generation_method + "_recent_patterns",
+                                                                                                         duration_generation_method,
+                                                                                                         time_step_min,
+                                                                                                         replication_id)
+    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simple Model & TS Model Simulation results 5mn/dataset_simulation_rep_1.csv".format(
+    #     dataset_name)
     dataset = pick_custom_dataset(path)
 
     start_date = dataset.date.min().to_pydatetime()

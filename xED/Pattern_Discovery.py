@@ -4,22 +4,19 @@ Created on Wed Mar 14 10:22:14 2018
 
 @author: cyriac.azefack
 """
-import datetime as dt
+
 import errno
 import getopt
-import os
+import inspect
 import pickle
 import sys
 import time as t
 
 import numpy as np
-import pandas as pd
 
+from Utils import *
 from xED import Candidate_Study
 from xED import FP_growth
-
-
-# matplotlib.style.use("seaborn")
 
 
 def main(argv):
@@ -42,20 +39,22 @@ def main(argv):
     output_dir = None
     nb_days = -1
     support_min = None
-    weekly_habits = False
+    accuracy_min = 0.5
+    Tep = 30  # 30 minutes
 
     try:
         opts, args = getopt.getopt(argv, "hn:r:o:",
-                                   ["name=", "replication=", "output_dir=", "days=", "support_min=", "weekly_habits"])
+                                   ["name=", "replication=", "output_dir=", "days=", "support_min=", "accuracy_min=",
+                                    "Tep="])
     except getopt.GetoptError:
-        print('xED.py -n <dataset name> -n <replication index> -o <output dir> [--days <number of days>]'
-              ' [--support_min <minimum support>]')
+        print('Pattern_Discovery.py -n <dataset name> -n <replication index> -o <output dir> [--days <number of days>]'
+              ' [--support_min <minimum support>] [--accuracy_min <minimum accuracy>] [--Tep <episode length parameter>]')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
             print(
-                'xED.py -n <dataset name> -o <output dir> [--days <number of days>] '
+                'Pattern_Discovery.py -n <dataset name> -o <output dir> [--days <number of days>] '
                 '[--support_min <minimum support>]')
             sys.exit()
         elif opt in ("-n", "--name"):
@@ -68,10 +67,13 @@ def main(argv):
             nb_days = int(arg)
         elif opt == '--support_min':
             support_min = int(arg)
-        elif opt == '--weekly_habits':
-            weekly_habits = True
+        elif opt == '--accuracy_min':
+            accuracy_min = float(arg)
+        elif opt == '--Tep':
+            Tep = int(arg)
 
     # TODO : Find a way to compute the ideal support
+
     if not support_min:
         support_min = support_dict[dataset_name]
 
@@ -84,8 +86,8 @@ def main(argv):
     print("Output Directory : {}".format(output_dir))
     print("Number of days selected : {}".format(nb_days))
     print("Support Minimum : {}".format(support_min))
-    print("Discover Weekly Habits : {}".format(weekly_habits))
-
+    print("Accuracy Minimum : {}".format(accuracy_min))
+    print("Tep : {}".format(Tep))
 
 
     dataset = pick_dataset(name=dataset_name, nb_days=nb_days)
@@ -93,9 +95,10 @@ def main(argv):
     # Find the best case among different tries:
 
     start_time = t.process_time()
-    patterns, patterns_string, data_left = pattern_discovery(data=dataset, Tep=30,
-                                                             support_min=support_min,
-                                                             tolerance_ratio=2, weekly_habits=weekly_habits)
+    patterns, patterns_string, data_left = pattern_discovery(data=dataset, Tep=Tep, accuracy_min=0.3,
+                                                             support_min=support_min)
+
+    p = inspect.signature(pattern_discovery)
     ratio_data_treated = round((1 - len(data_left) / len(dataset)) * 100, 2)
 
     elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
@@ -117,6 +120,10 @@ def main(argv):
                 raise
 
     with open(log_filename, 'w+') as file:
+        file.write("Parameters :\n")
+        file.write("Support Min : {}\n".format(support_min))
+        file.write("Accuracy Min : {}\n".format(accuracy_min))
+        file.write("Tep : {}\n".format(Tep))
         file.write("Time to process all the tries : {}\n".format(elapsed_time))
         file.write("{}% of the {} dataset explained by the patterns discovered\n".format(ratio_data_treated,
                                                                                          dataset_name))
@@ -129,13 +136,6 @@ def main(argv):
     # Write readable results in csv file
     patterns_string.to_csv(output_dir + "/patterns.csv", sep=";", index=False)
     data_left.to_csv(output_dir + "/data_left.csv", sep=";", index=False)
-
-    # Write all the results in differents excel sheets
-    # writer = pd.ExcelWriter(output_dir + "/all_results.xlsx")
-    # dataset.to_excel(writer, sheet_name="Input Data", index=False)
-    # best_patterns_string.to_excel(writer, sheet_name="Patterns", index=False)
-    # best_data_left.to_excel(writer, sheet_name="Non treated Data", index=False)
-    # writer.save()
 
 
 def pattern_discovery(data, Tep=30, support_min=2, accuracy_min=0.5,
@@ -371,67 +371,7 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
     return missing_events_df
 
 
-def pick_dataset(name, nb_days=-1):
-    my_path = os.path.abspath(os.path.dirname(__file__))
 
-    dataset = None
-    if name == 'toy':
-        path = os.path.join(my_path, "../input/toy_dataset.csv")
-        dataset = pd.read_csv(path, delimiter=';')
-        date_format = '%Y-%d-%m %H:%M'
-        dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
-
-    elif name == 'aruba':
-        path = os.path.join(my_path, "../input/aruba/activity_dataset.csv")
-        dataset = pd.read_csv(path, delimiter=';')
-        date_format = '%Y-%m-%d %H:%M:%S.%f'
-        dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
-        dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
-
-    else:
-        filename = "../input/{} House/{}_dataset.csv".format(name, name)
-        path = os.path.join(my_path, filename)
-        dataset = pd.read_csv(path, delimiter=';')
-        dataset['date'] = pd.to_datetime(dataset['date'])
-        dataset['end_date'] = pd.to_datetime(dataset['end_date'])
-
-    # We only take nb_days
-    if nb_days > 0:
-        start_date = dataset.date.min().to_pydatetime()
-        end_date = start_date + dt.timedelta(days=nb_days)
-        dataset = dataset.loc[(dataset.date >= start_date) & (dataset.date < end_date)].copy()
-
-    dataset.drop_duplicates(['date', 'label'], keep='last', inplace=True)
-
-    # dataset['id_patient'] = dataset['date'].apply(lambda x : x.timetuple().tm_yday)
-    # dataset['duree'] = 0
-    # dataset['evt'] = dataset['label']
-    # dataset['nbjours'] = dataset.date.apply(
-    #         lambda x: int(Candidate_Study.modulo_datetime(x.to_pydatetime(), dt.timedelta(days=1))))
-    #
-    # dataset = dataset[['id_patient', 'duree', 'evt', 'nbjours']]
-    #
-    #
-    # dataset.to_csv('./{}_hugo_dataset.csv'.format(name), index=False, sep=";")
-
-    return dataset
-
-
-def pick_custom_dataset(path, nb_days=-1):
-    dataset = pd.read_csv(path, delimiter=';')
-    dataset['date'] = pd.to_datetime(dataset['date'])
-    dataset['end_date'] = pd.to_datetime(dataset['end_date'])
-
-    # We only take nb_days
-    if nb_days > 0:
-        start_date = dataset.date.min().to_pydatetime()
-        end_date = start_date + dt.timedelta(days=nb_days)
-        dataset = dataset.loc[(dataset.date >= start_date) & (dataset.date < end_date)].copy()
-
-    dataset.drop_duplicates(['date', 'label'], keep='last', inplace=True)
-
-
-    return dataset
 
 
 if __name__ == "__main__":
