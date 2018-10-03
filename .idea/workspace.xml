@@ -2,15 +2,13 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/Simulation_Model.py" line="20" />
-    <bookmark url="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" line="306" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Change histogram validation to functions">
-      <change afterPath="$PROJECT_DIR$/Utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DES/Activity.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Activity.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DES/Digital Twin Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Digital Twin Model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/Visualization.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/KA_dataset.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/input/aruba/activity_dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/aruba/activity_dataset.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/toy_dataset.txt" beforeDir="false" />
@@ -20,7 +18,6 @@
       <change beforePath="$PROJECT_DIR$/output/aruba/ID_0/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/aruba/ID_0/log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/aruba/ID_0/patterns.csv" beforeDir="false" afterPath="$PROJECT_DIR$/output/aruba/ID_0/patterns.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/aruba/ID_0/patterns.pickle" beforeDir="false" afterPath="$PROJECT_DIR$/output/aruba/ID_0/patterns.pickle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xED/Pattern_Discovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/xED/Pattern_Discovery.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,38 +36,38 @@
           <entry key="project.closed" value="4" />
           <entry key="project.open.time.12" value="1" />
           <entry key="project.open.time.14" value="1" />
-          <entry key="project.open.time.16" value="1" />
+          <entry key="project.open.time.16" value="2" />
           <entry key="project.open.time.24" value="1" />
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.8" value="4" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="10" />
+          <entry key="project.opened" value="11" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="csv" value="1" />
           <entry key="ipynb" value="1" />
-          <entry key="py" value="8" />
+          <entry key="py" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="IPNB" value="1" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="8" />
+          <entry key="Python" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="3345" />
-          <entry key="txt" value="58" />
+          <entry key="py" value="3900" />
+          <entry key="txt" value="149" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="58" />
-          <entry key="Python" value="3345" />
+          <entry key="PLAIN_TEXT" value="149" />
+          <entry key="Python" value="3900" />
         </counts>
       </usages-collector>
     </session>
@@ -83,7 +80,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/xED/Candidate_Study.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="3417">
               <caret line="209" selection-start-line="209" selection-end-line="220" selection-end-column="36" />
             </state>
           </provider>
@@ -92,8 +89,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/xED/Pattern_Discovery.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2159">
-              <caret line="127" column="63" selection-start-line="127" selection-start-column="63" selection-end-line="127" selection-end-column="63" />
+            <state relative-caret-position="2006">
+              <caret line="129" column="63" selection-start-line="113" selection-start-column="4" selection-end-line="129" selection-end-column="63" />
               <folding>
                 <element signature="e#94#106#0" expanded="true" />
               </folding>
@@ -110,11 +107,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="588">
-              <caret line="198" column="73" selection-start-line="198" selection-start-column="73" selection-end-line="198" selection-end-column="73" />
+            <state relative-caret-position="221">
+              <caret line="48" column="124" lean-forward="true" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="124" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -122,20 +122,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
+            <state relative-caret-position="357">
               <caret line="24" column="73" selection-start-line="24" selection-start-column="73" selection-end-line="24" selection-end-column="73" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Validation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="342" column="4" selection-start-line="368" selection-start-column="98" selection-end-line="368" selection-end-column="114" />
+            <state relative-caret-position="44">
+              <caret line="129" lean-forward="true" selection-start-line="129" selection-end-line="129" />
               <folding>
                 <element signature="e#24#45#0" expanded="true" />
               </folding>
@@ -146,8 +143,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DES/Activity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="609">
-              <caret line="386" column="8" selection-start-line="386" selection-start-column="8" selection-end-line="386" selection-end-column="8" />
+            <state relative-caret-position="561">
+              <caret line="40" column="8" selection-start-line="40" selection-start-column="8" selection-end-line="40" selection-end-column="8" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -176,9 +173,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>groupb</find>
-      <find>period_id</find>
-      <find>Acyclic_Graph.Ac</find>
       <find>time</find>
       <find>min</find>
       <find>mn</find>
@@ -206,6 +200,9 @@
       <find>aruba</find>
       <find>Rd</find>
       <find>RdY</find>
+      <find>duration_gen</find>
+      <find>'No'</find>
+      <find>'Normal'</find>
     </findStrings>
     <replaceStrings>
       <replace>labels</replace>
@@ -216,6 +213,7 @@
       <replace>ennem</replace>
       <replace>occ_id</replace>
       <replace>Acyclic_Graph.Acyclic_Graph</replace>
+      <replace>'Gaussian'</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -281,13 +279,13 @@
         <option value="$PROJECT_DIR$/DES/MacroActivity.py" />
         <option value="$PROJECT_DIR$/DES/Simple Model.py" />
         <option value="$PROJECT_DIR$/DES/Macro Activities Model.py" />
-        <option value="$PROJECT_DIR$/DES/Activity.py" />
         <option value="$PROJECT_DIR$/Temporal_patterns/Episode_Discovery.py" />
         <option value="$PROJECT_DIR$/Visualization.py" />
         <option value="$PROJECT_DIR$/Utils.py" />
-        <option value="$PROJECT_DIR$/Validation.py" />
         <option value="$PROJECT_DIR$/xED/Pattern_Discovery.py" />
+        <option value="$PROJECT_DIR$/DES/Activity.py" />
         <option value="$PROJECT_DIR$/DES/Digital Twin Model.py" />
+        <option value="$PROJECT_DIR$/Validation.py" />
       </list>
     </option>
   </component>
@@ -319,6 +317,31 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="xED" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
+              <item name="Scratches" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <expand>
@@ -345,31 +368,6 @@
               <item name="Root" type="cbb8eebc:String" user="Root" />
               <item name="Frailty_Box" type="cbb8eebc:String" user="Frailty_Box" />
               <item name="xED_Algorithm" type="cbb8eebc:String" user="xED_Algorithm" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="xED" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
-              <item name="Scratches" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
             </path>
           </expand>
           <select />
@@ -410,7 +408,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Pattern_Discovery_HH101">
+  <component name="RunManager" selected="Python.Validation">
     <configuration name="Digital Twin Model" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -823,7 +821,14 @@
       <option name="project" value="LOCAL" />
       <updated>1537532497580</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="* Add HH datasets&#10;* Time distribution validation based on HeatMaps">
+      <created>1538560992998</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1538560992998</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -839,12 +844,12 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.3645533" visible="true" weight="0.2881981" />
-      <window_info id="Structure" order="1" sideWeight="0.63544667" side_tool="true" visible="true" weight="0.2881981" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.3631124" visible="true" weight="0.29135934" />
+      <window_info active="true" id="Structure" order="1" sideWeight="0.6368876" side_tool="true" visible="true" weight="0.29135934" />
       <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.3271028" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49209693" visible="true" weight="0.2793354" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49209693" visible="true" weight="0.2793354" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" weight="0.2845275" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -901,7 +906,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Starting dataset rewriting" />
     <MESSAGE value="xED Algorithm and Output done" />
     <MESSAGE value="Graph Drawing from a manual pattern" />
     <MESSAGE value="Own label management for graphs" />
@@ -926,7 +930,8 @@
     <MESSAGE value="Adding 'Aruba' Input files" />
     <MESSAGE value="Adding 'Aruba' Replications results files" />
     <MESSAGE value="Change histogram validation to functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Change histogram validation to functions" />
+    <MESSAGE value="* Add HH datasets&#10;* Time distribution validation based on HeatMaps" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Add HH datasets&#10;* Time distribution validation based on HeatMaps" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -956,17 +961,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>449</line>
+          <line>416</line>
           <option name="timeStamp" value="603" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DES/Digital Twin Model.py</url>
-          <line>65</line>
+          <line>66</line>
           <option name="timeStamp" value="613" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>75</line>
+          <line>73</line>
           <option name="timeStamp" value="624" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -976,7 +981,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DES/Digital Twin Model.py</url>
-          <line>186</line>
+          <line>188</line>
           <option name="timeStamp" value="634" />
         </line-breakpoint>
       </breakpoints>
@@ -1337,10 +1342,21 @@
     <entry file="file://$PROJECT_DIR$/Temporal_patterns/FP_growth.py" />
     <entry file="file://$PROJECT_DIR$/Temporal_patterns/Episode_Discovery.py" />
     <entry file="file://$PROJECT_DIR$/input/transform_data.py" />
+    <entry file="file://$PROJECT_DIR$/meal_preparation.csv" />
     <entry file="file://$PROJECT_DIR$/xED/Candidate_Study.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="3417">
           <caret line="209" selection-start-line="209" selection-end-line="220" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/xED/Pattern_Discovery.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2006">
+          <caret line="129" column="63" selection-start-line="113" selection-start-column="4" selection-end-line="129" selection-end-column="63" />
+          <folding>
+            <element signature="e#94#106#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1353,10 +1369,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
+        <state relative-caret-position="357">
           <caret line="24" column="73" selection-start-line="24" selection-start-column="73" selection-end-line="24" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DES/Activity.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="561">
+          <caret line="40" column="8" selection-start-line="40" selection-start-column="8" selection-end-line="40" selection-end-column="8" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1368,43 +1391,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Validation.py">
+    <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="342" column="4" selection-start-line="368" selection-start-column="98" selection-end-line="368" selection-end-column="114" />
-          <folding>
-            <element signature="e#24#45#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/meal_preparation.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xED/Pattern_Discovery.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2159">
-          <caret line="127" column="63" selection-start-line="127" selection-start-column="63" selection-end-line="127" selection-end-column="63" />
-          <folding>
-            <element signature="e#94#106#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DES/Activity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="609">
-          <caret line="386" column="8" selection-start-line="386" selection-start-column="8" selection-end-line="386" selection-end-column="8" />
+        <state relative-caret-position="221">
+          <caret line="48" column="124" lean-forward="true" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="124" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
+    <entry file="file://$PROJECT_DIR$/Validation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="588">
-          <caret line="198" column="73" selection-start-line="198" selection-start-column="73" selection-end-line="198" selection-end-column="73" />
+        <state relative-caret-position="44">
+          <caret line="129" lean-forward="true" selection-start-line="129" selection-end-line="129" />
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

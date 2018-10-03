@@ -29,11 +29,14 @@ def main():
 
     period = dt.timedelta(days=1)
     activities_generation_method = 'Macro'  # {'Simple', 'Macro'}
-    duration_generation_method = 'Normal'  # {'Normal', 'Forecast Normal', 'TS Forecasting'}
+    duration_generation_method = 'Gaussian'  # {'Gaussian', 'Forecast Normal', 'TS Forecasting'}
     time_step_min = 5
     time_step = dt.timedelta(minutes=time_step_min)
     nb_replications = 20
-    Tep = 30  # For Macro Activities (Duration max of a macro activity)
+    simmulation_id = 1
+    Tep = 120  # For Macro Activities (Duration max of a macro activity)
+    pattern_folder_id = 5
+
 
     dataset = pick_dataset(dataset_name)
 
@@ -43,10 +46,9 @@ def main():
     # Compute the number of periods
     nb_periods = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
 
-    output = "../output/{}/{} Activities Model - {} - Time Step {}mn/".format(dataset_name,
-                                                                              activities_generation_method,
-                                                                              duration_generation_method,
-                                                                              time_step_min)
+    output = "../output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simmulation_id,
+                                                                            pattern_folder_id)
+
     # Create the folder if it does not exist yet
     if not os.path.exists(os.path.dirname(output)):
         try:
@@ -55,7 +57,8 @@ def main():
             if exc.errno != errno.EEXIST:
                 raise
 
-    digital_twin_model = generate_all_activities(dataset_name, dataset, period=period, time_step=time_step,
+    digital_twin_model = generate_all_activities(dataset_name, dataset, folder_id=pattern_folder_id, period=period,
+                                                 time_step=time_step,
                                                  output=output, model=activities_generation_method,
                                                  duration_gen=duration_generation_method, Tep=Tep)
 
@@ -153,8 +156,8 @@ def main():
         print("Time elapsed for the simulation : {}".format(elapsed_time))
 
 
-def generate_all_activities(dataset_name, dataset, period, time_step, output, model='Simple', duration_gen='Normal',
-                            Tep=30):
+def generate_all_activities(dataset_name, dataset, period, time_step, output, folder_id, Tep, model='Simple',
+                            duration_gen='Gaussian'):
     """
     Generate activities according to the method chosen
     :param dataset_name:
@@ -162,7 +165,8 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, mo
     :param period:
     :param time_step:
     :param output:
-    :param model:
+    :param model: 'Macro' pick the pattern episodes on their ranking and discover the temporality in the data
+                  'Temporaral_Macro' pick the pattern episodes and their temporal occurrences on their ranking
     :param duration_gen:
     :param Tep:
     :return:
@@ -175,7 +179,7 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, mo
     train_dataset = dataset.copy()
 
     if model == 'Macro':  # Mining Macro activities first
-        input = "../output/{}/ID_{}/patterns.pickle".format(dataset_name, 0)
+        input = "../output/{}/ID_{}/patterns.pickle".format(dataset_name, folder_id)
 
         patterns = pd.read_pickle(input)
 
@@ -196,7 +200,7 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, mo
             if len(episode) > 1:
                 activity = Activity.MacroActivity(episode=episode, dataset=train_dataset, occurrences=occurrences,
                                                   period=period, duration_gen=duration_gen, time_step=time_step,
-                                                  start_date=start_date, end_date=end_date, display=True)
+                                                  start_date=start_date, end_date=end_date, display=False, Tep=Tep)
 
             else:
                 activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=time_step,
@@ -236,6 +240,16 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, mo
         print("Time spent for activity {}: {}".format(episode,
                                                       dt.timedelta(
                                                           seconds=round(t.process_time() - start_time, 1))))
+
+    log_filename = output + "/parameters.txt"
+
+    with open(log_filename, 'w+') as file:
+        file.write("Parameters :\n")
+        file.write("Pattern ID : {}\n".format(folder_id))
+        file.write("Activities generation Method : {}\n".format(model))
+        file.write("Duration generation Method : {}\n".format(duration_gen))
+        file.write("Tep : {}\n".format(Tep))
+
 
     pickle.dump(all_activities, open(output + "/digital_twin_model.pkl", 'wb'))
     print('Digital Twin Model Created & Saved!!')

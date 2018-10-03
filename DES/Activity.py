@@ -38,14 +38,14 @@ class Activity:
     ID = 0
     SLIDING_WINDOW = dt.timedelta(days=30)
 
-    def __init__(self, label, occurrences, period, time_step, start_date, end_date, duration_gen='Normal',
+    def __init__(self, label, occurrences, period, time_step, start_date, end_date, duration_gen='Gaussian',
                  display_histogram=False):
         '''
         Creation of an activity
         :param label: label of the activity
         :param occurrences: Dataframe representing the occurrences of the activity
         :param period: [dt.timedelta] Frequency of the analysis
-        :param time_step: [dt.timedelta] discret time step for the simulation
+        :param time_step: [dt.timedelta] discrete time step for the simulation
         '''
 
         print('\n')
@@ -342,21 +342,20 @@ class Activity:
 
         return simulation_result, generated_duration
 
-
-    def duration_generation(self, date, ts_id, method='Normal'):
+    def duration_generation(self, date, ts_id, method='Gaussian'):
         """
         Generate the duration of the activity
         :param date:
         :param ts_id:
         :param method:
-            'Normal' : Static normal distribution of the duration at each time step id
+            'Gaussian' : Static normal distribution of the duration at each time step id
             'Forecast Normal' : Static normal distribution of the duration at each time step id forecasted for this specific date
             'TS Forecast' : Use a Time series forecasting model to predict the duration at this specific date (by one time step)
         :return:
         """
         generated_duration = -1
 
-        if method == 'Normal':
+        if method == 'Gaussian':
             stats = self.get_stats(time_step_id=ts_id)
             mean_duration = stats['mean_duration']
             std_duration = stats['std_duration']
@@ -384,7 +383,7 @@ class Activity:
 
 class MacroActivity(Activity):
 
-    def __init__(self, episode, dataset, occurrences, period, time_step, start_date, end_date, duration_gen='Normal',
+    def __init__(self, episode, dataset, occurrences, period, time_step, start_date, end_date, duration_gen='Gaussian',
                  display=False, Tep=30):
         '''
         Create a Macro Activity
@@ -400,7 +399,7 @@ class MacroActivity(Activity):
         '''
         Activity.__init__(self, episode, occurrences, period, time_step, start_date, end_date,
                           duration_gen, display_histogram=display)
-        self.Tep = dt.timedelta(minutes=30)
+        self.Tep = dt.timedelta(minutes=Tep)
         # Find the events corresponding to the occurrences
         events = pd.DataFrame(columns=["date", "label", 'occ_id'])
         for index, occurrence in occurrences.iterrows():

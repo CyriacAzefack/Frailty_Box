@@ -9,7 +9,6 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 import seaborn as sns
-from scipy import stats
 
 from xED.Candidate_Study import modulo_datetime
 from xED.Pattern_Discovery import pick_dataset, pick_custom_dataset
@@ -18,7 +17,7 @@ sns.set_style("darkgrid")
 # plt.xkcd()
 
 def main():
-    dataset_name = 'hh102'
+    dataset_name = 'hh101'
     # Original data
     original_dataset = pick_dataset(dataset_name)
 
@@ -55,15 +54,11 @@ def main():
 
     activity = "work"
 
-    activities_generation_method = 'Macro'
-    duration_generation_method = 'Normal'
-    time_step_min = 5
+    simulation_id = 1
+    pattern_folder_id = 2
 
-    dirname = "./output/{}/{} Activities Model - {} - Time Step {}mn/".format(dataset_name,
-                                                                                       activities_generation_method,
-                                                                                       duration_generation_method,
-                                                                                       time_step_min)
-
+    dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
+                                                                            pattern_folder_id)
 
     # Occurrence time validation
     # r = validation_periodic_time_distribution(activity, original_dataset, dirname, period, time_step, display=True)
@@ -87,7 +82,7 @@ def all_activities_validation(original_dataset, dirname, period, time_step, disp
     labels.sort()
     for label in labels:
         label_validation_df = validation_periodic_time_distribution(label, original_dataset, dirname, period, time_step,
-                                                                    confidence=0.9, display=False)
+                                                                    display=False)
         errors = label_validation_df[['prob_error']]
         errors.columns = [label]
         validation_df = pd.concat([validation_df, errors], axis=1)
@@ -128,33 +123,6 @@ def all_activities_validation(original_dataset, dirname, period, time_step, disp
         plt.title('SSE on the fitted distribution')
 
     return validation_df
-
-
-def compute_stochastic(row, error_confidence=0.9):
-    array = row.values
-
-    # We remove all the 'NaN' values
-    array = array[~np.isnan(array)]
-
-    return compute_stochastic_error(array=array, confidence=0.9)
-
-
-def compute_stochastic_error(array, confidence=0.9):
-    '''
-    Compute the stochastic error given by the array
-    :param array: an array of numbers
-    :return: mean and the error
-    '''
-
-    mean = np.mean(array)
-    std = np.std(array)
-
-    n = len(array)
-    # We find the t-distribution value of the student law
-    t_sdt = stats.t.ppf(q=confidence, df=n - 1)
-    error = t_sdt * (std / math.sqrt(n))
-
-    return mean, error
 
 
 def compute_activity_time(data, label, start_date=None, end_date=None, time_step_in_days=1):
@@ -242,7 +210,7 @@ def periodic_time_distribution(data, label, period, time_step, display=False):
 
 
 def validation_periodic_time_distribution(label, original_dataset, replications_directory, period, time_step,
-                                          confidence=0.9, display=True):
+                                          display=True):
     """
     Validation of the occurrence time of a specific label
     :param label:
@@ -299,12 +267,9 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
     # Compute the Stochastic Mean & Error
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        big_df['prob_results'] = big_df.apply(compute_stochastic, args=(confidence,), axis=1)
-        big_df['prob_mean'] = big_df.prob_results.apply(lambda x: x[0])
-        big_df['prob_lower'] = big_df.prob_results.apply(lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
-        big_df['prob_upper'] = big_df.prob_results.apply(lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
+        big_df['prob_mean'] = big_df.apply(np.mean, axis=1)
 
-    big_df.drop(['prob_results'], axis=1, inplace=True)
+
     big_df = big_df.join(original_time_dist.set_index('time_step_id'), on='time_step_id')
     big_df.fillna(0, inplace=True)
 
