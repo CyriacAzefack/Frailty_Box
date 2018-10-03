@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 import seaborn as sns
+from sklearn.metrics import mean_squared_error
 
 from xED.Candidate_Study import modulo_datetime
 from xED.Pattern_Discovery import pick_dataset, pick_custom_dataset
@@ -33,29 +34,27 @@ def main():
     #####################
     #  COMPARE MODELS   #
     ####################
-    # model_A_activities_generation_method = 'Simple'
-    # model_A_duration_generation_method = 'Normal'
-    # model_A_time_step_min = 5
-    # model_A_name = "{} Activities Model - {} - Simulation results {}mn".format(model_A_activities_generation_method,
-    #                                                                                             model_A_duration_generation_method,
-    #                                                                                             model_A_time_step_min)
-    # model_A_dirname = "./output/{}/{}/".format(dataset_name, model_A_name)
-    #
-    # model_B_activities_generation_method = 'Macro'
-    # model_B_duration_generation_method = 'Normal'
-    # model_B_time_step_min = 15
-    # model_B_name = "{} Activities Model - {} - Simulation results {}mn".format(model_B_activities_generation_method,
-    #                                                                            model_B_duration_generation_method,
-    #                                                                            model_B_time_step_min)
-    # model_B_dirname = "./output/{}/{}/".format(dataset_name, model_B_name)
-    #
-    # compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
-    #                model_B_dir=model_B_dirname, period=period, time_step=time_step)
+    model_A_simulation_id = 1
+    model_A_pattern_folder_id = 1
+
+    model_A_name = "X{}_Pattern_ID{}".format(model_A_simulation_id, model_A_pattern_folder_id)
+    model_A_dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, model_A_simulation_id,
+                                                                                    model_A_pattern_folder_id)
+
+    model_B_simulation_id = 1
+    model_B_pattern_folder_id = 1
+
+    model_B_name = "X{}_Pattern_ID{}".format(model_B_simulation_id, model_B_pattern_folder_id)
+    model_B_dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, model_B_simulation_id,
+                                                                                    model_B_pattern_folder_id)
+
+    compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
+                   model_B_dir=model_B_dirname, period=period, time_step=time_step)
 
     activity = "work"
 
     simulation_id = 1
-    pattern_folder_id = 2
+    pattern_folder_id = 1
 
     dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
                                                                             pattern_folder_id)
@@ -76,53 +75,35 @@ def main():
 def all_activities_validation(original_dataset, dirname, period, time_step, display=True):
     index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
     validation_df = pd.DataFrame(index=index)
+    labels_rmse = []
 
     labels = original_dataset.label.unique()
 
     labels.sort()
     for label in labels:
-        label_validation_df = validation_periodic_time_distribution(label, original_dataset, dirname, period, time_step,
-                                                                    display=False)
+        label_validation_df, label_rmse = validation_periodic_time_distribution(label, original_dataset, dirname,
+                                                                                period, time_step,
+                                                                                display=False)
         errors = label_validation_df[['prob_error']]
         errors.columns = [label]
         validation_df = pd.concat([validation_df, errors], axis=1)
 
-    validation_df = validation_df.T
-    f, ax = plt.subplots(figsize=(9, 6))
-    sns.heatmap(validation_df, annot=False, fmt="d", ax=ax, cmap="Blues", linewidths=0.3, vmax=1)
-    plt.title('Activities beginning time probability errors')
+        labels_rmse.append(label_rmse)
+
+
 
 
 
 
     if display:
-        # AUC plot
-        y = list(validation_df.mae_auc_percentage.values)
-        x = list(validation_df.original_auc.values)
-        fig, ax = plt.subplots()
-        ax.scatter(x, y, color='r')
+        sns.distplot(labels_rmse)
+        plt.title("Activities RMSE distribution")
 
-        for i, txt in enumerate(labels):
-            ax.annotate(txt, (x[i], y[i]))
+        f, ax = plt.subplots(figsize=(9, 6))
+        sns.heatmap(validation_df.T, annot=False, fmt="d", ax=ax, cmap="Blues", linewidths=0.3, vmax=1)
+        plt.title('Activities beginning time probability errors')
 
-        plt.xlabel('Area Under the Histogram')
-        plt.ylabel('Mean Absolute Error (%)')
-        plt.title('Area Under Histogram')
-
-        # SSE plot
-        y = list(validation_df.mae_sse_percentage.values)
-        x = list(validation_df.original_sse.values)
-        fig, ax = plt.subplots()
-        ax.scatter(x, y, color='r')
-
-        for i, txt in enumerate(labels):
-            ax.annotate(txt, (x[i], y[i]))
-
-        plt.xlabel('SSE on the fitted distribution')
-        plt.ylabel('Mean Absolute Error (%)')
-        plt.title('SSE on the fitted distribution')
-
-    return validation_df
+    return validation_df, labels_rmse
 
 
 def compute_activity_time(data, label, start_date=None, end_date=None, time_step_in_days=1):
@@ -267,13 +248,15 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
     # Compute the Stochastic Mean & Error
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        big_df['prob_mean'] = big_df.apply(np.mean, axis=1)
+        big_df['prob_repl_mean'] = big_df.apply(np.mean, axis=1)
 
 
     big_df = big_df.join(original_time_dist.set_index('time_step_id'), on='time_step_id')
     big_df.fillna(0, inplace=True)
 
-    big_df['prob_error'] = abs(big_df['prob'] - big_df['prob_mean'])
+    big_df['prob_error'] = abs(big_df['prob'] - big_df['prob_repl_mean'])
+
+    rmse = mean_squared_error(big_df.prob, big_df.prob_repl_mean)
 
     if display:
         now = dt.date.today()
@@ -299,7 +282,7 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
         plt.gcf().autofmt_xdate()
         plt.show()
 
-    return big_df[['prob', 'prob_mean', 'prob_error']]
+    return big_df[['prob', 'prob_repl_mean', 'prob_error']], rmse
 
 
 
@@ -405,8 +388,10 @@ def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, mo
     :param model_B_dir:
     :return:
     """
-    model_A_validation_df = all_activities_validation(original_dataset, model_A_dir, period, time_step, display=False)
-    model_B_validation_df = all_activities_validation(original_dataset, model_B_dir, period, time_step, display=False)
+    model_A_validation_df, model_A_rmse = all_activities_validation(original_dataset, model_A_dir, period, time_step,
+                                                                    display=False)
+    model_B_validation_df, model_B_rmse = all_activities_validation(original_dataset, model_B_dir, period, time_step,
+                                                                    display=False)
 
     model_A_validation_df['model_name'] = model_A_name
     model_B_validation_df['model_name'] = model_B_name
