@@ -7,6 +7,7 @@ import sys
 import time as t
 from random import random
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -25,17 +26,17 @@ def main():
     #   - Training Dataset : the Whole Original dataset
     #   - Test Dataset : The Whole Original dataset
 
-    dataset_name = 'hh101'
+    dataset_name = 'KA'
 
     period = dt.timedelta(days=1)
     activities_generation_method = 'Macro'  # {'Simple', 'Macro'}
     duration_generation_method = 'Gaussian'  # {'Gaussian', 'Forecast Normal', 'TS Forecasting'}
-    time_step_min = 5
+    time_step_min = 120
     time_step = dt.timedelta(minutes=time_step_min)
-    nb_replications = 20
-    simmulation_id = 1
-    Tep = 120  # For Macro Activities (Duration max of a macro activity)
-    pattern_folder_id = 5
+    nb_replications = 10
+    simmulation_id = 32
+    Tep = 30  # For Macro Activities (Duration max of a macro activity)
+    pattern_folder_id = 0
 
 
     dataset = pick_dataset(dataset_name)
@@ -186,6 +187,7 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, fo
         patterns['Validity Duration'] = patterns['Validity Duration'].apply(lambda x: x.total_seconds())
 
         patterns['sort_key'] = patterns['Validity Duration'] * patterns['Accuracy']
+        # patterns['sort_key'] = patterns['Episode'].apply(lambda x: len(x))  # * patterns['Accuracy']
         patterns.sort_values(['sort_key'], ascending=False, inplace=True)
 
         for index, pattern in patterns.iterrows():  # Create one Macro/Single Activity per row
@@ -201,6 +203,7 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, fo
                 activity = Activity.MacroActivity(episode=episode, dataset=train_dataset, occurrences=occurrences,
                                                   period=period, duration_gen=duration_gen, time_step=time_step,
                                                   start_date=start_date, end_date=end_date, display=False, Tep=Tep)
+                plt.show()
 
             else:
                 activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=time_step,

@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Simulation_Model.py" line="20" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Change histogram validation to functions">
+    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Validation of HH101">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DES/Activity.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Activity.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DES/Digital Twin Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Digital Twin Model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/KA_dataset.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/aruba/activity_dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/aruba/activity_dataset.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/toy_dataset.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/transform_data.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/output/aruba/ID_0/data_left.csv" beforeDir="false" afterPath="$PROJECT_DIR$/output/aruba/ID_0/data_left.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/aruba/ID_0/data_left.pickle" beforeDir="false" afterPath="$PROJECT_DIR$/output/aruba/ID_0/data_left.pickle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/aruba/ID_0/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/aruba/ID_0/log.txt" afterDir="false" />
@@ -33,41 +25,45 @@
     <session id="1521681394">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="4" />
-          <entry key="project.open.time.12" value="1" />
+          <entry key="project.closed" value="8" />
+          <entry key="project.open.time.10" value="1" />
+          <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.12" value="2" />
           <entry key="project.open.time.14" value="1" />
+          <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.16" value="2" />
           <entry key="project.open.time.24" value="1" />
-          <entry key="project.open.time.7" value="1" />
-          <entry key="project.open.time.8" value="4" />
+          <entry key="project.open.time.27" value="1" />
+          <entry key="project.open.time.7" value="2" />
+          <entry key="project.open.time.8" value="8" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="11" />
+          <entry key="project.opened" value="21" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="csv" value="1" />
+          <entry key="csv" value="2" />
           <entry key="ipynb" value="1" />
-          <entry key="py" value="9" />
+          <entry key="py" value="13" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="IPNB" value="1" />
-          <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="9" />
+          <entry key="PLAIN_TEXT" value="2" />
+          <entry key="Python" value="13" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="3900" />
-          <entry key="txt" value="149" />
+          <entry key="py" value="8619" />
+          <entry key="txt" value="168" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="149" />
-          <entry key="Python" value="3900" />
+          <entry key="PLAIN_TEXT" value="168" />
+          <entry key="Python" value="8619" />
         </counts>
       </usages-collector>
     </session>
@@ -89,8 +85,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/xED/Pattern_Discovery.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2006">
-              <caret line="129" column="63" selection-start-line="113" selection-start-column="4" selection-end-line="129" selection-end-column="63" />
+            <state relative-caret-position="85">
+              <caret line="5" column="3" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
               <folding>
                 <element signature="e#94#106#0" expanded="true" />
               </folding>
@@ -110,8 +106,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="48" column="124" lean-forward="true" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="124" />
+            <state relative-caret-position="3179">
+              <caret line="202" column="42" selection-start-line="202" selection-start-column="42" selection-end-line="202" selection-end-column="42" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -131,10 +127,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Validation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
-              <caret line="129" lean-forward="true" selection-start-line="129" selection-end-line="129" />
+            <state relative-caret-position="-291">
+              <caret line="471" selection-start-line="471" selection-end-line="471" />
               <folding>
                 <element signature="e#24#45#0" expanded="true" />
+                <marker date="1539607105970" expanded="true" signature="15421:15426" ph="..." />
               </folding>
             </state>
           </provider>
@@ -143,11 +140,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DES/Activity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="40" column="8" selection-start-line="40" selection-start-column="8" selection-end-line="40" selection-end-column="8" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="663">
+              <caret line="46" column="63" selection-start-line="46" selection-start-column="63" selection-end-line="46" selection-end-column="63" />
             </state>
           </provider>
         </entry>
@@ -155,8 +149,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
-              <caret line="52" column="11" selection-start-line="52" selection-start-column="11" selection-end-line="52" selection-end-column="11" />
+            <state relative-caret-position="136">
+              <caret line="21" column="30" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -173,11 +167,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>time</find>
-      <find>min</find>
-      <find>mn</find>
-      <find>Acy</find>
-      <find>Acyclic_Graph</find>
       <find>Acyclic</find>
       <find>.ix</find>
       <find>print</find>
@@ -203,6 +192,11 @@
       <find>duration_gen</find>
       <find>'No'</find>
       <find>'Normal'</find>
+      <find>drop</find>
+      <find>range</find>
+      <find>START P</find>
+      <find>START PERUID</find>
+      <find>exist</find>
     </findStrings>
     <replaceStrings>
       <replace>labels</replace>
@@ -271,7 +265,6 @@
         <option value="$PROJECT_DIR$/Pattern_Discovery/Pattern_Discovery.py" />
         <option value="$PROJECT_DIR$/xED/Candidate_Study.py" />
         <option value="$PROJECT_DIR$/DES/Macro_Activity.py" />
-        <option value="$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py" />
         <option value="$PROJECT_DIR$/Graph_Model/AcyclicGraph.py" />
         <option value="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" />
         <option value="$PROJECT_DIR$/Graph_Model/__init__.py" />
@@ -284,14 +277,15 @@
         <option value="$PROJECT_DIR$/Utils.py" />
         <option value="$PROJECT_DIR$/xED/Pattern_Discovery.py" />
         <option value="$PROJECT_DIR$/DES/Activity.py" />
+        <option value="$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py" />
         <option value="$PROJECT_DIR$/DES/Digital Twin Model.py" />
         <option value="$PROJECT_DIR$/Validation.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="177" />
-    <option name="y" value="-8" />
+    <option name="x" value="151" />
+    <option name="y" value="-18" />
     <option name="width" value="1936" />
     <option name="height" value="1096" />
   </component>
@@ -464,7 +458,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/xED/Pattern_Discovery.py" />
-      <option name="PARAMETERS" value="--name aruba --replication 0 --days 300 --support_min 10 --accuracy_min 0.3" />
+      <option name="PARAMETERS" value="--name aruba --replication 0 --Tep 30 --support_min 30 --accuracy_min 0.4" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -514,7 +508,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Simple Model" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="Pattern_Discovery_KA" type="PythonConfigurationType" factoryName="Python">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/xED" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/xED/Pattern_Discovery.py" />
+      <option name="PARAMETERS" value="--name KA --replication 0 --support_min 3 --accuracy_min 0.4 --Tep 30" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Simple Model" type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -600,6 +615,7 @@
     </configuration>
     <list>
       <item itemvalue="Python.Pattern_Discovery_Aruba" />
+      <item itemvalue="Python.Pattern_Discovery_KA" />
       <item itemvalue="Python.Pattern_Discovery_HH102" />
       <item itemvalue="Python.Pattern_Discovery_HH101" />
       <item itemvalue="Python.Simulation KA" />
@@ -614,7 +630,6 @@
         <item itemvalue="Python.Digital Twin Model" />
         <item itemvalue="Python.Visualization" />
         <item itemvalue="Python.MacroActivity" />
-        <item itemvalue="Python.Simple Model" />
       </list>
     </recent_temporary>
   </component>
@@ -828,7 +843,21 @@
       <option name="project" value="LOCAL" />
       <updated>1538560992998</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Validation of HH101">
+      <created>1538575990792</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1538575990792</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Validation of HH101">
+      <created>1538580466671</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1538580466671</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -844,12 +873,12 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.3631124" visible="true" weight="0.29135934" />
-      <window_info active="true" id="Structure" order="1" sideWeight="0.6368876" side_tool="true" visible="true" weight="0.29135934" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.35107914" visible="true" weight="0.19125395" />
+      <window_info id="Structure" order="1" sideWeight="0.64892083" side_tool="true" visible="true" weight="0.19125395" />
       <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.3271028" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49209693" visible="true" weight="0.2793354" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49209693" visible="true" weight="0.27829698" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" weight="0.2845275" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -863,6 +892,26 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.352518" visible="true" weight="0.19125395" />
+      <window_info id="Structure" order="1" sideWeight="0.64748204" side_tool="true" visible="true" weight="0.19125395" />
+      <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.3271028" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49209693" visible="true" weight="0.27829698" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49525815" weight="0.2845275" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3281412" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.24818276" />
+      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49789253" weight="0.32883817" />
+      <window_info anchor="bottom" id="Messages" order="9" weight="0.32883817" />
+      <window_info anchor="bottom" id="Terminal" order="10" weight="0.3205394" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50790304" side_tool="true" weight="0.22614108" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ORDER">
@@ -906,7 +955,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="xED Algorithm and Output done" />
     <MESSAGE value="Graph Drawing from a manual pattern" />
     <MESSAGE value="Own label management for graphs" />
     <MESSAGE value="Graph construction Finished" />
@@ -931,7 +979,8 @@
     <MESSAGE value="Adding 'Aruba' Replications results files" />
     <MESSAGE value="Change histogram validation to functions" />
     <MESSAGE value="* Add HH datasets&#10;* Time distribution validation based on HeatMaps" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Add HH datasets&#10;* Time distribution validation based on HeatMaps" />
+    <MESSAGE value="Validation of HH101" />
+    <option name="LAST_COMMIT_MESSAGE" value="Validation of HH101" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -960,29 +1009,24 @@
           <option name="timeStamp" value="592" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>416</line>
-          <option name="timeStamp" value="603" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DES/Digital Twin Model.py</url>
-          <line>66</line>
+          <line>69</line>
           <option name="timeStamp" value="613" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>73</line>
-          <option name="timeStamp" value="624" />
+          <url>file://$PROJECT_DIR$/xED/Pattern_Discovery.py</url>
+          <line>96</line>
+          <option name="timeStamp" value="636" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>24</line>
-          <option name="timeStamp" value="631" />
+          <line>447</line>
+          <option name="timeStamp" value="651" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DES/Digital Twin Model.py</url>
-          <line>188</line>
-          <option name="timeStamp" value="634" />
+          <url>file://$PROJECT_DIR$/Validation.py</url>
+          <line>102</line>
+          <option name="timeStamp" value="661" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -1000,47 +1044,49 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
       <expression>
-        <expression-string>occurrences[['time_step_id']].to_csv('vincent.csv', index=False)</expression-string>
+        <expression-string>repl_durations['in_error_daily'].sum()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>__py_debug_temp_var_881892380</expression-string>
+        <expression-string>len(pd.date_range(start=start_date, end=end_date, freq='D'))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>plt.bar(hist.index, hist.values)</expression-string>
+        <expression-string>len(repl_durations)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>hist.values</expression-string>
+        <expression-string>all_df.append(all_validation_df)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>hist</expression-string>
+        <expression-string>(big_df['stoc_lower'] &lt;= big_df['duration']) &amp; (big_df['stoc_upper'] &gt;= big_df['duration'])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>hist.index</expression-string>
+        <expression-string>big_df['daily_in'] = (big_df['stoc_lower'] &lt;= big_df['duration']) &amp; (big_df['stoc_upper'] &gt;= big_df['duration'])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>pd.concat([model_A_validation_df, model_B_validation_df], sort=True)</expression-string>
+        <expression-string>big_df['daily_in'] = (big_df['stoc_lower'] &lt;= big_df['duration']) and (big_df['stoc_upper'] &gt;= big_df['duration'])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>pd.concat(model_A_validation_df, model_B_validation_df)</expression-string>
+        <expression-string>x = np.random.randn(100)*1e-1
+sns.distplot(x)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>dt.timedelta(seconds=time_in_period)</expression-string>
+        <expression-string>x = np.random.randn(100)*1e-6
+sns.distplot(x)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -1063,6 +1109,16 @@
       </expression>
     </expressions>
     <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>sns.distplot(rmse_df[model['name']], label=label, hist=True, kde_kws={&quot;shade&quot;:True}, norm_hist=False)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>dataset.label.unique()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>p.parameters['accuracy_min']</expression-string>
         <language-id>Python</language-id>
@@ -1098,33 +1154,9 @@
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>after = now + dt.timedelta(min=5)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>time_dist.date</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/site-packages/pandas/core/series.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="2745" column="4" selection-start-line="2745" selection-start-column="4" selection-end-line="2745" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/codecs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="306" selection-start-line="306" selection-end-line="306" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py345/Lib/site-packages/scipy/stats/_distn_infrastructure.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="444">
@@ -1271,13 +1303,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/core/generic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="4371" selection-start-line="4371" selection-end-line="4371" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/output/aruba/Simple Model &amp; TS Model Simulation results 5mn/all_activities.pkl">
       <provider editor-type-id="text-editor" />
       <provider selected="true" editor-type-id="LargeFileEditor" />
@@ -1308,13 +1333,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/core/frame.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="5826" column="8" selection-start-line="5826" selection-start-column="8" selection-end-line="5826" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../Smart Homes DataSets/Preprocessing CASAS -ARUBA- Dataset.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
         <state>
@@ -1333,9 +1351,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2669">
           <caret line="157" column="27" selection-start-line="157" selection-start-column="10" selection-end-line="157" selection-end-column="27" />
-          <folding>
-            <element signature="e#90#111#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1343,6 +1358,27 @@
     <entry file="file://$PROJECT_DIR$/Temporal_patterns/Episode_Discovery.py" />
     <entry file="file://$PROJECT_DIR$/input/transform_data.py" />
     <entry file="file://$PROJECT_DIR$/meal_preparation.csv" />
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/scipy/stats/_continuous_distns.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="3874" selection-start-line="3874" selection-end-line="3874" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/core/generic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="4365" selection-start-line="4365" selection-end-line="4365" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/validation_results.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="27" column="3" lean-forward="true" selection-start-line="27" selection-start-column="3" selection-end-line="27" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/xED/Candidate_Study.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3417">
@@ -1352,8 +1388,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/xED/Pattern_Discovery.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2006">
-          <caret line="129" column="63" selection-start-line="113" selection-start-column="4" selection-end-line="129" selection-end-column="63" />
+        <state relative-caret-position="85">
+          <caret line="5" column="3" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
           <folding>
             <element signature="e#94#106#0" expanded="true" />
           </folding>
@@ -1367,6 +1403,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3179">
+          <caret line="202" column="42" selection-start-line="202" selection-start-column="42" selection-end-line="202" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
@@ -1376,37 +1422,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DES/Activity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="40" column="8" selection-start-line="40" selection-start-column="8" selection-end-line="40" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="663">
+          <caret line="46" column="63" selection-start-line="46" selection-start-column="63" selection-end-line="46" selection-end-column="63" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="52" column="11" selection-start-line="52" selection-start-column="11" selection-end-line="52" selection-end-column="11" />
+        <state relative-caret-position="136">
+          <caret line="21" column="30" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/core/frame.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="48" column="124" lean-forward="true" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="124" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="271">
+          <caret line="2664" selection-start-line="2664" selection-end-line="2664" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Validation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="129" lean-forward="true" selection-start-line="129" selection-end-line="129" />
+        <state relative-caret-position="-291">
+          <caret line="471" selection-start-line="471" selection-end-line="471" />
           <folding>
             <element signature="e#24#45#0" expanded="true" />
+            <marker date="1539607105970" expanded="true" signature="15421:15426" ph="..." />
           </folding>
         </state>
       </provider>

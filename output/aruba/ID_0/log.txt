@@ -1,6 +1,7 @@
 Parameters :
-Support Min 10 :
-Accuracy Min 0.3 :
-Time to process all the tries : 0:05:59.400000
-5.31% of the aruba dataset explained by the patterns discovered
-12 Patterns found
+Support Min : 30
+Accuracy Min : 0.4
+Tep : 30
+Time to process all the tries : 0:03:27.900000
+3.2% of the aruba dataset explained by the patterns discovered
+3 Patterns found

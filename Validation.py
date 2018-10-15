@@ -4,10 +4,11 @@ import glob
 import math
 import warnings
 
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scipy.stats as st
+import scipy.stats as stats
 import seaborn as sns
 from sklearn.metrics import mean_squared_error
 
@@ -18,64 +19,77 @@ sns.set_style("darkgrid")
 # plt.xkcd()
 
 def main():
-    dataset_name = 'hh101'
-    # Original data
-    original_dataset = pick_dataset(dataset_name)
-
-    print("\n")
-    print("###############################")
-    print("EVALUATION OF THE MODEL on the {} HOUSE Dataset".format(dataset_name))
-    print("##############################")
-    print("\n")
 
     period = dt.timedelta(days=1)
-    time_step = dt.timedelta(minutes=5)
+    time_step = dt.timedelta(minutes=1)
 
     #####################
     #  COMPARE MODELS   #
     ####################
-    model_A_simulation_id = 1
-    model_A_pattern_folder_id = 1
 
-    model_A_name = "X{}_Pattern_ID{}".format(model_A_simulation_id, model_A_pattern_folder_id)
-    model_A_dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, model_A_simulation_id,
-                                                                                    model_A_pattern_folder_id)
+    models = []
+    models.append({
+        'name': 'hh101',
+        'label': 'Tstep=5mn',
+        'sim_id': 1,
+        'pattern_id': 0
+    })
 
-    model_B_simulation_id = 1
-    model_B_pattern_folder_id = 1
+    models.append({
+        'name': 'hh101',
+        'label': 'Tstep=15mn',
+        'sim_id': 2,
+        'pattern_id': 0
+    })
 
-    model_B_name = "X{}_Pattern_ID{}".format(model_B_simulation_id, model_B_pattern_folder_id)
-    model_B_dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, model_B_simulation_id,
-                                                                                    model_B_pattern_folder_id)
+    models.append({
+        'name': 'hh101',
+        'label': 'Tstep=30mn',
+        'sim_id': 3,
+        'pattern_id': 0
+    })
 
-    compare_models(original_dataset, model_A_name=model_A_name, model_A_dir=model_A_dirname, model_B_name=model_B_name,
-                   model_B_dir=model_B_dirname, period=period, time_step=time_step)
+    compare_models(models, period=period, time_step=time_step)
 
-    activity = "work"
-
-    simulation_id = 1
-    pattern_folder_id = 1
-
-    dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
-                                                                            pattern_folder_id)
-
-    # Occurrence time validation
-    # r = validation_periodic_time_distribution(activity, original_dataset, dirname, period, time_step, display=True)
-
-    all_activities_validation(original_dataset, dirname, period, time_step, display=False)
+    # dataset_name = 'hh101'
+    # # Original data
+    # original_dataset = pick_dataset(dataset_name)
+    #
+    # print("\n")
+    # print("###############################")
+    # print("EVALUATION OF THE MODEL on the {} HOUSE Dataset".format(dataset_name))
+    # print("##############################")
+    #
+    # activity = "sleeping"
+    #
+    # simulation_id = 1
+    # pattern_folder_id = 0
+    #
+    # dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
+    #                                                                         pattern_folder_id)
+    #
+    # # dirname = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/aruba/Macro Activities Model - Normal - Simulation results 15mn/"
+    #
+    # # Occurrence time validation
+    # #r = validation_periodic_time_distribution(activity, original_dataset, dirname, period, time_step, display=True)
+    #
+    # all_activities_validation(original_dataset, dirname, period, time_step, display=True)
 
 
     # Duration Validation
     confidence_error = 0.9
-    #activity_duration_validation(activity, original_dataset, dirname, dataset_name, confidence_error)
+    # activity_duration_validation(activity, original_dataset, dirname, confidence_error)
 
     plt.show()
 
 
 def all_activities_validation(original_dataset, dirname, period, time_step, display=True):
-    index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
+    index = np.arange(int(period.total_seconds() / time_step.total_seconds()))
     validation_df = pd.DataFrame(index=index)
+
+    all_validation_df = pd.DataFrame(columns=['rmse', 'cum_in'])
     labels_rmse = []
+
 
     labels = original_dataset.label.unique()
 
@@ -84,26 +98,32 @@ def all_activities_validation(original_dataset, dirname, period, time_step, disp
         label_validation_df, label_rmse = validation_periodic_time_distribution(label, original_dataset, dirname,
                                                                                 period, time_step,
                                                                                 display=False)
+        daily_in, cum_in = activity_duration_validation(label, original_dataset, dirname, display=False)
+
         errors = label_validation_df[['prob_error']]
         errors.columns = [label]
         validation_df = pd.concat([validation_df, errors], axis=1)
+        all_validation_df.loc[label] = [label_rmse, cum_in]
 
         labels_rmse.append(label_rmse)
 
-
-
-
+    labels_rmse = np.asarray(labels_rmse)
 
 
     if display:
-        sns.distplot(labels_rmse)
+        sns.distplot(labels_rmse, norm_hist=1, kde=1)
         plt.title("Activities RMSE distribution")
 
-        f, ax = plt.subplots(figsize=(9, 6))
-        sns.heatmap(validation_df.T, annot=False, fmt="d", ax=ax, cmap="Blues", linewidths=0.3, vmax=1)
+        sns.heatmap(validation_df.T, annot=False, fmt="d", cmap="Blues", linewidths=0.3, vmax=1)
         plt.title('Activities beginning time probability errors')
 
-    return validation_df, labels_rmse
+        sns.jointplot(x='rmse', y='cum_in', kind="kde", data=all_validation_df, ylim=(0, 1))
+        plt.title('Labels representation')
+        plt.show()
+
+    return validation_df, labels_rmse, all_validation_df
+
+
 
 
 def compute_activity_time(data, label, start_date=None, end_date=None, time_step_in_days=1):
@@ -155,7 +175,7 @@ def periodic_time_distribution(data, label, period, time_step, display=False):
     """
 
     occurrences = data[data.label == label].copy()
-    index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
+    index = np.arange(int(period.total_seconds() / time_step.total_seconds()))
     index_df = pd.DataFrame(index, columns=['time_step_id'])
 
     if occurrences.empty:
@@ -182,10 +202,13 @@ def periodic_time_distribution(data, label, period, time_step, display=False):
 
         fig, ax = plt.subplots()
         sns.lineplot(x='date', y='prob', data=time_dist)
-        plt.title('Probability of occurrence of the label : \'{}\''.format(label))
-        plt.xlabel('Day hour')
+        plt.title('Occurrence probability of  : \'{}\''.format(label), fontsize=14)
+        plt.xlabel('Hour of the day')
         plt.ylabel('Probability')
-        plt.gcf().autofmt_xdate()
+        ax.set_xlim(time_dist.date.min(), time_dist.date.max())
+        # plt.gcf().autofmt_xdate()
+        myFmt = mdates.DateFormatter('%H:%M')
+        ax.xaxis.set_major_formatter(myFmt)
         plt.show()
     return time_dist[['time_step_id', 'prob']]
 
@@ -213,7 +236,7 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
         raise FileNotFoundError("'{}' does not contains csv files".format(replications_directory))
 
     replications_time_dist = {}
-    replications_errors = []
+
     for filename in list_files:
         dataset = pick_custom_dataset(filename)
         repl_time_dist = periodic_time_distribution(data=dataset, label=label, period=period, time_step=time_step,
@@ -223,13 +246,6 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
         replications_time_dist[filename] = repl_time_dist
         duo_df = original_time_dist.join(repl_time_dist.set_index('time_step_id'), on='time_step_id', rsuffix='_simul')
         duo_df.fillna(0, inplace=True)
-        duo_df['error'] = (duo_df['prob_simul'] - duo_df['prob']) / duo_df['prob']
-        error = np.sqrt(np.sum(np.power(duo_df.error.values, 2)))  # Quadratic error
-
-        # error = duo_df.error.corr(duo_df.prob_simul)
-        replications_errors.append(error)
-
-    replications_errors = np.asarray(replications_errors)
 
 
     big_df = pd.DataFrame()
@@ -268,26 +284,26 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
         fig, ax = plt.subplots()
 
         # TIME STEP PLOT
-        ax.plot(big_df.index, big_df.prob, label="Original Data", linestyle="-")
+        ax.plot(big_df.index, big_df.prob, label="Real Data", linestyle="-", color='blue')
 
-        ax.plot(big_df.index, big_df.prob_mean, label="MEAN simulation", linestyle="-")
+        ax.plot(big_df.index, big_df.prob_repl_mean, label="Simulated Data", linestyle="--", color='red')
 
         # ax.fill_between(big_df.index, big_df.prob_lower, big_df.prob_upper,
         #                 label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
 
         ax.set_ylabel('Probability')
-        ax.set_xlabel('Day hour')
+        ax.set_xlabel('Hour of the day')
         ax.legend()
         plt.title("Daily time distribution of the label '{}'".format(label))
-        plt.gcf().autofmt_xdate()
+        myFmt = mdates.DateFormatter('%H:%M')
+        ax.xaxis.set_major_formatter(myFmt)
+        #ax.set_xlim(big_df.index.min(), right=big_df.index.max())
         plt.show()
 
     return big_df[['prob', 'prob_repl_mean', 'prob_error']], rmse
 
 
-
-
-def activity_duration_validation(label, original_dataset, replications_directory, dataset_name, confidence=0.9,
+def activity_duration_validation(label, original_dataset, replications_directory, confidence=0.9,
                                  display=True):
     """
     Validation of the simulation replications using the Duration of the activity throughout the data
@@ -318,56 +334,68 @@ def activity_duration_validation(label, original_dataset, replications_directory
     # Build a large Dataframe with a date range index
     start_date = original_data_evaluation.index[0]
     end_date = original_data_evaluation.index[-1]
-    big_df = pd.DataFrame(index=pd.date_range(start=start_date, end=end_date, freq='D'))
+    repl_durations = pd.DataFrame(index=pd.date_range(start=start_date, end=end_date, freq='D'))
 
     for filename, evaluation_result in evaluation_sim_results.items():
         i = list_files.index(filename)
         evaluation_result.columns = ["simulation_{}".format(i)]
-        big_df = pd.concat([big_df, evaluation_result[["simulation_{}".format(i)]]], axis=1)
+        repl_durations = pd.concat([repl_durations, evaluation_result[["simulation_{}".format(i)]]], axis=1)
 
     # Compute the Stochastic Mean & Error
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        big_df['stoc_results'] = big_df.apply(compute_stochastic, args=(confidence,), axis=1)
-        big_df['stoc_mean'] = big_df.stoc_results.apply(lambda x: x[0])
-        big_df['stoc_lower'] = big_df.stoc_results.apply(lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
-        big_df['stoc_upper'] = big_df.stoc_results.apply(lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
+        repl_durations['stoc_results'] = repl_durations.apply(compute_stochastic, args=(confidence,), axis=1)
+        repl_durations['stoc_mean'] = repl_durations.stoc_results.apply(lambda x: x[0])
+        repl_durations['stoc_lower'] = repl_durations.stoc_results.apply(
+            lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
+        repl_durations['stoc_upper'] = repl_durations.stoc_results.apply(
+            lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
 
-    big_df.drop(['stoc_results'], axis=1, inplace=True)
+    repl_durations.drop(['stoc_results'], axis=1, inplace=True)
 
-    # big_df[big_df.apply(lambda row: row.fillna(row.mean()), axis=1)
+    # repl_durations[repl_durations.apply(lambda row: row.fillna(row.mean()), axis=1)
 
-    big_df = pd.concat([big_df, original_data_evaluation['duration']], axis=1)
-    big_df = big_df.loc[(big_df.index >= start_date) & (big_df.index <= end_date)].copy()
-    big_df.fillna(0, inplace=True)
+    repl_durations = pd.concat([repl_durations, original_data_evaluation['duration']], axis=1)
+    repl_durations = repl_durations.loc[
+        (repl_durations.index >= start_date) & (repl_durations.index <= end_date)].copy()
+    repl_durations.fillna(0, inplace=True)
 
-    # Turn the seconds into hours
-    big_df = big_df / 3600
+    repl_durations['in_error_daily'] = (repl_durations['stoc_lower'] <= repl_durations['duration']) & (
+            repl_durations['stoc_upper'] >= repl_durations['duration'])
+
+    repl_durations['in_error_cum'] = (repl_durations['stoc_lower'].cumsum() <= repl_durations['duration'].cumsum()) & (
+            repl_durations['stoc_upper'].cumsum() >= repl_durations['duration'].cumsum())
+
+    daily_in = repl_durations['in_error_daily'].sum() / len(repl_durations)
+    cum_in = repl_durations['in_error_cum'].sum() / len(repl_durations)
+
 
     ####################
     # DISPLAY RESULTS  #
     ####################
 
     if display:
+        # Turn the seconds into hours
+        repl_durations = repl_durations / 3600
         fig, (ax1, ax2) = plt.subplots(2)
 
         # TIME STEP PLOT
-        ax1.plot_date(big_df.index, big_df.duration, label="Original Data", linestyle="-")
+        ax1.plot_date(repl_durations.index, repl_durations.duration, label="Original Data", linestyle="-")
 
-        ax1.plot(big_df.index, big_df.stoc_mean, label="MEAN simulation", linestyle="--")
+        ax1.plot(repl_durations.index, repl_durations.stoc_mean, label="MEAN simulation", linestyle="--")
 
-        ax1.fill_between(big_df.index, big_df.stoc_lower, big_df.stoc_upper,
+        ax1.fill_between(repl_durations.index, repl_durations.stoc_lower, repl_durations.stoc_upper,
                          label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
 
         # CUMSUM PLOT
-        ax2.plot_date(big_df.index, big_df.duration.cumsum(), label="Original Data", linestyle="-")
+        ax2.plot_date(repl_durations.index, repl_durations.duration.cumsum(), label="Original Data", linestyle="-")
 
-        ax2.plot(big_df.index, big_df.stoc_mean.cumsum(), label="MEAN simulation", linestyle="--")
+        ax2.plot(repl_durations.index, repl_durations.stoc_mean.cumsum(), label="MEAN simulation", linestyle="--")
 
-        ax2.fill_between(big_df.index, big_df.stoc_lower.cumsum(), big_df.stoc_upper.cumsum(),
+        ax2.fill_between(repl_durations.index, repl_durations.stoc_lower.cumsum(), repl_durations.stoc_upper.cumsum(),
                          label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
 
-        ax1.title.set_text("{} House Dataset\nActivity [{}]".format(dataset_name, label))
+        ax1.title.set_text("Event duration for activity '{}'".format(label))
         ax1.set_ylabel('Duration (hours)')
         ax2.set_ylabel('Duration (hours)')
         ax2.set_xlabel('Date')
@@ -375,9 +403,12 @@ def activity_duration_validation(label, original_dataset, replications_directory
         ax1.legend(loc="upper left")
         ax2.legend(loc="upper left")
         plt.gcf().autofmt_xdate()
+        plt.show()
+
+    return daily_in, cum_in
 
 
-def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, model_B_dir, period=dt.timedelta(days=1),
+def compare_models(models, period=dt.timedelta(days=1),
                    time_step=dt.timedelta(minutes=10)):
     """
     Compare 2 simulation models
@@ -388,107 +419,89 @@ def compare_models(original_dataset, model_A_name, model_B_name, model_A_dir, mo
     :param model_B_dir:
     :return:
     """
-    model_A_validation_df, model_A_rmse = all_activities_validation(original_dataset, model_A_dir, period, time_step,
-                                                                    display=False)
-    model_B_validation_df, model_B_rmse = all_activities_validation(original_dataset, model_B_dir, period, time_step,
-                                                                    display=False)
 
-    model_A_validation_df['model_name'] = model_A_name
-    model_B_validation_df['model_name'] = model_B_name
+    list_validation_df = []
 
-    df = pd.concat([model_A_validation_df, model_B_validation_df], sort=True)
+    all_df = pd.DataFrame(columns=['rmse', 'cum_in', 'model_name'])
 
-    ################
-    # AUC
-    ################
-    # fig, ax = plt.subplots()
-    g = sns.catplot(data=df, x="model_name", y="mae_auc_percentage", hue="label", capsize=.2, height=6, aspect=.75,
-                    kind="point")
-    plt.xlabel('Model Name')
-    plt.ylabel('AUC MAE Percentage')
-    g.despine(left=True)
-    plt.title('AUC Mean Absolute Error')
+    fig1, ax1 = plt.subplots()
+    fig2, ax2 = plt.subplots()
 
-    fig, ax = plt.subplots()
-    y = list(model_A_validation_df.mae_auc_percentage.values)
-    x = list(model_A_validation_df.original_auc.values)
-    labels = list(model_A_validation_df.label.values)
+    for model in models:
+        dataset = pick_dataset(model['name'])
 
-    ax.scatter(x, y, color='b', label=model_A_name)
+        dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(model['name'],
+                                                                                model['sim_id'],
+                                                                                model['pattern_id'])
 
-    for i, txt in enumerate(labels):
-        ax.annotate(txt, (x[i], y[i]))
+        validation_df, rmse, all_validation_df = all_activities_validation(dataset, dirname, period, time_step,
+                                                                           display=False)
 
-    y = list(model_B_validation_df.mae_auc_percentage.values)
-    x = list(model_B_validation_df.original_auc.values)
-    labels = list(model_B_validation_df.label.values)
+        rmse_df = pd.DataFrame(rmse * 1e5, columns=[model['name']])
 
-    ax.scatter(x, y, color='r', label=model_B_name)
+        label = "{}_Sim{}_Pattern{} : Mean_RMSE={:.2e}".format(model['name'], model['sim_id'], model['pattern_id'],
+                                                               np.mean(rmse))
 
-    for i, txt in enumerate(labels):
-        ax.annotate(txt, (x[i], y[i]))
+        # label = "{}\tMean RMSE={:.2e}".format(model['name'], np.mean(rmse))
+        label = model['label']
 
-    plt.xlabel('Area Under the Histogram')
-    plt.ylabel('Mean Absolute Error (%)')
+        validation_df['model_name'] = label
+        all_validation_df['model_name'] = label
+
+        all_df = all_df.append(all_validation_df)
+
+        list_validation_df.append(validation_df)
+
+        sns.kdeplot(rmse_df[model['name']], label=label, shade=True, shade_lowest=False, ax=ax1)
+        sns.kdeplot(all_validation_df['cum_in'], label=label, shade=True, shade_lowest=False, ax=ax2)
+
+    df = pd.concat(list_validation_df, sort=True)
+    df.to_csv('validation_results.csv', index=False)
+
+    ax1.set_xlabel('Labels RMSE (x 1e-05)')
+    ax1.set_ylabel('Density')
+    ax2.set_xlabel('Ratio in the confidence interval')
+    ax2.set_ylabel('Density')
+
+    ax1.set_title('RMSE distribution')
+    ax2.set_title('Confidence interval ratio distribution')
+    ax1.set_xlim([0, 35])
+    ax2.set_xlim([0, 1])
     plt.legend()
+    plt.show()
 
-    ################
-    # SSE
-    ################
-    # fig, ax = plt.subplots()
-    g = sns.catplot(data=df, x="model_name", y="mae_sse_percentage", hue="label", capsize=.2, height=6, aspect=.75,
-                    kind="point")
-    plt.xlabel('Model Name')
-    plt.ylabel('SSE MAE Percentage')
-    g.despine(left=True)
-    plt.title('SSE on fitted distribution Mean Absolute Error')
-
-    fig, ax = plt.subplots()
-    y = list(model_A_validation_df.mae_sse_percentage.values)
-    x = list(model_A_validation_df.original_sse.values)
-    labels = list(model_A_validation_df.label.values)
-
-    ax.scatter(x, y, color='b', label=model_A_name)
-
-    for i, txt in enumerate(labels):
-        ax.annotate(txt, (x[i], y[i]))
-
-    y = list(model_B_validation_df.mae_sse_percentage.values)
-    x = list(model_B_validation_df.original_sse.values)
-    labels = list(model_B_validation_df.label.values)
-
-    ax.scatter(x, y, color='r', label=model_B_name)
-
-    for i, txt in enumerate(labels):
-        ax.annotate(txt, (x[i], y[i]))
-
-    plt.xlabel('SSE on fitted distribution')
-    plt.ylabel('Mean Absolute Error (%)')
-    plt.legend()
+    sns.boxplot(x='model_name', y='cum_in', data=all_df)
+    plt.xlabel('Dataset')
+    plt.ylabel('Ratio in the confidence interval')
+    # plt.title('Labels cumulative event duration ratio in the confidence interval')
+    plt.show()
 
 
+def compute_stochastic(row, error_confidence=0.9):
+    array = row.values
+
+    # We remove all the 'NaN' values
+    array = array[~np.isnan(array)]
+
+    return compute_stochastic_error(array=array, confidence=0.9)
 
 
-def compute_dist_sse(dist_name, params, data, bins=100):
-    """
-    Compute Sum Squared Error of the data on the fitted distribution
-    :param distribution:
-    :param params:
-    :param data:
-    :return:
-    """
+def compute_stochastic_error(array, confidence=0.9):
+    '''
+    Compute the stochastic error given by the array
+    :param array: an array of numbers
+    :return: mean and the error
+    '''
 
-    y, x = np.histogram(data, bins=bins, density=True)
-    x = (x + np.roll(x, -1))[:-1] / 2.0
+    mean = np.mean(array)
+    std = np.std(array)
 
-    dist = getattr(st, dist_name)
-    arg = params[:-2]
-    loc = params[-2]
-    scale = params[-1]
-    pdf = dist.pdf(x, loc=loc, scale=scale, *arg)
-    sse = np.sum(np.power(y - pdf, 2.0))
+    n = len(array)
+    # We find the t-distribution value of the student law
+    t_sdt = stats.t.ppf(q=confidence, df=n - 1)
+    error = t_sdt * (std / math.sqrt(n))
 
-    return sse
+    return mean, error
 
 if __name__ == "__main__":
     main()
