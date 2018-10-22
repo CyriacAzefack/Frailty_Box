@@ -139,18 +139,18 @@ class Acyclic_Graph:
         :return:
         '''
         edges = {}
-        for col in Q.columns:
-            for idx in Q.index:
-                if Q.loc[idx, col] != 0:
+        for label in Q.columns:
+            for graph_node in Q.index:
+                if Q.loc[graph_node, label] != 0:
                     # Build the name of the transition
-                    lvl = 0
-                    if idx != Acyclic_Graph.START_NODE:
-                        lvl = int(idx[idx.rindex('_') + 1:]) + 1
+                    id = ''
+                    if graph_node != Acyclic_Graph.START_NODE:
+                        id = graph_node[graph_node.rindex('_') + 1:]
 
-                    node_name = col
-                    if col != Acyclic_Graph.NONE_NODE:
-                        node_name = col + '_' + str(lvl)
-                    edges[(idx, node_name)] = round(Q.loc[idx, col], 3)
+                    next_graph_node = label
+                    if label != Acyclic_Graph.NONE_NODE:
+                        next_graph_node = label + '_' + id + str(self.labels.index(label))
+                    edges[(graph_node, next_graph_node)] = round(Q.loc[graph_node, label], 3)
         return edges
 
     def get_prob_matrix(self):
@@ -209,13 +209,12 @@ class Acyclic_Graph:
 
             else:
                 # Turn the column label to a node name
-                lvl = 0
+                destination_label = self.graph_labels[destination_index]
+                current_id = ''
                 if current_state != Acyclic_Graph.START_NODE:
-                    lvl = int(current_state[current_state.rindex('_') + 1:]) + 1
-                destination_state = self.graph_labels[destination_index] + '_' + str(lvl)
+                    current_id = current_state[current_state.rindex('_') + 1:]
 
-                destination_label = destination_state[
-                                    0: destination_state.rindex('_')]  # We remove everything after the last '_'
+                destination_state = destination_label + '_' + current_id + str(self.labels.index(destination_label))
 
                 # Waiting Time distribution
                 waiting_tuple = time_matrix[state_index][destination_index]

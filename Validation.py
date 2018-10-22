@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
-import datetime as dt
 import glob
-import math
 import warnings
 
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
 import scipy.stats as stats
 import seaborn as sns
 from sklearn.metrics import mean_squared_error
 
-from xED.Candidate_Study import modulo_datetime
+from xED.Candidate_Study import *
 from xED.Pattern_Discovery import pick_dataset, pick_custom_dataset
 
 sns.set_style("darkgrid")
@@ -27,53 +23,59 @@ def main():
     #  COMPARE MODELS   #
     ####################
 
-    models = []
-    models.append({
-        'name': 'hh101',
-        'label': 'Tstep=5mn',
-        'sim_id': 1,
-        'pattern_id': 0
-    })
+    # models = []
+    # models.append({
+    #     'name': 'hh101',
+    #     'label': 'Tstep=5mn',
+    #     'sim_id': 1,
+    #     'pattern_id': 0
+    # })
+    #
+    # models.append({
+    #     'name': 'hh101',
+    #     'label': 'Tstep=15mn',
+    #     'sim_id': 2,
+    #     'pattern_id': 0
+    # })
+    #
+    # models.append({
+    #     'name': 'hh101',
+    #     'label': 'Tstep=30mn',
+    #     'sim_id': 3,
+    #     'pattern_id': 0
+    # })
+    #
+    # compare_models(models, period=period, time_step=time_step)
 
-    models.append({
-        'name': 'hh101',
-        'label': 'Tstep=15mn',
-        'sim_id': 2,
-        'pattern_id': 0
-    })
+    dataset_name = 'hh101'
+    # Original data
+    original_dataset = pick_dataset(dataset_name)
 
-    models.append({
-        'name': 'hh101',
-        'label': 'Tstep=30mn',
-        'sim_id': 3,
-        'pattern_id': 0
-    })
+    print("\n")
+    print("###############################")
+    print("EVALUATION OF THE MODEL on the {} HOUSE Dataset".format(dataset_name))
+    print("##############################")
 
-    compare_models(models, period=period, time_step=time_step)
+    activity = "sleeping"
 
-    # dataset_name = 'hh101'
-    # # Original data
-    # original_dataset = pick_dataset(dataset_name)
-    #
-    # print("\n")
-    # print("###############################")
-    # print("EVALUATION OF THE MODEL on the {} HOUSE Dataset".format(dataset_name))
-    # print("##############################")
-    #
-    # activity = "sleeping"
-    #
-    # simulation_id = 1
-    # pattern_folder_id = 0
-    #
-    # dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
-    #                                                                         pattern_folder_id)
-    #
-    # # dirname = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/aruba/Macro Activities Model - Normal - Simulation results 15mn/"
-    #
-    # # Occurrence time validation
-    # #r = validation_periodic_time_distribution(activity, original_dataset, dirname, period, time_step, display=True)
-    #
+    simulation_id = 2
+    pattern_folder_id = 0
+
+    dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
+                                                                            pattern_folder_id)
+
+    # dirname = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/aruba/Macro Activities Model - Normal - Simulation results 15mn/"
+
+    # Occurrence time validation
+    # r = validation_periodic_time_distribution(activity, original_dataset, dirname, period, time_step, display=True)
+
     # all_activities_validation(original_dataset, dirname, period, time_step, display=True)
+
+    pkl_filename = "./output/{}/ID_{}/patterns.pickle".format(dataset_name, pattern_folder_id)
+    patterns = pd.read_pickle(pkl_filename)
+
+    patterns_validation(original_dataset=original_dataset, original_patterns=patterns, replications_directory=dirname,
+                        period=period, Tep=30)
 
 
     # Duration Validation
@@ -475,6 +477,72 @@ def compare_models(models, period=dt.timedelta(days=1),
     plt.ylabel('Ratio in the confidence interval')
     # plt.title('Labels cumulative event duration ratio in the confidence interval')
     plt.show()
+
+
+def patterns_validation(original_dataset, original_patterns, replications_directory, period, Tep, display=True):
+    list_files = glob.glob(replications_directory + '*.csv')
+
+    results = pd.DataFrame(
+        columns=['episode', 'description', 'original_accuracy', 'mean_error', 'lower_error', 'upper_error'])
+
+    if len(list_files) == 0:
+        raise FileNotFoundError("'{}' does not contains csv files".format(replications_directory))
+
+    for index, pattern in original_patterns.iterrows():  # Create one Macro/Single Activity per row
+
+        episode = list(pattern['Episode'])
+        description = pattern['Description']
+        original_accuracy = pattern_accuracy(data=original_dataset, episode=episode, time_description=description,
+                                             period=period, Tep=Tep)
+        replications_accuracy = []
+        for filename in list_files:
+            dataset = pick_custom_dataset(filename)
+            accuracy = pattern_accuracy(data=dataset, episode=episode, time_description=description,
+                                        period=period, Tep=Tep)
+            replications_accuracy.append(accuracy)
+
+            evolution_percentage = 100 * (1 + list_files.index(filename)) / len(list_files)
+            sys.stdout.write("\r{} %% of replications treated!".format(evolution_percentage))
+            sys.stdout.flush()
+        sys.stdout.write("\n")
+
+        mean, error = compute_stochastic_error(replications_accuracy)
+        min_val = mean - error
+        max_val = mean + error
+
+        natural_desc = {}
+        for mean_time, std_time in description.items():
+            natural_desc[str(dt.timedelta(seconds=mean_time))] = str(dt.timedelta(seconds=std_time))
+
+        results.loc[len(results)] = [str(episode), natural_desc, round(original_accuracy, 3), round(mean, 3),
+                                     round(min_val, 3), round(max_val, 3)]
+
+        print([str(episode), natural_desc, round(original_accuracy, 3), round(mean, 3), round(min_val, 3),
+               round(max_val, 3)])
+
+        evolution_percentage = 100 * (index + 1) / len(original_patterns)
+        print("{} %% of Pattern validated!!".format(evolution_percentage))
+
+    results.to_csv('patterns_results_with_mean.csv', index=False, sep=";")
+
+    results['error'] = results['original_accuracy'] - results['mean_error']
+
+    sns.distplot(results['error'])
+    plt.show()
+
+
+def pattern_accuracy(data, episode, time_description, period, Tep):
+    """
+    Compute the accuracy of the pattern in the given data
+    :param data:
+    :param episode:
+    :param time_description:
+    :return: accuracy
+    """
+    occurrences = find_occurrences(data, episode, Tep)
+    accuracy, expected_occurrences = compute_pattern_accuracy(occurrences=occurrences, period=period,
+                                                              time_description=time_description)
+    return accuracy
 
 
 def compute_stochastic(row, error_confidence=0.9):

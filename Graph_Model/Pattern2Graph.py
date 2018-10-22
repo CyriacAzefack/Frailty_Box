@@ -282,8 +282,8 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list)
     :return: Probability transition matrix size = nb(graph_nodes) x nb(labels)
     '''
 
-    list_length = [len(l) for l in occurrence_list]
-    nb_max_events = max(list_length)
+    # list_length = [len(l) for l in occurrence_list]
+    # nb_max_events = max(list_length)
 
     nodes = [Graph_Pattern.Graph.START_NODE]
     nodes += graph_nodes_labels
@@ -296,38 +296,61 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list)
     prob_matrix = np.zeros((n, l))
 
     # Deal with the beginning of the graph
-    single_list = []
+
+    first_node_list = []
     non_occurrences = 0
     for list in occurrence_list:
         if list:
-            single_list.append(list[0])
+            first_node_list.append(list[0])
         else:
             non_occurrences += 1
 
-    for node in set(single_list):
+    for node in set(first_node_list):
         label = Graph_Pattern.Graph.node2label(node)
-        prob_matrix[0][graph_labels.index(label)] = single_list.count(node) / len(occurrence_list)
+        prob_matrix[0][graph_labels.index(label)] = first_node_list.count(node) / len(occurrence_list)
 
     prob_matrix[0][l - 1] = non_occurrences / len(occurrence_list)
 
-    for i in range(n - 2):
-        tuple_list = []
-        single_list = []
-        for list in occurrence_list:
-            if len(list) > i + 1:
-                tuple_list.append(list[i: i + 2])
-                single_list.append(list[i])
+    for node in graph_nodes_labels:
+        node_id = node[node.rindex('_') + 1:]  # sleeping_132, node_id = 132
+        if len(node_id) != len(occurrence_list[0]):  # Not a terminal node
+            occ_node_present = []
 
-        for node_1 in set(single_list):
-            # Count the number of tuple_list starting by 'label_1'
-            nb_max = sum([1 if list[0] == node_1 else 0 for list in tuple_list])
-            for node_2 in graph_nodes_labels:
-                # Count the number of tuple_list starting by 'label_1' and finishing by 'label_2'
-                nb = sum([1 if list == [node_1, node_2] else 0 for list in tuple_list])
-                label_2 = Graph_Pattern.Graph.node2label(node_2)
-                p = nb / nb_max
-                if p != 0:
-                    prob_matrix[nodes.index(node_1)][graph_labels.index(label_2)] = p
+            next_node_dict = {}
+
+            for occ_list in occurrence_list:
+                if node in occ_list:
+                    occ_node_present.append(occ_list)
+                    next_node = occ_list[len(node_id)]
+                    next_node_label = Graph_Pattern.Graph.node2label(next_node)  # without the identifier
+
+                    if next_node_label not in next_node_dict:  # If we have not seen this next_node yet
+                        next_node_dict[next_node_label] = 1
+                    else:
+                        next_node_dict[next_node_label] += 1
+
+            for next_node_label, count in next_node_dict.items():
+                prob_matrix[nodes.index(node)][graph_labels.index(next_node_label)] = count / len(occ_node_present)
+
+    # # Deal with the rest
+    # for i in range(n - 2):
+    #     tuple_list = []
+    #     single_list = []
+    #     for list in occurrence_list:
+    #         if len(list) > i + 1:
+    #             tuple_list.append(list[i: i + 2])
+    #             single_list.append(list[i])
+    #
+    #     for node_1 in set(single_list):
+    #         # Count the number of tuple_list starting by 'label_1'
+    #         nb_max = sum([1 if list[0] == node_1 else 0 for list in tuple_list])
+    #         for node_2 in graph_nodes_labels:
+    #             # Count the number of tuple_list starting by 'label_1' and finishing by 'label_2'
+    #             nb = sum([1 if list == [node_1, node_2] else 0 for list in tuple_list])
+    #             label_2 = Graph_Pattern.Graph.node2label(node_2)
+    #             p = nb / nb_max
+    #             if p != 0:
+    #                 prob_matrix[nodes.index(node_1)][graph_labels.index(label_2)] = p
 
     # Checking the validity of the transition (sum output = 1 OR 0)
 

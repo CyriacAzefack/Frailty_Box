@@ -26,17 +26,17 @@ def main():
     #   - Training Dataset : the Whole Original dataset
     #   - Test Dataset : The Whole Original dataset
 
-    dataset_name = 'KA'
+    dataset_name = 'hh101'
 
     period = dt.timedelta(days=1)
     activities_generation_method = 'Macro'  # {'Simple', 'Macro'}
     duration_generation_method = 'Gaussian'  # {'Gaussian', 'Forecast Normal', 'TS Forecasting'}
-    time_step_min = 120
+    time_step_min = 15
     time_step = dt.timedelta(minutes=time_step_min)
     nb_replications = 10
     simmulation_id = 32
     Tep = 30  # For Macro Activities (Duration max of a macro activity)
-    pattern_folder_id = 0
+    pattern_folder_id = 1
 
 
     dataset = pick_dataset(dataset_name)
@@ -59,9 +59,8 @@ def main():
                 raise
 
     digital_twin_model = generate_all_activities(dataset_name, dataset, folder_id=pattern_folder_id, period=period,
-                                                 time_step=time_step,
-                                                 output=output, model=activities_generation_method,
-                                                 duration_gen=duration_generation_method, Tep=Tep)
+                                                 time_step=time_step, output=output, model=activities_generation_method,
+                                                 duration_gen=duration_generation_method, Tep=Tep, display=True)
 
     # We can load them instead
     # all_activities = pickle.load(open(output + '/digital_twin_model.pkl', 'rb'))
@@ -158,7 +157,7 @@ def main():
 
 
 def generate_all_activities(dataset_name, dataset, period, time_step, output, folder_id, Tep, model='Simple',
-                            duration_gen='Gaussian'):
+                            duration_gen='Gaussian', display=False):
     """
     Generate activities according to the method chosen
     :param dataset_name:
@@ -202,7 +201,7 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, fo
             if len(episode) > 1:
                 activity = Activity.MacroActivity(episode=episode, dataset=train_dataset, occurrences=occurrences,
                                                   period=period, duration_gen=duration_gen, time_step=time_step,
-                                                  start_date=start_date, end_date=end_date, display=False, Tep=Tep)
+                                                  start_date=start_date, end_date=end_date, display=display, Tep=Tep)
                 plt.show()
 
             else:

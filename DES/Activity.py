@@ -470,20 +470,22 @@ class MacroActivity(Activity):
         for occ_id in occurrence_ids:
             occ_list = []
             occ_df = events[events.occ_id == occ_id]
-            i = 0
+
+            node_id = ''
             for index, event_row in occ_df.iterrows():
-                new_label = event_row['label'] + '_' + str(i)
+                node_id = node_id + str(episode.index(event_row['label']))
+                new_label = event_row['label'] + '_' + node_id
                 events.at[index, 'label'] = new_label
                 occ_list.append(new_label)
-                i += 1
+
             graph_nodes_labels += occ_list
             events_occurrences_lists.append(occ_list)
 
-        # Set of graph_nodes for the graphs
+        # Set of graph_nodes for the graphs (the branches of the graph)
         graph_nodes_labels = set(graph_nodes_labels)
 
-        for occ_id in range(min(occurrence_ids), max(occurrence_ids) + 1):
-            events_occurrences_lists.append(events.loc[events.occ_id == occ_id, 'label'].tolist())
+        # for occ_id in range(min(occurrence_ids), max(occurrence_ids) + 1):
+        #     events_occurrences_lists.append(events.loc[events.occ_id == occ_id, 'label'].tolist())
 
         graph_nodes, graph_labels, prob_matrix = build_probability_acyclic_graph(list(episode), graph_nodes_labels,
                                                                                  events_occurrences_lists)
@@ -506,14 +508,14 @@ class MacroActivity(Activity):
         time_matrix = [[[] for j in range(l)] for i in
                        range(n)]  # Empty lists, [[mean_time, std_time], ...] transition durations
 
-        for i in range(n):
+        for position_index in range(n):
             for j in range(l - 1):  # We dont need the "END NODE"
-                if prob_matrix[i][j] != 0:  # Useless to compute time for never happening transition
-                    from_node = graph_nodes[i]
+                if prob_matrix[position_index][j] != 0:  # Useless to compute time for never happening transition
+                    from_node = graph_nodes[position_index]
                     to_label = graph_labels[j]
 
                     if from_node == Acyclic_Graph.Acyclic_Graph.START_NODE:  # START_NODE transitions
-                        time_matrix[i][j] = ('norm', [0, 0])
+                        time_matrix[position_index][j] = ('norm', [0, 0])
                         continue
 
                     time_df = events.loc[(events.label == from_node) & (events.next_label == to_label)]
@@ -522,14 +524,15 @@ class MacroActivity(Activity):
                     # We remove NaN from the values
                     inter_events_durations = inter_events_durations[~np.isnan(inter_events_durations)]
                     inter_events_durations = clean_data_arrays(inter_events_durations)
-                    time_matrix[i][j] = ('norm', [np.mean(inter_events_durations), np.std(inter_events_durations)])
+                    time_matrix[position_index][j] = (
+                    'norm', [np.mean(inter_events_durations), np.std(inter_events_durations)])
 
         events['activity_duration'] = events['end_date'] - events['date']
         events['activity_duration'] = events['activity_duration'].apply(lambda x: x.total_seconds())
 
         duration_matrix = [[] for i in range(n)]  # Empty lists, [[mean_time, std_time], ...] Activity duration
-        for i in range(n):
-            node = graph_nodes[i]
+        for position_index in range(n):
+            node = graph_nodes[position_index]
             if node != Acyclic_Graph.Acyclic_Graph.START_NODE:
                 time_df = events.loc[events.label == node]
                 activity_durations = time_df.activity_duration.values
@@ -540,7 +543,8 @@ class MacroActivity(Activity):
                     # plt.figure()
                     # sns.distplot(activity_durations)
                     # plt.show()
-                    duration_matrix[i] = ('norm', [np.mean(activity_durations), np.std(activity_durations)])
+                    duration_matrix[position_index] = (
+                    'norm', [np.mean(activity_durations), np.std(activity_durations)])
 
         acyclic_graph = Acyclic_Graph.Acyclic_Graph(nodes=graph_nodes, labels=list(episode), period=period,
                                                     prob_matrix=prob_matrix,
