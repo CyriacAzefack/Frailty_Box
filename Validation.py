@@ -25,31 +25,38 @@ def main():
 
     # models = []
     # models.append({
-    #     'name': 'hh101',
-    #     'label': 'Tstep=5mn',
-    #     'sim_id': 1,
-    #     'pattern_id': 0
-    # })
-    #
-    # models.append({
-    #     'name': 'hh101',
-    #     'label': 'Tstep=15mn',
+    #     'name': 'aruba',
+    #     'label': 'Aruba',
     #     'sim_id': 2,
     #     'pattern_id': 0
     # })
     #
     # models.append({
     #     'name': 'hh101',
-    #     'label': 'Tstep=30mn',
-    #     'sim_id': 3,
+    #     'label': 'HH101',
+    #     'sim_id': 2,
+    #     'pattern_id': 0
+    # })
+    #
+    # models.append({
+    #     'name': 'KA',
+    #     'label': 'KA',
+    #     'sim_id': 2,
     #     'pattern_id': 0
     # })
     #
     # compare_models(models, period=period, time_step=time_step)
 
-    dataset_name = 'hh101'
+    dataset_name = 'aruba'
     # Original data
     original_dataset = pick_dataset(dataset_name)
+
+    labels = original_dataset.label.unique()
+    labels.sort()
+
+    start_date = original_dataset.date.min().to_pydatetime() + dt.timedelta(days=1)
+    nb_days = 10
+    original_amb = plot_ambulatogram(original_dataset, labels, start_date, nb_days)
 
     print("\n")
     print("###############################")
@@ -58,11 +65,26 @@ def main():
 
     activity = "sleeping"
 
-    simulation_id = 2
+    simulation_id = 3
     pattern_folder_id = 0
 
     dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
                                                                             pattern_folder_id)
+
+    list_files = glob.glob(dirname + '*.csv')
+
+    fig, ax = plt.subplots(1, 1)
+    ax.plot(original_amb.date, original_amb.label_id, linestyle="-", label='Real Data')
+
+    for filename in list_files[:1]:
+        dataset = pick_custom_dataset(filename)
+        amb = plot_ambulatogram(dataset, labels, start_date, nb_days)
+        ax.plot(amb.date, amb.label_id, linestyle="-", label='Sim Data N°{}'.format(list_files.index(filename)))
+
+    ax.set_yticks(np.arange(1, 1 + len(labels)))
+    ax.set_yticklabels(labels, minor=False, rotation=45)
+    plt.legend()
+    plt.show()
 
     # dirname = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/aruba/Macro Activities Model - Normal - Simulation results 15mn/"
 
@@ -441,11 +463,11 @@ def compare_models(models, period=dt.timedelta(days=1),
 
         rmse_df = pd.DataFrame(rmse * 1e5, columns=[model['name']])
 
-        label = "{}_Sim{}_Pattern{} : Mean_RMSE={:.2e}".format(model['name'], model['sim_id'], model['pattern_id'],
+        label = "{}_Sim{}_Pattern{} : Mean_RMSE={:.2e}".format(model['label'], model['sim_id'], model['pattern_id'],
                                                                np.mean(rmse))
 
         # label = "{}\tMean RMSE={:.2e}".format(model['name'], np.mean(rmse))
-        label = model['label']
+        # label = model['label']
 
         validation_df['model_name'] = label
         all_validation_df['model_name'] = label
@@ -521,9 +543,9 @@ def patterns_validation(original_dataset, original_patterns, replications_direct
                round(max_val, 3)])
 
         evolution_percentage = 100 * (index + 1) / len(original_patterns)
-        print("{} %% of Pattern validated!!".format(evolution_percentage))
+        print("{} %% of Pattern validated!!".format(round(evolution_percentage, 2)))
 
-    results.to_csv('patterns_results_with_mean.csv', index=False, sep=";")
+    results.to_csv(replications_directory + '/patterns_results_with_mean.csv', index=False, sep=";")
 
     results['error'] = results['original_accuracy'] - results['mean_error']
 
@@ -543,6 +565,46 @@ def pattern_accuracy(data, episode, time_description, period, Tep):
     accuracy, expected_occurrences = compute_pattern_accuracy(occurrences=occurrences, period=period,
                                                               time_description=time_description)
     return accuracy
+
+
+def plot_ambulatogram(data, labels, start_date=None, nb_days=1, display=False):
+    if not start_date:
+        start_date = data.date.min().to_pydatetime()
+
+    end_date = start_date + dt.timedelta(days=nb_days)
+
+    data = data[(data.date >= start_date) & (data.end_date < end_date)].copy()
+
+    labels_df = pd.DataFrame(labels, columns=['label'])
+    labels_df.sort_values(by=['label'], ascending=True, inplace=True)
+    labels_df['label_id'] = 1 + np.arange(len(labels))
+
+    def add_end_event(row):
+        return [row.end_date, row.label]
+
+    end_events = data.apply(add_end_event, axis=1)
+
+    end_data = data[['date', 'label']].copy()
+    end_data['date'] = end_events.apply(lambda x: x[0])
+    end_data['label'] = end_events.apply(lambda x: x[1])
+
+    data = data[['date', 'label']].append(end_data)
+
+    data.sort_values(['date'], ascending=True, inplace=True)
+
+    data = data.join(labels_df.set_index('label'), on='label')
+
+    if display:
+        fig, ax = plt.subplots(1, 1)
+        ax.plot(data.date, data.label_id, linestyle="-")
+
+        ax.set_yticks(labels_df.label_id.values)
+        ax.set_yticklabels(labels_df.label.values, minor=False, rotation=45)
+        plt.show()
+
+    return data[['date', 'label_id']]
+
+
 
 
 def compute_stochastic(row, error_confidence=0.9):

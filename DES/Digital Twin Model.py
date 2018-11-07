@@ -31,12 +31,12 @@ def main():
     period = dt.timedelta(days=1)
     activities_generation_method = 'Macro'  # {'Simple', 'Macro'}
     duration_generation_method = 'Gaussian'  # {'Gaussian', 'Forecast Normal', 'TS Forecasting'}
-    time_step_min = 15
+    time_step_min = 5
     time_step = dt.timedelta(minutes=time_step_min)
     nb_replications = 10
-    simmulation_id = 32
+    simmulation_id = 2
     Tep = 30  # For Macro Activities (Duration max of a macro activity)
-    pattern_folder_id = 1
+    pattern_folder_id = 2
 
 
     dataset = pick_dataset(dataset_name)
@@ -185,8 +185,8 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, fo
 
         patterns['Validity Duration'] = patterns['Validity Duration'].apply(lambda x: x.total_seconds())
 
-        patterns['sort_key'] = patterns['Validity Duration'] * patterns['Accuracy']
-        # patterns['sort_key'] = patterns['Episode'].apply(lambda x: len(x))  # * patterns['Accuracy']
+        # patterns['sort_key'] = patterns['Validity Duration'] * patterns['Accuracy']
+        patterns['sort_key'] = patterns['Episode'].apply(lambda x: len(x))  # * patterns['Accuracy']
         patterns.sort_values(['sort_key'], ascending=False, inplace=True)
 
         for index, pattern in patterns.iterrows():  # Create one Macro/Single Activity per row
@@ -250,6 +250,7 @@ def generate_all_activities(dataset_name, dataset, period, time_step, output, fo
         file.write("Pattern ID : {}\n".format(folder_id))
         file.write("Activities generation Method : {}\n".format(model))
         file.write("Duration generation Method : {}\n".format(duration_gen))
+        file.write("Time Step : {} min\n".format(time_step.total_seconds() / 60))
         file.write("Tep : {}\n".format(Tep))
 
 
