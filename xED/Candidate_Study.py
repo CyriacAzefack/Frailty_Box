@@ -391,7 +391,7 @@ def compute_pattern_accuracy(occurrences, period, time_description, start_date=N
 
     # We need to drop the occurrences happening around the same time called extra occurrences
 
-    # "diff_mean_time" is the time distance from the occurrence to the relative mean time of the component where an
+    # "diff_mean_time" is the time distanceDTW from the occurrence to the relative mean time of the component where an
     # occurrence happen
     occurrences["diff_mean_time"] = abs(occurrences["relative_date"] - occurrences["expected"])
     occurrences.fillna(0, inplace=True)

@@ -208,7 +208,7 @@ class Activity:
         Estimate the number of time the current activity started at time_step_id in the last Sliding_Window
         :param date:
         :param time_step_id:
-        :param hist: if True, return only the Hist_count, otherwhise everything
+        :param hist: if True, return only the Hist_count, otherwise everything
         :return: a dict with the value of indicators {'hist_count':..., 'mean_duration':..., 'std_duration':...}
         '''
 

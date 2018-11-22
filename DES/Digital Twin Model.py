@@ -95,7 +95,7 @@ def main():
             # Pick the next group index according to time_in_period value
             time_step_id = math.ceil(time_in_period / time_step.total_seconds()) % (max(index))
 
-            # Search for the most likely to happen events
+            # Search for the events most likely to occur
             candidate_activities = []
             count_candidate_activities = []
 

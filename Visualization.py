@@ -9,35 +9,39 @@ from xED.Pattern_Discovery import *
 
 sns.set_style('darkgrid')
 
-# Map value to color
-color_mapper = np.vectorize(lambda x: {10: 'red', 40: 'blue'}.get(x))
 
 
 def main():
-    dataset_name = 'aruba'
+    dataset_name = 'hh101'
 
     dataset = pick_dataset(dataset_name)
-    sim_id = 0
-    replication_id = 1
 
-    activities_generation_method = 'Macro'
-    duration_generation_method = 'Normal'
-    time_step_min = 5
+    label = "relax"
 
-    path = "./output/{}/{} Activities Model - {} - Time Step {}mn//dataset_simulation_rep_{}.csv".format(dataset_name,
-                                                                                                         activities_generation_method + "_recent_patterns",
-                                                                                                         duration_generation_method,
-                                                                                                         time_step_min,
-                                                                                                         replication_id)
-    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simple Model & TS Model Simulation results 5mn/dataset_simulation_rep_1.csv".format(
-    #     dataset_name)
-    dataset = pick_custom_dataset(path)
+    plot_activity_occurrence_time(dataset, label=label)
+    # plot_activiy_duration(dataset, label=label)
 
-    start_date = dataset.date.min().to_pydatetime()
-    end_date = start_date + dt.timedelta(days=20)
+    # sim_id = 0
+    # replication_id = 1
 
-    visualize(dataset, start_date=start_date, end_date=end_date)
-    # visualize(dataset, start_date=start_date, end_date=end_date, start_suffix='_begin', end_suffix='_end')
+    # activities_generation_method = 'Macro'
+    # duration_generation_method = 'Normal'
+    # time_step_min = 5
+    #
+    # path = "./output/{}/{} Activities Model - {} - Time Step {}mn//dataset_simulation_rep_{}.csv".format(dataset_name,
+    #                                                                                                      activities_generation_method + "_recent_patterns",
+    #                                                                                                      duration_generation_method,
+    #                                                                                                      time_step_min,
+    #                                                                                                      replication_id)
+    # # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simple Model & TS Model Simulation results 5mn/dataset_simulation_rep_1.csv".format(
+    # #     dataset_name)
+    # dataset = pick_custom_dataset(path)
+    #
+    # start_date = dataset.date.min().to_pydatetime()
+    # end_date = start_date + dt.timedelta(days=20)
+    #
+    # visualize(dataset, start_date=start_date, end_date=end_date)
+    # # visualize(dataset, start_date=start_date, end_date=end_date, start_suffix='_begin', end_suffix='_end')
 
 
 def visualize(data, start_date, end_date):
@@ -89,6 +93,49 @@ def visualize(data, start_date, end_date):
     plt.show()
 
     print("done")
+
+
+def plot_activity_occurrence_time(data, label, start_date=None, end_date=None):
+    data = data[data.label == label].copy()
+
+    if not start_date:
+        start_date = data.date.min().to_pydatetime()
+
+    if not end_date:
+        end_date = data.date.max().to_pydatetime()
+
+    data = data[(data.date >= start_date) & (data.date < end_date)].copy()
+
+    # Compute the timestamp of all the events
+    # Timestamp : Nb of seconds since the beginning of the day
+    data['day_date'] = data['date'].dt.date.apply(lambda x: dt.datetime.combine(x, dt.datetime.min.time()))
+    data['timestamp'] = (data['date'] - data['day_date']).apply(lambda x: x.total_seconds()) / 3600
+
+    # fig = plt.figure()
+    plt.plot(data.date, data.timestamp, 'bo', label=label)
+    plt.legend()
+    plt.show()
+    # plt.savefig('output/videos/foo.png')
+    # plt.close(fig)
+
+
+def plot_activiy_duration(data, label, start_date=None, end_date=None):
+    data = data[data.label == label].copy()
+
+    if not start_date:
+        start_date = data.date.min().to_pydatetime()
+
+    if not end_date:
+        end_date = data.date.max().to_pydatetime()
+
+    data = data[(data.date >= start_date) & (data.date < end_date)].copy()
+
+    # Duration in minutes
+    data['duration'] = (data.end_date - data.date).apply(lambda x: x.total_seconds() / 60)
+
+    plt.plot(data.date, data.duration, 'bo', label=label)
+    plt.legend()
+    plt.show()
 
 
 if __name__ == '__main__':

@@ -28,6 +28,12 @@ def pick_dataset(name, nb_days=-1):
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
         dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
 
+    elif name == 'KA_events':
+        filename = "./input/{} House/{}_dataset.csv".format('KA', 'KA_label')
+        path = os.path.join(my_path, filename)
+        dataset = pd.read_csv(path, delimiter=';')
+        dataset['date'] = pd.to_datetime(dataset['date'])
+
     else:
         filename = "./input/{} House/{}_dataset.csv".format(name, name)
         path = os.path.join(my_path, filename)
