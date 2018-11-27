@@ -206,11 +206,12 @@ def mcl_clusterinig(matrix, labels, expansion_power=4, inflation_power=2, nb_ite
 
         # Draw the graph
         plt.figure()
-        nx.draw(graph, node_size=300, node_color=color_map, with_labels=True)
+        pos = nx.drawing.spring_layout(graph)
+        nx.draw(graph, node_size=300, pos=pos, node_color=color_map, with_labels=True)
 
         if gif:
             empty_folder(OUTPUT_FOLER)
-            pos = nx.drawing.spring_layout(graph)
+
             fake_graph = graph.copy()
 
             while len(labels) > 0:

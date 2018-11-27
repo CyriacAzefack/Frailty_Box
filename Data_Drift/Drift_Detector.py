@@ -13,12 +13,12 @@ def main():
     data_name = 'hh101'
 
     data = pick_dataset(data_name)
-    similarity_metric = 'relax'
+    similarity_metric = 'cook_dinner'
     window_size = dt.timedelta(days=5)
 
     drift_detector(data, window_size, similarity_metric, plot=True)
 
-    plt.title(similarity_metric + " Analysis")
+
     plt.show()
 
 
@@ -50,6 +50,7 @@ def drift_detector(data, window_size=dt.timedelta(days=5), similarity_metric="sl
 
         window_data = data[(data.date >= window_start_time) & (data.date < window_end_time)].copy()
 
+        ## Compute the windows occurrences time
         labels_dict = {}
 
         for label in labels:
@@ -73,7 +74,7 @@ def drift_detector(data, window_size=dt.timedelta(days=5), similarity_metric="sl
 
     graph_labels = ['W_{}'.format(i) for i in windows_occ_times.keys()]
 
-    clusters, clusters_color = mcl_clusterinig(similarity_matrix, graph_labels, inflation_power=3, plot=plot, gif=False)
+    clusters, clusters_color = mcl_clusterinig(similarity_matrix, graph_labels, inflation_power=2, plot=plot, gif=True)
 
     ##################################
     ### VALIDATION OF THE CLUSTERS ###
@@ -117,11 +118,11 @@ def drift_detector(data, window_size=dt.timedelta(days=5), similarity_metric="sl
 
     # Cluster Histograms
     plt.figure()
-    bins = []
+
     for cluster_id, window_ids in clusters.items():
         occ_times = []
 
-        if len(window_ids) < 2:
+        if len(window_ids) < 4:
             continue
 
         for window_id in window_ids:
@@ -134,7 +135,8 @@ def drift_detector(data, window_size=dt.timedelta(days=5), similarity_metric="sl
         # else :
         #     plt.hist(occ_times, bins=bins,  alpha=0.5, label='Cluster {}'.format(cluster_id))
 
-        sns.kdeplot(occ_times, label='Cluster {}'.format(cluster_id), shade=True, color=clusters_color[cluster_id])
+        sns.kdeplot(occ_times, label='Cluster {}'.format(cluster_id), shade_lowest=False, shade=True,
+                    color=clusters_color[cluster_id])
 
     plt.title("Cluster Occurrence Time distributions")
     plt.legend(loc='upper right')
@@ -167,7 +169,7 @@ def drift_detector(data, window_size=dt.timedelta(days=5), similarity_metric="sl
         #     data2.loc[(data2.label == similarity_metric) & (data2.date >= win_start_time)
         #          & (data2.date < win_end_time), 'cluster'] = cluster_id
 
-    plt.title(similarity_metric)
+    plt.title(similarity_metric + " occurrences time")
 
     return None
 

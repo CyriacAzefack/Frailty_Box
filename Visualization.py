@@ -16,7 +16,7 @@ def main():
 
     dataset = pick_dataset(dataset_name)
 
-    label = "relax"
+    label = "cook_dinner"
 
     plot_activity_occurrence_time(dataset, label=label)
     # plot_activiy_duration(dataset, label=label)
@@ -113,8 +113,13 @@ def plot_activity_occurrence_time(data, label, start_date=None, end_date=None):
 
     # fig = plt.figure()
     plt.plot(data.date, data.timestamp, 'bo', label=label)
-    plt.legend()
+    # plt.legend()
+    plt.title("Occurrences of '{}'".format(label))
+    plt.xlabel("Date")
+    plt.ylabel("Hour of the day")
+    plt.xticks(rotation=45)
     plt.show()
+
     # plt.savefig('output/videos/foo.png')
     # plt.close(fig)
 
