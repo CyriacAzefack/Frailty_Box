@@ -4,14 +4,14 @@ Markov Clustering Algorithm Implementation
 
 import glob
 import math
-import os
 import os.path
-import random
 
 import imageio
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+
+from Utils import *
 
 OUTPUT_FOLER = "../output/videos"
 
@@ -39,7 +39,7 @@ def main():
     xmax, xmin = matrix.max(), matrix.min()
     matrix = (matrix - xmin) / (xmax - xmin)
 
-    # Turn into a similarity matrix
+    # Turn into a array_similarity matrix
     matrix = 1 - matrix
 
     results = mcl_clusterinig(matrix, labels, inflation_power=2, expansion_power=2, plot=True)
@@ -137,7 +137,7 @@ def plot_graph(matrix, labels, plot=False):
     # nx.draw(gr, node_size=500, labels=labels, with_labels=True)
 
     if plot:
-        nx.draw(gr, node_size=500, with_labels=True)
+        nx.draw(gr, node_size=800, with_labels=True)
         plt.show()
 
     return gr
@@ -147,7 +147,7 @@ def mcl_clusterinig(matrix, labels, expansion_power=4, inflation_power=2, nb_ite
                     plot=True, gif=False):
     """
     Run the MCL clustering algorithm
-    :param matrix: A similarity matrix
+    :param weak_matrix: A similarity matrix
     :param expansion_power: How far you'd like your random-walkers to go (bigger number -> more walking)
     :param inflation_power: How tightly clustered you'd like your final picture to be (bigger number -> more clusters)
     :param nb_iterations_max: The number max of iterations
@@ -159,27 +159,29 @@ def mcl_clusterinig(matrix, labels, expansion_power=4, inflation_power=2, nb_ite
 
     # Cut weak edges
     threshold_indices = edges_treshold > matrix
-    matrix[threshold_indices] = 0
+
+    weak_matrix = matrix.copy()
+    weak_matrix[threshold_indices] = 0
 
     # Create the initial graph
-    graph = plot_graph(matrix, labels)
+    graph = plot_graph(weak_matrix, labels)
 
     ## CLUSTERING
-    np.fill_diagonal(matrix, 1)
-    matrix = normalize(matrix)
+    np.fill_diagonal(weak_matrix, 1)
+    weak_matrix = normalize(weak_matrix)
 
     for _ in range(nb_iterations_max):
-        matrix = normalize(inflate(expand(matrix, expansion_power), inflation_power))
+        weak_matrix = normalize(inflate(expand(weak_matrix, expansion_power), inflation_power))
 
-        num_ones = np.count_nonzero(matrix == 1)
-        num_zeros = (matrix == 0).sum()
+        num_ones = np.count_nonzero(weak_matrix == 1)
+        num_zeros = (weak_matrix == 0).sum()
 
-        if num_ones == len(matrix) and num_ones + num_zeros == len(matrix) * len(matrix):
+        if num_ones == len(weak_matrix) and num_ones + num_zeros == len(weak_matrix) * len(weak_matrix):
             # we converged
             break
 
-    ## Transform the MCL result matrix to clusters
-    clusters, labels_clusters = translate_clustering(matrix, labels)
+    ## Transform the MCL result weak_matrix to clusters
+    clusters, labels_clusters = translate_clustering(weak_matrix, labels)
 
     clusters_color = {}
 
@@ -194,7 +196,6 @@ def mcl_clusterinig(matrix, labels, expansion_power=4, inflation_power=2, nb_ite
 
         # Add color to the cluster
         clusters_color[cluster_id] = color
-        print(color)
         for label in cluster_label:
             color_dict[label] = color
 
@@ -234,39 +235,6 @@ def mcl_clusterinig(matrix, labels, expansion_power=4, inflation_power=2, nb_ite
 
     return clusters, clusters_color
 
-
-def generate_random_color(n):
-    """
-    Generate n random colors
-    :return:
-    """
-    ret = []
-    r = int(random.random() * 256)
-    g = int(random.random() * 256)
-    b = int(random.random() * 256)
-    step = 256 / n
-    for i in range(n):
-        r += step
-        g += 3 * step
-        b += step
-        r = int(r) % 256
-        g = int(g) % 256
-        b = int(b) % 256
-        ret.append((r, g, b))
-
-    colors = ['#%02x%02x%02x' % (c[0], c[1], c[2]) for c in ret]
-    return colors
-
-
-def empty_folder(path):
-    """
-    Delete all the files in the folder
-    :param path:
-    :return:
-    """
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            os.remove(os.path.join(root, file))
 
 
 if __name__ == '__main__':
