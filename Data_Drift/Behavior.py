@@ -1,3 +1,5 @@
+import matplotlib.dates as dat
+import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.cluster.hierarchy import fcluster
@@ -10,17 +12,17 @@ from Utils import *
 
 
 def main():
-    data_name = 'KA'
+    data_name = 'hh101'
 
     data = pick_dataset(data_name)
 
-    window_size = dt.timedelta(days=5)
+    window_size = dt.timedelta(days=15)
     # labels = ['get drink']
     labels = None
 
     inhabitant_behavior = Behavior(dataset=data, time_window_duration=window_size)
     inhabitant_behavior.create_activities_behavior()
-    changes = inhabitant_behavior.drift_detector(behavior_type=Behavior.OCC_TIME, method='hist_intersect', plot=False,
+    changes = inhabitant_behavior.drift_detector(behavior_type=Behavior.DURATION, method='similarity', plot=True,
                                                  labels=labels)
     print(changes)
 
@@ -45,6 +47,7 @@ class Behavior:
         self.labels = dataset.label.unique()
         self.activities_behavior = {}  # {'activity_label' : ActivityBehavior}
         self.time_windows_data = self.create_time_windows()
+        self.begin_date = self.dataset.date.min().to_pydatetime()
 
     def create_activities_behavior(self):
         """
@@ -85,37 +88,10 @@ class Behavior:
 
         for label in labels:
             activity_behavior = self.activities_behavior[label]
+            print("### Behavior Drift on '{}' ###".format(label))
             clusters, colors, label_changes = activity_behavior.drift_detector(behavior_type=behavior_type,
                                                                                method=method, plot=plot)
 
-            for cluster_id_tuple, area in label_changes.items():
-                changes[(label, cluster_id_tuple)] = area
-
-            label_clusters[label] = clusters
-
-            print("{} clusters found for the Activity '{}'".format(len(clusters), label))
-
-            if plot:
-                plt.show()
-
-        sorted_changes = [(k, changes[k]) for k in sorted(changes, key=changes.get, reverse=False)]
-
-        print(sorted_changes)
-
-        for change in sorted_changes:
-            label = change[0][0]
-            idA = change[0][1][0]
-            idB = change[0][1][1]
-
-            activity_behavior = self.activities_behavior[label]
-            clusters = {}
-            clusters[0] = label_clusters[label][idA]
-            clusters[1] = label_clusters[label][idB]
-
-            colors = generate_random_color(2)
-            activity_behavior.display_occurrence_time_drift(clusters, colors)
-            plt.title('Important changes detected')
-            plt.show()
 
         return changes
 
@@ -177,41 +153,22 @@ class ActivityBehavior(Behavior):
         elif method == 'hist_intersect':
             clusters, clusters_color = self.histogram_intersection_clustering(behavior_type=behavior_type, plot=plot)
 
-        # Check the difference between cluster to rank changes
+        ##################################################
+        # Density Intersection Area for all the clusters #
+        ##################################################
 
-        # changes_matrix = np.empty((len(clusters), len(clusters)))
+        # TODO : Compute the density intersection for all clusters
 
-        clusters_data_points = []
-        for i in range(len(clusters)):
-            data_points = []
-            for window_id in clusters[i]:
+        self.display_behavior_evolution(clusters, clusters_color)
 
-                if behavior_type == Behavior.OCC_TIME:
-                    data_points += list(self.time_windows_data[window_id].timestamp.values)
+        if behavior_type == Behavior.OCC_TIME:
+            self.display_occurrence_time_drift(clusters, clusters_color)
+        elif behavior_type == Behavior.DURATION:
+            self.display_duration_drift(clusters, clusters_color)
 
-                elif behavior_type == Behavior.DURATION:
-                    data_points += list(self.time_windows_data[window_id].duration.values)
+        if plot:
+            plt.show()
 
-                else:
-                    raise ValueError("Illegal value of behavior_type")
-            clusters_data_points.append(data_points)
-
-        for i in range(len(clusters)):
-            for j in range(i, len(clusters)):
-
-                if (len(clusters_data_points[i]) <= 4) or (len(clusters_data_points[j]) <= 4):
-                    area = 1
-                else:
-                    area = density_intersection_area(clusters_data_points[i], clusters_data_points[j])
-                # changes_matrix[i][j] = area
-                changes[(i, j)] = area
-
-        # sort by intersection area
-        # sorted_changes = [(k, changes[k]) for k in sorted(changes, key=changes.get, reverse=False)]
-
-        # plt.figure()
-        # sns.heatmap(changes_matrix, vmin=0, vmax=1, annot=True, fmt=".2f")
-        # plt.title("Validation of clusters")
 
         return clusters, clusters_color, changes
 
@@ -415,7 +372,7 @@ class ActivityBehavior(Behavior):
         graph_labels = ['W_{}'.format(i) for i in range(nb_windows)]
 
         clusters, clusters_color = mcl_clusterinig(matrix=mse_matrix, labels=graph_labels, inflation_power=2,
-                                                   plot=plot, gif=True, edges_treshold=0.85)
+                                                   plot=False, gif=True, edges_treshold=0.85)
 
         return clusters, clusters_color
 
@@ -426,7 +383,7 @@ class ActivityBehavior(Behavior):
         :param colors: a list of the clusters color
         :return:
         """
-        nb_clusters = len(clusters)
+
 
         # Cluster Occurrence Time
         fig, (ax1, ax2) = plt.subplots(2)
@@ -440,18 +397,31 @@ class ActivityBehavior(Behavior):
             for window_id in window_ids:
                 occ_times += list(self.time_windows_data[window_id].timestamp.values)
 
-            occ_times = [x / 3600 for x in occ_times]
-            occ_times = np.asarray(occ_times)
+            occ_times = np.asarray(occ_times) / 3600  # Display in hours
 
             if len(window_ids) == 0:
                 nb_occ_per_wind = 0
             else:
                 nb_occ_per_wind = len(occ_times) / (len(window_ids) * self.time_window_duration.days)
 
-            ax1.hist(occ_times, bins=100, alpha=0.3, label='Cluster {} : {.2f}/day'.format(cluster_id, nb_occ_per_wind),
+            # Describe the time period of the cluster
+            time_periods = self.time_periods_from_windows(window_ids)
+
+            msg = ''
+            nb_days = 0
+            for time_period in time_periods:
+                start_date = self.begin_date + time_period[0] * self.time_window_duration
+                end_date = self.begin_date + (time_period[1] + 1) * self.time_window_duration
+                msg += "[{} - {}]\t".format(start_date.date(), end_date.date())
+
+                nb_days += (end_date - start_date).days
+            print("Cluster {} : {} days  ** {}".format(cluster_id, nb_days, msg))
+
+            ax1.hist(occ_times, bins=100, alpha=0.3,
+                     label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
                      color=colors[cluster_id])
 
-            sns.kdeplot(occ_times, label='Cluster {} : {.2f}/day'.format(cluster_id, nb_occ_per_wind),
+            sns.kdeplot(occ_times, label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
                         shade_lowest=False, shade=True,
                         color=colors[cluster_id], ax=ax2)
 
@@ -467,6 +437,64 @@ class ActivityBehavior(Behavior):
 
         plt.legend(loc='upper right')
 
+    def display_duration_drift(self, clusters, colors):
+        """
+        Display the drift discovered for the duration of the activity
+        :param clusters: dict like : {'cluster_id': [window_id list]}
+        :param colors: a list of the clusters color
+        :return:
+        """
+        # TODO : Merge 'display_duration_drift' and 'display_occ_drift'
+
+        fig, (ax1, ax2) = plt.subplots(2)
+
+        for cluster_id, window_ids in clusters.items():
+            durations = []
+
+            # if len(window_ids) < 4:
+            #     continue
+
+            for window_id in window_ids:
+                durations += list(self.time_windows_data[window_id].duration.values)
+
+            durations = np.asarray(durations) / 3600  # Display in hours
+
+            if len(window_ids) == 0:
+                nb_occ_per_wind = 0
+            else:
+                nb_occ_per_wind = len(durations) / (len(window_ids) * self.time_window_duration.days)
+
+            # Describe the time period of the cluster
+            time_periods = self.time_periods_from_windows(window_ids)
+
+            msg = ''
+            nb_days = 0
+            for time_period in time_periods:
+                start_date = self.begin_date + time_period[0] * self.time_window_duration
+                end_date = self.begin_date + (time_period[1] + 1) * self.time_window_duration
+                msg += "[{} - {}]\t".format(start_date.date(), end_date.date())
+
+                nb_days += (end_date - start_date).days
+            print("Cluster {} : {} days  ** {}".format(cluster_id, nb_days, msg))
+
+            ax1.hist(durations, bins=100, alpha=0.3,
+                     label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
+                     color=colors[cluster_id])
+
+            sns.kdeplot(durations, label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
+                        shade_lowest=False, shade=True, color=colors[cluster_id], ax=ax2)
+
+        ax1.set_title("{}\nCluster : Activity Duration distribution".format(self.label))
+        ax1.set_xlabel('Duration (hour)')
+        ax1.set_ylabel('Number of occurrences')
+        # ax1.set_xlim(0, 24)
+
+        ax2.set_title("Density Distribution")
+        ax2.set_xlabel('Duration (hour)')
+        ax2.set_ylabel('Density')
+        # ax2.set_xlim(0, 24)
+
+        plt.legend(loc='upper right')
     def time_periods_from_windows(self, window_ids):
         """
         Compute the time period where a cluster is valid
@@ -487,6 +515,34 @@ class ActivityBehavior(Behavior):
         time_periods.append(current_time_period)
 
         return time_periods
+
+    def display_behavior_evolution(self, clusters, colors):
+        """
+        Plot the evolution of the different behavior throughout the dataset
+        :param clusters:
+        :param colors:
+        :return:
+        """
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        xfmt = dat.DateFormatter('%d-%m-%y %H:%M')
+        ax.xaxis.set_major_formatter(xfmt)
+        ax = ax.xaxis_date()
+        for cluster_id, window_ids in clusters.items():
+            lvl = cluster_id * 5
+
+            time_periods = self.time_periods_from_windows(window_ids)
+
+            for period in time_periods:
+                start_date = self.begin_date + period[0] * self.time_window_duration
+                end_date = self.begin_date + (period[1] + 1) * self.time_window_duration
+
+                plt.text(dat.date2num(start_date), lvl, 'cluster {}'.format(cluster_id), fontsize=14)
+                ax = plt.hlines(lvl, dat.date2num(start_date), dat.date2num(end_date),
+                                label='cluster {}'.format(cluster_id),
+                                linewidth=75, color=colors[cluster_id])
+
+        plt.title("{}\nBehavior evolution".format(self.label))
 
 
 if __name__ == '__main__':

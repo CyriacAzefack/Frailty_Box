@@ -143,7 +143,7 @@ def plot_graph(matrix, labels, plot=False):
     return gr
 
 
-def mcl_clusterinig(matrix, labels, expansion_power=4, inflation_power=2, nb_iterations_max=300, edges_treshold=0.7,
+def mcl_clusterinig(matrix, labels, expansion_power=3, inflation_power=2, nb_iterations_max=300, edges_treshold=0.7,
                     plot=True, gif=False):
     """
     Run the MCL clustering algorithm

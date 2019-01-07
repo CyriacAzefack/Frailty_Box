@@ -1,3 +1,4 @@
+import seaborn as sns
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.cluster.hierarchy import fcluster
 from sklearn.manifold import TSNE
