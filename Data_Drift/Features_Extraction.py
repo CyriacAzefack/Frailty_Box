@@ -123,7 +123,7 @@ def activities_features(window_data, activity_labels):
 
 def mse(arrayA, arrayB, bins=10):
     """
-    Compute the intersection area of the kernel density on the two arrays
+    Compute the MSE (Mean Squared Error) of the normalized histograms on the 2 arrays
     :param arrayA:
     :param arrayB:
     :param bins: nb of data points for the kernel density

@@ -1,3 +1,7 @@
+import getopt
+import json
+import sys
+
 import matplotlib.dates as dat
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -11,20 +15,101 @@ from Data_Drift.MCL import mcl_clusterinig
 from Utils import *
 
 
-def main():
-    data_name = 'hh101'
+def main(argv):
+    # Default values
+    dataset_name = 'toy_no_changes'
+    window_size = 30
+    behavior_type = Behavior.OCC_TIME
+    drift_method = 'student_test'
+    labels = None
+    plot = False
+    debug = False
 
-    data = pick_dataset(data_name)
+    try:
+        opts, args = getopt.getopt(argv, "hn:w:pdATDsimf",
+                                   ["help", "dataset_name=", "window_size=", "plot", "debug", "all_methods"])
+    except getopt.GetoptError:
+        print('Command Error :')
+        print('Behavior.py -n <dataset_name> -w <window_size> [-p --plot] [-d --debug]')
+        print('-T\t For Behavior drift on activities occurrence time (default one used)')
+        print('-D\t For Behavior drift on activities durations')
+        print('-s\t Use the student-test as similarity metric for clustering')
+        print('-i\t Use the density intersection as similarity metric for clustering')
+        print('-m\t Use the Mean Squared Error of normed histograms as similarity metric for clustering ')
+        print('-f\t Use features and a classic clustering algorithm ')
 
-    window_size = dt.timedelta(days=15)
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            print('How to use the command :')
+            print('Behavior.py -n <dataset_name> -w <window_size> [-p --plot] [-d --debug]')
+            print('-T\t For Behavior drift on activities occurrence time (default one used)')
+            print('-D\t For Behavior drift on activities durations')
+            print('-s\t Use the student-test as similarity metric for clustering')
+            print('-i\t Use the density intersection as similarity metric for clustering')
+            print('-m\t Use the Mean Squared Error of normed histograms as similarity metric for clustering ')
+            print('-f\t Use features and a classic clustering algorithm ')
+            print('-A\t Use all drift methods and compare them')
+
+            sys.exit()
+        elif opt in ("-n", "--dataset_name"):
+            dataset_name = arg
+        elif opt in ("-w", "--window_size"):
+            window_size = int(arg)
+        elif opt in ("-p", "--plot"):
+            plot = True
+        elif opt in ("-d", "--debug"):
+            debug = True
+        elif opt in ("-T"):
+            behavior_type = Behavior.OCC_TIME
+        elif opt in ("-D"):
+            behavior_type = Behavior.DURATION
+        elif opt in ("-s"):
+            drift_method = 'student_test'
+        elif opt in ("-i"):
+            drift_method = 'density_intersect'
+        elif opt in ("-m"):
+            drift_method = 'histogram_mse'
+        elif opt in ("-f"):
+            drift_method = 'features'
+        elif opt in ("-A", "--all_methods"):
+            drift_method = "All Methods"
+
+    print("Dataset Name : {}".format(dataset_name.upper()))
+    print("Windows size : {}".format(window_size))
+    print("Behavior Type : {}".format(behavior_type))
+    print("Drift Method : {}".format(drift_method))
+    print("Display : {}".format(plot))
+    print("Mode debug : {}".format(debug))
+
+    data = pick_dataset(dataset_name)
+
+    time_window_size = dt.timedelta(days=window_size)
     # labels = ['get drink']
     labels = None
 
-    inhabitant_behavior = Behavior(dataset=data, time_window_duration=window_size)
+    inhabitant_behavior = Behavior(dataset=data, time_window_duration=time_window_size)
     inhabitant_behavior.create_activities_behavior()
-    changes = inhabitant_behavior.drift_detector(behavior_type=Behavior.DURATION, method='similarity', plot=True,
-                                                 labels=labels)
-    print(changes)
+    if drift_method != "All Methods":
+
+        changes = inhabitant_behavior.drift_detector(behavior_type=behavior_type, method=drift_method, plot=plot,
+                                                     labels=labels, debug=debug)
+        changes_str = stringify_keys(changes)
+        changes_str.pop('clusters', None)
+        print(json.dumps(changes_str, indent=4))
+
+    else:
+        methods = ['features', 'student_test', 'histogram_mse', 'density_intersect']
+
+        for drift_method in methods:
+            print('### {} ###'.format(drift_method))
+            changes = inhabitant_behavior.drift_detector(behavior_type=behavior_type, method=drift_method, plot=plot,
+                                                         labels=labels, debug=debug)
+
+            changes_str = stringify_keys(changes)
+            changes_str.pop('clusters', None)
+            print(json.dumps(changes_str, indent=4))
 
 
 class Behavior:
@@ -71,7 +156,7 @@ class Behavior:
             self.dataset['duration'] = (self.dataset['end_date'] - self.dataset['date']).apply(
                 lambda x: x.total_seconds() / 60)  # Duration in minutes
 
-    def drift_detector(self, behavior_type, method, plot=False, labels=None):
+    def drift_detector(self, behavior_type, method, plot=False, labels=None, debug=False):
         """
         Drift detection of a specific behavior
         :param behavior_type: the behavior type for the drift detection. availables ones : Behavior.OCC_TIME,
@@ -80,8 +165,8 @@ class Behavior:
         :param plot: if True, plot the changes detected
         :return: changes
         """
-        changes = {}  # {('label', (clusterA, clusterB)) : *changes*}
-        label_clusters = {}
+        changes = {}  # {('label', (clusters, colors)) : *changes*}
+
 
         if labels is None:
             labels = self.labels
@@ -89,8 +174,16 @@ class Behavior:
         for label in labels:
             activity_behavior = self.activities_behavior[label]
             print("### Behavior Drift on '{}' ###".format(label))
-            clusters, colors, label_changes = activity_behavior.drift_detector(behavior_type=behavior_type,
-                                                                               method=method, plot=plot)
+            clusters, colors = activity_behavior.drift_detector(behavior_type=behavior_type, method=method, plot=plot,
+                                                                debug=debug)
+            score = activity_behavior.clustering_quality(clusters, behavior_type=behavior_type)
+
+            changes[label] = {
+                # 'clusters': clusters,
+                'colors': colors,
+                'nb_clusters': len(clusters),
+                'score': score
+            }
 
 
         return changes
@@ -137,42 +230,35 @@ class ActivityBehavior(Behavior):
         self.time_windows_data = [data[data.label == label].copy() for data in self.time_windows_data]
         self.label = label
 
-    def drift_detector(self, behavior_type=Behavior.OCC_TIME, method='similarity', plot=True):
+    def drift_detector(self, behavior_type=Behavior.OCC_TIME, method='similarity', plot=True, debug=False):
         """
         Drift detection of this activity
         :param behavior_type: the behavior type for the drift detection
         :param
         :return: clusters, clusters_color, changes (dict like {(clusterA, clusterB) : density intersection area}
         """
-        changes = {}
 
-        if method == 'similarity':
-            clusters, clusters_color = self.similarity_clustering(behavior_type=behavior_type, plot=plot)
-        elif method == 'features':
-            clusters, clusters_color = self.features_clustering(behavior_type=behavior_type, plot=plot)
-        elif method == 'hist_intersect':
-            clusters, clusters_color = self.histogram_intersection_clustering(behavior_type=behavior_type, plot=plot)
+        if method == 'features':
+            clusters, clusters_color = self.features_clustering(behavior_type=behavior_type, plot=debug)
+        else:
+            clusters, clusters_color = self.distribution_similarity(behavior_type=behavior_type, method=method,
+                                                                    plot=debug)
+
+
 
         ##################################################
         # Density Intersection Area for all the clusters #
         ##################################################
 
-        # TODO : Compute the density intersection for all clusters
-
-        self.display_behavior_evolution(clusters, clusters_color)
-
-        if behavior_type == Behavior.OCC_TIME:
-            self.display_occurrence_time_drift(clusters, clusters_color)
-        elif behavior_type == Behavior.DURATION:
-            self.display_duration_drift(clusters, clusters_color)
-
         if plot:
+            self.display_behavior_evolution(clusters, clusters_color)
+            self.display_drift(clusters, clusters_color, behavior_type=behavior_type)
+
             plt.show()
 
+        return clusters, clusters_color
 
-        return clusters, clusters_color, changes
-
-    def features_clustering(self, behavior_type, plot=True):
+    def features_clustering(self, behavior_type, plot=False):
         """
         Clustering of the time windows with features
         :param time_windows_data:
@@ -206,7 +292,26 @@ class ActivityBehavior(Behavior):
         linked = linkage(norm_data, method='ward')
 
         # TODO : automatic threshold decision
-        max_d = 7
+
+        last = linked[-10:, 2]
+        last_rev = last[::-1]
+        idxs = np.arange(1, len(last) + 1)
+        #
+
+        acceleration = np.diff(last, 2)  # 2nd derivative of the distances
+        acceleration_rev = acceleration[::-1]
+        #
+        # x
+        k = acceleration_rev.argmax() + 2  # if idx 0 is the max of this we want 2 clusters
+
+        if plot:
+            plt.plot(idxs, last_rev)
+            plt.plot(idxs[:-2] + 1, acceleration_rev)
+            plt.title("Elbow Method\nBest Number of clusters : {}".format(k))
+
+        print('Best number of clusters :', k)
+
+
         if plot:
             plt.figure(figsize=(10, 7))
 
@@ -216,13 +321,14 @@ class ActivityBehavior(Behavior):
                 labels=time_windows_labels,
                 distance_sort='descending',
                 show_leaf_counts=True)
-            plt.axhline(y=max_d, c='k')
-            plt.title("{}\n{} - Dendogram".format(self.label, behavior_type))
 
-        clusters = fcluster(linked, max_d, criterion='distance')
+            plt.title("{}\n{} - Dendogram\nBest Number of Clusters {}".format(self.label, behavior_type, k))
+
+        clusters = fcluster(linked, k, criterion='maxclust')
         nb_clusters = len(set(list(clusters)))
 
-        print('{} clusters detected using dendograms :)'.format(nb_clusters))
+        if plot:
+            print('{} clusters detected using dendograms :)'.format(nb_clusters))
 
         colors = generate_random_color(nb_clusters)
 
@@ -253,67 +359,7 @@ class ActivityBehavior(Behavior):
 
         return clusters_dict, colors
 
-    def similarity_clustering(self, behavior_type, plot=True, gif=False):
-        """
-        Clustering of the time windows using a student-test as similarity metric
-        :param time_windows_data:
-        :return:
-        """
-        nb_windows = len(self.time_windows_data)
-
-        ######################
-        ## Similarity Matrix #
-        ######################
-
-        print('Starting building similarity matrix...')
-
-        similarity_matrix = np.zeros((nb_windows, nb_windows))
-
-        for i in range(nb_windows):
-            tw_data_A = self.time_windows_data[i]
-            for j in range(i, nb_windows):
-                tw_data_B = self.time_windows_data[j]
-
-                # 1- Occurrence time similarity
-                if behavior_type == Behavior.OCC_TIME:
-                    arrayA = tw_data_A.timestamp.values
-                    arrayB = tw_data_B.timestamp.values
-                elif behavior_type == Behavior.DURATION:
-                    arrayA = tw_data_A.duration.values
-                    arrayB = tw_data_B.duration.values
-                else:
-                    raise ValueError("Illegal value of behavior type")
-
-                similarity = array_similarity(arrayA, arrayB)
-
-                similarity_matrix[i][j] = similarity
-
-        # Little trick for speed purposes ;)
-        # Cause the similarity matrix is triangular
-        missing_part = np.transpose(similarity_matrix.copy())
-        np.fill_diagonal(missing_part, 0)
-        similarity_matrix = similarity_matrix + missing_part
-
-        print('Finish building similarity matrix...')
-
-        # Plotting similarity matrix
-        # plt.figure()
-        # sns.heatmap(similarity_matrix, vmin=0, vmax=1)
-        # plt.title("Similarity Matrix between Time Windows")
-        # plt.show()
-
-        ###################
-        ## MCL Clustering #
-        ###################
-
-        graph_labels = ['W_{}'.format(i) for i in range(nb_windows)]
-
-        clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels, inflation_power=2,
-                                                   plot=plot, gif=gif)
-
-        return clusters, clusters_color
-
-    def histogram_intersection_clustering(self, behavior_type, plot=True):
+    def distribution_similarity(self, behavior_type, method, plot, gif_debug=False):
         """
         Clustering of the time windows using histogram intersection surface as similarity metric
         :param behavior_type:
@@ -323,21 +369,20 @@ class ActivityBehavior(Behavior):
 
         nb_windows = len(self.time_windows_data)
 
+        edges_treshold = 0.8
+
         ######################
         ## Similarity Matrix #
         ######################
 
         # print('Building intersection area matrix...')
 
-        mse_matrix = np.zeros((nb_windows, nb_windows))
+        similarity_matrix = np.zeros((nb_windows, nb_windows))
         for i in range(nb_windows):
             tw_data_A = self.time_windows_data[i]
             for j in range(i, nb_windows):
                 tw_data_B = self.time_windows_data[j]
 
-                # TODO : Add weights for the different type of similarity
-
-                # 1- Occurrence time similarity
                 if behavior_type == Behavior.OCC_TIME:
                     arrayA = tw_data_A.timestamp.values
                     arrayB = tw_data_B.timestamp.values
@@ -347,20 +392,26 @@ class ActivityBehavior(Behavior):
                 else:
                     raise ValueError("Illegal value of behavior_type")
 
-                similarity = mse(arrayA, arrayB)
+                if method == 'student_test':
+                    similarity = array_similarity(arrayA, arrayB)
+
+                elif method == 'density_intersect':
+                    similarity = density_intersection_area(arrayA, arrayB)
+                elif method == 'histogram_mse':
+                    similarity = mse(arrayA, arrayB)
+                else:
+                    raise ValueError("Illegal value of Similarity Method")
 
                 # print('[{}, {}] : {}'.format(i, j, similarity))
-                mse_matrix[i][j] = similarity
+                similarity_matrix[i][j] = similarity
 
-        # Little trick for speed purposes ;)
-        # Cause the similarity matrix is triangular
-
-        mse_matrix = (mse_matrix - mse_matrix.min()) / (mse_matrix.max() - mse_matrix.min())
-        missing_part = np.transpose(mse_matrix.copy())
+        missing_part = np.transpose(similarity_matrix.copy())
         np.fill_diagonal(missing_part, 0)
-        mse_matrix = mse_matrix + missing_part
+        similarity_matrix = similarity_matrix + missing_part
 
-        mse_matrix = 1 - (mse_matrix - mse_matrix.min()) / (mse_matrix.max() - mse_matrix.min())
+        if method == 'histogram_mse':
+            similarity_matrix = 1 - (similarity_matrix - similarity_matrix.min()) / (
+                    similarity_matrix.max() - similarity_matrix.min())
 
         # plt.figure()
         # sns.heatmap(mse_matrix, vmin=mse_matrix.min(), vmax=mse_matrix.max(), annot=False, fmt=".2f")
@@ -371,93 +422,31 @@ class ActivityBehavior(Behavior):
 
         graph_labels = ['W_{}'.format(i) for i in range(nb_windows)]
 
-        clusters, clusters_color = mcl_clusterinig(matrix=mse_matrix, labels=graph_labels, inflation_power=2,
-                                                   plot=False, gif=True, edges_treshold=0.85)
+        clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels, inflation_power=2,
+                                                   plot=plot, gif=gif_debug, edges_treshold=edges_treshold)
 
         return clusters, clusters_color
 
-    def display_occurrence_time_drift(self, clusters, colors):
-        """
-        Display the drift discovered for the occurrence time of the activity
-        :param clusters: dict like : {'cluster_id': [window_id list]}
-        :param colors: a list of the clusters color
-        :return:
-        """
-
-
-        # Cluster Occurrence Time
-        fig, (ax1, ax2) = plt.subplots(2)
-
-        for cluster_id, window_ids in clusters.items():
-            occ_times = []
-
-            # if len(window_ids) < 4:
-            #     continue
-
-            for window_id in window_ids:
-                occ_times += list(self.time_windows_data[window_id].timestamp.values)
-
-            occ_times = np.asarray(occ_times) / 3600  # Display in hours
-
-            if len(window_ids) == 0:
-                nb_occ_per_wind = 0
-            else:
-                nb_occ_per_wind = len(occ_times) / (len(window_ids) * self.time_window_duration.days)
-
-            # Describe the time period of the cluster
-            time_periods = self.time_periods_from_windows(window_ids)
-
-            msg = ''
-            nb_days = 0
-            for time_period in time_periods:
-                start_date = self.begin_date + time_period[0] * self.time_window_duration
-                end_date = self.begin_date + (time_period[1] + 1) * self.time_window_duration
-                msg += "[{} - {}]\t".format(start_date.date(), end_date.date())
-
-                nb_days += (end_date - start_date).days
-            print("Cluster {} : {} days  ** {}".format(cluster_id, nb_days, msg))
-
-            ax1.hist(occ_times, bins=100, alpha=0.3,
-                     label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
-                     color=colors[cluster_id])
-
-            sns.kdeplot(occ_times, label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
-                        shade_lowest=False, shade=True,
-                        color=colors[cluster_id], ax=ax2)
-
-        ax1.set_title("{}\nCluster : Occurrence Time distribution".format(self.label))
-        ax1.set_xlabel('Hour of the day')
-        ax1.set_ylabel('Number of occurrences')
-        ax1.set_xlim(0, 24)
-
-        ax2.set_title("Density Distribution")
-        ax2.set_xlabel('Hour of the day')
-        ax2.set_ylabel('Density')
-        ax2.set_xlim(0, 24)
-
-        plt.legend(loc='upper right')
-
-    def display_duration_drift(self, clusters, colors):
+    def display_drift(self, clusters, colors, behavior_type):
         """
         Display the drift discovered for the duration of the activity
         :param clusters: dict like : {'cluster_id': [window_id list]}
         :param colors: a list of the clusters color
         :return:
         """
-        # TODO : Merge 'display_duration_drift' and 'display_occ_drift'
 
         fig, (ax1, ax2) = plt.subplots(2)
 
         for cluster_id, window_ids in clusters.items():
             durations = []
-
-            # if len(window_ids) < 4:
-            #     continue
+            occ_times = []
 
             for window_id in window_ids:
+                occ_times += list(self.time_windows_data[window_id].timestamp.values)
                 durations += list(self.time_windows_data[window_id].duration.values)
 
             durations = np.asarray(durations) / 3600  # Display in hours
+            occ_times = np.asarray(occ_times) / 3600  # Display in hours
 
             if len(window_ids) == 0:
                 nb_occ_per_wind = 0
@@ -470,31 +459,48 @@ class ActivityBehavior(Behavior):
             msg = ''
             nb_days = 0
             for time_period in time_periods:
-                start_date = self.begin_date + time_period[0] * self.time_window_duration
-                end_date = self.begin_date + (time_period[1] + 1) * self.time_window_duration
+                start_date = self.begin_date + dt.timedelta(days=time_period[0])
+                end_date = self.begin_date + dt.timedelta(days=time_period[1] + 1)
                 msg += "[{} - {}]\t".format(start_date.date(), end_date.date())
 
                 nb_days += (end_date - start_date).days
             print("Cluster {} : {} days  ** {}".format(cluster_id, nb_days, msg))
 
-            ax1.hist(durations, bins=100, alpha=0.3,
+            array = []
+            if behavior_type == Behavior.OCC_TIME:
+                array = occ_times
+            elif behavior_type == Behavior.DURATION:
+                array = durations
+
+            ax1.hist(array, bins=100, alpha=0.3,
                      label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
                      color=colors[cluster_id])
 
-            sns.kdeplot(durations, label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
+            sns.kdeplot(array, label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
                         shade_lowest=False, shade=True, color=colors[cluster_id], ax=ax2)
 
-        ax1.set_title("{}\nCluster : Activity Duration distribution".format(self.label))
-        ax1.set_xlabel('Duration (hour)')
-        ax1.set_ylabel('Number of occurrences')
-        # ax1.set_xlim(0, 24)
+        if behavior_type == Behavior.OCC_TIME:
+            ax1.set_title("{}\nCluster : Occurrence Time distribution".format(self.label))
+            ax1.set_xlabel('Hour of the day')
+            ax1.set_xlim(0, 24)
 
+            ax2.set_xlabel('Hour of the day')
+            ax2.set_xlim(0, 24)
+
+        elif behavior_type == Behavior.DURATION:
+            ax1.set_title("{}\nCluster : Activity Duration distribution".format(self.label))
+            ax1.set_xlabel('Duration (hour)')
+
+            ax2.set_xlabel('Duration (hour)')
+
+
+        ax1.set_ylabel('Number of occurrences')
         ax2.set_title("Density Distribution")
-        ax2.set_xlabel('Duration (hour)')
         ax2.set_ylabel('Density')
-        # ax2.set_xlim(0, 24)
+
 
         plt.legend(loc='upper right')
+
     def time_periods_from_windows(self, window_ids):
         """
         Compute the time period where a cluster is valid
@@ -534,8 +540,8 @@ class ActivityBehavior(Behavior):
             time_periods = self.time_periods_from_windows(window_ids)
 
             for period in time_periods:
-                start_date = self.begin_date + period[0] * self.time_window_duration
-                end_date = self.begin_date + (period[1] + 1) * self.time_window_duration
+                start_date = self.begin_date + dt.timedelta(days=period[0])
+                end_date = self.begin_date + dt.timedelta(days=period[1] + 1)
 
                 plt.text(dat.date2num(start_date), lvl, 'cluster {}'.format(cluster_id), fontsize=14)
                 ax = plt.hlines(lvl, dat.date2num(start_date), dat.date2num(end_date),
@@ -544,6 +550,51 @@ class ActivityBehavior(Behavior):
 
         plt.title("{}\nBehavior evolution".format(self.label))
 
+    def clustering_quality(self, clusters, behavior_type):
+        """
+        Compute the mean of inter-clusters density intersection area
+        :param clusters:
+        :param behavior_type:
+        :return: clustering score
+        """
+
+        nb_clusters = len(clusters)
+
+        clustering_quality_matrix = np.zeros((nb_clusters, nb_clusters))
+        clusters_data = {}
+        for cluster_id, window_ids in clusters.items():
+
+            array = []
+
+            if behavior_type == Behavior.OCC_TIME:
+                for window_id in window_ids:
+                    array += list(self.time_windows_data[window_id].timestamp.values)
+            elif behavior_type == Behavior.DURATION:
+                for window_id in window_ids:
+                    array += list(self.time_windows_data[window_id].duration.values)
+
+            clusters_data[cluster_id] = array
+
+        for cluster_i in range(nb_clusters):
+            array_i = clusters_data[cluster_i]
+            for cluster_j in range(cluster_i, nb_clusters):
+                array_j = clusters_data[cluster_j]
+
+                clustering_quality = 1 - density_intersection_area(array_i, array_j)
+
+                clustering_quality_matrix[cluster_i][cluster_j] = clustering_quality
+
+        # Little trick for speed purposes ;)
+        # Cause the similarity matrix is triangular
+
+        missing_part = np.transpose(clustering_quality_matrix.copy())
+        np.fill_diagonal(missing_part, 0)
+        clustering_quality_matrix = clustering_quality_matrix + missing_part
+
+        overall_clustering_quality = clustering_quality_matrix.mean()
+
+        return overall_clustering_quality
+
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

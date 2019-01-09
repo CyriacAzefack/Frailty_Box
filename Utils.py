@@ -9,11 +9,12 @@ def pick_dataset(name, nb_days=-1):
     my_path = os.path.abspath(os.path.dirname(__file__))
 
     dataset = None
-    if name == 'toy':
-        path = os.path.join(my_path, "./input/toy_dataset.csv")
+    if 'toy' in name:
+        path = os.path.join(my_path, "./input/Toy/{}.csv".format(name))
         dataset = pd.read_csv(path, delimiter=';')
-        date_format = '%Y-%d-%m %H:%M'
+        date_format = '%Y-%m-%d %H:%M:%S.%f'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+        dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
 
     elif name == 'aruba':
         path = os.path.join(my_path, "./input/aruba/activity_dataset.csv")
@@ -122,3 +123,30 @@ def generate_random_color(n):
         colors.append(color)
 
     return colors
+
+
+def stringify_keys(d):
+    """
+    Convert a dict's keys to strings if they are not.
+    """
+    for key in d.keys():
+
+        # check inner dict
+        if isinstance(d[key], dict):
+            value = stringify_keys(d[key])
+        else:
+            value = d[key]
+
+        # convert nonstring to string if needed
+        if not isinstance(key, str):
+            try:
+                d[str(key)] = value
+            except Exception:
+                try:
+                    d[repr(key)] = value
+                except Exception:
+                    raise
+
+            # delete old key
+            del d[key]
+    return d
