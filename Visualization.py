@@ -15,11 +15,11 @@ sns.set_style('darkgrid')
 
 
 def main():
-    dataset_name = 'aruba'
+    dataset_name = 'hh101'
 
     dataset = pick_dataset(dataset_name)
 
-    label = "sleeping"
+    label = "toilet"
 
     time_window_duration = dt.timedelta(days=30)  # 2 week
 

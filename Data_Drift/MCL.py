@@ -1,12 +1,12 @@
 """
 Markov Clustering Algorithm Implementation
 """
-
 import glob
 import math
 import os.path
 
 import imageio
+import markov_clustering as mc
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
@@ -39,10 +39,10 @@ def main():
     xmax, xmin = matrix.max(), matrix.min()
     matrix = (matrix - xmin) / (xmax - xmin)
 
-    # Turn into a array_similarity matrix
+    # Turn into a ks_similarity matrix
     matrix = 1 - matrix
 
-    results = mcl_clusterinig(matrix, labels, inflation_power=2, expansion_power=2, plot=True)
+    results = mcl_clusterinig(matrix, labels, plot=True)
 
     print(results)
 
@@ -143,22 +143,54 @@ def plot_graph(matrix, labels, plot=False):
     return gr
 
 
-def mcl_clusterinig(matrix, labels, expansion_power=3, inflation_power=2, nb_iterations_max=300, edges_treshold=0.7,
-                    plot=True, gif=False):
+def mcl_clusterinig(matrix, labels, threshold_filter=None, inflation_power=None, plot=True, gif=False):
     """
     Run the MCL clustering algorithm
-    :param weak_matrix: A similarity matrix
-    :param expansion_power: How far you'd like your random-walkers to go (bigger number -> more walking)
+    :param matrix: A similarity matrix
+    :param labels : labels of the nodes
+    :param treshold_filter: Threshold to filter weak edges
     :param inflation_power: How tightly clustered you'd like your final picture to be (bigger number -> more clusters)
-    :param nb_iterations_max: The number max of iterations
-    :param edges_treshold: Threshold to link similar nodes
+
     :return: the clusters
     """
 
     # TODO: Set a better convergence metric (inter-cluster and intra-cluster distance)
 
     # Cut weak edges
-    threshold_indices = edges_treshold > matrix
+    if inflation_power is None:
+        inflations = [i / 10 for i in range(14, 25)]
+    else:
+        inflations = [inflation_power]
+
+    if threshold_filter is None:
+        thresholds = [i / 100 for i in range(80, 100, 5)]
+    else:
+        thresholds = [threshold_filter]
+
+    Qs_matrix = np.zeros((len(thresholds), len(inflations)))
+
+    for threshold in thresholds:
+        threshold_indices = threshold > matrix
+
+        weak_matrix = matrix.copy()
+        weak_matrix[threshold_indices] = 0
+
+        for inflation in inflations:
+            result = mc.run_mcl(weak_matrix, inflation=inflation)
+            clusters = mc.get_clusters(result)
+            Q = mc.modularity(matrix=result, clusters=clusters)
+            # print("inflation:", inflation, "modularity:", Q)
+            Qs_matrix[thresholds.index(threshold)][inflations.index(inflation)] = Q
+
+    threshold_index, inflation_index = np.unravel_index(Qs_matrix.argmax(), Qs_matrix.shape)
+
+    threshold = thresholds[threshold_index]
+    inflation_power = inflations[inflation_index]
+
+    print('Threshold : {}'.format(threshold))
+    print('Inflation Power : {}'.format(inflation_power))
+
+    threshold_indices = threshold > matrix
 
     weak_matrix = matrix.copy()
     weak_matrix[threshold_indices] = 0
@@ -170,8 +202,8 @@ def mcl_clusterinig(matrix, labels, expansion_power=3, inflation_power=2, nb_ite
     np.fill_diagonal(weak_matrix, 1)
     weak_matrix = normalize(weak_matrix)
 
-    for _ in range(nb_iterations_max):
-        weak_matrix = normalize(inflate(expand(weak_matrix, expansion_power), inflation_power))
+    for _ in range(200):
+        weak_matrix = normalize(inflate(expand(weak_matrix, 4), inflation_power))
 
         num_ones = np.count_nonzero(weak_matrix == 1)
         num_zeros = (weak_matrix == 0).sum()

@@ -5,6 +5,7 @@
 # Implementation of all the features extraction method for time windows
 
 import numpy as np
+import seaborn as sns
 from scipy import stats
 from sklearn import metrics
 from sklearn.metrics import mean_squared_error
@@ -13,6 +14,7 @@ from statsmodels.nonparametric.kde import KDEUnivariate
 from Data_Drift import Drift_Detector
 from Utils import *
 
+sns.set_style('darkgrid')
 
 def main():
     data_name = 'KA'
@@ -57,12 +59,12 @@ def main():
                 arrayA = tw_data_A[tw_data_A.label == label].timestamp.values
                 arrayB = tw_data_B[tw_data_B.label == label].timestamp.values
 
-                occ_time_similarity = array_similarity(arrayA, arrayB)
+                occ_time_similarity = ks_similarity(arrayA, arrayB)
 
                 arrayA = tw_data_A[tw_data_A.label == label].duration.values
                 arrayB = tw_data_B[tw_data_B.label == label].duration.values
 
-                duration_similarity = array_similarity(arrayA, arrayB)
+                duration_similarity = ks_similarity(arrayA, arrayB)
                 similarity = (duration_similarity + occ_time_similarity) / 2
                 similarities.append(similarity)
             similarity_matrix[i][j] = np.mean(similarities)
@@ -70,9 +72,9 @@ def main():
     pass
 
 
-def array_similarity(arrayA, arrayB):
+def ks_similarity(arrayA, arrayB):
     """
-    Compute the activity similarity between 2 time windows event sequence using a student test.
+    Compute the similarity between 2 time windows event sequence using a Kolmogorov–Smirnov test.
     Null hypothesis : The two data array come from the same distribution
     :param array_A:
     :param arrayB:
@@ -84,7 +86,7 @@ def array_similarity(arrayA, arrayB):
     elif (len(arrayA) == 0) or (len(arrayB) == 0):
         return 0
 
-    _, p_val = stats.ttest_ind(arrayA, arrayB, equal_var=True)
+    _, p_val = stats.ks_2samp(arrayA, arrayB)
 
     if np.isnan(p_val):
         return 0
@@ -162,9 +164,11 @@ def density_intersection_area(arrayA, arrayB, bins=1000):
     :param bins: nb of data points for the kernel density
     :return:
     """
+    if np.array_equal(arrayA, arrayB):
+        return 1
 
     if (len(arrayA) <= 1) or (len(arrayB) <= 1):
-        return 1
+        return 0
 
     kdeA = KDEUnivariate(arrayA)
     kdeA.fit(bw="scott")
@@ -195,6 +199,42 @@ def density_intersection_area(arrayA, arrayB, bins=1000):
         return 0
 
     return area
+
+
+def histogram_intersection(array_A, array_B, bin_width=30):
+    """
+    Compute the intersection of 2 histograms
+    :param array_A:
+    :param array_B:
+    :param bin_width: width of a bin in minutes
+    :return:
+    """
+    bin_width *= 60  # convert in seconds
+
+    min_val = 0
+    max_val = 24 * 3600  # 24hours
+
+    bins = np.linspace(min_val, max_val, int(max_val / bin_width))
+
+    hist_A, _ = np.histogram(array_A, bins=bins, range=(min_val, max_val))
+
+    hist_B, _ = np.histogram(array_B, bins=bins, range=(min_val, max_val))
+
+    minima = np.minimum(hist_A, hist_B)
+    intersection = np.sum(minima) / np.sum(hist_B)
+
+    # plt.hist(array_A, bins, alpha=0.2, label='Time Window 1', color='b')
+    # plt.hist(array_B, bins, alpha=0.2, label='Time Window 2', color='r')
+    # plt.legend(loc='upper right')
+    #
+    # plt.xlabel('Hour of the day')
+    # plt.ylabel('Number of occurrences')
+    #
+    #
+    # plt.title('Windows Histograms\nIntersection : {}'.format(intersection))
+    # plt.show()
+
+    return intersection
 
 
 if __name__ == '__main__':

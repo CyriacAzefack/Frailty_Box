@@ -1,4 +1,3 @@
-import seaborn as sns
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.cluster.hierarchy import fcluster
 from sklearn.manifold import TSNE
@@ -87,8 +86,8 @@ def activity_drift_detector(data, time_window_duration, label, plot=True, gif=Fa
 
     for i in range(len(clusters)):
         for j in range(len(clusters)):
-            cluster_val_occ_matrix[i][j] = array_similarity(clusters_occ_times[i], clusters_occ_times[j])
-            cluster_val_dur_matrix[i][j] = array_similarity(clusters_duration_times[i], clusters_duration_times[j])
+            cluster_val_occ_matrix[i][j] = ks_similarity(clusters_occ_times[i], clusters_occ_times[j])
+            cluster_val_dur_matrix[i][j] = ks_similarity(clusters_duration_times[i], clusters_duration_times[j])
 
     valid_clusters_occ = len(cluster_val_occ_matrix < 0.05) / 2
 
@@ -106,7 +105,7 @@ def activity_drift_detector(data, time_window_duration, label, plot=True, gif=Fa
     sns.heatmap(cluster_val_dur_matrix, vmin=0, vmax=1, annot=True, fmt=".2f")
     plt.title("Validation of Clusters Activity Duration Time")
 
-    # ## Inter-Cluster array_similarity.
+    # ## Inter-Cluster ks_similarity.
     # for cluster_id_1, window_ids_1 in clusters.items():
     #     for cluster_id_2, window_ids_2 in clusters.items():
     #         if cluster_id_1 != cluster_id_2:
@@ -116,7 +115,7 @@ def activity_drift_detector(data, time_window_duration, label, plot=True, gif=Fa
     #             # Extract the cluster from the similarity_matrix
     #             sub_matrix = similarity_matrix[window_ids_1[:, None], window_ids_2]
     #
-    #             # The array_similarity mean between
+    #             # The ks_similarity mean between
     #             cluster_validation_matrix[cluster_id_1][cluster_id_2] = sub_matrix.mean()
     #
     #
@@ -297,7 +296,7 @@ def similarity_clustering(time_windows_data, label, plot=True, gif=False):
             arrayA = tw_data_A.timestamp.values
             arrayB = tw_data_B.timestamp.values
 
-            occ_time_similarity = array_similarity(arrayA, arrayB)
+            occ_time_similarity = ks_similarity(arrayA, arrayB)
 
             # arrayA = tw_data_A.duration.values
             # arrayB = tw_data_B.duration.values

@@ -1,6 +1,7 @@
-import getopt
+
 import json
-import sys
+import time as t
+from optparse import OptionParser
 
 import matplotlib.dates as dat
 import matplotlib.pyplot as plt
@@ -15,66 +16,48 @@ from Data_Drift.MCL import mcl_clusterinig
 from Utils import *
 
 
-def main(argv):
+def main():
     # Default values
-    dataset_name = 'toy_no_changes'
-    window_size = 30
-    behavior_type = Behavior.OCC_TIME
-    drift_method = 'student_test'
-    labels = None
-    plot = False
-    debug = False
 
-    try:
-        opts, args = getopt.getopt(argv, "hn:w:pdATDsimf",
-                                   ["help", "dataset_name=", "window_size=", "plot", "debug", "all_methods"])
-    except getopt.GetoptError:
-        print('Command Error :')
-        print('Behavior.py -n <dataset_name> -w <window_size> [-p --plot] [-d --debug]')
-        print('-T\t For Behavior drift on activities occurrence time (default one used)')
-        print('-D\t For Behavior drift on activities durations')
-        print('-s\t Use the student-test as similarity metric for clustering')
-        print('-i\t Use the density intersection as similarity metric for clustering')
-        print('-m\t Use the Mean Squared Error of normed histograms as similarity metric for clustering ')
-        print('-f\t Use features and a classic clustering algorithm ')
+    parser = OptionParser(usage='Usage: %prog <options>')
+    parser.add_option('-n', '--dataset_name', help='Name of the Input event log', dest='dataset_name', action='store',
+                      type='string')
+    parser.add_option('-w', '--window_size', help='Size of the time windows in days', dest='window_size',
+                      action='store', type='int')
+    parser.add_option('-p', '--plot', help='Display of the behavior changes', dest='plot', action='store_true',
+                      default=False)
+    parser.add_option('-d', '--debug', help='Display of the Drift methods used for behavior changes detection',
+                      dest='debug', action='store_true', default=False)
+    parser.add_option('-b', '--behavior', help='Behavior to focus on', dest='behavior_type', action='store',
+                      type='choice', choices=['duration', 'start_time'], default='start_time')
+    parser.add_option('-m', '--drift_method', help='Drift method used', dest='drift_method', action='store',
+                      type='choice', choices=['features', 'stat_test', 'histogram_intersect', 'density_intersect',
+                                              'all_methods'], default='stat_test')
 
-        sys.exit(2)
+    (options, args) = parser.parse_args()
 
-    for opt, arg in opts:
-        if opt == '-h':
-            print('How to use the command :')
-            print('Behavior.py -n <dataset_name> -w <window_size> [-p --plot] [-d --debug]')
-            print('-T\t For Behavior drift on activities occurrence time (default one used)')
-            print('-D\t For Behavior drift on activities durations')
-            print('-s\t Use the student-test as similarity metric for clustering')
-            print('-i\t Use the density intersection as similarity metric for clustering')
-            print('-m\t Use the Mean Squared Error of normed histograms as similarity metric for clustering ')
-            print('-f\t Use features and a classic clustering algorithm ')
-            print('-A\t Use all drift methods and compare them')
+    # Mandatory Options
+    if options.dataset_name is None:
+        print("The name of the Input event log is missing\n")
+        parser.print_help()
+        exit(-1)
 
-            sys.exit()
-        elif opt in ("-n", "--dataset_name"):
-            dataset_name = arg
-        elif opt in ("-w", "--window_size"):
-            window_size = int(arg)
-        elif opt in ("-p", "--plot"):
-            plot = True
-        elif opt in ("-d", "--debug"):
-            debug = True
-        elif opt in ("-T"):
-            behavior_type = Behavior.OCC_TIME
-        elif opt in ("-D"):
-            behavior_type = Behavior.DURATION
-        elif opt in ("-s"):
-            drift_method = 'student_test'
-        elif opt in ("-i"):
-            drift_method = 'density_intersect'
-        elif opt in ("-m"):
-            drift_method = 'histogram_mse'
-        elif opt in ("-f"):
-            drift_method = 'features'
-        elif opt in ("-A", "--all_methods"):
-            drift_method = "All Methods"
+    if options.window_size is None:
+        print("The size of the time windows is missing\n")
+        parser.print_help()
+        exit(-1)
+
+    dataset_name = options.dataset_name
+    window_size = options.window_size
+
+    if options.behavior_type == 'start_time':
+        behavior_type = Behavior.OCC_TIME
+    elif options.behavior_type == 'duration':
+        behavior_type = Behavior.DURATION
+
+    drift_method = options.drift_method
+    plot = options.plot
+    debug = options.debug
 
     print("Dataset Name : {}".format(dataset_name.upper()))
     print("Windows size : {}".format(window_size))
@@ -91,6 +74,7 @@ def main(argv):
 
     inhabitant_behavior = Behavior(dataset=data, time_window_duration=time_window_size)
     inhabitant_behavior.create_activities_behavior()
+
     if drift_method != "All Methods":
 
         changes = inhabitant_behavior.drift_detector(behavior_type=behavior_type, method=drift_method, plot=plot,
@@ -100,7 +84,7 @@ def main(argv):
         print(json.dumps(changes_str, indent=4))
 
     else:
-        methods = ['features', 'student_test', 'histogram_mse', 'density_intersect']
+        methods = ['features', 'stat_test', 'histogram_intersect', 'density_intersect']
 
         for drift_method in methods:
             print('### {} ###'.format(drift_method))
@@ -156,6 +140,7 @@ class Behavior:
             self.dataset['duration'] = (self.dataset['end_date'] - self.dataset['date']).apply(
                 lambda x: x.total_seconds() / 60)  # Duration in minutes
 
+
     def drift_detector(self, behavior_type, method, plot=False, labels=None, debug=False):
         """
         Drift detection of a specific behavior
@@ -176,16 +161,27 @@ class Behavior:
             print("### Behavior Drift on '{}' ###".format(label))
             clusters, colors = activity_behavior.drift_detector(behavior_type=behavior_type, method=method, plot=plot,
                                                                 debug=debug)
-            score = activity_behavior.clustering_quality(clusters, behavior_type=behavior_type)
+            if len(clusters) > 1:
+                score = activity_behavior.clustering_quality(clusters, behavior_type=behavior_type)
 
-            changes[label] = {
-                # 'clusters': clusters,
-                'colors': colors,
-                'nb_clusters': len(clusters),
-                'score': score
-            }
+                changes[label] = {
+                    'clusters': clusters,
+                    'colors': colors,
+                    'nb_clusters': len(clusters),
+                    'score': score
+                }
 
+        changes = dict(sorted(changes.items(), key=lambda kv: kv[1]['score']))
 
+        for label, change in changes.items():
+            print('### Activity \'{}\' ###'.format(label))
+            activity_behavior = self.activities_behavior[label]
+            activity_behavior.display_drift(change['clusters'], change['colors'], behavior_type)
+            activity_behavior.display_behavior_evolution(change['clusters'], change['colors'])
+
+            plt.show()
+
+        changes.pop('clusters', None)  # Remove the detail of the clusters
         return changes
 
     def create_time_windows(self):
@@ -238,11 +234,17 @@ class ActivityBehavior(Behavior):
         :return: clusters, clusters_color, changes (dict like {(clusterA, clusterB) : density intersection area}
         """
 
+        time_start = t.process_time()
+
         if method == 'features':
             clusters, clusters_color = self.features_clustering(behavior_type=behavior_type, plot=debug)
         else:
-            clusters, clusters_color = self.distribution_similarity(behavior_type=behavior_type, method=method,
-                                                                    plot=debug)
+            clusters, clusters_color = self.similarity_clustering(behavior_type=behavior_type, method=method,
+                                                                  plot=debug)
+
+        elapsed_time = dt.timedelta(seconds=round(t.process_time() - time_start, 1))
+
+        print("\t#### Time elapsed for the clustering  : \t{} ####".format(elapsed_time))
 
 
 
@@ -359,7 +361,7 @@ class ActivityBehavior(Behavior):
 
         return clusters_dict, colors
 
-    def distribution_similarity(self, behavior_type, method, plot, gif_debug=False):
+    def build_similarity_matrix(self, behavior_type, method):
         """
         Clustering of the time windows using histogram intersection surface as similarity metric
         :param behavior_type:
@@ -369,7 +371,6 @@ class ActivityBehavior(Behavior):
 
         nb_windows = len(self.time_windows_data)
 
-        edges_treshold = 0.8
 
         ######################
         ## Similarity Matrix #
@@ -392,13 +393,12 @@ class ActivityBehavior(Behavior):
                 else:
                     raise ValueError("Illegal value of behavior_type")
 
-                if method == 'student_test':
-                    similarity = array_similarity(arrayA, arrayB)
-
+                if method == 'stat_test':
+                    similarity = ks_similarity(arrayA, arrayB)
                 elif method == 'density_intersect':
                     similarity = density_intersection_area(arrayA, arrayB)
-                elif method == 'histogram_mse':
-                    similarity = mse(arrayA, arrayB)
+                elif method == 'histogram_intersect':
+                    similarity = histogram_intersection(arrayA, arrayB)
                 else:
                     raise ValueError("Illegal value of Similarity Method")
 
@@ -409,21 +409,32 @@ class ActivityBehavior(Behavior):
         np.fill_diagonal(missing_part, 0)
         similarity_matrix = similarity_matrix + missing_part
 
-        if method == 'histogram_mse':
-            similarity_matrix = 1 - (similarity_matrix - similarity_matrix.min()) / (
-                    similarity_matrix.max() - similarity_matrix.min())
+        print("Similarity Matrix Built")
+        return similarity_matrix
 
-        # plt.figure()
-        # sns.heatmap(mse_matrix, vmin=mse_matrix.min(), vmax=mse_matrix.max(), annot=False, fmt=".2f")
-        # plt.title("Validation of Clusters Activity Duration Time")
-        # plt.show()
+    def similarity_clustering(self, behavior_type, method, plot=False, gif_debug=False):
+        """
+        Clustering of the time windows into behavior clusters
+        :param behavior_type:
+        :param method:
+        :param plot:
+        :param gif_debug:
+        :return:
+        """
 
-        # print('Markov Clustering...')
+        nb_windows = len(self.time_windows_data)
 
+        # Build the similarity matrix
+        similarity_matrix = self.build_similarity_matrix(behavior_type=behavior_type, method=method)
+
+        # Clustering of the time windows
         graph_labels = ['W_{}'.format(i) for i in range(nb_windows)]
 
-        clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels, inflation_power=2,
-                                                   plot=plot, gif=gif_debug, edges_treshold=edges_treshold)
+        inflation_power = None  # Automatic search
+        if method == 'density_intersect':
+            inflation_power = 1.5
+        clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels,
+                                                   inflation_power=inflation_power, plot=plot, gif=gif_debug)
 
         return clusters, clusters_color
 
@@ -591,10 +602,10 @@ class ActivityBehavior(Behavior):
         np.fill_diagonal(missing_part, 0)
         clustering_quality_matrix = clustering_quality_matrix + missing_part
 
-        overall_clustering_quality = clustering_quality_matrix.mean()
+        overall_clustering_quality = clustering_quality_matrix.sum()
 
         return overall_clustering_quality
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main()
