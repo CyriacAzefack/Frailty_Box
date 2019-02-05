@@ -2,7 +2,6 @@ from datetime import datetime
 
 import imageio
 import matplotlib.dates as dat
-import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from numpy import random
@@ -15,18 +14,18 @@ sns.set_style('darkgrid')
 
 
 def main():
-    dataset_name = 'hh101'
+    dataset_name = 'toy_periodic_change'
 
     dataset = pick_dataset(dataset_name)
 
-    label = "toilet"
+    label = "Eating"
 
     time_window_duration = dt.timedelta(days=30)  # 2 week
 
     # plot_activity_occurrence_time(dataset, label=label)
     # plot_activiy_duration(dataset, label=label)
 
-    distribution_evolution(dataset, time_window_duration=time_window_duration, label=label)
+    # distribution_evolution(dataset, time_window_duration=time_window_duration, label=label)
 
 
 

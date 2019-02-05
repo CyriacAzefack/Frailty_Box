@@ -1,7 +1,7 @@
 import datetime as dt
 import os
 
-import matplotlib
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
@@ -97,28 +97,13 @@ def generate_random_color(n):
     Generate n random colors
     :return:
     """
-    # ret = []
-    # r = int(random.random() * 256)
-    # g = int(random.random() * 256)
-    # b = int(random.random() * 256)
-    # step = 256 / n
-    # for i in range(n):
-    #     r += step
-    #     g += 3 * step
-    #     b += step
-    #     r = int(r) % 256
-    #     g = int(g) % 256
-    #     b = int(b) % 256
-    #     ret.append((r, g, b))
-    # 256*rgb
-    # colors = ['#%02x%02x%02x' % (c[0], c[1], c[2]) for c in ret]
 
-    i = 0
     colors = []
-    cmap = matplotlib.cm.get_cmap('Spectral')
+    # cmap = matplotlib.cm.get_cmap('hsv')
+    cmap = plt.get_cmap('Spectral')
     for i in range(1, n + 1):
         rgb = cmap(1 / i)
-        rgb = [int(256 * x) for x in rgb]
+        rgb = [int(256 * x) % 256 for x in rgb]
         color = '#%02x%02x%02x' % (rgb[0], rgb[1], rgb[2])
         colors.append(color)
 

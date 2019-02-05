@@ -4,18 +4,16 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Data_Drift/Behavior.py" line="263" />
+    <bookmark url="file://$PROJECT_DIR$/Data_Drift/Behavior.py" line="311" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Behavior Automatic drift detector">
+    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Drift methods validation ongoing">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Data_Drift/Behavior.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Drift/Behavior.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_Drift/Drift_Detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Drift/Drift_Detector.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Data_Drift/Features_Extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Drift/Features_Extraction.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Data_Drift/MCL.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Drift/MCL.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_Drift/Toy_Data_Generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Drift/Toy_Data_Generation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/Visualization.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/aruba/ID_0/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/aruba/ID_0/log.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,8 +33,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Data_Drift/Behavior.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="354">
-              <caret line="287" column="35" selection-start-line="287" selection-start-column="35" selection-end-line="287" selection-end-column="35" />
+            <state relative-caret-position="119">
+              <caret line="636" column="86" lean-forward="true" selection-start-line="636" selection-start-column="86" selection-end-line="636" selection-end-column="86" />
               <folding>
                 <element signature="e#1#12#0" expanded="true" />
               </folding>
@@ -45,24 +43,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Data_Drift/Toy_Data_Generation.py">
+        <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1578">
-              <caret line="64" column="92" selection-start-line="64" selection-start-column="92" selection-end-line="64" selection-end-column="92" />
+            <state relative-caret-position="208">
+              <caret line="33" column="37" selection-start-line="32" selection-end-line="33" selection-end-column="83" />
               <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Data_Drift/Features_Extraction.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="50">
-              <caret line="97" column="4" selection-start-line="97" selection-start-column="4" selection-end-line="97" selection-end-column="4" />
-              <folding>
-                <element signature="e#146#164#0" expanded="true" />
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -71,10 +57,43 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Visualization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="192">
-              <caret line="32" column="3" lean-forward="true" selection-start-line="32" selection-start-column="3" selection-end-line="32" selection-end-column="3" />
+            <state relative-caret-position="288">
+              <caret line="28" column="6" selection-start-line="28" selection-start-column="6" selection-end-line="28" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1568">
+              <caret line="102" column="33" selection-start-line="102" selection-start-column="33" selection-end-line="102" selection-end-column="33" />
               <folding>
-                <element signature="e#0#29#0" expanded="true" />
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Data_Drift/MCL.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="134">
+              <caret line="160" column="52" selection-start-line="160" selection-start-column="52" selection-end-line="160" selection-end-column="52" />
+              <folding>
+                <marker date="1549292095009" expanded="true" signature="7655:7657" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Data_Drift/Features_Extraction.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="234">
+              <caret line="202" column="44" selection-start-line="202" selection-start-column="44" selection-end-line="202" selection-end-column="44" />
+              <folding>
+                <element signature="e#146#164#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -92,19 +111,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>kstest</find>
-      <find>timestamp</find>
-      <find>arra</find>
-      <find>Acycli</find>
-      <find>label</find>
-      <find>genera</find>
-      <find>create</find>
-      <find>show(</find>
-      <find>show()</find>
-      <find>CV_COMP_INTERSECT</find>
-      <find>cv</find>
-      <find>colors</find>
-      <find>kdepl</find>
       <find>generate</find>
       <find>aruba</find>
       <find>now(</find>
@@ -122,6 +128,19 @@
       <find>key</find>
       <find>shade</find>
       <find>sns</find>
+      <find>Util</find>
+      <find>kdepl</find>
+      <find>heatm</find>
+      <find>normal</find>
+      <find>orientation</find>
+      <find>den</find>
+      <find>linkage</find>
+      <find>Time el</find>
+      <find>reverse</find>
+      <find>nan</find>
+      <find>heatmap</find>
+      <find>/3600</find>
+      <find>/ 3600</find>
     </findStrings>
     <replaceStrings>
       <replace>labels</replace>
@@ -199,23 +218,24 @@
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_3.py" />
         <option value="$PROJECT_DIR$/Data_Drift/Behavior_change_detection.py" />
         <option value="$USER_HOME$/Google Drive/TP k-means/TP-kMeans-resources/test.py" />
-        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$PROJECT_DIR$/Data_Drift/Drift_Detector.py" />
         <option value="$PROJECT_DIR$/DES/Digital Twin Model.py" />
-        <option value="$PROJECT_DIR$/Utils.py" />
         <option value="$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/markov_clustering/modularity.py" />
-        <option value="$PROJECT_DIR$/Data_Drift/MCL.py" />
         <option value="$PROJECT_DIR$/Data_Drift/Toy_Data_Generation.py" />
-        <option value="$PROJECT_DIR$/Data_Drift/Features_Extraction.py" />
         <option value="$PROJECT_DIR$/Visualization.py" />
+        <option value="$PROJECT_DIR$/Utils.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
+        <option value="$PROJECT_DIR$/Data_Drift/MCL.py" />
+        <option value="$PROJECT_DIR$/Data_Drift/Features_Extraction.py" />
         <option value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="953" />
-    <option name="width" value="974" />
-    <option name="height" value="1087" />
+    <option name="x" value="570" />
+    <option name="y" value="95" />
+    <option name="width" value="816" />
+    <option name="height" value="616" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -239,7 +259,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -247,10 +266,25 @@
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
               <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="Data_Drift" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Scratches and Consoles" type="1a2a3e82:ScratchProjectViewPane$MyProjectNode" />
+              <item name="Scratches" type="d62648e6:ScratchProjectViewPane$MyRootNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -290,7 +324,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Toy_no_change">
+  <component name="RunManager" selected="Python.hh101_behavior_drift">
+    <configuration name="Aruba_behavior_drift" type="PythonConfigurationType" factoryName="Python">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Data_Drift" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
+      <option name="PARAMETERS" value="-n aruba -w 14 -b duration -m stat_test" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Behavior_1_change_later_breakfast" type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -304,7 +359,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
-      <option name="PARAMETERS" value="-n toy_1_change_later_breakfast -w 30 -m density_intersect --plot --debug" />
+      <option name="PARAMETERS" value="-n toy_1_change_later_breakfast -w 28 -m features --plot --debug" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -325,7 +380,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
-      <option name="PARAMETERS" value="-n toy_1_change_stop_breakfast -w 30 -m density_intersect --plot --debug" />
+      <option name="PARAMETERS" value="-n toy_1_change_stop_breakfast -w 28 -m features" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -333,7 +388,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Toy_Data_Generation" type="PythonConfigurationType" factoryName="Python">
+    <configuration name="KA_behavior_drift " type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -345,8 +400,29 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Toy_Data_Generation.py" />
-      <option name="PARAMETERS" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
+      <option name="PARAMETERS" value="-n KA -w 7 -b start_time -m stat_test" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Toy_2_changes" type="PythonConfigurationType" factoryName="Python">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Data_Drift" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
+      <option name="PARAMETERS" value="-n toy_2_changes -w 28 -m features --plot --debug" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -367,7 +443,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
-      <option name="PARAMETERS" value="-n toy_periodic_change -w 30 -m density_intersect" />
+      <option name="PARAMETERS" value="-n toy_periodic_change -w 28 -m histogram_intersect --plot" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -388,7 +464,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
-      <option name="PARAMETERS" value="-n toy_no_change -w 28 -m histogram_intersect --plot --debug" />
+      <option name="PARAMETERS" value="-n toy_no_change -w 28 -m features --plot --debug" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -409,7 +485,28 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
-      <option name="PARAMETERS" value="-n toy_progressive_change -w 28 -m stat_test --plot --debug" />
+      <option name="PARAMETERS" value="-n toy_progressive_change -w 14 -m features --plot --debug" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Utils" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Utils.py" />
+      <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -438,17 +535,66 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="hh101_behavior_drift" type="PythonConfigurationType" factoryName="Python">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Data_Drift" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
+      <option name="PARAMETERS" value="-n hh101 -w 7 --drift_method stat_test --behavior duration" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="scratch" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.Behavior_1_change_stop_breakfast" />
+      <item itemvalue="Python.Toy_2_changes" />
       <item itemvalue="Python.Toy_Periodic_changes" />
       <item itemvalue="Python.Toy_progressive_change" />
       <item itemvalue="Python.Toy_no_change" />
       <item itemvalue="Python.Behavior_1_change_later_breakfast" />
-      <item itemvalue="Python.Toy_Data_Generation" />
+      <item itemvalue="Python.hh101_behavior_drift" />
+      <item itemvalue="Python.Aruba_behavior_drift" />
+      <item itemvalue="Python.KA_behavior_drift " />
       <item itemvalue="Python.Visualization" />
+      <item itemvalue="Python.Utils" />
+      <item itemvalue="Python.scratch" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.scratch" />
+        <item itemvalue="Python.Utils" />
         <item itemvalue="Python.Visualization" />
       </list>
     </recent_temporary>
@@ -733,7 +879,14 @@
       <option name="project" value="LOCAL" />
       <updated>1547040661996</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Drift methods validation ongoing">
+      <created>1548084230763</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1548084230763</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TodoView" selected-index="3">
@@ -747,13 +900,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.36283186" visible="true" weight="0.20021075" />
-      <window_info active="true" id="Structure" order="1" sideWeight="0.63716817" side_tool="true" visible="true" weight="0.20021075" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.3480826" visible="true" weight="0.20021075" />
+      <window_info id="Structure" order="1" sideWeight="0.6519174" side_tool="true" visible="true" weight="0.20021075" />
       <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4947313" weight="0.32502595" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.46770832" visible="true" weight="0.29595014" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.46680716" visible="true" weight="0.29595014" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4731296" weight="0.28245068" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -762,7 +916,7 @@
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49683878" weight="0.3281412" />
       <window_info anchor="bottom" id="Messages" order="9" weight="0.32883817" />
       <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49947312" weight="0.31983384" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.53229165" side_tool="true" weight="0.2964467" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5331928" side_tool="true" weight="0.29595014" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -821,7 +975,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Slurm Jobs Working on Centaure Cluster" />
     <MESSAGE value="Fixed Validation" />
     <MESSAGE value="Add 'days' and 'support_min' as Simulation_Model main arguments" />
     <MESSAGE value="Rollback on 1 simulation model per replication" />
@@ -846,7 +999,8 @@
     <MESSAGE value="Unique label occurrence time drift detector" />
     <MESSAGE value="Behavior Automatic drift detector" />
     <MESSAGE value="All drift methods implemented&#10;Toy_generation no changes implemented" />
-    <option name="LAST_COMMIT_MESSAGE" value="All drift methods implemented&#10;Toy_generation no changes implemented" />
+    <MESSAGE value="Drift methods validation ongoing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Drift methods validation ongoing" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -910,18 +1064,13 @@
           <option name="timeStamp" value="688" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Data_Drift/Features_Extraction.py</url>
-          <line>72</line>
-          <option name="timeStamp" value="770" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Visualization.py</url>
           <line>187</line>
           <option name="timeStamp" value="779" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Data_Drift/Drift_Detector.py</url>
-          <line>267</line>
+          <line>266</line>
           <option name="timeStamp" value="783" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -931,23 +1080,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Data_Drift/Toy_Data_Generation.py</url>
-          <line>107</line>
+          <line>100</line>
           <option name="timeStamp" value="852" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/markov_clustering/modularity.py</url>
-          <line>38</line>
-          <option name="timeStamp" value="864" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/markov_clustering/modularity.py</url>
-          <line>31</line>
-          <option name="timeStamp" value="865" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Visualization.py</url>
           <line>21</line>
           <option name="timeStamp" value="866" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py</url>
+          <line>50</line>
+          <option name="timeStamp" value="879" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Data_Drift/Behavior.py</url>
+          <line>682</line>
+          <option name="timeStamp" value="896" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -962,48 +1111,53 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
       <expression>
-        <expression-string>dataset.label.unique()</expression-string>
+        <expression-string>plt.hist(array_i/3600, bins=50)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>[matrix[:,i].T.tolist()[0]]</expression-string>
+        <expression-string>plt.hist(array_i/3600)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>list(matrix[:,i].T.tolist()[0])</expression-string>
+        <expression-string>array_i/3600</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>matrix[:,i].T.tolist()[0]</expression-string>
+        <expression-string>plt.hist(array_j)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>matrix[:,i].T.tolist()</expression-string>
+        <expression-string>plt.hist(array_i)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>find(matrix[:,i])[2]</expression-string>
+        <expression-string>plt.hist(array_i, bins=10)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>find(matrix[:,i])</expression-string>
+        <expression-string>density_intersection_area(array_i, array_j)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>matrix.shape[0]</expression-string>
+        <expression-string>sns.distplot(np.asarray(arrayA), norm_hist=True, kde=False, label='Time window w_p')
+sns.distplot(np.asarray(arrayB), norm_hist=True, kde=False, label='Time window w_p')</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>plt.hist(similarity_matrix.flatten(), bins=1000)
-plt.show()</expression-string>
+        <expression-string>arrayAarrayA</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>arrayB[1]/3600</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -1091,94 +1245,6 @@ plt.show()</expression-string>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/scipy/stats/_distn_infrastructure.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="1817" selection-start-line="1817" selection-end-line="1817" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5648">
-          <caret line="356" selection-start-line="356" selection-end-line="356" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/codecs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="310" selection-start-line="310" selection-end-line="310" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/scipy/cluster/hierarchy.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="1451" selection-start-line="1451" selection-end-line="1451" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="24" column="93" selection-start-line="24" selection-start-column="4" selection-end-line="24" selection-end-column="93" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DES/Activity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6016">
-          <caret line="383" selection-start-line="383" selection-end-line="400" selection-end-column="66" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Validation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="597">
-          <caret line="451" column="30" selection-start-line="451" selection-start-column="30" selection-end-line="451" selection-end-column="30" />
-          <folding>
-            <element signature="e#24#35#0" expanded="true" />
-            <marker date="1541587670507" expanded="true" signature="16377:16382" ph="..." />
-            <marker date="1541587670507" expanded="true" signature="21259:22933" ph="..." />
-            <marker date="1541587670507" expanded="true" signature="21777:22933" ph="..." />
-            <marker date="1541587670507" expanded="true" signature="22242:22247" ph="..." />
-            <marker date="1541587670507" expanded="true" signature="22983:22988" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1728110072/cv2/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="18" column="7" selection-start-line="18" selection-start-column="7" selection-end-line="18" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/preprocessing/data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3129">
-          <caret line="1350" column="4" selection-start-line="1350" selection-start-column="4" selection-end-line="1350" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/neighbors/kde.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-231">
-          <caret line="71" column="8" selection-start-line="71" selection-start-column="8" selection-end-line="71" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Google Drive/TP k-means/TP-kMeans-resources/kmeans.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1186,13 +1252,6 @@ plt.show()</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret column="11" selection-start-column="11" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/nonparametric/kde.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="462" selection-start-line="462" selection-end-line="462" />
         </state>
       </provider>
     </entry>
@@ -1228,16 +1287,6 @@ plt.show()</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-103">
           <caret line="55" column="4" selection-start-line="55" selection-start-column="4" selection-end-line="55" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="611">
-          <caret line="354" column="55" selection-start-line="354" selection-start-column="52" selection-end-line="354" selection-end-column="55" />
-          <folding>
-            <element signature="e#56#87#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1278,10 +1327,10 @@ plt.show()</expression-string>
     <entry file="file://$PROJECT_DIR$/Data_Drift/toy_data.csv" />
     <entry file="file://$PROJECT_DIR$/input/Toy/toy_data_no_changes.csv" />
     <entry file="file://$PROJECT_DIR$/input/Toy/toy_1_change_stop_breakfast.csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
     </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/json/encoder.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -1318,13 +1367,6 @@ plt.show()</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/markov_clustering/modularity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="36" column="19" selection-start-line="36" selection-start-column="19" selection-end-line="36" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/markov_clustering/mcl.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="233">
@@ -1336,27 +1378,6 @@ plt.show()</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="96">
           <caret line="6" selection-start-line="6" selection-end-line="6" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3/builtins.pyi">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="902" column="11" selection-start-line="902" selection-start-column="11" selection-end-line="902" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1728110072/builtins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="523" column="16" selection-start-line="523" selection-start-column="13" selection-end-line="523" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="127" column="4" selection-start-line="127" selection-start-column="4" selection-end-line="127" selection-end-column="4" />
         </state>
       </provider>
     </entry>
@@ -1374,24 +1395,6 @@ plt.show()</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/seaborn/distributions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1159">
-          <caret line="269" column="35" selection-start-line="269" selection-start-column="30" selection-end-line="269" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data_Drift/MCL.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="598">
-          <caret line="266" column="23" selection-start-line="266" selection-start-column="23" selection-end-line="266" selection-end-column="23" />
-          <folding>
-            <element signature="e#51#81#0" expanded="true" />
-            <marker date="1547720618912" expanded="true" signature="7572:7574" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/numpy/core/function_base.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="217">
@@ -1399,37 +1402,173 @@ plt.show()</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/numpy/lib/histograms.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/markov_clustering/modularity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="596" column="4" selection-start-line="596" selection-start-column="4" selection-end-line="596" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Visualization.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="32" column="3" lean-forward="true" selection-start-line="32" selection-start-column="3" selection-end-line="32" selection-end-column="3" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="416">
+          <caret line="31" selection-start-line="31" selection-end-line="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Data_Drift/Toy_Data_Generation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1578">
-          <caret line="64" column="92" selection-start-line="64" selection-start-column="92" selection-end-line="64" selection-end-column="92" />
+        <state relative-caret-position="16">
+          <caret line="64" column="93" selection-start-line="64" selection-start-column="93" selection-end-line="64" selection-end-column="93" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/envs/py35/Lib/site-packages/matplotlib/cm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-583">
+          <caret line="295" column="8" selection-start-line="295" selection-start-column="8" selection-end-line="295" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="531">
+          <caret line="1740" selection-start-line="1740" selection-end-line="1740" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/matplotlib/axes/_axes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="6529" selection-start-line="6529" selection-end-line="6529" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/matplotlib/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="1854" selection-start-line="1854" selection-end-line="1854" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1728110072/numpy/random/mtrand.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6457">
+          <caret line="1594" column="67" selection-start-line="1594" selection-start-column="60" selection-end-line="1594" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/numpy/lib/histograms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="822" selection-start-line="822" selection-end-line="822" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/seaborn/matrix.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-488">
+          <caret line="331" column="4" selection-start-line="331" selection-start-column="4" selection-end-line="331" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/seaborn/distributions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="632">
+          <caret line="512" column="30" selection-start-line="512" selection-start-column="21" selection-end-line="512" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/manifold/t_sne.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1545">
+          <caret line="454" column="67" lean-forward="true" selection-start-line="454" selection-start-column="67" selection-end-line="454" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/scipy/cluster/hierarchy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="472">
+          <caret line="473" column="4" selection-start-line="473" selection-start-column="4" selection-end-line="473" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/cluster/hierarchical.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="669" column="8" selection-start-line="669" selection-start-column="8" selection-end-line="669" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Visualization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="28" column="6" selection-start-line="28" selection-start-column="6" selection-end-line="28" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1568">
+          <caret line="102" column="33" selection-start-line="102" selection-start-column="33" selection-end-line="102" selection-end-column="33" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/nonparametric/kde.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="7" column="4" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/matplotlib/pyplot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="3816" column="4" selection-start-line="3816" selection-start-column="4" selection-end-line="3816" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data_Drift/MCL.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="134">
+          <caret line="160" column="52" selection-start-line="160" selection-start-column="52" selection-end-line="160" selection-end-column="52" />
+          <folding>
+            <marker date="1549292095009" expanded="true" signature="7655:7657" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1728110072/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="519" column="4" selection-start-line="519" selection-start-column="4" selection-end-line="519" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3/builtins.pyi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="903" column="18" selection-start-line="903" selection-start-column="11" selection-end-line="903" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="33" column="37" selection-start-line="32" selection-end-line="33" selection-end-column="83" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/_collections_abc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="789" column="8" selection-start-line="789" selection-start-column="8" selection-end-line="789" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Data_Drift/Features_Extraction.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="97" column="4" selection-start-line="97" selection-start-column="4" selection-end-line="97" selection-end-column="4" />
+        <state relative-caret-position="234">
+          <caret line="202" column="44" selection-start-line="202" selection-start-column="44" selection-end-line="202" selection-end-column="44" />
           <folding>
             <element signature="e#146#164#0" expanded="true" />
           </folding>
@@ -1438,8 +1577,8 @@ plt.show()</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/Data_Drift/Behavior.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="287" column="35" selection-start-line="287" selection-start-column="35" selection-end-line="287" selection-end-column="35" />
+        <state relative-caret-position="119">
+          <caret line="636" column="86" lean-forward="true" selection-start-line="636" selection-start-column="86" selection-end-line="636" selection-end-column="86" />
           <folding>
             <element signature="e#1#12#0" expanded="true" />
           </folding>

@@ -69,7 +69,6 @@ def main():
                 similarities.append(similarity)
             similarity_matrix[i][j] = np.mean(similarities)
 
-    pass
 
 
 def ks_similarity(arrayA, arrayB):
@@ -186,12 +185,6 @@ def density_intersection_area(arrayA, arrayB, bins=1000):
 
     intersection = [min(fitted_A[i], fitted_B[i]) for i in range(bins)]
 
-    # plt.figure()
-    # plt.plot(X_plot, fitted_A, label='A')
-    # plt.plot(X_plot, fitted_B, label='B')
-    # plt.legend()
-    # plt.title("Kernel Density Estimation")
-    # plt.show()
 
     area = metrics.auc(X_plot, intersection)
 
@@ -201,40 +194,36 @@ def density_intersection_area(arrayA, arrayB, bins=1000):
     return area
 
 
-def histogram_intersection(array_A, array_B, bin_width=30):
+def histogram_intersection(array_A, array_B, bin_width=5 * 60, max_bin=24 * 3600):
     """
     Compute the intersection of 2 histograms
     :param array_A:
     :param array_B:
-    :param bin_width: width of a bin in minutes
+    :param bin_width: width of a bin in seconds
+    :param max_bin: maximum value of the bin
     :return:
     """
-    bin_width *= 60  # convert in seconds
 
-    min_val = 0
-    max_val = 24 * 3600  # 24hours
+    # bin_width = bin_minutes * 60
+    min_bin = 0
+    # max_bin = 24 * 3600  # 24hours
 
-    bins = np.linspace(min_val, max_val, int(max_val / bin_width))
+    bins = int(max_bin / bin_width)
 
-    hist_A, _ = np.histogram(array_A, bins=bins, range=(min_val, max_val))
+    # bins = np.linspace(min_val, max_val, int(max_val / bin_minutes))
 
-    hist_B, _ = np.histogram(array_B, bins=bins, range=(min_val, max_val))
+    hist_A, _ = np.histogram(array_A, bins=bins, range=(min_bin, max_bin), density=True)
 
-    minima = np.minimum(hist_A, hist_B)
-    intersection = np.sum(minima) / np.sum(hist_B)
+    hist_B, _ = np.histogram(array_B, bins=bins, range=(min_bin, max_bin), density=True)
 
-    # plt.hist(array_A, bins, alpha=0.2, label='Time Window 1', color='b')
-    # plt.hist(array_B, bins, alpha=0.2, label='Time Window 2', color='r')
-    # plt.legend(loc='upper right')
-    #
-    # plt.xlabel('Hour of the day')
-    # plt.ylabel('Number of occurrences')
-    #
-    #
-    # plt.title('Windows Histograms\nIntersection : {}'.format(intersection))
-    # plt.show()
+    area = 0
+    for i in range(bins):
+        area += min(bin_width * hist_A[i], bin_width * hist_B[i])
 
-    return intersection
+    # intersection = np.minimum(hist_A, hist_B)
+    # area = bin_minutes * np.sum(intersection)
+
+    return area
 
 
 if __name__ == '__main__':
