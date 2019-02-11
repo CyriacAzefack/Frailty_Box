@@ -69,7 +69,7 @@ def main():
 
     time_window_size = dt.timedelta(days=window_size)
     labels = None
-    # labels = ['phone']
+    # labels = ['relax']
 
     inhabitant_behavior = Behavior(dataset=data, time_window_duration=time_window_size)
     inhabitant_behavior.create_activities_behavior()
@@ -80,7 +80,14 @@ def main():
                                                      labels=labels, debug=debug)
         changes_str = stringify_keys(changes)
         changes_str.pop('clusters', None)
-        print(json.dumps(changes_str, indent=4))
+        # print(json.dumps(changes_str, indent=4))
+
+        # df = pd.DataFrame(columns=['label', 'db_index', 'dunn_index', 'silhouette'])
+        # for label, change in changes.items():
+        #     df.loc[len(df)] = [label, change['db_index'], change['dunn_index'], change['silhouette']]
+        #
+        # df.to_csv('Results_{}_{}_{}_w{}.csv'.format(dataset_name, behavior_type, drift_method, window_size), index=False)
+
 
     else:
         methods = ['features', 'stat_test', 'histogram_intersect', 'density_intersect']
@@ -172,8 +179,11 @@ class Behavior:
                 print('##### CLUSTERING EVALUATION #####')
                 print('#################################')
 
-                db_index, dunn_index = activity_behavior.clustering_quality(clusters, behavior_type=behavior_type)
+                db_index, dunn_index, silhouette = activity_behavior.clustering_quality(clusters,
+                                                                                        behavior_type=behavior_type)
                 print('DB_Index : {:.2f}'.format(db_index))
+                print('Dunn_Index : {:.2f}'.format(dunn_index))
+                print('Silhouette : {:.2f}'.format(silhouette))
 
 
 
@@ -182,17 +192,19 @@ class Behavior:
                     'colors': colors,
                     'nb_clusters': len(clusters),
                     'db_index': db_index,
-                    'dunn_index': dunn_index
+                    'dunn_index': dunn_index,
+                    'silhouette': silhouette
                 }
 
-        changes = dict(sorted(changes.items(), key=lambda kv: kv[1]['db_index'], reverse=True))
+        changes = dict(sorted(changes.items(), key=lambda kv: kv[1]['db_index'], reverse=False))
 
-        for label, change in changes.items():
-            print('### Activity \'{}\' ###'.format(label))
-            print('\t DB Index : {:.2f}'.format(change['db_index']))
-            activity_behavior = self.activities_behavior[label]
-            activity_behavior.display_drift(change['clusters'], change['colors'], behavior_type)
-            activity_behavior.display_behavior_evolution(change['clusters'], change['colors'])
+        if plot:
+            for label, change in changes.items():
+                print('### Activity \'{}\' ###'.format(label))
+                print('\t DB Index : {:.2f}'.format(change['db_index']))
+                activity_behavior = self.activities_behavior[label]
+                activity_behavior.display_behavior_evolution(change['clusters'], change['colors'])
+                activity_behavior.display_drift(change['clusters'], change['colors'], behavior_type)
 
             plt.show()
 
@@ -346,7 +358,7 @@ class ActivityBehavior(Behavior):
         norm_data = StandardScaler().fit_transform(data_features)
 
         ## Find optimal number of clusters
-        range_n_clusters = [2, 3, 4, 5, 6, 7, 8]
+        range_n_clusters = [2, 3, 4, 5, 6, 7, 8, 9, 10]
         silhouettes = []
 
         # Compute TSNE
@@ -359,8 +371,8 @@ class ActivityBehavior(Behavior):
             cluster_labels = clus.fit_predict(norm_data)
             silhouette_avg = silhouette_score(norm_data, cluster_labels)
             silhouettes.append(silhouette_avg)
-            # print("For n_clusters =", n_clusters,
-            #       "The average silhouette_score is :", silhouette_avg)
+            print("For n_clusters =", n_clusters,
+                  "The average silhouette_score is :", silhouette_avg)
 
         k = range_n_clusters[np.argmax(silhouettes)]
 
@@ -474,7 +486,7 @@ class ActivityBehavior(Behavior):
         np.fill_diagonal(missing_part, 0)
         similarity_matrix = similarity_matrix + missing_part
 
-        print("Similarity Matrix Built")
+
         return similarity_matrix
 
     def similarity_clustering(self, behavior_type, method, plot=False, gif_debug=False):
@@ -492,23 +504,33 @@ class ActivityBehavior(Behavior):
         # Build the similarity matrix
         similarity_matrix = self.build_similarity_matrix(behavior_type=behavior_type, method=method)
 
+        print("Similarity Matrix Built")
+
         # Clustering of the time windows
         graph_labels = ['W_{}'.format(i) for i in range(nb_windows)]
 
-        # Similarity Matrix Heatmap
-        # sns.heatmap(similarity_matrix, vmin=0, vmax=1)
-        # plt.title('Time Windows Similarity Matrix')
-        # plt.xlabel('Time Windows ID')
-        # plt.ylabel('Time Windows ID')
-        #
-        # plt.show()
-
-        inflation_power = 1.5  # Automatic search
-        threshold_edges = 0.8  # Automatic search
-        if method == 'density_intersect':
-            inflation_power = 1.4
+        inflation_power = None  # Automatic search
+        threshold_edges = None  # Automatic search
+        if method == 'stat_test':
+            threshold_edges = max(0.85, np.median(similarity_matrix.flatten()))
         elif method == 'histogram_intersect':
-            threshold_edges = max(0.7, np.median(similarity_matrix.flatten()))
+            threshold_edges = max(0.5, np.median(similarity_matrix.flatten()))
+            inflation_power = 1.8
+        elif method == 'density_intersect':
+            inflation_power = 1.5
+
+        threshold_indices = threshold_edges > similarity_matrix
+
+        weak_matrix = similarity_matrix.copy()
+        weak_matrix[threshold_indices] = 0
+
+        # Similarity Matrix Heatmap
+        sns.heatmap(weak_matrix, vmin=0, vmax=1)
+        plt.title('Time Windows Similarity Matrix')
+        plt.xlabel('Time Windows ID')
+        plt.ylabel('Time Windows ID')
+
+        plt.show()
 
 
         clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels,
@@ -520,7 +542,7 @@ class ActivityBehavior(Behavior):
 
     def display_drift(self, clusters, colors, behavior_type):
         """
-        Display the drift discovered for the duration of the activity
+        Display the Distribution drifts discovered on the Activity
         :param clusters: dict like : {'cluster_id': [window_id list]}
         :param colors: a list of the clusters color
         :return:
@@ -567,10 +589,10 @@ class ActivityBehavior(Behavior):
                 array = durations
 
             ax1.hist(array, bins=100, range=range, alpha=0.3,
-                     label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
+                     label='Behavior {}'.format(cluster_id),
                      color=colors[cluster_id])
 
-            sns.kdeplot(array, label='Cluster {} : {:.2f}/day'.format(cluster_id, nb_occ_per_wind),
+            sns.kdeplot(array, label='Behavior {}'.format(cluster_id),
                         shade_lowest=False, shade=True, color=colors[cluster_id], ax=ax2)
 
             # Draw the two density plots
@@ -627,25 +649,30 @@ class ActivityBehavior(Behavior):
                 start_date = self.begin_date + dt.timedelta(days=period[0])
                 end_date = self.begin_date + dt.timedelta(days=period[1] + 1)
 
-                plt.text(dat.date2num(start_date), lvl, 'Behavior {}'.format(cluster_id), fontsize=14)
+                if time_periods.index(period) == 0:
+                    plt.text(dat.date2num(start_date), lvl, 'Behavior {}'.format(cluster_id), fontsize=12)
                 ax = plt.hlines(lvl, dat.date2num(start_date), dat.date2num(end_date),
-                                label='cluster {}'.format(cluster_id),
+                                label='Behavior {}'.format(cluster_id),
                                 linewidth=75, color=colors[cluster_id])
 
-        plt.title("{}\nBehavior evolution".format(self.label))
+        plt.title("{}\nBehavior Drit".format(self.label))
 
-    def clustering_quality(self, clusters, behavior_type, method='density_intersect'):
+    def clustering_quality(self, clusters, behavior_type, method='stat_test'):
         """
         Compute the quality metrics of the clustering
         :param clusters:
         :param behavior_type:
-        :return: Davies-Bouldin Index, Dunn Index
+        :return: Davies-Bouldin Index, Dunn Index, Silhouette score
         """
+
+        # Time Windows Similarity Matrix
+        tw_similarity_matrix = 1 - self.build_similarity_matrix(behavior_type=behavior_type,
+                                                                method=method)  # Turn similarity into distance
 
         nb_clusters = len(clusters)
 
         # Inter-Cluster distance matrix
-        inter_cluster_similarity = np.zeros((nb_clusters, nb_clusters))
+        inter_cluster_distance = np.zeros((nb_clusters, nb_clusters))
         clusters_data = {}
 
         hist_max_bin = 24 * 3600  # For Occurrence time
@@ -674,23 +701,23 @@ class ActivityBehavior(Behavior):
                 elif method == 'histogram_intersect':
                     similarity = histogram_intersection(array_i, array_j, max_bin=hist_max_bin)
 
-                inter_cluster_similarity[cluster_i][cluster_j] = similarity
+                inter_cluster_distance[cluster_i][cluster_j] = 1 - similarity
 
 
         # Little trick for speed purposes ;)
         # Cause the similarity matrix is triangular
 
-        missing_part = np.transpose(inter_cluster_similarity.copy())
+        missing_part = np.transpose(inter_cluster_distance.copy())
         np.fill_diagonal(missing_part, 0)
-        inter_cluster_similarity = inter_cluster_similarity + missing_part
+        inter_cluster_distance = inter_cluster_distance + missing_part
 
         # Intra-Cluster distance
 
-        intra_cluster_similarity = np.zeros((nb_clusters))
+        intra_cluster_distance = np.zeros((nb_clusters))
 
         for cluster_id, window_ids in clusters.items():
 
-            similarity_to_centroid = []
+            distance_to_centroid = []
 
             cluster_array = clusters_data[cluster_id]
             for window_id in window_ids:
@@ -707,11 +734,16 @@ class ActivityBehavior(Behavior):
                 elif method == 'histogram_intersect':
                     similarity = histogram_intersection(array, cluster_array, max_bin=hist_max_bin)
 
-                similarity_to_centroid.append(similarity)
+                distance_to_centroid.append(1 - similarity)
 
-            intra_cluster_similarity[cluster_id] = np.mean(similarity_to_centroid)
+            intra_cluster_distance[cluster_id] = np.mean(distance_to_centroid)
 
-        # Davies–Bouldin index
+        ########################
+        # Davies–Bouldin index #
+        ########################
+
+        # Based on https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
+
         # Mi,j the separation between the ith and the jth cluster
         # Si, the within cluster scatter for cluster i
         # Ri,j = (Si + Sj)/Mi,j
@@ -727,9 +759,9 @@ class ActivityBehavior(Behavior):
                     R_ij[cluster_i][cluster_j] = 0
                     continue
 
-                Si = intra_cluster_similarity[cluster_i]
-                Sj = intra_cluster_similarity[cluster_j]
-                Mij = inter_cluster_similarity[cluster_i][cluster_j]
+                Si = intra_cluster_distance[cluster_i]
+                Sj = intra_cluster_distance[cluster_j]
+                Mij = inter_cluster_distance[cluster_i][cluster_j]
 
                 if Mij == 0:
                     R_ij[cluster_i][cluster_j] = 0
@@ -738,7 +770,54 @@ class ActivityBehavior(Behavior):
 
         db_index = np.mean(R_ij.max(axis=1))
 
-        return db_index, 0
+        ##############
+        # Dunn index #
+        ##############
+
+        # Based on https://en.wikipedia.org/wiki/Dunn_index
+
+        fake_inter_cluster_distance = inter_cluster_distance.copy()
+        np.fill_diagonal(fake_inter_cluster_distance, 1)
+        dunn_index = fake_inter_cluster_distance.min() / intra_cluster_distance.max()
+
+        ##########################
+        # Silhouette Score index #
+        ##########################
+
+        # Based on https://en.wikipedia.org/wiki/Silhouette_(clustering)
+
+        # a(i) : average distance between i and all other points in its cluster
+        # b(i) : the smallest average distance of i to all points in any other cluster, of which i is not a member
+
+        nb_windows = len(self.time_windows_data)
+        tw_silhouettes = np.zeros((nb_windows))
+
+        for cluster_id, window_ids in clusters.items():
+
+            for i in window_ids:
+                same_cluster_ids = window_ids.copy()
+                same_cluster_ids.remove(i)
+
+                if len(same_cluster_ids) == 0:
+                    a_i = 0
+                else:
+                    a_i = tw_similarity_matrix[
+                        np.ix_(same_cluster_ids, same_cluster_ids)].mean()  # Extract submatrix and average
+
+                b_i = np.inf
+                for other_cluster_id, other_window_ids in clusters.items():
+                    if other_cluster_id == cluster_id:
+                        continue
+                    current_b_i = tw_similarity_matrix[
+                        np.ix_([i], other_window_ids)].mean()  # Extract submatrix and average
+                    if current_b_i < b_i:
+                        b_i = current_b_i
+
+                tw_silhouettes[i] = (b_i - a_i) / max([a_i, b_i])
+
+        silhouette_score = np.mean(tw_silhouettes)
+
+        return db_index, dunn_index, silhouette_score
 
 if __name__ == '__main__':
     main()

@@ -6,6 +6,7 @@ import math
 import os.path
 
 import imageio
+import markov_clustering as mc
 import networkx as nx
 import numpy as np
 
@@ -155,35 +156,35 @@ def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, p
     # TODO: Set a better convergence metric (inter-cluster and intra-cluster distance)
 
     # Cut weak edges
-    # if inflation_power is None:
-    #     inflations = [i / 10 for i in range(14, 17)]
-    # else:
-    #     inflations = [inflation_power]
-    #
-    # if threshold_filter is None:
-    #     thresholds = [i / 100 for i in range(80, 100, 5)]
-    # else:
-    #     thresholds = [threshold_filter]
-    #
-    # Qs_matrix = np.zeros((len(thresholds), len(inflations)))
-    #
-    # for threshold in thresholds:
-    #     threshold_indices = threshold > matrix
-    #
-    #     weak_matrix = matrix.copy()
-    #     weak_matrix[threshold_indices] = 0
-    #
-    #     for inflation in inflations:
-    #         result = mc.run_mcl(weak_matrix, inflation=inflation)
-    #         clusters = mc.get_clusters(result)
-    #         Q = mc.modularity(matrix=result, clusters=clusters)
-    #         # print("inflation:", inflation, "modularity:", Q)
-    #         Qs_matrix[thresholds.index(threshold)][inflations.index(inflation)] = Q
-    #
-    # threshold_index, inflation_index = np.unravel_index(Qs_matrix.argmax(), Qs_matrix.shape)
-    #
-    # threshold = thresholds[threshold_index]
-    # inflation_power = inflations[inflation_index]
+    if inflation_power is None:
+        inflations = [i / 10 for i in range(14, 17)]
+    else:
+        inflations = [inflation_power]
+
+    if threshold_filter is None:
+        thresholds = [i / 100 for i in range(30, 90, 5)]
+    else:
+        thresholds = [threshold_filter]
+
+    Qs_matrix = np.zeros((len(thresholds), len(inflations)))
+
+    for threshold in thresholds:
+        threshold_indices = threshold > matrix
+
+        weak_matrix = matrix.copy()
+        weak_matrix[threshold_indices] = 0
+
+        for inflation in inflations:
+            result = mc.run_mcl(weak_matrix, inflation=inflation)
+            clusters = mc.get_clusters(result)
+            Q = mc.modularity(matrix=result, clusters=clusters)
+            # print("inflation:", inflation, "modularity:", Q)
+            Qs_matrix[thresholds.index(threshold)][inflations.index(inflation)] = Q
+
+    threshold_index, inflation_index = np.unravel_index(Qs_matrix.argmax(), Qs_matrix.shape)
+
+    threshold_filter = thresholds[threshold_index]
+    inflation_power = inflations[inflation_index]
 
     print('Threshold : {}'.format(threshold_filter))
     print('Inflation Power : {}'.format(inflation_power))
@@ -238,7 +239,7 @@ def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, p
         # Draw the graph
         plt.figure()
         pos = nx.drawing.spring_layout(graph)
-        nx.draw(graph, node_size=300, pos=pos, node_color=color_map, with_labels=True)
+        nx.draw(graph, node_size=150, font_size=8, pos=pos, node_color=color_map, with_labels=True)
 
         if gif:
             empty_folder(OUTPUT_FOLER)
