@@ -517,20 +517,22 @@ class ActivityBehavior(Behavior):
             threshold_edges = max(0.5, np.median(similarity_matrix.flatten()))
             inflation_power = 1.8
         elif method == 'density_intersect':
-            inflation_power = 1.5
+            # threshold_edges = max(0.5, np.median(similarity_matrix.flatten()))
+            inflation_power = 1.4
 
-        threshold_indices = threshold_edges > similarity_matrix
+        if threshold_edges is not None:
+            threshold_indices = threshold_edges > similarity_matrix
 
-        weak_matrix = similarity_matrix.copy()
-        weak_matrix[threshold_indices] = 0
+            weak_matrix = similarity_matrix.copy()
+            weak_matrix[threshold_indices] = 0
 
-        # Similarity Matrix Heatmap
-        sns.heatmap(weak_matrix, vmin=0, vmax=1)
-        plt.title('Time Windows Similarity Matrix')
-        plt.xlabel('Time Windows ID')
-        plt.ylabel('Time Windows ID')
+            # Similarity Matrix Heatmap
+            sns.heatmap(weak_matrix, vmin=0, vmax=1)
+            plt.title('Time Windows Similarity Matrix')
+            plt.xlabel('Time Windows ID')
+            plt.ylabel('Time Windows ID')
 
-        plt.show()
+            plt.show()
 
 
         clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels,

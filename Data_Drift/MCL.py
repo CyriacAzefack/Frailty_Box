@@ -153,7 +153,7 @@ def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, p
     :return: the clusters
     """
 
-    # TODO: Set a better convergence metric (inter-cluster and intra-cluster distance)
+
 
     # Cut weak edges
     if inflation_power is None:
@@ -162,7 +162,7 @@ def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, p
         inflations = [inflation_power]
 
     if threshold_filter is None:
-        thresholds = [i / 100 for i in range(30, 90, 5)]
+        thresholds = [i / 100 for i in range(80, 100, 5)]
     else:
         thresholds = [threshold_filter]
 
@@ -178,7 +178,7 @@ def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, p
             result = mc.run_mcl(weak_matrix, inflation=inflation)
             clusters = mc.get_clusters(result)
             Q = mc.modularity(matrix=result, clusters=clusters)
-            # print("inflation:", inflation, "modularity:", Q)
+            print("Threshold:", threshold, "inflation:", inflation, "modularity:", Q)
             Qs_matrix[thresholds.index(threshold)][inflations.index(inflation)] = Q
 
     threshold_index, inflation_index = np.unravel_index(Qs_matrix.argmax(), Qs_matrix.shape)
