@@ -4,17 +4,14 @@
 
 # Implementation of all the features extraction method for time windows
 
-import numpy as np
-import seaborn as sns
 from scipy import stats
 from sklearn import metrics
 from sklearn.metrics import mean_squared_error
 from statsmodels.nonparametric.kde import KDEUnivariate
 
-from Data_Drift import Drift_Detector
+import Data_Drift.Drift_Detector as Drift_Detector
 from Utils import *
 
-sns.set_style('darkgrid')
 
 def main():
     data_name = 'KA'

@@ -1,9 +1,13 @@
+from __future__ import absolute_import
 
 import json
+import math
 import time as t
 from optparse import OptionParser
 
 import matplotlib.dates as dat
+import matplotlib.pyplot as plt
+import seaborn as sns
 from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
@@ -14,9 +18,15 @@ from Data_Drift.Features_Extraction import *
 from Data_Drift.MCL import mcl_clusterinig
 from Utils import *
 
+sns.set_style('darkgrid')
+
 
 def main():
     # Default values
+    """
+    Extraction of parameters
+    :return:
+    """
 
     parser = OptionParser(usage='Usage: %prog <options>')
     parser.add_option('-n', '--dataset_name', help='Name of the Input event log', dest='dataset_name', action='store',
@@ -58,6 +68,14 @@ def main():
     plot = options.plot
     debug = options.debug
 
+    # labels = None
+    labels = ['resperate']
+
+    df = data_drift(dataset_name, window_size, behavior_type, drift_method, plot, debug, labels)
+
+
+def data_drift(dataset_name, window_size, behavior_type, drift_method, plot, debug, labels):
+
     print("Dataset Name : {}".format(dataset_name.upper()))
     print("Windows size : {}".format(window_size))
     print("Behavior Type : {}".format(behavior_type))
@@ -68,8 +86,6 @@ def main():
     data = pick_dataset(dataset_name)
 
     time_window_size = dt.timedelta(days=window_size)
-    labels = None
-    # labels = ['relax']
 
     inhabitant_behavior = Behavior(dataset=data, time_window_duration=time_window_size)
     inhabitant_behavior.create_activities_behavior()
@@ -82,11 +98,17 @@ def main():
         changes_str.pop('clusters', None)
         # print(json.dumps(changes_str, indent=4))
 
-        # df = pd.DataFrame(columns=['label', 'db_index', 'dunn_index', 'silhouette'])
-        # for label, change in changes.items():
-        #     df.loc[len(df)] = [label, change['db_index'], change['dunn_index'], change['silhouette']]
-        #
+        df = pd.DataFrame(
+            columns=['dataset', 'method', 'aspect', 'label', 'nb_clusters', 'nb_drift_points', 'db_index', 'dunn_index',
+                     'silhouette'])
+        for label, change in changes.items():
+            df.loc[len(df)] = [dataset_name, drift_method, behavior_type, label, change['nb_clusters'],
+                               change['nb_drift_points'], change['db_index'], change['dunn_index'],
+                               change['silhouette']]
+
         # df.to_csv('Results_{}_{}_{}_w{}.csv'.format(dataset_name, behavior_type, drift_method, window_size), index=False)
+
+        return df
 
 
     else:
@@ -147,10 +169,7 @@ class Behavior:
             self.dataset['duration'] = (self.dataset['end_date'] - self.dataset['date']).apply(
                 lambda x: x.total_seconds())  # Duration in seconds
 
-
-
-
-    def drift_detector(self, behavior_type, method, plot=False, labels=None, debug=False):
+    def drift_detector(self, behavior_type, method, labels=None, plot=False, debug=False):
         """
         Drift detection of a specific behavior
         :param behavior_type: the behavior type for the drift detection. availables ones : Behavior.OCC_TIME,
@@ -168,45 +187,77 @@ class Behavior:
         for label in labels:
             activity_behavior = self.activities_behavior[label]
             print("### Behavior Drift on '{}' ###".format(label))
-            clusters, colors = activity_behavior.drift_detector(behavior_type=behavior_type, method=method, plot=plot,
+            clusters, colors = activity_behavior.drift_detector(behavior_type=behavior_type, method=method, plot=debug,
                                                                 debug=debug)
             if len(clusters) > 1:
                 ################################
                 # EVALUATION OF THE CLUSTERING #
                 ################################
 
-                print('#################################')
-                print('##### CLUSTERING EVALUATION #####')
-                print('#################################')
+                print('CLUSTERING EVALUATION'.center(30, '*'))
 
                 db_index, dunn_index, silhouette = activity_behavior.clustering_quality(clusters,
                                                                                         behavior_type=behavior_type)
-                print('DB_Index : {:.2f}'.format(db_index))
-                print('Dunn_Index : {:.2f}'.format(dunn_index))
-                print('Silhouette : {:.2f}'.format(silhouette))
+                nb_drifting_points = -1
+                clusters_durations = {}
+                for cluster_id, window_ids in clusters.items():
+                    nb_drifting_points += len(self.time_periods_from_windows(window_ids))
+                    time_periods = self.time_periods_from_windows(window_ids)
+                    nb_days = 0
+                    for time_period in time_periods:
+                        start_date = self.begin_date + dt.timedelta(days=time_period[0])
+                        end_date = self.begin_date + dt.timedelta(days=time_period[1] + 1)
+                        nb_days += (end_date - start_date).days
+                    clusters_durations[cluster_id] = nb_days
 
+                ##################################
+                # INTERPRETATION OF THE CLUSTERS #
+                ##################################
 
+                print('CLUSTERING INTERPRETATION'.center(30, '*'))
+
+                clusters_interpreations = activity_behavior.clustering_interpretation(clusters,
+                                                                                      behavior_type=behavior_type)
 
                 changes[label] = {
                     'clusters': clusters,
                     'colors': colors,
                     'nb_clusters': len(clusters),
+                    'nb_drift_points': nb_drifting_points,
+                    'interpretation': clusters_interpreations,
+                    'duration': clusters_durations,
                     'db_index': db_index,
                     'dunn_index': dunn_index,
                     'silhouette': silhouette
                 }
 
-        changes = dict(sorted(changes.items(), key=lambda kv: kv[1]['db_index'], reverse=False))
+        changes = dict(sorted(changes.items(), key=lambda kv: kv[1]['silhouette'], reverse=True))
 
-        if plot:
-            for label, change in changes.items():
-                print('### Activity \'{}\' ###'.format(label))
-                print('\t DB Index : {:.2f}'.format(change['db_index']))
+        print(' +' * 20)
+        print(' +' + 'RESULTS'.format(label.upper()).center(30, ' ') + ' +')
+        print(' +' * 20)
+
+        for label, change in changes.items():
+
+            print('#' * 30)
+            print('#' + '{}'.format(label.upper()).center(28, ' ') + '#')
+            print('#' * 30)
+
+            print('Number of behaviors detected : {}'.format(change['nb_clusters']))
+            print('Silhouette : {:.2f}'.format(change['silhouette']))
+            print('Number of drift points : {}'.format(change['nb_drift_points']))
+
+            for cluster_id in range(change['nb_clusters']):
+                print('Cluster {}'.format(cluster_id).center(20, '*'))
+                print('Interpretation : '.ljust(20) + str(change['interpretation'][cluster_id]))
+                print('Duration : '.ljust(20) + str(change['duration'][cluster_id]) + ' days')
+
+            if plot:
                 activity_behavior = self.activities_behavior[label]
                 activity_behavior.display_behavior_evolution(change['clusters'], change['colors'])
                 activity_behavior.display_drift(change['clusters'], change['colors'], behavior_type)
 
-            plt.show()
+                plt.show()
 
         changes.pop('clusters', None)  # Remove the detail of the clusters
         return changes
@@ -358,7 +409,7 @@ class ActivityBehavior(Behavior):
         norm_data = StandardScaler().fit_transform(data_features)
 
         ## Find optimal number of clusters
-        range_n_clusters = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+        range_n_clusters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         silhouettes = []
 
         # Compute TSNE
@@ -367,12 +418,15 @@ class ActivityBehavior(Behavior):
         transformed = vizu_model.fit_transform(norm_data)
 
         for n_clusters in range_n_clusters:
-            clus = KMeans(n_clusters=n_clusters, random_state=1996)
-            cluster_labels = clus.fit_predict(norm_data)
-            silhouette_avg = silhouette_score(norm_data, cluster_labels)
+            if n_clusters == 1:
+                silhouette_avg = 0
+            else:
+                clus = KMeans(n_clusters=n_clusters)
+                cluster_labels = clus.fit_predict(norm_data)
+                silhouette_avg = silhouette_score(norm_data, cluster_labels)
             silhouettes.append(silhouette_avg)
-            print("For n_clusters =", n_clusters,
-                  "The average silhouette_score is :", silhouette_avg)
+            # print("For n_clusters =", n_clusters,
+            #       "The average silhouette_score is :", silhouette_avg)
 
         k = range_n_clusters[np.argmax(silhouettes)]
 
@@ -440,12 +494,9 @@ class ActivityBehavior(Behavior):
 
         nb_windows = len(self.time_windows_data)
 
-
         ######################
         ## Similarity Matrix #
         ######################
-
-
 
         similarity_matrix = np.zeros((nb_windows, nb_windows))
         for i in range(nb_windows):
@@ -480,6 +531,8 @@ class ActivityBehavior(Behavior):
                     raise ValueError("Illegal value of Similarity Method")
 
                 # print('[{}, {}] : {}'.format(i, j, similarity))
+                if np.isnan(similarity):
+                    similarity = 0
                 similarity_matrix[i][j] = similarity
 
         missing_part = np.transpose(similarity_matrix.copy())
@@ -489,13 +542,13 @@ class ActivityBehavior(Behavior):
 
         return similarity_matrix
 
-    def similarity_clustering(self, behavior_type, method, plot=False, gif_debug=False):
+    def similarity_clustering(self, behavior_type, method, plot=False, debug=False):
         """
         Clustering of the time windows into behavior clusters
         :param behavior_type:
         :param method:
         :param plot:
-        :param gif_debug:
+        :param debug:
         :return:
         """
 
@@ -520,7 +573,7 @@ class ActivityBehavior(Behavior):
             # threshold_edges = max(0.5, np.median(similarity_matrix.flatten()))
             inflation_power = 1.4
 
-        if threshold_edges is not None:
+        if threshold_edges is not None and debug:
             threshold_indices = threshold_edges > similarity_matrix
 
             weak_matrix = similarity_matrix.copy()
@@ -537,9 +590,7 @@ class ActivityBehavior(Behavior):
 
         clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels,
                                                    threshold_filter=threshold_edges, inflation_power=inflation_power,
-                                                   plot=plot, gif=gif_debug)
-
-
+                                                   plot=plot, gif=debug)
         return clusters, clusters_color
 
     def display_drift(self, clusters, colors, behavior_type):
@@ -564,23 +615,21 @@ class ActivityBehavior(Behavior):
             durations = np.asarray(list(set(durations))) / 60  # Display in minutes # 'set' to remove duplicates
             occ_times = np.asarray(list(set(occ_times))) / 3600  # Display in hours # 'set' to remove duplicates
 
-            if len(window_ids) == 0:
-                nb_occ_per_wind = 0
-            else:
-                nb_occ_per_wind = len(durations) / (len(window_ids) * self.time_window_duration.days)
-
-            # Describe the time period of the cluster
-            time_periods = self.time_periods_from_windows(window_ids)
-
-            msg = ''
-            nb_days = 0
-            for time_period in time_periods:
-                start_date = self.begin_date + dt.timedelta(days=time_period[0])
-                end_date = self.begin_date + dt.timedelta(days=time_period[1] + 1)
-                msg += "[{} - {}]\t".format(start_date.date(), end_date.date())
-
-                nb_days += (end_date - start_date).days
-            print("Cluster {} : {} days  ** {}".format(cluster_id, nb_days, msg))
+            # # Describe the time period of the cluster
+            # time_periods = self.time_periods_from_windows(window_ids)
+            #
+            # msg = ''
+            # nb_days = 0
+            #
+            # for time_period in time_periods:
+            #     start_date = self.begin_date + dt.timedelta(days=time_period[0])
+            #     end_date = self.begin_date + dt.timedelta(days=time_period[1] + 1)
+            #     msg += "[{} - {}]\t".format(start_date.date(), end_date.date())
+            #     nb_days += (end_date - start_date).days
+            #
+            # nb_occ_per_days = len(durations) / nb_days
+            #
+            # print("Cluster {} : {} days ({:.2f} occ/day) ** {}".format(cluster_id, nb_days, nb_occ_per_days, msg))
 
             array = []
             range = None
@@ -594,7 +643,7 @@ class ActivityBehavior(Behavior):
                      label='Behavior {}'.format(cluster_id),
                      color=colors[cluster_id])
 
-            sns.kdeplot(array, label='Behavior {}'.format(cluster_id),
+            sns.kdeplot(array, label='Behavior {}'.format(cluster_id), gridsize=50,
                         shade_lowest=False, shade=True, color=colors[cluster_id], ax=ax2)
 
             # Draw the two density plots
@@ -741,7 +790,7 @@ class ActivityBehavior(Behavior):
             intra_cluster_distance[cluster_id] = np.mean(distance_to_centroid)
 
         ########################
-        # Davies–Bouldin index #
+        # Davies?Bouldin index #
         ########################
 
         # Based on https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
@@ -819,7 +868,57 @@ class ActivityBehavior(Behavior):
 
         silhouette_score = np.mean(tw_silhouettes)
 
+        if np.isnan(silhouette_score):
+            silhouette_score = 0
         return db_index, dunn_index, silhouette_score
+
+    def clustering_interpretation(self, clusters, behavior_type):
+        """
+        Use DBSCAN to intepret the cluster
+        :param clusters:
+        :param behavior_type:
+        :return:
+        """
+
+        clusters_interpretations = {}
+        for cluster_id, window_ids in clusters.items():
+            durations = []
+            occ_times = []
+
+            for window_id in window_ids:
+                occ_times += list(self.time_windows_data[window_id].timestamp.values)
+                durations += list(self.time_windows_data[window_id].duration.values)
+
+            durations = np.asarray(list(set(durations))).reshape(-1, 1)
+            occ_times = np.asarray(list(set(occ_times))).reshape(-1, 1)
+
+            if behavior_type == Behavior.OCC_TIME:
+                data = occ_times
+            else:
+                data = durations
+
+            # if behavior_type == Behavior.OCC_TIME:
+            #     std_max = dt.timedelta(hours=1)
+            # elif behavior_type == Behavior.DURATION:
+            #     std_max = dt.timedelta(minutes=30)
+
+            if len(data) == 0:
+                clusters_interpretations[cluster_id] = {}  # No interpretation
+                continue
+
+            data_clusters = univariate_clustering(data)
+
+            interpretation = {}  # mean_time (in seconds) as key and std_duration (in seconds) as value
+
+            for i, array in data_clusters.items():
+                mu = math.ceil(np.mean(array))
+                sigma = math.ceil(np.std(array))
+
+                interpretation[str(dt.timedelta(seconds=mu))] = str(dt.timedelta(seconds=sigma))
+
+            clusters_interpretations[cluster_id] = interpretation
+
+        return clusters_interpretations
 
 if __name__ == '__main__':
     main()

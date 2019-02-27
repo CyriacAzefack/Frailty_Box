@@ -6,9 +6,6 @@ from sklearn.preprocessing import StandardScaler
 from Data_Drift.Features_Extraction import *
 from Data_Drift.MCL import mcl_clusterinig
 
-sns.set_style('darkgrid')
-
-
 
 def main():
     data_name = 'KA'
@@ -19,7 +16,7 @@ def main():
 
     label = "leave_home"
 
-    windows_dataset = activity_drift_detector(data, window_size, label, plot=True, gif=False)
+    # windows_dataset = activity_drift_detector(data, window_size, label, plot=True, gif=False)
 
     # windows_dataset.to_csv("{}_windows_data.csv".format(data_name), index=False)
 

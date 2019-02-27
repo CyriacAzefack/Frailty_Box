@@ -1,8 +1,10 @@
 import datetime as dt
 import os
 
-import matplotlib.pyplot as plt
+import matplotlib
+import numpy as np
 import pandas as pd
+from sklearn.cluster import MeanShift, estimate_bandwidth
 
 
 def pick_dataset(name, nb_days=-1):
@@ -10,7 +12,8 @@ def pick_dataset(name, nb_days=-1):
 
     dataset = None
     if 'toy' in name:
-        path = os.path.join(my_path, "./input/Toy/{}.csv".format(name))
+        path = os.path.join(my_path, "./input/Toy/Simulation/{}.csv".format(name))
+
         dataset = pd.read_csv(path, delimiter=';')
         date_format = '%Y-%m-%d %H:%M:%S.%f'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
@@ -99,8 +102,8 @@ def generate_random_color(n):
     """
 
     colors = []
-    # cmap = matplotlib.cm.get_cmap('hsv')
-    cmap = plt.get_cmap('Spectral')
+    cmap = matplotlib.cm.get_cmap('Spectral')
+    # cmap = plt.get_cmap('Spectral')
     for i in range(1, n + 1):
         rgb = cmap(1 / i)
         rgb = [int(256 * x) % 256 for x in rgb]
@@ -135,3 +138,37 @@ def stringify_keys(d):
             # delete old key
             del d[key]
     return d
+
+
+def univariate_clustering(x, quantile=0.6):
+    """
+    1d - Clustering
+    :param x:
+    :param quantile:
+    :return:
+    """
+
+    X = np.array(list(zip(x, np.zeros(len(x)))), dtype=np.int)
+    bandwidth = estimate_bandwidth(X, quantile=quantile)
+    if bandwidth == 0:
+        return {}
+    ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
+    ms.fit(X)
+    labels = ms.labels_
+    cluster_centers = ms.cluster_centers_
+
+    labels_unique = np.unique(labels)
+    n_clusters_ = len(labels_unique)
+
+    clusters = {}
+
+    for k in range(n_clusters_):
+        my_members = labels == k
+
+        cluster_array = X[my_members, 0]
+
+        # print("cluster {0}: {1}".format(k, cluster_array))
+
+        clusters[k] = cluster_array
+
+    return clusters

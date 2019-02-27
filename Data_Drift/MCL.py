@@ -5,10 +5,10 @@ import glob
 import math
 import os.path
 
-import imageio
+# import imageio
 import markov_clustering as mc
+import matplotlib.pyplot as plt
 import networkx as nx
-import numpy as np
 
 from Utils import *
 
@@ -178,7 +178,7 @@ def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, p
             result = mc.run_mcl(weak_matrix, inflation=inflation)
             clusters = mc.get_clusters(result)
             Q = mc.modularity(matrix=result, clusters=clusters)
-            print("Threshold:", threshold, "inflation:", inflation, "modularity:", Q)
+            # print("Threshold:", threshold, "inflation:", inflation, "modularity:", Q)
             Qs_matrix[thresholds.index(threshold)][inflations.index(inflation)] = Q
 
     threshold_index, inflation_index = np.unravel_index(Qs_matrix.argmax(), Qs_matrix.shape)
@@ -265,7 +265,6 @@ def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, p
             imageio.mimsave(OUTPUT_FOLER + '/video.gif', images, duration=0.1)
 
     return clusters, clusters_color
-
 
 
 if __name__ == '__main__':

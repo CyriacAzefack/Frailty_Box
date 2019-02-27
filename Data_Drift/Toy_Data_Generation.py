@@ -12,7 +12,9 @@ def main():
     # Initialisation
     # 3 occurrences per day
 
-    toy_name = 'T3_3_changes'
+    output_folder = '../input/Toy/Simulation/'
+
+
 
     breakfast = {
         'mean_time': dt.timedelta(hours=8, minutes=30).total_seconds(),
@@ -55,59 +57,71 @@ def main():
         'accuracy': .95
     }
 
-    start_date = dt.datetime.strptime("01/01/19", "%d/%m/%y")
+
 
     behavior_A = [breakfast, lunch, dinner]
     behavior_B = [brunch, lunner]
 
+    NB_DC = 100
+    NB_DD = 100
 
-    # Period 1
+    # DC Datasets
 
-    event_log_1 = driftless_generation(label, behavior_A, start_date, nb_days=4 * 30)  # 3 months
+    for i in range(NB_DC):
+        start_date = dt.datetime.strptime("01/01/19", "%d/%m/%y")
 
-    # Period 2
-    start_date = event_log_1.end_date.max().to_pydatetime() + dt.timedelta(days=1)
-    start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
+        pA = 0.5
 
-    event_log_2 = driftless_generation(label, behavior_B, start_date, nb_days=2 * 30)  # 5 months
+        event_log = driftless_generation(label, behavior_A, behavior_B, pA, start_date, nb_days=365)
 
-    # # Period 3
-    start_date = event_log_2.end_date.max().to_pydatetime() + dt.timedelta(days=1)
-    start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
+        event_log.to_csv()
+        event_log.to_csv(output_folder + 'toy_DC_{}.csv'.format(i), index=False, sep=';')
 
-    event_log_3 = driftless_generation(label, behavior_A, start_date, nb_days=4 * 30)  # 6 months
+        print("DC_{} Generated".format(i))
 
-    # # Period 4
-    start_date = event_log_3.end_date.max().to_pydatetime() + dt.timedelta(days=1)
-    start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
+    # DD Datasets
 
-    event_log_4 = driftless_generation(label, behavior_B, start_date, nb_days=2 * 30)  # 3 months
+    for i in range(NB_DD):
+        start_date = dt.datetime.strptime("01/01/19", "%d/%m/%y")
 
-    event_logs = [event_log_1, event_log_2, event_log_3, event_log_4]
+        initial_pA = 1 - (0.5 / NB_DD) * i
 
-    event_log = pd.DataFrame(columns=['date', 'end_date', 'label'])
-    for log in event_logs:
-        event_log = event_log.append(log, ignore_index=True)
+        # 5 months - Beginning
+        begin_event_log = driftless_generation(label, behavior_A, behavior_B, initial_pA, start_date, nb_days=5 * 30)
 
-    event_log.to_csv('../input/Toy/toy_{}.csv'.format(toy_name), index=False, sep=';')
+        # 2 months - transition
+        start_date = begin_event_log.end_date.max().to_pydatetime() + dt.timedelta(days=1)
+        start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
 
-    # new_occurrences = [new_breakfast, lunch, dinner]
-    #
-    # start_date = event_log_2.end_date.max().to_pydatetime() + dt.timedelta(days=1)
-    # start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
-    #
-    # event_log_3 = driftless_generation(label, new_occurrences, start_date, nb_days=250)
+        trans_event_log = progressive_drift_generation(label, behavior_A, behavior_B, initial_pA, start_date,
+                                                       nb_days=60)
+
+        # 5 months - Ending
+        start_date = trans_event_log.end_date.max().to_pydatetime() + dt.timedelta(days=1)
+        start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
+
+        end_event_log = driftless_generation(label, behavior_A, behavior_B, 1 - initial_pA, start_date, nb_days=5 * 30)
+
+        event_logs = [begin_event_log, trans_event_log, end_event_log]
+
+        event_log = pd.DataFrame(columns=['date', 'end_date', 'label'])
+        for log in event_logs:
+            event_log = event_log.append(log, ignore_index=True)
+
+        event_log.to_csv(output_folder + 'toy_DD_{}.csv'.format(i), index=False, sep=';')
+
+        print("DD_{} Generated".format(i))
 
 
-
-
-def driftless_generation(label, behavior, start_date, nb_days):
+def driftless_generation(label, behavior_A, behavior_B, prob_A, start_date, nb_days):
     """
     Generate an event log with no drift in the behavior
     :param label:
-    :param behavior:
+    :param behavior_A:
+    :param behavior_B:
+    :param prob_A:
     :param start_date:
-    :param nb_days: number of days
+    :param nb_days:
     :return:
     """
 
@@ -117,6 +131,15 @@ def driftless_generation(label, behavior, start_date, nb_days):
 
     current_date = start_date
     while current_date < end_date:
+
+        # Choose the behavior
+        behavior = behavior_A  # default behavior
+
+        rand_behavior = random.random()
+
+        if rand_behavior > prob_A:
+            behavior = behavior_B
+
         for occurrence in behavior:
             rand = random.random()
             if rand <= occurrence['accuracy']:  # prob of the occurrence to happen
@@ -134,26 +157,32 @@ def driftless_generation(label, behavior, start_date, nb_days):
     return event_log
 
 
-def progressive_drift_generation(label, behavior_A, behavior_B, start_date, nb_days):
+def progressive_drift_generation(label, behavior_A, behavior_B, initial_prob_A, start_date, nb_days):
     """
     Generate an event log with progressive drift between the start and end behavior
     :param label:
-    :param start_behavior: Original behavior
-    :param end_behavior:
+    :param behavior_A:
+    :param behavior_B:
+    :param initial_prob_A:
     :param start_date:
-    :param duration:
+    :param nb_days:
     :return:
     """
 
     end_date = start_date + dt.timedelta(days=nb_days)
 
-    cutoff_value = 0.999
+    cutoff_value = 0.999 * initial_prob_A
     d = int(nb_days / 2)
 
-    alpha = math.log2(cutoff_value / (1 - cutoff_value)) / d
+    alpha = math.log2(cutoff_value / (initial_prob_A - cutoff_value)) / d
 
     def prob_sigmoid(x):
-        return 1 / (1 + math.exp(alpha * (d - x)))
+        """
+        Rising sigmoïd for prob_b
+        :param x:
+        :return:
+        """
+        return initial_prob_A / (1 + math.exp(alpha * (d - x)))
 
 
     event_log = pd.DataFrame(columns=['date', 'end_date', 'label'])
@@ -166,9 +195,9 @@ def progressive_drift_generation(label, behavior_A, behavior_B, start_date, nb_d
         behavior = behavior_A  # default behavior
 
         prob_B = prob_sigmoid(x)
-        rand_beh = random.random()
+        rand_behavior = random.random()
 
-        if rand_beh <= prob_B:
+        if rand_behavior <= prob_B:
             behavior = behavior_B
 
         for occurrence in behavior:
