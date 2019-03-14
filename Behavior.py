@@ -75,6 +75,7 @@ def main():
 
 
 def data_drift(dataset_name, window_size, behavior_type, drift_method, plot, debug, labels):
+    OUTDIR = '../output/Data_Drift'
 
     print("Dataset Name : {}".format(dataset_name.upper()))
     print("Windows size : {}".format(window_size))
@@ -99,14 +100,18 @@ def data_drift(dataset_name, window_size, behavior_type, drift_method, plot, deb
         # print(json.dumps(changes_str, indent=4))
 
         df = pd.DataFrame(
-            columns=['dataset', 'method', 'aspect', 'label', 'nb_clusters', 'nb_drift_points', 'db_index', 'dunn_index',
-                     'silhouette'])
-        for label, change in changes.items():
-            df.loc[len(df)] = [dataset_name, drift_method, behavior_type, label, change['nb_clusters'],
-                               change['nb_drift_points'], change['db_index'], change['dunn_index'],
-                               change['silhouette']]
+            columns=['label', 'nb_behaviors', 'behavior_duration', 'nb_drift_points', 'interpretation', 'silhouette'])
+        for label, change in changes_str.items():
+            df.loc[len(df)] = [label, change['nb_clusters'], change['duration'], change['nb_drift_points'],
+                               change['interpretation'], '{:.2f}'.format(change['silhouette'])]
 
-        # df.to_csv('Results_{}_{}_{}_w{}.csv'.format(dataset_name, behavior_type, drift_method, window_size), index=False)
+        # if not os.path.exists(outdir):
+        #     os.mkdir(outdir)
+
+        fullname = os.path.join(OUTDIR, '{}_{}_{}_W{}.csv'.format(dataset_name.upper(), behavior_type.replace(' ', '-'),
+                                                                  drift_method, window_size))
+
+        df.to_csv(fullname, index=False, sep=';')
 
         return df
 
@@ -560,7 +565,7 @@ class ActivityBehavior(Behavior):
         print("Similarity Matrix Built")
 
         # Clustering of the time windows
-        graph_labels = ['W_{}'.format(i) for i in range(nb_windows)]
+        graph_labels = ['{}'.format(i) for i in range(nb_windows)]
 
         inflation_power = None  # Automatic search
         threshold_edges = None  # Automatic search
@@ -686,11 +691,18 @@ class ActivityBehavior(Behavior):
         :param colors:
         :return:
         """
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        xfmt = dat.DateFormatter('%d-%m-%y %H:%M')
-        ax.xaxis.set_major_formatter(xfmt)
-        ax = ax.xaxis_date()
+        fig, ax = plt.subplots()
+        # xfmt = dat.DateFormatter('%d-%m-%y')
+        months = dat.MonthLocator()  # every month
+        monthsFmt = dat.DateFormatter('%b %Y')  # Eg. Jan 2012
+
+        # format the ticks
+        ax.xaxis.set_major_locator(months)
+        ax.xaxis.set_major_formatter(monthsFmt)
+        ax.xaxis.set_minor_locator(months)
+
+
+
         for cluster_id, window_ids in clusters.items():
             lvl = cluster_id * 2
 
@@ -701,12 +713,16 @@ class ActivityBehavior(Behavior):
                 end_date = self.begin_date + dt.timedelta(days=period[1] + 1)
 
                 if time_periods.index(period) == 0:
-                    plt.text(dat.date2num(start_date), lvl, 'Behavior {}'.format(cluster_id), fontsize=12)
-                ax = plt.hlines(lvl, dat.date2num(start_date), dat.date2num(end_date),
-                                label='Behavior {}'.format(cluster_id),
+                    plt.text(dat.date2num(start_date), lvl, 'Behavior {}'.format(cluster_id), fontsize=16)
+                ax.hlines(lvl, dat.date2num(start_date), dat.date2num(end_date), label='Behavior {}'.format(cluster_id),
                                 linewidth=75, color=colors[cluster_id])
 
-        plt.title("{}\nBehavior Drit".format(self.label))
+        ax.tick_params(axis='both', which='major', labelsize=12)
+        fig.autofmt_xdate()
+        # plt.title("Activity : '{}'".format(self.label))
+        plt.xlabel('Time')
+        plt.ylabel('Behaviors')
+
 
     def clustering_quality(self, clusters, behavior_type, method='stat_test'):
         """
@@ -902,7 +918,7 @@ class ActivityBehavior(Behavior):
             # elif behavior_type == Behavior.DURATION:
             #     std_max = dt.timedelta(minutes=30)
 
-            if len(data) == 0:
+            if len(data) <= 2:
                 clusters_interpretations[cluster_id] = {}  # No interpretation
                 continue
 

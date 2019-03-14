@@ -200,7 +200,7 @@ def find_number_clusters(data_points, eps, min_samples):
     """
     return the number of clusters
     """
-    db = DBSCAN(eps=eps, min_samples=min_samples, p=1).fit(data_points)
+    db = DBSCAN(eps=eps, min_samples=min_samples).fit(data_points)
 
     Nb_clusters = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0)  # Noisy samples are given the label -1.
 
