@@ -6,10 +6,10 @@ Created on Wed Mar 28 11:07 2018
 """
 import datetime as dt
 import errno
-import getopt
 import os
 import sys
 import time as t
+from optparse import OptionParser
 
 import pandas as pd
 
@@ -26,50 +26,44 @@ def main(argv):
         'aruba': 10
     }
 
-    dataset_name = ''
-    id_replication = ''
-    nb_days = -1
-    support_min = None
-    nb_sim = 10
-    graph_plot = False
+    parser = OptionParser(usage='Usage of the Pattern Discovery algorihtm: %prog <options>')
+    parser.add_option('-n', '--dataset_name', help='Name of the Input event log', dest='dataset_name', action='store',
+                      type='string')
+    parser.add_option('-r', '--replication', help='Patterns replication ID', dest='replication', action='store',
+                      type=int, default=0)
+    # parser.add_option('-o', '--output_dir', help='Output directory', dest='output_dir', action='store', type='string')
+    parser.add_option('-w', '--window_size', help='Number of the days used', dest='window_size', action='store',
+                      type=int, default=-1)
+    parser.add_option('-s', '--support', help='Minimum number of occurrences of a pattern', dest='support_min',
+                      action='store', type=int, default=3)
+    parser.add_option('--sim', help='Number of replications', dest='nb_sim', action='store',
+                      type=int, default=5)
+    parser.add_option('--display', help='Display graphs', dest='display', action='store_true', default=False)
 
-    try:
-        opts, args = getopt.getopt(argv, "hn:r:",
-                                   ["name=", "replication_id=", "days=", "support_min=", "nbsim=", "graph_plot"])
-    except getopt.GetoptError:
-        print('Command Error :')
-        print('Simulation_Model.py -n <dataset_name> -r <replication_id> [--days <number_days>] '
-              '[--support_min <minimum support> [--nbsim <number of simulations>]')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print('How to use the command :')
-            print('Simulation_Model.py -n <dataset_name> -r <replication_id> [--days <number_days>] '
-                  '[--support_min <minimum support> [--nbsim <number of simulations>]')
-            sys.exit()
-        elif opt in ("-n", "--name"):
-            dataset_name = arg
-        elif opt in ("-r", "--replication"):
-            id_replication = int(arg)
-        elif opt in ("--days"):
-            nb_days = int(arg)
-        elif opt in ("--support_min"):
-            support_min = int(arg)
-        elif opt in ("--nbsim"):
-            nb_sim = int(arg)
-        elif opt in ("--graph_plot"):
-            graph_plot = True
+    (options, args) = parser.parse_args()
+    # Mandatory Options
+    if options.dataset_name is None:
+        print("The name of the Input event log is missing\n")
+        parser.print_help()
+        exit(-1)
+    elif options.replication is None:
+        print("The name of the Discovery Pattern ID is missing")
+        parser.print_help()
+        exit(-1)
 
-    # TODO : Automatically compute a better support min
-    if not support_min:
-        support_min = support_dict[dataset_name]
+    dataset_name = options.dataset_name
+    id_replication = options.replication
+    nb_days = options.window_size
+    support_min = options.support_min
+    nb_sim = options.nb_sim
+    display = options.display
 
     print("Dataset Name : {}".format(dataset_name.upper()))
     print("ID Replication : {}".format(id_replication))
     print("Number of days selected : {}".format(nb_days))
     print("Support Minimum : {}".format(support_min))
     print("Number of simulations to launch : {}".format(nb_sim))
-    print("Display Patterns Graphs : {}".format(graph_plot))
+    print("Display Patterns Graphs : {}".format(display))
 
 
     # READ THE INPUT DATASET
@@ -88,18 +82,18 @@ def main(argv):
     # BUILD THE SIMULATION MODEL
     start_time = t.process_time()
 
-    sim_model = build_simulation_model(data=dataset, output_directory=dirname)
+    simulation_model = build_simulation_model(data=dataset, output_directory=dirname, debug=display)
 
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime()
 
     elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
 
-    print("\n")
+
     print("###############################")
     print("SIMULATION MODEL BUILT  -  Time for the build : {}".format(elapsed_time))
     print("##############################")
-    print("\n")
+    print()
 
     # START THE SIMULATION
     dirname += "/Simulation Replications/"
@@ -114,7 +108,7 @@ def main(argv):
     for sim_id in range(nb_sim):
         start_time = t.process_time()
 
-        simulated_data = simulation(simulation_model=sim_model, start_date=start_date,
+        simulated_data = simulation(simulation_model=simulation_model, start_date=start_date,
                                     end_date=end_date)
 
         # SAVE THE SIMULATION RESULTS
@@ -129,9 +123,9 @@ def main(argv):
         print("##############################")
 
 
-def build_simulation_model(data, output_directory='.'):
+def build_simulation_model(data, output_directory='.', debug=False):
     '''
-    Build the somulation model from scratch.
+    Build the simulation model from scratch.
     :param data: Input sequence
     :param output_directory: Location of the 'patterns.pickle' file
     :return:
@@ -142,11 +136,9 @@ def build_simulation_model(data, output_directory='.'):
     # Build All the graphs associated with the patterns
     simulation_model = []
     output = output_directory
-    print("\n")
     print("###############################")
     print("Start building Graphs from patterns")
     print("##############################")
-    print("\n")
 
     validity_start_date = data.date.min().to_pydatetime()
     validity_end_date = data.date.max().to_pydatetime()
@@ -168,9 +160,9 @@ def build_simulation_model(data, output_directory='.'):
                     raise
 
         patterns_graph_list = p2g.pattern2graph(data=data, labels=labels, time_description=time_description,
-                                                period=period,
-                                                start_date=validity_start_date, end_date=validity_end_date,
-                                                output_directory=output_folder, display_graph=False)
+                                                period=period, start_date=validity_start_date,
+                                                end_date=validity_end_date, output_directory=output_folder,
+                                                display_graph=debug)
         simulation_model += patterns_graph_list
 
         sys.stdout.write("\r%.2f %% of patterns converted to graphs!!" % (100 * (index + 1) / len(patterns)))

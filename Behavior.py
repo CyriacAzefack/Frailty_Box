@@ -258,6 +258,8 @@ class Behavior:
                 print('Duration : '.ljust(20) + str(change['duration'][cluster_id]) + ' days')
 
             if plot:
+                sns.set(font_scale=5)
+                plt.rcParams['figure.figsize'] = [20, 20]
                 activity_behavior = self.activities_behavior[label]
                 activity_behavior.display_behavior_evolution(change['clusters'], change['colors'])
                 activity_behavior.display_drift(change['clusters'], change['colors'], behavior_type)

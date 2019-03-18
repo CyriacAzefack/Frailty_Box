@@ -4,32 +4,30 @@ Created on Thu Mar 15 09:41:33 2018
 
 @author: cyriac.azefack
 """
-import datetime as dt
 import math
 import os
 import sys
 
-import numpy as np
-import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 from sklearn.mixture import GaussianMixture
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 
-import xED
+from Utils import *
 
 def main():
-    data = xED.pick_dataset('toy')
+    data = pick_dataset('KA')
     episodes = []
     # episodes.append(("go to bed END", "use toilet START", "use toilet START"))
     # episodes.append(["take shower start", "take shower end", "leave house start"])
     # episodes.append(["use toilet start", "use toilet end", "go to bed start"])
     # episodes.append(["prepare Breakfast start", "prepare Breakfast end"])
     # episodes.append(["leave house end"])
-    # episodes.append(['brush teeth start', 'go to bed start'])
+    episodes.append(['brush teeth start', 'go to bed start'])
 
     # episodes.append(["breakfast"])
-    episodes.append(("kitchen",))
+    # episodes.append(("prepare breakfast",))
 
     with open('output/output_candidate_study_step.csv', 'w') as file:
         file.truncate()

@@ -6,20 +6,18 @@ Created on Wed Mar 14 10:22:14 2018
 """
 
 import errno
-import getopt
 import inspect
 import pickle
 import sys
 import time as t
-
-import numpy as np
+from optparse import OptionParser
 
 from Utils import *
 from xED import Candidate_Study
 from xED import FP_growth
 
 
-def main(argv):
+def main():
     ######################
     # DATA PREPROCESSING #
     ######################
@@ -27,59 +25,42 @@ def main(argv):
     """
     The dataframe should have 1 index (date as datetime) and 1 feature (label)
     """
-    support_dict = {
-        'KA': 3,
-        'KB': 2,
-        'KC': 2,
-        'aruba': 10
-    }
 
-    replication_id = None
-    dataset_name = ''
-    output_dir = None
-    nb_days = -1
-    support_min = None
-    accuracy_min = 0.5
-    Tep = 30  # 30 minutes
+    parser = OptionParser(usage='Usage of the Pattern Discovery algorihtm: %prog <options>')
+    parser.add_option('-n', '--dataset_name', help='Name of the Input event log', dest='dataset_name', action='store',
+                      type='string')
+    parser.add_option('-r', '--replication', help='Replication Identifier', dest='replication', action='store',
+                      type=int, default=0)
+    parser.add_option('-o', '--output_dir', help='Output directory', dest='output_dir', action='store', type='string')
+    parser.add_option('-w', '--window_size', help='Number of the days used', dest='window_size', action='store',
+                      type=int, default=-1)
+    parser.add_option('-s', '--support', help='Minimum number of occurrences of a pattern', dest='support_min',
+                      action='store', type=int, default=3)
+    parser.add_option('-a', '--accuracy_min', help='Accuracy min of a pattern', dest='accuracy_min', action='store',
+                      type=float, default=0.5)
+    parser.add_option('-t', '--tep', help='Duration max of an occurrence (in minutes)', dest='tep', action='store',
+                      type=int, default=30)
 
-    try:
-        opts, args = getopt.getopt(argv, "hn:r:o:",
-                                   ["name=", "replication=", "output_dir=", "days=", "support_min=", "accuracy_min=",
-                                    "Tep="])
-    except getopt.GetoptError:
-        print('Pattern_Discovery.py -n <dataset name> -n <replication index> -o <output dir> [--days <number of days>]'
-              ' [--support_min <minimum support>] [--accuracy_min <minimum accuracy>] [--Tep <episode length parameter>]')
-        sys.exit(2)
+    (options, args) = parser.parse_args()
+    # Mandatory Options
+    if options.dataset_name is None:
+        print("The name of the Input event log is missing\n")
+        parser.print_help()
+        exit(-1)
 
-    for opt, arg in opts:
-        if opt == '-h':
-            print(
-                'Pattern_Discovery.py -n <dataset name> -o <output dir> [--days <number of days>] '
-                '[--support_min <minimum support>]')
-            sys.exit()
-        elif opt in ("-n", "--name"):
-            dataset_name = arg
-        elif opt in ("-r", "--replication"):
-            replication_id = int(arg)
-        elif opt in ("-o", "--output_dir"):
-            output_dir = arg
-        elif opt == '--days':
-            nb_days = int(arg)
-        elif opt == '--support_min':
-            support_min = int(arg)
-        elif opt == '--accuracy_min':
-            accuracy_min = float(arg)
-        elif opt == '--Tep':
-            Tep = int(arg)
+    dataset_name = options.dataset_name
+    replication_id = options.replication
 
-    # TODO : Find a way to compute the ideal support
-
-    if not support_min:
-        support_min = support_dict[dataset_name]
-
-    if not output_dir:
+    if options.output_dir is None:
         my_path = os.path.abspath(os.path.dirname(__file__))
         output_dir = os.path.join(my_path, "../output/{}/ID_{}".format(dataset_name, replication_id))
+    else:
+        output_dir = options.output_dir
+
+    nb_days = options.window_size
+    support_min = options.support_min
+    accuracy_min = options.accuracy_min
+    Tep = options.tep
 
     print("Dataset Name : {}".format(dataset_name.upper()))
     print("Replication ID : {}".format(replication_id))
@@ -136,6 +117,8 @@ def main(argv):
     # Write readable results in csv file
     patterns_string.to_csv(output_dir + "/patterns.csv", sep=";", index=False)
     data_left.to_csv(output_dir + "/data_left.csv", sep=";", index=False)
+
+    print("OUTPUT DIR : {}".format(output_dir))
 
 
 def pattern_discovery(data, Tep=30, support_min=2, accuracy_min=0.5,
@@ -375,4 +358,4 @@ def find_missing_events(data, episode, occurrences, description, period, toleran
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

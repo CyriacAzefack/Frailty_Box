@@ -134,21 +134,23 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
             period_df = events[events.period_id == period_id]
             i = 0
             for index, event_row in period_df.iterrows():
-                new_label = event_row['label'] + '_' + str(i)
+                new_label = event_row['label'] + '_' + str(i)  # 'i' represents the depth in the graph
                 events.at[index, 'label'] = new_label
                 period_list.append(new_label)
                 i += 1
             graph_nodes_labels += period_list
-            events_occurrences_lists.append(period_list)
+            # events_occurrences_lists.append(period_list)
 
         # Set of graph_nodes for the graphs
         graph_nodes_labels = set(graph_nodes_labels)
 
-        for period_id in range(min(period_ids), max(period_ids) + 1):
+        for period_id in range(min(period_ids),
+                               max(period_ids) + 1):  # Take to account all the periods (even the one with no events)
             events_occurrences_lists.append(events.loc[events.period_id == period_id, 'label'].tolist())
 
-        graph_nodes, graph_labels, prob_matrix = build_probability_acyclic_graph(labels, graph_nodes_labels,
-                                                                                 events_occurrences_lists)
+        graph_nodes, graph_labels, prob_matrix = build_probability_acyclic_graph(labels=labels,
+                                                                                 graph_nodes_labels=graph_nodes_labels,
+                                                                                 occurrence_list=events_occurrences_lists)
 
         # Build the time matrix
         events['is_last_event'] = events['period_id'] != events['period_id'].shift(-1)
@@ -298,18 +300,20 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list)
     # Deal with the beginning of the graph
 
     first_node_list = []
-    non_occurrences = 0
+    missing_occurrences = 0
+
+    # Starting Node of the graph probabilities
     for list in occurrence_list:
         if list:
             first_node_list.append(list[0])
         else:
-            non_occurrences += 1
+            missing_occurrences += 1
 
     for node in set(first_node_list):
         label = Graph_Pattern.Graph.node2label(node)
         prob_matrix[0][graph_labels.index(label)] = first_node_list.count(node) / len(occurrence_list)
 
-    prob_matrix[0][l - 1] = non_occurrences / len(occurrence_list)
+    prob_matrix[0][l - 1] = missing_occurrences / len(occurrence_list)  # Probability of a missing occurrence
 
     for node in graph_nodes_labels:
         node_id = node[node.rindex('_') + 1:]  # sleeping_132, node_id = 132
