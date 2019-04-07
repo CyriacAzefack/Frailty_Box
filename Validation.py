@@ -2,22 +2,24 @@
 import glob
 import warnings
 
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
-import scipy.stats as stats
 import seaborn as sns
-from sklearn.metrics import mean_squared_error
+from Bio import pairwise2
+# Import format_alignment method
+from Bio.pairwise2 import format_alignment
 
+from Data_Drift.Features_Extraction import *
 from xED.Candidate_Study import *
-from xED.Pattern_Discovery import pick_dataset, pick_custom_dataset
+
+# Import pairwise2 module
 
 sns.set_style("darkgrid")
-# plt.xkcd()
+sns.set(font_scale=1.4)
+plt.xkcd()
 
 def main():
 
     period = dt.timedelta(days=1)
-    time_step = dt.timedelta(minutes=1)
+    time_step = dt.timedelta(minutes=5)
 
     #####################
     #  COMPARE MODELS   #
@@ -54,55 +56,125 @@ def main():
     labels = original_dataset.label.unique()
     labels.sort()
 
-    start_date = original_dataset.date.min().to_pydatetime() + dt.timedelta(days=1)
-    nb_days = 10
-    original_amb = plot_ambulatogram(original_dataset, labels, start_date, nb_days)
+    start_date = original_dataset.date.min().to_pydatetime()
+    end_date = original_dataset.date.max().to_pydatetime()
+
+    # Compute the number of periods
+    nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
+    training_days = nb_days
+
+    training_start_date = start_date
+    training_end_date = start_date + dt.timedelta(days=training_days)
+
+    testing_start_date = training_start_date
+    testing_duration = dt.timedelta(days=nb_days)
+    testing_end_date = testing_start_date + testing_duration
+
+    training_dataset = original_dataset[
+        (original_dataset.date > training_start_date) & (original_dataset.date < training_end_date)].copy()
+    testing_dataset = original_dataset[
+        (original_dataset.date > testing_start_date) & (original_dataset.date < testing_end_date)].copy()
+
+    # original_amb = plot_ambulatogram(original_dataset, labels, start_date, nb_days)
 
     print("\n")
-    print("###############################")
-    print("EVALUATION OF THE MODEL on the {} HOUSE Dataset".format(dataset_name))
-    print("##############################")
+    print("########################################################################")
+    print("# EVALUATION OF THE MODEL on the {} HOUSE Dataset #".format(dataset_name))
+    print("##########################################################################")
 
     activity = "sleeping"
 
-    simulation_id = 3
+    simulation_id = 1
     pattern_folder_id = 0
 
     dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
                                                                             pattern_folder_id)
+    labels = original_dataset.label.unique()
 
-    list_files = glob.glob(dirname + '*.csv')
+    labels.sort()
 
-    fig, ax = plt.subplots(1, 1)
-    ax.plot(original_amb.date, original_amb.label_id, linestyle="-", label='Real Data')
+    results_df = pd.DataFrame(columns=['hist_inters', 'density_area', 'rmse'])
 
-    for filename in list_files[:1]:
-        dataset = pick_custom_dataset(filename)
-        amb = plot_ambulatogram(dataset, labels, start_date, nb_days)
-        ax.plot(amb.date, amb.label_id, linestyle="-", label='Sim Data N°{}'.format(list_files.index(filename)))
+    for label in labels:
+        results_df.loc[label] = validation_periodic_time_distribution(label=label, real_dataset=testing_dataset,
+                                                                      replications_directory=dirname,
+                                                                      period=period, bin_width=5, display=True)
 
-    ax.set_yticks(np.arange(1, 1 + len(labels)))
-    ax.set_yticklabels(labels, minor=False, rotation=45)
-    plt.legend()
-    plt.show()
+    results_df.to_csv(dirname + '../Aruba_label_validation_5mn_bin.csv', sep=";", index=True)
 
-    # dirname = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/aruba/Macro Activities Model - Normal - Simulation results 15mn/"
+    print("###################################")
+    print("#  SEQUENCE ALIGNMENT VALIDATION  #")
+    print("###################################")
 
-    # Occurrence time validation
-    # r = validation_periodic_time_distribution(activity, original_dataset, dirname, period, time_step, display=True)
+    # Compute the label similarity matrix with daily density
+    training_dataset['relative_date'] = training_dataset.date.apply(
+        lambda x: modulo_datetime(x.to_pydatetime(), dt.timedelta(days=1)))
 
-    # all_activities_validation(original_dataset, dirname, period, time_step, display=True)
+    labels = training_dataset.label.unique()
 
-    pkl_filename = "./output/{}/ID_{}/patterns.pickle".format(dataset_name, pattern_folder_id)
-    patterns = pd.read_pickle(pkl_filename)
+    label_similarity_matrix = np.zeros((len(labels), len(labels)))
 
-    patterns_validation(original_dataset=original_dataset, original_patterns=patterns, replications_directory=dirname,
-                        period=period, Tep=30)
+    for i in range(len(labels)):
+        timestampA = training_dataset[training_dataset.label == labels[i]].relative_date.values
+        for j in range(len(labels)):
+            timestampB = training_dataset[training_dataset.label == labels[j]].relative_date.values
+            label_similarity_matrix[i][j] = density_intersection_area(timestampA, timestampB)
+
+    # Correspondance between activities and letter of the alphabet
+    alphabet = {}
+
+    for i in range(len(labels)):
+        alphabet[labels[i]] = chr(ord('A') + i)
+        print('\t{} : {}'.format(chr(ord('A') + i), labels[i]))
+
+    letter_similarity = {}
+
+    for i in range(len(labels)):
+        for j in range(len(labels)):
+            letter1 = alphabet[labels[i]]
+            letter2 = alphabet[labels[j]]
+
+            letter_similarity[(letter1, letter2)] = label_similarity_matrix[i][j]
+
+    # sequence_alignement_validation(original_data=testing_dataset, directory=dirname, period=period, alphabet=alphabet,
+    #                                letter_similarity=letter_similarity, display=True)
 
 
     # Duration Validation
-    confidence_error = 0.9
-    # activity_duration_validation(activity, original_dataset, dirname, confidence_error)
+    # confidence_error = 0.9
+    labels_count_df = pd.DataFrame(columns=['duration'])
+
+    for label in labels:
+        labels_count_df.loc[label] = len(original_dataset[original_dataset.label == label])
+
+    labels_count_df.sort_values(by=['duration'], ascending=False, inplace=True)
+
+    explode = (0, 0, 0, 0, 0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5)
+
+    fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
+
+    cmap = plt.get_cmap('tab20c')
+    colors = cmap(np.linspace(0., 1., len(labels_count_df)))
+    labels_count_df.duration.plot(kind='pie', fontsize=18, explode=explode, colors=colors, startangle=90)
+
+    # wedges, texts = ax.pie(labels_count_df.duration, wedgeprops=dict(width=0.5), startangle=0, colors=colors)
+    # bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
+    # kw = dict(xycoords='data', textcoords='data', arrowprops=dict(arrowstyle="-"),
+    #           bbox=bbox_props, zorder=0, va="center")
+    # for i, p in enumerate(wedges):
+    #     ang = (p.theta2 - p.theta1) / 2. + p.theta1
+    #     y = np.sin(np.deg2rad(ang))
+    #     x = np.cos(np.deg2rad(ang))
+    #     horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
+    #     connectionstyle = "angle,angleA=0,angleB={}".format(ang)
+    #     kw["arrowprops"].update({"connectionstyle": connectionstyle})
+    #     ax.annotate(labels_count_df.index[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
+    #                 horizontalalignment=horizontalalignment, **kw)
+
+    # plt.legend(labels=labels_count_df.index, loc="best")
+    plt.axis('equal')
+    plt.tight_layout()
+    plt.ylabel('')
 
     plt.show()
 
@@ -119,9 +191,9 @@ def all_activities_validation(original_dataset, dirname, period, time_step, disp
 
     labels.sort()
     for label in labels:
-        label_validation_df, label_rmse = validation_periodic_time_distribution(label, original_dataset, dirname,
-                                                                                period, time_step,
-                                                                                display=False)
+        intersect_area, den_area, rmse = validation_periodic_time_distribution(label, original_dataset, dirname,
+                                                                               period, time_step,
+                                                                               display=True)
         daily_in, cum_in = activity_duration_validation(label, original_dataset, dirname, display=False)
 
         errors = label_validation_df[['prob_error']]
@@ -187,7 +259,7 @@ def compute_activity_time(data, label, start_date=None, end_date=None, time_step
     return result[['duration']]
 
 
-def periodic_time_distribution(data, label, period, time_step, display=False):
+def periodic_time_distribution(data, label, period, display=False):
     """
     Return the probability of the label occurring for each time step id
     :param data:
@@ -195,54 +267,39 @@ def periodic_time_distribution(data, label, period, time_step, display=False):
     :param period:
     :param time_step:
     :param display:
-    :return:
+    :return: time_step_df, array of relative ts
     """
 
     occurrences = data[data.label == label].copy()
-    index = np.arange(int(period.total_seconds() / time_step.total_seconds()))
-    index_df = pd.DataFrame(index, columns=['time_step_id'])
+
+    if len(occurrences) == 0:
+        return np.asarray([])
 
     if occurrences.empty:
         print('The label "{}" does not exist in the dataset'.format(label))
         return None
     occurrences['relative_date'] = occurrences.date.apply(lambda x: modulo_datetime(x.to_pydatetime(), period))
-    occurrences['time_step_id'] = occurrences['relative_date'] / time_step.total_seconds()
-    occurrences['time_step_id'] = occurrences['time_step_id'].apply(math.floor)
 
-    time_dist = occurrences.groupby(['time_step_id']).size().reset_index(name='prob')
-    time_dist['prob'] = time_dist['prob'] / len(occurrences)
-
-    time_dist.sort_values(['time_step_id'], ascending=True, inplace=True)
-
-    # time_dist = pd.concat([time_dist, index_df], axis=1)
-    time_dist = index_df.join(time_dist.set_index('time_step_id'))
-
-    time_dist.fillna(0, inplace=True)
+    ts_array = occurrences.relative_date.values
 
     if display:
-        now = dt.date.today()
-        begin_day = dt.datetime.fromordinal(now.toordinal())
-        time_dist['date'] = time_dist['time_step_id'].apply(lambda x: begin_day + x * time_step)
-
-        fig, ax = plt.subplots()
-        sns.lineplot(x='date', y='prob', data=time_dist)
-        plt.title('Occurrence probability of  : \'{}\''.format(label), fontsize=14)
+        sns.kdeplot(ts_array, shade_lowest=False, shade=True, label=label)
+        plt.title('Time distribution : {}'.format(label))
         plt.xlabel('Hour of the day')
-        plt.ylabel('Probability')
-        ax.set_xlim(time_dist.date.min(), time_dist.date.max())
-        # plt.gcf().autofmt_xdate()
-        myFmt = mdates.DateFormatter('%H:%M')
-        ax.xaxis.set_major_formatter(myFmt)
+        plt.ylabel('Density')
+        plt.xlim(0, 24)
+        plt.legend(loc="upper left")
         plt.show()
-    return time_dist[['time_step_id', 'prob']]
+
+    return ts_array
 
 
-def validation_periodic_time_distribution(label, original_dataset, replications_directory, period, time_step,
+def validation_periodic_time_distribution(label, real_dataset, replications_directory, period, bin_width=5,
                                           display=True):
     """
     Validation of the occurrence time of a specific label
     :param label:
-    :param original_dataset:
+    :param real_dataset:
     :param replications_directory:
     :param period:
     :param time_step:
@@ -252,79 +309,81 @@ def validation_periodic_time_distribution(label, original_dataset, replications_
     """
 
     # Original Dataset
-    original_time_dist = periodic_time_distribution(original_dataset, label, period, time_step, display=False)
+    original_ts_array = periodic_time_distribution(real_dataset, label, period, display=False)
 
     # Simulation replications
     list_files = glob.glob(replications_directory + '*.csv')
     if len(list_files) == 0:
         raise FileNotFoundError("'{}' does not contains csv files".format(replications_directory))
 
-    replications_time_dist = {}
-
+    bin_width *= 60  # Convert in seconsd
+    repl_intersections_area = []
+    repl_den_area = []
+    repl_rmse = []
     for filename in list_files:
         dataset = pick_custom_dataset(filename)
-        repl_time_dist = periodic_time_distribution(data=dataset, label=label, period=period, time_step=time_step,
-                                                    display=False)
-        if repl_time_dist is None:
-            continue
-        replications_time_dist[filename] = repl_time_dist
-        duo_df = original_time_dist.join(repl_time_dist.set_index('time_step_id'), on='time_step_id', rsuffix='_simul')
-        duo_df.fillna(0, inplace=True)
+        repl_ts_array = periodic_time_distribution(data=dataset, label=label, period=period,
+                                                   display=False)
+        intersect_area = histogram_intersection(original_ts_array, repl_ts_array, bin_width)
+        den_area = density_intersection_area(original_ts_array, repl_ts_array)
+        rmse = mse(original_ts_array, repl_ts_array, bin_width)
 
+        repl_intersections_area.append(intersect_area)
+        repl_rmse.append(rmse)
+        repl_den_area.append(den_area)
 
-    big_df = pd.DataFrame()
-    for filename, repl_time_dist in replications_time_dist.items():
-        i = list_files.index(filename)
-        repl_time_dist.columns = ["time_step_id", "simulation_{}".format(i)]
-        if len(big_df) == 0:
-            big_df = pd.concat([big_df, repl_time_dist], axis=1)
-        else:
-            big_df = big_df.join(repl_time_dist.set_index('time_step_id'), on='time_step_id')
+        # bins = np.arange(0, 24.0, 5/60)
+        #
+        # sns.distplot(repl_ts_array/3600, bins=bins, norm_hist=True, kde=False, label='Simulation')
+        # sns.distplot(original_ts_array/3600, bins=bins, norm_hist=True, kde=False, label='Real data')
+        # plt.xlabel("Hour of the day")
+        # plt.legend()
+        # plt.show()
 
-    big_df.fillna(0, inplace=True)
-    big_df.set_index(['time_step_id'], inplace=True)
-    # big_df.drop(['time_step_id'], axis=1, inplace=True)
+    min_bin = 0
+    max_bin = 24 * 3600  # 24hours
 
-    # Compute the Stochastic Mean & Error
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        big_df['prob_repl_mean'] = big_df.apply(np.mean, axis=1)
+    bins = np.arange(0, max_bin, bin_width)
 
+    # bins = np.linspace(min_val, max_val, int(max_val / bin_minutes))
 
-    big_df = big_df.join(original_time_dist.set_index('time_step_id'), on='time_step_id')
-    big_df.fillna(0, inplace=True)
+    hist_A, _ = np.histogram(original_ts_array, bins=bins, range=(min_bin, max_bin), density=True)
 
-    big_df['prob_error'] = abs(big_df['prob'] - big_df['prob_repl_mean'])
+    hist_B, _ = np.histogram(repl_ts_array, bins=bins, range=(min_bin, max_bin), density=True)
+    #
+    # plt.plot(hist_A, label='Original data', linestyle="-", color='blue')
+    # plt.plot(hist_B, label='Simulated data', linestyle="--", color='red')
+    # plt.xticks(np.arange(0,24,1))
+    # plt.show()
 
-    rmse = mean_squared_error(big_df.prob, big_df.prob_repl_mean)
+    intersect_area = np.mean(repl_intersections_area)
+
+    rmse = np.mean(repl_rmse)
+
+    den_area = np.mean(repl_den_area)
 
     if display:
-        now = dt.date.today()
-        begin_day = dt.datetime.fromordinal(now.toordinal())
-        big_df['date'] = pd.Series({x: begin_day + x * time_step for x in big_df.index})
+        fig, (ax1, ax2) = plt.subplots(2, 1)
+        ax1.set_title('Time distribution : {}'.format(label))
+        # ax1.set_title('Time distribution : {}\nIntersect score={:.2f}'.format(label, intersect_area))
+        sns.distplot(original_ts_array / 3600, bins=bins / 3600, ax=ax1, label='Real Data', kde=False)
+        sns.distplot(repl_ts_array / 3600, bins=bins / 3600, ax=ax1, label='Simulated Data', kde=False)
 
-        big_df.set_index(['date'], inplace=True)
+        sns.kdeplot(original_ts_array / 3600, shade_lowest=False, shade=True, label='Real Data', ax=ax2)
+        sns.kdeplot(repl_ts_array / 3600, shade_lowest=False, shade=True, label='Simulated Data', ax=ax2)
 
-        fig, ax = plt.subplots()
+        ax1.set_ylabel('Number of occurrences')
 
-        # TIME STEP PLOT
-        ax.plot(big_df.index, big_df.prob, label="Real Data", linestyle="-", color='blue')
-
-        ax.plot(big_df.index, big_df.prob_repl_mean, label="Simulated Data", linestyle="--", color='red')
-
-        # ax.fill_between(big_df.index, big_df.prob_lower, big_df.prob_upper,
-        #                 label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
-
-        ax.set_ylabel('Probability')
-        ax.set_xlabel('Hour of the day')
-        ax.legend()
-        plt.title("Daily time distribution of the label '{}'".format(label))
-        myFmt = mdates.DateFormatter('%H:%M')
-        ax.xaxis.set_major_formatter(myFmt)
-        #ax.set_xlim(big_df.index.min(), right=big_df.index.max())
+        plt.xlabel('Hour of the day')
+        plt.ylabel('Density')
+        # ax1.set_xlim(0, 24)
+        ax2.set_xlim(0, 24)
+        ax1.set_xlim(0, 24)
+        ax1.legend()
+        plt.legend(loc="upper left")
         plt.show()
 
-    return big_df[['prob', 'prob_repl_mean', 'prob_error']], rmse
+    return intersect_area, den_area, rmse
 
 
 def activity_duration_validation(label, original_dataset, replications_directory, confidence=0.9,
@@ -429,7 +488,7 @@ def activity_duration_validation(label, original_dataset, replications_directory
         plt.gcf().autofmt_xdate()
         plt.show()
 
-    return daily_in, cum_in
+    return repl_durations
 
 
 def compare_models(models, period=dt.timedelta(days=1),
@@ -632,6 +691,142 @@ def compute_stochastic_error(array, confidence=0.9):
     error = t_sdt * (std / math.sqrt(n))
 
     return mean, error
+
+
+def sequence_alignement_validation(original_data, directory, period, alphabet, letter_similarity, display=True):
+    """
+    Compute the alignement between real life dataset and simulation replication event logs
+    :param original_data:
+    :param replications_directory:
+    :param display:
+    :return:
+    """
+
+    start_date = original_data.date.min().to_pydatetime()
+    start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, period=dt.timedelta(days=1)))
+    end_date = original_data.end_date.max().to_pydatetime()
+
+    repl_scores = pd.DataFrame(index=pd.date_range(start=start_date, end=end_date, freq='D'))
+
+    list_files = glob.glob(directory + '*.csv')
+    for filename in list_files:
+        i = list_files.index(filename)
+
+        dataset = pick_custom_dataset(filename)
+        alignement_df = sequence_alignment(original_data=original_data, sim_data=dataset, alphabet=alphabet,
+                                           letter_similarity=letter_similarity, period=period, start_date=start_date,
+                                           end_date=end_date)
+
+        alignement_df.columns = ["score_rep_{}".format(i)]
+        repl_scores = pd.concat([repl_scores, alignement_df], axis=1)
+
+        evolution_percentage = round(100 * (i + 1) / len(list_files), 2)
+        sys.stdout.write("\r{} %% of replications evaluated!!".format(evolution_percentage))
+        sys.stdout.flush()
+    sys.stdout.write("\n")
+
+    # plt.plot(alignement_df.day_date, alignement_df.score,
+    #               label="Replication N°{}".format(list_files.index(filename)), linestyle="-")
+    #
+    # plt.title("Daily Sequence Alignement")
+    # plt.xlabel("Days")
+    # plt.ylabel("Alignment score")
+    # plt.show()
+
+    repl_scores['min_score'] = repl_scores.apply(lambda x: min(x), axis=1)
+    repl_scores['max_score'] = repl_scores.apply(lambda x: max(x), axis=1)
+    repl_scores['mean_score'] = repl_scores.apply(lambda x: np.mean(x), axis=1)
+
+    repl_scores.drop(repl_scores.tail(1).index, inplace=True)  # drop last row
+
+    if display:
+        fig, ax = plt.subplots()
+        ax.plot(np.arange(len(repl_scores)), repl_scores.mean_score, label="Alignment Mean", linestyle="-")
+
+        ax.fill_between(np.arange(len(repl_scores)), repl_scores.min_score, repl_scores.max_score,
+                        label='Alignment Min - Max', color='k', alpha=.2, hatch='//')
+
+        alignment_mean = np.mean(repl_scores.mean_score)
+        ax.axhline(alignment_mean, color='red', lw=2, linestyle='dashed')
+
+        plt.draw()
+
+        labels = [round(i, 2) for i in list(np.arange(0, 1, step=0.1)) + [1]]
+        locs = list(np.arange(0, 1, step=0.1)) + [1]
+        labels += [round(alignment_mean, 2)]
+        locs += [alignment_mean]
+        ax.set_yticklabels(labels)
+        ax.set_yticks(locs)
+
+        plt.xlabel("Days")
+        plt.ylabel("Normalized alignment score")
+        plt.ylim(0, 1)
+        plt.legend(loc=1)
+        plt.xticks(np.arange(0, len(repl_scores) + 10, step=10))
+
+        plt.show()
+
+    return None
+
+
+def sequence_alignment(original_data, sim_data, alphabet, letter_similarity, period, start_date, end_date):
+    """
+    Compute the alignement score in each period of time
+    :param original_data:
+    :param simu_data:
+    :param label_similarity_matrix:
+    :param period:
+    :return: a pandas Series with day_date as index and align score as column
+    """
+
+    # # SMITH-WATERMAN ALGORITHM
+    # scoring_matrix = np.zeros((len(labels)+1, len(labels)+1))
+
+    current_date = start_date
+
+    align_df = pd.DataFrame(columns=['day_date', 'score'])
+
+    while current_date < end_date:
+
+        current_end_date = current_date + period
+
+        seq1 = original_data[
+            (original_data.date >= current_date) & (original_data.date < current_end_date)].label.values
+        seq2 = sim_data[(sim_data.date >= current_date) & (sim_data.date < current_end_date)].label.values
+
+        if len(seq2) == 0 or len(seq1) == 0:
+            score = 0
+            align_df.loc[len(align_df)] = [current_date, score]
+            current_date = current_end_date
+            continue
+
+        X = "".join([alphabet[label] for label in seq1])
+        Y = "".join([alphabet[label] for label in seq2])
+
+        # alignments = pairwise2.align.globalds(X, Y, letter_similarity, -0.1, -0.1, one_alignment_only=True)
+
+        alignments = pairwise2.align.globalms(X, Y, 8, -2, -2, -2, one_alignment_only=True)
+
+        score = alignments[0][2]
+        # perfect_score = pairwise2.align.globalds(X, X, letter_similarity, -0.1, -0.1, score_only=True)
+        perfect_score = pairwise2.align.globalms(X, X, 8, -2, -2, -2, score_only=True)
+        null_score = -2 * max(len(Y), len(X))
+
+        ratio_score = (score - null_score) / (perfect_score - null_score)
+
+        # ratio_score = score / perfect_score
+
+        print('Ratio score={:.2f}'.format(ratio_score))
+        print(format_alignment(*alignments[0]))
+
+        align_df.loc[len(align_df)] = [current_date, ratio_score]
+
+        current_date = current_end_date
+
+    align_df.set_index(['day_date'], inplace=True)
+    # align_df.drop(['day_date'], axis=1, inplace=True)
+    return align_df
+
 
 if __name__ == "__main__":
     main()

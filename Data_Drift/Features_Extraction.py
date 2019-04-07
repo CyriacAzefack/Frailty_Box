@@ -119,7 +119,7 @@ def activities_features(window_data, activity_labels):
     return features
 
 
-def mse(arrayA, arrayB, bins=10):
+def mse(array_A, array_B, bin_width=5 * 60, max_bin=24 * 3600):
     """
     Compute the MSE (Mean Squared Error) of the normalized histograms on the 2 arrays
     :param arrayA:
@@ -128,26 +128,31 @@ def mse(arrayA, arrayB, bins=10):
     :return:
     """
 
-    if (len(arrayA) == 0) and (len(arrayB) == 0):
-        return 0
+    if (len(array_A) == 0) and (len(array_B) == 0):
+        return np.nan
 
-    if len(arrayA) == 0:
-        arrayA = np.zeros_like(arrayB)
+    if len(array_A) == 0:
+        array_A = np.zeros_like(array_B)
 
-    if len(arrayB) == 0:
-        arrayB = np.zeros_like(arrayA)
+    if len(array_B) == 0:
+        array_B = np.zeros_like(array_A)
 
-    histA, _ = np.histogram(arrayA, bins=bins)
-    histA = histA / np.sum(histA)
+    min_bin = 0
+    # max_bin = 24 * 3600  # 24hours
 
-    histB, _ = np.histogram(arrayB, bins)
-    histB = histB / np.sum(histB)
+    bins = int(max_bin / bin_width)
+
+    # bins = np.linspace(min_val, max_val, int(max_val / bin_minutes))
+
+    hist_A, _ = np.histogram(array_A, bins=bins, range=(min_bin, max_bin), density=False)
+
+    hist_B, _ = np.histogram(array_B, bins=bins, range=(min_bin, max_bin), density=False)
 
     # bin_min = min(list(arrayA) + list(arrayB))
     # bin_max = max(list(arrayA) + list(arrayB))
     # X_plot = np.linspace(bin_min, bin_max, bins)
 
-    mse = mean_squared_error(histA, histB)
+    mse = mean_squared_error(hist_A, hist_B)
 
     return mse
 
@@ -199,7 +204,16 @@ def histogram_intersection(array_A, array_B, bin_width=5 * 60, max_bin=24 * 3600
     :param bin_width: width of a bin in seconds
     :param max_bin: maximum value of the bin
     :return:
+
     """
+    if (len(array_A) == 0) and (len(array_B) == 0):
+        return 0
+
+    if len(array_A) == 0:
+        array_A = np.zeros_like(array_B)
+
+    if len(array_B) == 0:
+        array_B = np.zeros_like(array_A)
 
     # bin_width = bin_minutes * 60
     min_bin = 0

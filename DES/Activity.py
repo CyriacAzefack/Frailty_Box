@@ -1,6 +1,5 @@
 import seaborn as sns
 from fbprophet import Prophet
-from pylab import plt
 
 from Graph_Model import Acyclic_Graph
 from Graph_Model.Pattern2Graph import *
@@ -9,6 +8,8 @@ from xED.Pattern_Discovery import pick_dataset
 
 sns.set_style('darkgrid')
 
+
+# np.random.seed(1996)
 
 def main():
     dataset = pick_dataset('aruba')
@@ -23,7 +24,7 @@ def main():
 
     print('{} occurrences of the episode {}'.format(len(occurrences), label))
     activity = Activity(label=label, occurrences=occurrences, period=period, time_step=time_step,
-                        display_histogram=True)
+                        display=True)
 
     # start_date = occurrences.date.min().to_pydatetime()
     # future_date = start_date + dt.timedelta(days=30)
@@ -39,7 +40,7 @@ class Activity:
     SLIDING_WINDOW = dt.timedelta(days=30)
 
     def __init__(self, label, occurrences, period, time_step, start_date, end_date, duration_gen='Gaussian',
-                 display_histogram=False):
+                 display=False):
         '''
         Creation of an activity
         :param label: label of the activity
@@ -59,7 +60,7 @@ class Activity:
         self.duration_gen = duration_gen
         self.index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
         self.occurrences = self.preprocessing(occurrences)
-        self.histogram = self.build_histogram(occurrences, display=display_histogram)
+        self.histogram = self.build_histogram(occurrences, display=display)
         self.activity_duration_model = self.build_activity_duration_model(occurrences)
         # self.time_evo_per_index = self.compute_time_evolution()
 
@@ -101,13 +102,16 @@ class Activity:
         # Create an index to have every time steps in the period
 
         hist = hist.reindex(self.index)
+
         hist.fillna(0, inplace=True)
 
+        # hist = hist/len(hist)  # normalize
+
         if display:
-            hist.plot(kind="bar")
+            plt.bar(hist.index, hist.values)
             plt.title(
                 '--'.join(self.label) + '\nTime step : {} min'.format(round(self.time_step.total_seconds() / 60, 1)))
-            plt.ylabel('Count')
+            plt.ylabel('Probability')
             plt.show()
 
         return hist
@@ -203,6 +207,8 @@ class Activity:
 
         return forecast
 
+    def get_label(self):
+        return self.label
     def get_stats_from_date(self, date, time_step_id, hist=True):
         '''
         Estimate the number of time the current activity started at time_step_id in the last Sliding_Window
@@ -252,11 +258,13 @@ class Activity:
         '''
         stats = {
             'hist_count': None,
+            'hist_prob': None,
             'mean_duration': None,
             'std_duration': None
         }
 
         stats['hist_count'] = self.histogram.loc[time_step_id]
+        stats['hist_prob'] = self.histogram.loc[time_step_id] / len(self.histogram)
         stats['mean_duration'] = self.activity_duration_model.loc[time_step_id].mean_duration
         stats['std_duration'] = self.activity_duration_model.loc[time_step_id].std_duration
 
@@ -383,7 +391,8 @@ class Activity:
 
 class MacroActivity(Activity):
 
-    def __init__(self, episode, dataset, occurrences, period, time_step, start_date, end_date, duration_gen='Gaussian',
+    def __init__(self, episode, dataset, occurrences, period, time_step, start_date, end_date,
+                 duration_model='Gaussian',
                  display=False, Tep=30):
         '''
         Create a Macro Activity
@@ -398,7 +407,7 @@ class MacroActivity(Activity):
         :param Tep:
         '''
         Activity.__init__(self, episode, occurrences, period, time_step, start_date, end_date,
-                          duration_gen, display_histogram=display)
+                          duration_model, display=display)
         self.Tep = dt.timedelta(minutes=Tep)
         # Find the events corresponding to the occurrences
         events = pd.DataFrame(columns=["date", "label", 'occ_id'])
@@ -418,7 +427,7 @@ class MacroActivity(Activity):
         for label in episode:
             label_events = events.loc[events.label == label].copy()
             label_activity = Activity(label=(label,), occurrences=label_events, period=period,
-                                      duration_gen=duration_gen, time_step=time_step, start_date=start_date,
+                                      duration_gen=duration_model, time_step=time_step, start_date=start_date,
                                       end_date=end_date)
             self.activities[label] = label_activity
 
@@ -436,22 +445,24 @@ class MacroActivity(Activity):
         # TODO : Fix this graph MESSSS
         graph_sim = self.graph.simulate(date, date + self.Tep)
 
-        graph_sim['time_before_next_event'] = graph_sim['date'].shift(-1) - graph_sim['date']
-        graph_sim['time_before_next_event'] = graph_sim['time_before_next_event'].apply(lambda x: x.total_seconds())
-        graph_sim.fillna(0, inplace=True)
+        # graph_sim['time_before_next_event'] = graph_sim['date'].shift(-1) - graph_sim['date']
+        # graph_sim['time_before_next_event'] = graph_sim['time_before_next_event'].apply(lambda x: x.total_seconds())
+        # graph_sim.fillna(0, inplace=True)
 
-        simulation_results = pd.DataFrame(columns=['label', 'date', 'end_date'])
+        # simulation_results = pd.DataFrame(columns=['label', 'date', 'end_date'])
+        #
+        # for _, row in graph_sim.iterrows():
+        #     activity = self.activities[row.label]
+        #     _, activity_duration = activity.simulate(date, time_step_id)
+        #     end_date = date + dt.timedelta(seconds=activity_duration)
+        #     simulation_results.loc[len(simulation_results)] = [row.label, date, end_date]
+        #     date = date + dt.timedelta(seconds=row.time_before_next_event)
+        #
+        # duration = (simulation_results.end_date.max().to_pydatetime() - date).total_seconds()
 
-        for _, row in graph_sim.iterrows():
-            activity = self.activities[row.label]
-            _, activity_duration = activity.simulate(date, time_step_id)
-            end_date = date + dt.timedelta(seconds=activity_duration)
-            simulation_results.loc[len(simulation_results)] = [row.label, date, end_date]
-            date = date + dt.timedelta(seconds=row.time_before_next_event)
+        duration = (graph_sim.end_date.max().to_pydatetime() - date).total_seconds()
 
-        duration = (simulation_results.end_date.max().to_pydatetime() - date).total_seconds()
-
-        return simulation_results, duration
+        return graph_sim, duration
 
     def build_activities_graph(self, episode, events, period, display=False):
         '''

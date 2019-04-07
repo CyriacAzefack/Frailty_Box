@@ -2,11 +2,12 @@ from datetime import datetime
 
 import imageio
 import matplotlib.dates as dat
+import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from numpy import random
 
-from Data_Drift import Drift_Detector
+# from Data_Drift import Drift_Detector
 from xED.Pattern_Discovery import *
 
 sns.set_style('darkgrid')
@@ -14,24 +15,9 @@ sns.set_style('darkgrid')
 
 
 def main():
-    dataset_name = 'toy_periodic_change'
-
-    dataset = pick_dataset(dataset_name)
-
-    label = "Eating"
-
-    time_window_duration = dt.timedelta(days=30)  # 2 week
-
-    # plot_activity_occurrence_time(dataset, label=label)
-    # plot_activiy_duration(dataset, label=label)
-
-    # distribution_evolution(dataset, time_window_duration=time_window_duration, label=label)
-
-
-
-    # sim_id = 0
-    # replication_id = 1
-
+    dataset_name = 'aruba'
+    replication_id = 1
+    #
     # activities_generation_method = 'Macro'
     # duration_generation_method = 'Normal'
     # time_step_min = 5
@@ -41,15 +27,16 @@ def main():
     #                                                                                                      duration_generation_method,
     #                                                                                                      time_step_min,
     #                                                                                                      replication_id)
-    # # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simple Model & TS Model Simulation results 5mn/dataset_simulation_rep_1.csv".format(
-    # #     dataset_name)
-    # dataset = pick_custom_dataset(path)
-    #
-    # start_date = dataset.date.min().to_pydatetime()
-    # end_date = start_date + dt.timedelta(days=20)
-    #
-    # visualize(dataset, start_date=start_date, end_date=end_date)
-    # # visualize(dataset, start_date=start_date, end_date=end_date, start_suffix='_begin', end_suffix='_end')
+    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simulation/Simulation_X1_Pattern_ID_0/dataset_simulation_rep_{}.csv".format(
+        dataset_name, replication_id)
+    dataset = pick_custom_dataset(path)
+    # dataset = pick_dataset(dataset_name)
+
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = start_date + dt.timedelta(days=20)
+
+    visualize(dataset, start_date=start_date, end_date=end_date)
+    # visualize(dataset, start_date=start_date, end_date=end_date, start_suffix='_begin', end_suffix='_end')
 
 
 def visualize(data, start_date, end_date):

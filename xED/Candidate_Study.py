@@ -4,10 +4,10 @@ Created on Thu Mar 15 09:41:33 2018
 
 @author: cyriac.azefack
 """
-import math
 import os
 import sys
 
+import math
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 from sklearn.mixture import GaussianMixture
@@ -136,8 +136,8 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
             GMM_descr = {}  # mean_time (in seconds) as key and std_duration (in seconds) as value
 
             for i in range(len(GMM.means_)):
-                mu = GMM.means_[i][0]
-                sigma = math.ceil(np.sqrt(GMM.covariances_[i]))
+                mu = int(GMM.means_[i][0])
+                sigma = int(math.ceil(np.sqrt(GMM.covariances_[i])))
 
                 if sigma > std_max * period_T.total_seconds():
                     continue

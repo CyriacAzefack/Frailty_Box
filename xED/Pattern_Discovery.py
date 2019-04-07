@@ -210,7 +210,7 @@ def pattern_discovery(data, Tep=30, support_min=2, accuracy_min=0.5,
 
             if periodicity["compression_power"] <= 1:
                 print("### COMPRESSION FINISHED : Insufficient compression power reached...")
-                break;
+                break
 
             expected_occurrences = periodicity["expected_occurrences"]
 
