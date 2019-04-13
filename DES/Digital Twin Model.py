@@ -14,8 +14,8 @@ import pandas as pd
 import scipy.signal as signal
 
 from DES import Activity
-from xED.Candidate_Study import find_occurrences, modulo_datetime
-from xED.Pattern_Discovery import pick_dataset
+from Pattern_Mining.Candidate_Study import find_occurrences, modulo_datetime
+from Pattern_Mining.Pattern_Discovery import pick_dataset
 
 
 # random.seed(1996)

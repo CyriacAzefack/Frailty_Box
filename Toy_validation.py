@@ -1,8 +1,7 @@
 import glob
-import os
 import sys
 
-from Behavior import *
+from Behavior_Drift import *
 from Utils import *
 
 if __name__ == '__main__':

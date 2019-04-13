@@ -3,8 +3,8 @@ from fbprophet import Prophet
 
 from Graph_Model import Acyclic_Graph
 from Graph_Model.Pattern2Graph import *
-from xED.Candidate_Study import modulo_datetime, find_occurrences
-from xED.Pattern_Discovery import pick_dataset
+from Pattern_Mining.Candidate_Study import modulo_datetime, find_occurrences
+from Pattern_Mining.Pattern_Discovery import pick_dataset
 
 sns.set_style('darkgrid')
 

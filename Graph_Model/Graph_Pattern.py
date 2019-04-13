@@ -19,7 +19,7 @@ sns.set_style("darkgrid")
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
-from xED.Candidate_Study import modulo_datetime
+from Pattern_Mining.Candidate_Study import modulo_datetime
 
 
 class Graph:

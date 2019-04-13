@@ -13,7 +13,6 @@ from optparse import OptionParser
 
 import pandas as pd
 
-import xED.Pattern_Discovery as pattern_discovery
 from Graph_Model import Pattern2Graph as p2g
 
 
@@ -67,7 +66,7 @@ def main(argv):
 
 
     # READ THE INPUT DATASET
-    dataset = pattern_discovery.pick_dataset(name=dataset_name, nb_days=nb_days)
+    dataset = Pattern_Discovery.pick_dataset(name=dataset_name, nb_days=nb_days)
 
     my_path = os.path.abspath(os.path.dirname(__file__))
     dirname = os.path.join(my_path, "./output/{}/ID_{}".format(dataset_name, id_replication))

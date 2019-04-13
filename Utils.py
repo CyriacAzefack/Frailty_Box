@@ -26,6 +26,13 @@ def pick_dataset(name, nb_days=-1):
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
         dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
 
+    elif name == 'toulouse':
+        path = os.path.join(my_path, "./input/Toulouse/toulouse_dataset.csv")
+        dataset = pd.read_csv(path, delimiter=';')
+        date_format = '%Y-%m-%d %H:%M:%S.%f'
+        dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+        dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
+
     elif name.startswith('hh'):
         path = os.path.join(my_path, "./input/HH/{}/dataset.csv".format(name))
         dataset = pd.read_csv(path, delimiter=',')

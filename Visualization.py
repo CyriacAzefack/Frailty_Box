@@ -8,7 +8,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from numpy import random
 
 # from Data_Drift import Drift_Detector
-from xED.Pattern_Discovery import *
+from Pattern_Mining.Pattern_Discovery import *
 
 sns.set_style('darkgrid')
 

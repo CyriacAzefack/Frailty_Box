@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 
-from xED.Candidate_Study import modulo_datetime
+from Pattern_Mining.Candidate_Study import modulo_datetime
 
 
 # from Graph_Model import Build_Graph
