@@ -271,10 +271,10 @@ def find_occurrences(data, episode, Tep=30):
             i = data.loc[(data.date >= occ_time) & (data.label == s), "date"].idxmin()
             indexes.append(i)
 
-        # data.loc[indexes, 'occurrence'] = False
+        data.loc[indexes, 'occurrence'] = False
 
         end_occ_time = data.loc[indexes, "end_date"].max().to_pydatetime()
-        data.drop(indexes, inplace=True)
+        # data.drop(indexes, inplace=True)
         occurrences.loc[len(occurrences)] = [occ_time, end_occ_time]
 
     occurrences.sort_values(by=['date'], ascending=True, inplace=True)

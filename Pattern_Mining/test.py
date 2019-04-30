@@ -1,8 +1,8 @@
-import sys
-
 import math
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.signal import argrelextrema
+from sklearn.mixture import GaussianMixture
 from statsmodels.nonparametric.kde import KDEUnivariate
 
 from Pattern_Mining import FP_growth, Candidate_Study
@@ -18,59 +18,60 @@ def main():
     """
 
     dataset_name = 'hh101'
-    dataset = pick_dataset(dataset_name, nb_days=60)
+    dataset = pick_dataset(dataset_name, nb_days=80)
     support_min = 10
     tep = 30
     period = dt.timedelta(days=1)
 
-    # macro_activities = extract_macro_activities(dataset=dataset, support_min=support_min, tep=tep, period=period)
+    macro_activities = extract_macro_activities(dataset=dataset, support_min=support_min, tep=tep, period=period,
+                                                display=True)
 
-    time_window_duration = dt.timedelta(days=30)
-
-    start_date = dataset.date.min().to_pydatetime()
-    end_date = dataset.date.max().to_pydatetime() - time_window_duration
-
-    nb_tw = math.ceil((end_date - start_date) / period)
-
-    window_start_date = start_date
-
-    new_episodes_evol = []
-
-    known_episodes = []
-
-    i = 0
-    while window_start_date < end_date:
-        i += 1
-        window_end_date = window_start_date + time_window_duration
-        tw_dataset = dataset.loc[(dataset.date >= window_start_date) & (dataset.date < window_end_date)].copy()
-
-        macro_activities = extract_macro_activities(dataset=tw_dataset, support_min=support_min, tep=tep, period=period)
-
-        episodes = list(macro_activities.keys())
-
-        episodes = [frozenset(e) for e in episodes]
-        old_episodes = list(set(episodes) & set(known_episodes))
-        new_episodes = set(episodes) - set(old_episodes)
-        nb_new_episodes = len(new_episodes)
-
-        for episode in new_episodes:
-            known_episodes.append(episode)
-
-        new_episodes_evol.append(nb_new_episodes)
-
-        window_start_date += period
-
-        evolution_percentage = round(100 * (i) / nb_tw, 2)
-        sys.stdout.write("\r{} %% of Time Windows treated!!".format(evolution_percentage))
-        sys.stdout.flush()
-
-    sys.stdout.write("\n")
-
-    plt.plot(np.arange(len(new_episodes_evol)), new_episodes_evol)
-    plt.title('Number of macro discovered')
-    plt.xlabel('Time Windows')
-    plt.ylabel('nb episodes')
-    plt.show()
+    # time_window_duration = dt.timedelta(days=30)
+    #
+    # start_date = dataset.date.min().to_pydatetime()
+    # end_date = dataset.date.max().to_pydatetime() - time_window_duration
+    #
+    # nb_tw = math.ceil((end_date - start_date) / period)
+    #
+    # window_start_date = start_date
+    #
+    # new_episodes_evol = []
+    #
+    # known_episodes = []
+    #
+    # i = 0
+    # while window_start_date < end_date:
+    #     i += 1
+    #     window_end_date = window_start_date + time_window_duration
+    #     tw_dataset = dataset.loc[(dataset.date >= window_start_date) & (dataset.date < window_end_date)].copy()
+    #
+    #     macro_activities = extract_macro_activities(dataset=tw_dataset, support_min=support_min, tep=tep, period=period)
+    #
+    #     episodes = list(macro_activities.keys())
+    #
+    #     episodes = [frozenset(e) for e in episodes]
+    #     old_episodes = list(set(episodes) & set(known_episodes))
+    #     new_episodes = set(episodes) - set(old_episodes)
+    #     nb_new_episodes = len(new_episodes)
+    #
+    #     for episode in new_episodes:
+    #         known_episodes.append(episode)
+    #
+    #     new_episodes_evol.append(nb_new_episodes)
+    #
+    #     window_start_date += period
+    #
+    #     evolution_percentage = round(100 * (i) / nb_tw, 2)
+    #     sys.stdout.write("\r{} %% of Time Windows treated!!".format(evolution_percentage))
+    #     sys.stdout.flush()
+    #
+    # sys.stdout.write("\n")
+    #
+    # plt.plot(np.arange(len(new_episodes_evol)), new_episodes_evol)
+    # plt.title('Number of macro discovered')
+    # plt.xlabel('Time Windows')
+    # plt.ylabel('nb episodes')
+    # plt.show()
 
 
 def extract_macro_activities(dataset, support_min, tep, period, display=False):
@@ -88,8 +89,8 @@ def extract_macro_activities(dataset, support_min, tep, period, display=False):
     i = 0
     while len(dataset) > 0:
         i += 1
-        episode, nb_occ_ratio, density_area = find_best_episode(dataset=dataset, tep=tep, support_min=support_min,
-                                                                period=period, display=display)
+        episode, nb_occ, density_area = find_best_episode(dataset=dataset, tep=tep, support_min=support_min,
+                                                          period=period, display=display)
 
         if episode is None:
             break
@@ -104,8 +105,8 @@ def extract_macro_activities(dataset, support_min, tep, period, display=False):
         print("########################################")
         print("Run N°{}".format(i))
         print("Best episode found {}.".format(episode))
-        print("Nb Occurrences : \t{}".format(int(nb_occ_ratio * len(dataset))))
-        print("Density area in a day : \t{:.2f}".format(density_area))
+        print("Nb Occurrences : \t{}".format(nb_occ))
+        print("Silhouette score : \t{:.2f}".format(density_area))
 
         dataset = pd.concat([dataset, episode_occurrences]).drop_duplicates(keep=False)
 
@@ -124,7 +125,7 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
     """
 
     # Dataset to store the objective values of the solutions
-    comparaison_df = pd.DataFrame(columns=['episode', 'nb_occ', 'score'])
+    comparaison_df = pd.DataFrame(columns=['episode', 'nb_occ', 'ratio_nb', 'score'])
 
     # Most frequents episode
     frequent_episodes = FP_growth.find_frequent_episodes(dataset, support_min, tep)
@@ -136,7 +137,7 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
     for episode, nb_occ in frequent_episodes.items():
         nb_occ *= len(episode)
 
-        nb_occ /= len(dataset)  # ratio in the dataset
+        ratio_nb = nb_occ / len(dataset)  # ratio in the dataset
 
         # find the episode occurrences
         occurrences = Candidate_Study.find_occurrences(dataset, episode, tep)
@@ -149,15 +150,57 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
         data_points = np.asarray(data_points).reshape(-1, 1)
 
         kde_a = KDEUnivariate(data_points)
-        kde_a.fit(bw="scott")
-
-        day_bins = np.linspace(0, 24 * 3600, 10000)
-
+        kde_a.fit(bw="normal_reference")
+        #
+        day_bins = np.linspace(0, period.total_seconds(), 10000)
+        #
         density_values = kde_a.evaluate(day_bins)
 
-        score = np.sum(density_values)  # Area under the curve for 24 hours
+        data_points = data_points.reshape((len(data_points)))
 
-        comparaison_df.loc[len(comparaison_df)] = [list(episode), nb_occ, score]
+        mi, ma = argrelextrema(density_values, np.less)[0], argrelextrema(density_values, np.greater)[0]
+
+        nb_clusters = len(day_bins[ma])
+
+        GMM = GaussianMixture(n_components=nb_clusters, n_init=10).fit(data_points.reshape(-1, 1))
+
+        fig, ax = plt.subplots()
+
+        GMM_descr = {}
+        for i in range(len(GMM.means_)):
+            mu = int(GMM.means_[i][0]) % period.total_seconds()
+            sigma = int(math.ceil(np.sqrt(GMM.covariances_[i])))
+
+            GMM_descr[mu] = sigma
+
+            ax.add_artist(plt.Circle((mu / 3600, mu / 3600), 2 * sigma / 3600, fill=True, alpha=0.5))
+
+        labels = GMM.predict(data_points.reshape(-1, 1))
+
+        score = GMM.score(data_points.reshape(-1, 1))
+
+        # score, _ = Candidate_Study.compute_pattern_accuracy(occurrences, period, time_description=GMM_descr,)
+
+        # if nb_clusters == 1:
+        #     score = np.std(data_points)/np.mean(data_points)
+        # else :
+        #
+        #     # plt.plot(day_bins, density_values)
+        #     # plt.title(day_bins[ma])
+        #
+        #     # labels = KMeans(n_clusters=nb_clusters).fit_predict(data_points.reshape(-1,1))
+        #
+        #     score = silhouette_score(data_points.reshape(-1,1), labels)
+
+        data_points /= 3600
+
+        plt.scatter(data_points, data_points, c=labels, cmap='Spectral')
+        plt.title('{}\nScore : {:.2f}\nnb_occ:{}'.format(episode, score, nb_occ))
+        # plt.xlim(0, period.total_seconds() / 3600)
+        # plt.ylim(0, period.total_seconds() / 3600)
+        plt.show()
+
+        comparaison_df.loc[len(comparaison_df)] = [list(episode), nb_occ, ratio_nb, score]
 
     scores = comparaison_df[comparaison_df.columns[1:]].values
     scores = np.asarray(scores)
@@ -166,19 +209,25 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
     pareto = identify_pareto(scores)
     pareto_front_df = comparaison_df.loc[pareto]
 
-    # Find the best point on the pareto front: where x & y are the closest
-    max_distance = 0
+    pareto_front_df.sort_values(['nb_occ'], ascending=True, inplace=True)
+
+    ##############################################
+    #       MOST INTERESTING EPISODE ??          #
+    ##############################################
+
+    max_distance = -1000
     best_point = None
 
     for i, row in pareto_front_df.iterrows():
-        nb_occ = row['nb_occ']
+        ratio_nb = row['ratio_nb']
         score = row['score']
-        dist = len(row['episode']) / abs(nb_occ - score)
+        dist = (score - 0.5) * math.sqrt(math.pow(ratio_nb, 2) + math.pow(score - 0.5, 2))
         # dist = math.pow(point[0], point[1])
 
         if dist > max_distance:
             max_distance = dist
             best_point = row
+
 
     if display:
         plt.scatter(comparaison_df.nb_occ, comparaison_df.score)
@@ -191,7 +240,7 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
                      color='black', weight='semibold')
 
         plt.xlabel('Nb occurrences')
-        plt.ylabel('Accuracy')
+        plt.ylabel('Silhouette Score')
         plt.show()
 
     return best_point['episode'], best_point['nb_occ'], best_point['score']
