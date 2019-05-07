@@ -18,13 +18,13 @@ def main():
     """
 
     dataset_name = 'hh101'
-    dataset = pick_dataset(dataset_name, nb_days=80)
+    dataset = pick_dataset(dataset_name)
     support_min = 10
     tep = 30
     period = dt.timedelta(days=1)
 
     macro_activities = extract_macro_activities(dataset=dataset, support_min=support_min, tep=tep, period=period,
-                                                display=True)
+                                                verbose=True, display=False)
 
     # time_window_duration = dt.timedelta(days=30)
     #
@@ -74,7 +74,7 @@ def main():
     # plt.show()
 
 
-def extract_macro_activities(dataset, support_min, tep, period, display=False):
+def extract_macro_activities(dataset, support_min, tep, period, verbose=False, display=False):
     """
     Extract the tupe (episode, occurrences) from the input dataset
     :param dataset: input dataset
@@ -89,7 +89,7 @@ def extract_macro_activities(dataset, support_min, tep, period, display=False):
     i = 0
     while len(dataset) > 0:
         i += 1
-        episode, nb_occ, density_area = find_best_episode(dataset=dataset, tep=tep, support_min=support_min,
+        episode, nb_occ, ratio, score = find_best_episode(dataset=dataset, tep=tep, support_min=support_min,
                                                           period=period, display=display)
 
         if episode is None:
@@ -99,14 +99,17 @@ def extract_macro_activities(dataset, support_min, tep, period, display=False):
 
         macro_activities[tuple(episode)] = episode_occurrences
 
-        # dataset = pd.merge(dataset, episode_occurrences, how='inner', on=['date', 'end_date', 'label'])
+        GMM_desc = compute_episode_description(dataset=dataset, episode=episode, period=period, tep=tep)
 
-        # if display:
-        print("########################################")
-        print("Run N°{}".format(i))
-        print("Best episode found {}.".format(episode))
-        print("Nb Occurrences : \t{}".format(nb_occ))
-        print("Silhouette score : \t{:.2f}".format(density_area))
+        if verbose:
+            print("########################################")
+            print("Run N°{}".format(i))
+            print("Best episode found {}.".format(episode))
+            print("Nb Occurrences : \t{}".format(nb_occ))
+            print("Ratio Dataset : \t{}".format(ratio))
+            print("Accuracy score : \t{:.2f}".format(score))
+            for mu, sigma in GMM_desc.items():
+                print('Mean : {} - Sigma : {}'.format(dt.timedelta(seconds=int(mu)), dt.timedelta(seconds=int(sigma))))
 
         dataset = pd.concat([dataset, episode_occurrences]).drop_duplicates(keep=False)
 
@@ -125,19 +128,20 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
     """
 
     # Dataset to store the objective values of the solutions
-    comparaison_df = pd.DataFrame(columns=['episode', 'nb_occ', 'ratio_nb', 'score'])
+    comparaison_df = pd.DataFrame(columns=['episode', 'nb_occ', 'ratio_dataset', 'score'])
 
     # Most frequents episode
     frequent_episodes = FP_growth.find_frequent_episodes(dataset, support_min, tep)
 
     if len(frequent_episodes) == 0:
-        return None, None, None
+        return None, None, None, None
+
+
 
     # Compute the sparsity of the episode occurrence time
     for episode, nb_occ in frequent_episodes.items():
-        nb_occ *= len(episode)
+        ratio_dataset = len(episode) * nb_occ / len(dataset)  # ratio in the dataset
 
-        ratio_nb = nb_occ / len(dataset)  # ratio in the dataset
 
         # find the episode occurrences
         occurrences = Candidate_Study.find_occurrences(dataset, episode, tep)
@@ -147,81 +151,43 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
             lambda x: Candidate_Study.modulo_datetime(x.to_pydatetime(), period))
 
         data_points = occurrences.relative_date.values
-        data_points = np.asarray(data_points).reshape(-1, 1)
 
-        kde_a = KDEUnivariate(data_points)
+        # For midnight-morning issue
+        data_points_2 = [x + period.total_seconds() for x in data_points]
+
+        big_data_points = np.asarray(list(data_points) + list(data_points_2)).reshape(-1, 1)
+
+        # Find the number of clusters
+        kde_a = KDEUnivariate(big_data_points)
         kde_a.fit(bw="normal_reference")
-        #
-        day_bins = np.linspace(0, period.total_seconds(), 10000)
-        #
+
+        day_bins = np.linspace(0, 2 * period.total_seconds(), 2000)
         density_values = kde_a.evaluate(day_bins)
 
-        data_points = data_points.reshape((len(data_points)))
+        score = np.max(density_values) * period.total_seconds()
 
-        mi, ma = argrelextrema(density_values, np.less)[0], argrelextrema(density_values, np.greater)[0]
+        comparaison_df.loc[len(comparaison_df)] = [list(episode), nb_occ, ratio_dataset, score]
 
-        nb_clusters = len(day_bins[ma])
-
-        GMM = GaussianMixture(n_components=nb_clusters, n_init=10).fit(data_points.reshape(-1, 1))
-
-        fig, ax = plt.subplots()
-
-        GMM_descr = {}
-        for i in range(len(GMM.means_)):
-            mu = int(GMM.means_[i][0]) % period.total_seconds()
-            sigma = int(math.ceil(np.sqrt(GMM.covariances_[i])))
-
-            GMM_descr[mu] = sigma
-
-            ax.add_artist(plt.Circle((mu / 3600, mu / 3600), 2 * sigma / 3600, fill=True, alpha=0.5))
-
-        labels = GMM.predict(data_points.reshape(-1, 1))
-
-        score = GMM.score(data_points.reshape(-1, 1))
-
-        # score, _ = Candidate_Study.compute_pattern_accuracy(occurrences, period, time_description=GMM_descr,)
-
-        # if nb_clusters == 1:
-        #     score = np.std(data_points)/np.mean(data_points)
-        # else :
-        #
-        #     # plt.plot(day_bins, density_values)
-        #     # plt.title(day_bins[ma])
-        #
-        #     # labels = KMeans(n_clusters=nb_clusters).fit_predict(data_points.reshape(-1,1))
-        #
-        #     score = silhouette_score(data_points.reshape(-1,1), labels)
-
-        data_points /= 3600
-
-        plt.scatter(data_points, data_points, c=labels, cmap='Spectral')
-        plt.title('{}\nScore : {:.2f}\nnb_occ:{}'.format(episode, score, nb_occ))
-        # plt.xlim(0, period.total_seconds() / 3600)
-        # plt.ylim(0, period.total_seconds() / 3600)
-        plt.show()
-
-        comparaison_df.loc[len(comparaison_df)] = [list(episode), nb_occ, ratio_nb, score]
-
-    scores = comparaison_df[comparaison_df.columns[1:]].values
+    scores = comparaison_df[["ratio_dataset", "score"]].values
     scores = np.asarray(scores)
 
     # Compute the pareto front
     pareto = identify_pareto(scores)
     pareto_front_df = comparaison_df.loc[pareto]
 
-    pareto_front_df.sort_values(['nb_occ'], ascending=True, inplace=True)
+    pareto_front_df.sort_values(['ratio_dataset'], ascending=True, inplace=True)
 
     ##############################################
     #       MOST INTERESTING EPISODE ??          #
     ##############################################
 
-    max_distance = -1000
+    max_distance = 0
     best_point = None
 
     for i, row in pareto_front_df.iterrows():
-        ratio_nb = row['ratio_nb']
-        score = row['score']
-        dist = (score - 0.5) * math.sqrt(math.pow(ratio_nb, 2) + math.pow(score - 0.5, 2))
+        # ratio_dataset = row['ratio_dataset']
+        # score = row['score']
+        dist = 2000 * len(row['episode']) + row['nb_occ']
         # dist = math.pow(point[0], point[1])
 
         if dist > max_distance:
@@ -230,20 +196,71 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
 
 
     if display:
-        plt.scatter(comparaison_df.nb_occ, comparaison_df.score)
+        sns.scatterplot(x='ratio_dataset', y='score', data=comparaison_df)
         plt.plot(pareto_front_df.nb_occ, pareto_front_df.score, color='r')
-        plt.plot([best_point['nb_occ']], [best_point['score']], marker='o', markersize=8, color="red")
+        plt.plot([best_point['ratio_dataset']], [best_point['score']], marker='o', markersize=8, color="red")
 
         #
         for _, row in pareto_front_df.iterrows():
-            plt.text(row['nb_occ'] + 0.01, row['score'], row['episode'], horizontalalignment='left', size='medium',
+            plt.text(row['ratio_dataset'] + 0.01, row['score'], row['episode'], horizontalalignment='left',
+                     size='medium',
                      color='black', weight='semibold')
 
+        plt.legend()
         plt.xlabel('Nb occurrences')
-        plt.ylabel('Silhouette Score')
+        plt.ylabel('Accuracy Score')
         plt.show()
 
-    return best_point['episode'], best_point['nb_occ'], best_point['score']
+    return best_point['episode'], best_point['nb_occ'], best_point['ratio_dataset'], best_point['score']
+
+
+def compute_episode_description(dataset, episode, period, tep):
+    """
+    Compute the frequency description of the episode
+    :param dataset:
+    :param episode:
+    :param tep:
+    :return: a dict-like object {[mu] : sigma}
+    """
+
+    # find the episode occurrences
+    occurrences = Candidate_Study.find_occurrences(dataset, episode, tep)
+
+    # Relative timestamp in the period
+    occurrences["relative_date"] = occurrences.date.apply(
+        lambda x: Candidate_Study.modulo_datetime(x.to_pydatetime(), period))
+
+    data_points = occurrences.relative_date.values
+
+    # # For midnight-morning issue
+    # data_points_2 = [x + period.total_seconds() for x in data_points]
+    #
+    # big_data_points = np.asarray(list(data_points) + list(data_points_2)).reshape(-1, 1)
+
+    # Find the number of clusters
+    kde_a = KDEUnivariate(data_points)
+    kde_a.fit(bw="normal_reference")
+
+    day_bins = np.linspace(0, period.total_seconds(), 1000)
+    density_values = kde_a.evaluate(day_bins)
+
+    mi, ma = argrelextrema(density_values, np.less)[0], argrelextrema(density_values, np.greater)[0]
+
+    nb_clusters = len(day_bins[ma])
+    #
+    # Fit Gaussian Mixture Model
+    GMM = GaussianMixture(n_components=nb_clusters, n_init=10).fit(data_points.reshape(-1, 1))
+
+    # Compute the description
+    GMM_descr = {}
+    for i in range(len(GMM.means_)):
+        mu = int(GMM.means_[i][0]) % period.total_seconds()
+        sigma = int(math.ceil(np.sqrt(GMM.covariances_[i])))
+
+        GMM_descr[mu] = sigma
+
+    return GMM_descr
+
 
 
 def compute_episode_occurrences(dataset, episode, tep):

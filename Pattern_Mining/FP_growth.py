@@ -301,27 +301,33 @@ def extract_transactions_itemsets(data, Tep):
 
     Tep = dt.timedelta(minutes=Tep)
 
-    data['trans_id'] = 0
-
-    current_start_time = min(data.date)
-    current_trans_id = 0
-
     transactions = []
 
-    while True:
-        current_end_time = current_start_time + Tep
-
+    def fetch_trans(row):
+        current_start_time = row['date']
+        current_end_time = row['date'] + Tep
         date_condition = (data.date >= current_start_time) & (data.date < current_end_time)
+        transaction = list(set(data.loc[date_condition, "label"].values))
+        transactions.append(transaction)
 
-        transactions.append(list(set(data.loc[date_condition, "label"].values)))  # list of set to avoid doublons
-        data.loc[date_condition, 'trans_id'] = current_trans_id
+        return True
 
-        if len(data.loc[data.date > current_end_time]) > 0:
-            current_start_time = min(data.loc[data.date > current_end_time, "date"])
-        else:
-            break
-        current_trans_id += 1
+    data.apply(fetch_trans, axis=1)
 
-    data.drop(['trans_id'], axis=1, inplace=True)
+    # while True:
+    #     current_end_time = current_start_time + Tep
+    #
+    #
+    #
+    #     transactions.append(list(set(data.loc[date_condition, "label"].values)))  # list of set to avoid doublons
+    #     data.loc[date_condition, 'trans_id'] = current_trans_id
+    #
+    #     if len(data.loc[data.date > current_end_time]) > 0:
+    #         current_start_time = min(data.loc[data.date > current_end_time, "date"])
+    #     else:
+    #         break
+    #     current_trans_id += 1
+    #
+    # data.drop(['trans_id'], axis=1, inplace=True)
 
     return transactions

@@ -14,7 +14,7 @@ np.random.seed(7)
 
 
 def main():
-    activity = 'meal_preparation'
+    activity = 'sleeping'
     raw_dataset = pd.read_csv('{}_dataset.csv'.format(activity))
     #
     # raw_dataset = raw_dataset[['Ts_0']]

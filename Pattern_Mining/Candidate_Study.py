@@ -229,7 +229,7 @@ def find_occurrences(data, episode, Tep=30):
     """
     Tep = dt.timedelta(minutes=Tep)
 
-    data = data.loc[data.label.isin(episode)].copy()
+    data = data[data.label.isin(episode)].copy()
     data.sort_values(by=['date'], inplace=True)
 
     if len(episode) == 1:
@@ -250,7 +250,7 @@ def find_occurrences(data, episode, Tep=30):
 
         date_condition = (data.date >= start_time) & (data.date < end_time)
 
-        next_labels = set(data.loc[date_condition, "label"].values)
+        next_labels = set(data[date_condition].label.values)
 
         return set(episode).issubset(next_labels)
 
@@ -262,13 +262,13 @@ def find_occurrences(data, episode, Tep=30):
 
     while (len(data[data.occurrence == True]) > 0):
         # Add a new occurrence
-        occ_time = data.loc[data.occurrence == True, "date"].min().to_pydatetime()
+        occ_time = data[data.occurrence == True].date.min().to_pydatetime()
 
         # Marked the occurrences treated as "False"
         # TODO: can be improved
         indexes = []
         for s in episode:
-            i = data.loc[(data.date >= occ_time) & (data.label == s), "date"].idxmin()
+            i = data[(data.date >= occ_time) & (data.label == s)].date.idxmin()
             indexes.append(i)
 
         data.loc[indexes, 'occurrence'] = False
@@ -279,6 +279,33 @@ def find_occurrences(data, episode, Tep=30):
 
     occurrences.sort_values(by=['date'], ascending=True, inplace=True)
     return occurrences
+
+
+def find_occurrences_fast(data, episode, Tep=30):
+    """
+    Fetch the occurrences of the episode in the dataset
+    :param data:
+    :param episode:
+    :param Tep:
+    :return:
+    """
+    Tep = dt.timedelta(minutes=Tep)
+
+    data = data.loc[data.label.isin(episode)].copy()
+    data.sort_values(by=['date'], inplace=True)
+
+    if len(episode) == 1:
+        return data[['date', 'end_date']]
+
+    occurrences = {}
+
+    def occurrence_exist(row):
+        start_time = row.date
+        end_time = row.date + Tep
+
+        date_condition = (data.date >= start_time) & (data.date < end_time)
+
+        next_labels = set(data.loc[date_condition, "label"].values)
 
 
 def translate_description(description):

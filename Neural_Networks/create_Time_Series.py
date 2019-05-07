@@ -13,7 +13,7 @@ def main():
     """
 
     dataset_name = 'aruba'
-    dataset = pick_dataset(dataset_name, nb_days=60)
+    dataset = pick_dataset(dataset_name)
     period = dt.timedelta(days=1)
     t_step = 60  # in minutes
 
