@@ -31,7 +31,7 @@ def main():
     print('Train shape : ', train.shape)
     print('Test shape : ', test.shape)
 
-    nb_input = 5 * nb_feat
+    nb_input = 10 * nb_feat
     nb_output = 1 * nb_feat
 
     score, scores, predictions = evaluate_model(train, test, n_input=nb_input, n_output=nb_output, display=True)
@@ -94,14 +94,14 @@ def build_model(train, test, n_input, n_output, display=False):
     train_x, train_y = to_supervised(train, n_input, n_output)
     test_x, test_y = to_supervised(test, n_input, n_output)
     # define parameters
-    verbose, epochs, batch_size = 2, 50, 20
+    verbose, epochs, batch_size = 2, 50, len(train)
     n_timesteps, n_features, n_outputs = train_x.shape[1], train_x.shape[2], train_y.shape[1]
     # define model
     model = Sequential()
     model.add(LSTM(10, activation='relu', return_sequences=True, input_shape=(n_timesteps, n_features)))
     model.add(Dropout(0.2))
     model.add(LSTM(10, activation='relu', return_sequences=True))
-    model.add(LSTM(5, activation='relu', return_sequences=False))
+    model.add(LSTM(10, activation='relu', return_sequences=False))
     model.add(Dropout(0.2))
     # model.add(Dense(50, activation='relu'))
     model.add(Dense(n_outputs))
@@ -143,7 +143,7 @@ def to_supervised(train, n_input, n_out):
             X.append(x_input)
             y.append(data[in_end:out_end, 0])
         # move along one time step
-        in_start += 6
+        in_start += 1
     return np.asarray(X), np.asarray(y)
 
 

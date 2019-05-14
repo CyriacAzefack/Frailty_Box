@@ -1,3 +1,5 @@
+import time as t
+
 import math
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -18,13 +20,18 @@ def main():
     """
 
     dataset_name = 'hh101'
-    dataset = pick_dataset(dataset_name)
-    support_min = 10
+    dataset = pick_dataset(dataset_name, nb_days=30)
+    support_min = 30
     tep = 30
     period = dt.timedelta(days=1)
 
+    start_time = t.process_time()
     macro_activities = extract_macro_activities(dataset=dataset, support_min=support_min, tep=tep, period=period,
                                                 verbose=True, display=False)
+    elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
+
+    print("###############################")
+    print("Elapsed time : {}".format(elapsed_time))
 
     # time_window_duration = dt.timedelta(days=30)
     #
