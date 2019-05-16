@@ -159,7 +159,7 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False, d
             for mu, sigma in GMM_desc.items():
                 print('Mean : {} - Sigma : {}'.format(dt.timedelta(seconds=int(mu)), dt.timedelta(seconds=int(sigma))))
 
-        dataset = pd.concat([dataset, episode_occurrences]).drop_duplicates(keep=False)
+        dataset = pd.concat([dataset, events]).drop_duplicates(keep=False)
 
     return macro_activities
 
