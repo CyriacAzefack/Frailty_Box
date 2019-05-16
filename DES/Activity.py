@@ -1,5 +1,4 @@
 import seaborn as sns
-from fbprophet import Prophet
 
 from Graph_Model import Acyclic_Graph
 from Graph_Model.Pattern2Graph import *
@@ -19,11 +18,12 @@ def main():
 
     label = ('sleeping',)
     period = dt.timedelta(days=1)
-    time_step = dt.timedelta(minutes=15)
+    time_step = dt.timedelta(minutes=10)
     occurrences = find_occurrences(data=dataset, episode=label)
 
     print('{} occurrences of the episode {}'.format(len(occurrences), label))
     activity = Activity(label=label, occurrences=occurrences, period=period, time_step=time_step,
+                        start_time_window_id=0,
                         display=True)
 
     # start_date = occurrences.date.min().to_pydatetime()
@@ -37,10 +37,8 @@ def main():
 
 class Activity:
     ID = 0
-    SLIDING_WINDOW = dt.timedelta(days=30)
 
-    def __init__(self, label, occurrences, period, time_step, start_date, end_date, duration_gen='Gaussian',
-                 display=False):
+    def __init__(self, label, occurrences, period, time_step, start_time_window_id, display=False):
         '''
         Creation of an activity
         :param label: label of the activity
@@ -57,22 +55,42 @@ class Activity:
         self.label = label
         self.period = period
         self.time_step = time_step
-        self.duration_gen = duration_gen
         self.index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
-        self.occurrences = self.preprocessing(occurrences)
-        self.histogram = self.build_histogram(occurrences, display=display)
-        self.activity_duration_model = self.build_activity_duration_model(occurrences)
-        # self.time_evo_per_index = self.compute_time_evolution()
 
-        if self.duration_gen == 'TS Forecast':
-            self.duration_forecasts = self.build_duration_forecaster(start_date, end_date)
-            # self.forecasters_per_index = self.build_time_step_forecasters()
+        # Initialize the count_histogram
+        colums = ['tw_id'] + ['ts_{}'.format(ts_id) for ts_id in self.index]
+        self.count_histogram = pd.DataFrame(columns=colums)
 
-        # evo = self.time_evo_per_index[3]
-        # plt.plot(evo.index, evo.mean_duration)
-        # plt.show()
+        self.duration_law = {}
+
+        if len(label) == 1:
+            self.duration_law[self.label] = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
+
+            self.add_time_window(occurrences, start_time_window_id, display=display)
+
+        # self.build_histogram(occurrences, display=display)
 
         Activity.ID += 1
+
+    def add_time_window(self, occurrences, time_window_id, display=False):
+        """
+        Update the ocurrence time Histogram and the duration laws history with the new time window data
+        :param occurrences:
+        :return:
+        """
+        occurrences = self.preprocessing(occurrences)
+
+        # Update histogram count history
+        hist = self.build_histogram(occurrences, display=display)
+        self.count_histogram.loc[time_window_id] = [time_window_id] + list(hist.values.T)
+
+        # Update duration law
+        mean_duration = np.mean(occurrences.activity_duration)
+        std_duration = np.std(occurrences.activity_duration)
+        self.duration_law.loc[time_window_id] = [time_window_id, mean_duration, std_duration]
+
+
+
 
     def preprocessing(self, occurrences):
         '''
@@ -91,7 +109,7 @@ class Activity:
 
     def build_histogram(self, occurrences, display=False):
         '''
-        Build the Time distribution histogram on occurrences
+        Build the Time distribution count_histogram on occurrences
         :param occurrences:
         :param display:
         :return:
@@ -116,99 +134,14 @@ class Activity:
 
         return hist
 
-    def build_activity_duration_model(self, occurrences):
-        '''
-        Build Activity duration Model
-        :param occurrences:
-        :return:
-        '''
-
-        aggregation = {
-            'activity_duration': {
-                'mean_duration': 'mean',
-                'std_duration': 'std'
-            }
-        }
-        activity_duration = occurrences[['time_step_id', 'activity_duration']].groupby(['time_step_id']).agg(
-            aggregation)
-        activity_duration = activity_duration.reindex(self.index)
-        activity_duration.fillna(0, inplace=True)
-        activity_duration.columns = activity_duration.columns.droplevel(level=0)
-
-        return activity_duration
-
-    def build_time_step_forecasters(self):
-        '''
-        Build the time series forecasters_per_index
-        :return: a dict like {'time_step_id' : {'hist_count': ..., 'mean_duration': ..., 'std_duration':...}, ...}
-        '''
-
-        forecasters_per_index = [{
-            'hist_count': None,  # Prophet forecasters_per_index for each indicator
-            'mean_duration': None,
-            'std_duration': None
-        } for i in self.index]
-
-        # forecasting_pre_computing
-
-        for time_step_id in self.index:
-            time_step_forecaster = forecasters_per_index[time_step_id]
-            df = self.time_evo_per_index[time_step_id]
-            df['date'] = df.index
-
-            for indicator_name in time_step_forecaster.keys():
-                df_indicator = df[['date', indicator_name]].copy()
-                df_indicator.columns = ['ds', 'y']
-
-                with suppress_stdout_stderr():
-                    if df_indicator.empty:
-                        time_step_forecaster[indicator_name] = None
-                        continue
-                    time_step_forecaster[indicator_name] = Prophet().fit(df_indicator)
-
-            evolution = (time_step_id + 1) / len(self.index)
-            evolution_percentage = round(100 * evolution, 2)
-            sys.stdout.write("\r{} %% of Forecasters built !!".format(evolution_percentage))
-            sys.stdout.flush()
-        print()
-        return forecasters_per_index
-
-    def build_duration_forecaster(self, start_date, end_date):
-        '''
-        Build a Time Series Forecaster for activity duration
-        :return:
-        '''
-        df = self.occurrences[['date', 'activity_duration']]
-        df.columns = ['ds', 'y']
-
-        with suppress_stdout_stderr():
-            forecaster = Prophet().fit(df)
-
-        # TODO : Replace this by the actual future
-
-        start_date = start_date - self.period - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
-
-        end_date = end_date + self.period - dt.timedelta(seconds=modulo_datetime(end_date, self.period))
-
-        future = pd.date_range(start_date, end_date, freq='{}S'.format(self.time_step.total_seconds()))
-        future = pd.DataFrame({'ds': future})
-
-        forecast = forecaster.predict(future)
-
-        forecast = forecast[['ds', 'yhat']]
-        forecast.columns = ['date', 'pred_duration']
-
-        forecast['relative_date'] = forecast.date.apply(
-            lambda x: modulo_datetime(x.to_pydatetime(), self.period))
-        forecast['time_step_id'] = forecast['relative_date'] / self.time_step.total_seconds()
-        forecast['time_step_id'] = forecast['time_step_id'].apply(math.floor)
-
-        forecast['day_date'] = forecast.date.dt.date
-
-        return forecast
 
     def get_label(self):
+        """
+        :return: The episode of the Activity
+        """
         return self.label
+
+    # TODO Update this method
     def get_stats_from_date(self, date, time_step_id, hist=True):
         '''
         Estimate the number of time the current activity started at time_step_id in the last Sliding_Window
@@ -250,6 +183,7 @@ class Activity:
 
         return stats
 
+
     def get_stats(self, time_step_id):
         '''
         Get parameters at this time_step_id
@@ -270,56 +204,7 @@ class Activity:
 
         return stats
 
-    def compute_time_evolution(self):
-        '''
-        Compute the time evolution of each time_step_id
-        :return:
-        '''
-
-        start_date = self.occurrences.date.min().to_pydatetime()
-        # We start at the beginning of the first period
-        start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
-        end_date = self.occurrences.date.max().to_pydatetime()
-        end_date = end_date + self.period - dt.timedelta(seconds=modulo_datetime(end_date, self.period))
-        end_date = end_date - Activity.SLIDING_WINDOW
-
-        nb_days_per_period = self.period.days
-        time_evo_per_index = [
-            pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_period) + 'D'),
-                         columns=['hist_count', 'mean_duration', 'std_duration']).fillna(0) for i in self.index]
-
-        current_date = start_date
-
-        while current_date <= end_date:
-            window_start_date = current_date
-            window_end_date = window_start_date + Activity.SLIDING_WINDOW
-
-            window_occurrences = self.occurrences.loc[(
-                                                              self.occurrences.date >= window_start_date) & (
-                                                              self.occurrences.date < window_end_date)].copy()
-
-            hist = self.build_histogram(window_occurrences)
-            activity_durations = self.build_activity_duration_model(window_occurrences)
-
-            for i in self.index:
-                time_step_df = time_evo_per_index[i]
-                hist_count = hist.loc[i]
-                mean_duration = activity_durations.loc[i].mean_duration
-                std_duration = activity_durations.loc[i].std_duration
-
-                time_step_df.loc[current_date] = [hist_count, mean_duration, std_duration]
-
-            evolution = (current_date - start_date).total_seconds() / (end_date - start_date).total_seconds()
-
-            evolution_percentage = round(100 * evolution, 2)
-            sys.stdout.write("\r{} %% of Time evolution computed !!".format(evolution_percentage))
-            sys.stdout.flush()
-
-            current_date += self.period
-        sys.stdout.write("\n")
-
-        return time_evo_per_index
-
+    # TODO : Build a simple method according to the new structure
     def simulate(self, date, time_step_id):
         """
         Generate the events for the activity
@@ -391,9 +276,7 @@ class Activity:
 
 class MacroActivity(Activity):
 
-    def __init__(self, episode, dataset, occurrences, period, time_step, start_date, end_date,
-                 duration_model='Gaussian',
-                 display=False, Tep=30):
+    def __init__(self, episode, occurrences, events, period, time_step, display=False):
         '''
         Create a Macro Activity
         :param episode:
@@ -406,30 +289,9 @@ class MacroActivity(Activity):
         :param display:
         :param Tep:
         '''
-        Activity.__init__(self, episode, occurrences, period, time_step, start_date, end_date,
-                          duration_model, display=display)
-        self.Tep = dt.timedelta(minutes=Tep)
-        # Find the events corresponding to the occurrences
-        events = pd.DataFrame(columns=["date", "label", 'occ_id'])
-        for index, occurrence in occurrences.iterrows():
-            occ_start_date = occurrence["date"]
-            occ_end_date = occ_start_date + dt.timedelta(minutes=Tep)
-            mini_data = dataset.loc[(dataset.label.isin(episode))
-                                    & (dataset.date >= occ_start_date)
-                                    & (dataset.date < occ_end_date)].copy()
-            mini_data.sort_values(["date"], ascending=True, inplace=True)
-            mini_data.drop_duplicates(["label"], keep='first', inplace=True)
-            mini_data['occ_id'] = index
-            events = events.append(mini_data, ignore_index=True)
+        Activity.__init__(self, episode, occurrences, period, time_step, display=display)
 
-        self.activities = {}  # key: label, value: Activity
 
-        for label in episode:
-            label_events = events.loc[events.label == label].copy()
-            label_activity = Activity(label=(label,), occurrences=label_events, period=period,
-                                      duration_gen=duration_model, time_step=time_step, start_date=start_date,
-                                      end_date=end_date)
-            self.activities[label] = label_activity
 
         # TODO : Build a graph for every time_step_id
         self.graph = self.build_activities_graph(episode=episode, events=events, period=period, display=display)
@@ -469,7 +331,8 @@ class MacroActivity(Activity):
         Create a graph for the Macro_Activities
         :param episode:
         :param events:
-        :param p:
+        :param period:
+        :param display:
         '''
 
         occurrence_ids = events['occ_id'].unique()
