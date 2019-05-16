@@ -29,7 +29,7 @@ def main():
     tep = 30
     period = dt.timedelta(days=1)
     time_window_duration = dt.timedelta(days=30)
-    nb_processes = 4
+    nb_processes = 2 * mp.cpu_count()  # For parallel computing
 
     if not os.path.exists(os.path.dirname(output_folder)):
         try:
@@ -54,39 +54,22 @@ def main():
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime() - time_window_duration
 
-    nb_tw = math.floor((end_date - start_date) / period)
-
-    window_start_date = start_date
-
-    new_episodes_evol = []
-
-    known_episodes = []
-
-    jobs = []
+    nb_tw = math.floor((end_date - start_date) / period)  # Number of time windows available
 
     results = {}
 
-    print("There are %d CPUs on this machine" % mp.cpu_count())
-
     args = [(dataset, support_min, tep, period, time_window_duration, tw_id) for tw_id in range(nb_tw)]
 
-    # with mp.Pool(processes=4) as pool:
-    #     temp = [pool.apply_async(extract_tw_macro_activities, (dataset, support_min, tep,period, time_window_duration,
-    #                                                            tw_id, results)) for tw_id in range(nb_tw)]
-    #     results = [t.get() for t in temp]
-    #
-    #
-    #
+
     with mp.Pool(processes=nb_processes) as pool:
         mp_results = pool.starmap(extract_tw_macro_activities, args)
 
         for result in mp_results:
             results[result[0]] = result[1]
-    # pool.join()
-    # pool.close()
+
 
     print("All Time Windows Treated")
-    # print(results)
+
 
     elapsed_time = dt.timedelta(seconds=round(t.time() - start_time, 1))
 
@@ -146,7 +129,7 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False, d
     :param support_min: Minimum number of episode occurrences
     :param tep: Duration max of an episode occurrence
     :param period: periodicity
-    :return: A dict-like object with 'episode' as key and 'episode occurrence' df as value
+    :return: A dict-like object with 'episode' as key and the tuple of dataframes (episode_occurrences, episode_occurrences) as value
     """
 
     macro_activities = {}
@@ -160,9 +143,9 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False, d
         if episode is None:
             break
 
-        episode_occurrences = compute_episode_occurrences(dataset=dataset, episode=episode, tep=tep)
+        episode_occurrences, events = compute_episode_occurrences(dataset=dataset, episode=episode, tep=tep)
 
-        macro_activities[tuple(episode)] = episode_occurrences
+        macro_activities[tuple(episode)] = (episode_occurrences, events)
 
         GMM_desc = compute_episode_description(dataset=dataset, episode=episode, period=period, tep=tep)
 
@@ -335,7 +318,7 @@ def compute_episode_occurrences(dataset, episode, tep):
     data = dataset[dataset.label.isin(episode)].copy()
 
     if len(episode) == 1:
-        return data
+        return data, data
 
     episode_occurrences = pd.DataFrame(columns=["date", "end_date", "label"])
     time_occurrences = Candidate_Study.find_occurrences(data, episode, tep)
@@ -350,7 +333,7 @@ def compute_episode_occurrences(dataset, episode, tep):
 
     episode_occurrences.sort_values(["date"], ascending=True, inplace=True)
 
-    return episode_occurrences
+    return time_occurrences, episode_occurrences
 
 
 def identify_pareto(scores):

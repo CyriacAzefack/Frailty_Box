@@ -86,7 +86,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
         period_occ.loc[:, "relative_date"] = period_occ.date.apply(
             lambda x: modulo_datetime(x.to_pydatetime(), period_T))
 
-        # Display relative times histogram
+        # Display relative times count_histogram
 
         if plot_graphs:
             plt.figure()
