@@ -7,20 +7,14 @@
     <bookmark url="file://$PROJECT_DIR$/Behavior_Drift.py" line="379" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Add time_occurrences and">
+    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="add 'episode_occurrences' and 'events' to macro-activities">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Behavior_Drift.py" beforeDir="false" afterPath="$PROJECT_DIR$/Behavior_Drift.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DES/Activity.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Activity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neural_Networks/Classic_Time_Series_Forecasting.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neural_Networks/LSTM.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neural_Networks/Window_LSTM.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neural_Networks/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neural_Networks/create_Time_Series.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neural_Networks/eating_dataset.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neural_Networks/meal_preparation_dataset.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neural_Networks/sleep_dataset.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neural_Networks/sleeping_dataset.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pattern_Mining/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Mining/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -1526,20 +1520,29 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="16">
               <caret line="11" column="25" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DES/Activity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="882">
-              <caret line="294" selection-start-line="294" selection-end-line="294" />
+            <state relative-caret-position="34">
+              <caret line="185" column="53" lean-forward="true" selection-start-line="185" selection-start-column="53" selection-end-line="185" selection-end-column="53" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1027">
+              <caret line="160" column="4" selection-start-line="160" selection-start-column="4" selection-end-line="160" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -1547,50 +1550,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pattern_Mining/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="20" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="80">
+              <caret line="5" column="18" lean-forward="true" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
-              <caret line="308" column="4" selection-start-line="308" selection-start-column="4" selection-end-line="308" selection-end-column="4" />
+            <state relative-caret-position="511">
+              <caret line="340" selection-start-line="340" selection-end-line="340" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Pattern_Mining/FP_growth.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="524">
-              <caret line="302" selection-start-line="302" selection-end-line="302" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="624">
-              <caret line="39" selection-start-line="39" selection-end-line="39" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3392">
-              <caret line="221" column="4" selection-start-line="221" selection-start-column="4" selection-end-line="221" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -1607,10 +1580,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>pie</find>
-      <find>DBSCA</find>
-      <find>sys</find>
-      <find>resper</find>
       <find>accura</find>
       <find>as_ma</find>
       <find>str(epi</find>
@@ -1636,7 +1605,11 @@
       <find>self.index</find>
       <find>duration_gen</find>
       <find>at</find>
+      <find>set(</find>
+      <find>set()</find>
       <find>self.label</find>
+      <find>occ_id</find>
+      <find>loc</find>
     </findStrings>
     <replaceStrings>
       <replace>labels</replace>
@@ -1650,11 +1623,13 @@
       <replace>'Gaussian'</replace>
       <replace>stat_test</replace>
       <replace>histogram_intersect</replace>
+      <replace>self.episode</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
+        <option value="PC-Bureau" />
         <option value="cyriac.azefack &lt;azefack1996&gt;" />
         <option value="Cyriac Pycharm" />
       </list>
@@ -1707,7 +1682,6 @@
         <option value="$PROJECT_DIR$/Data_Drift/Features_Extraction.py" />
         <option value="$PROJECT_DIR$/DES/Digital Twin Model.py" />
         <option value="$PROJECT_DIR$/Pattern_Mining/Pattern_Discovery.py" />
-        <option value="$PROJECT_DIR$/Utils.py" />
         <option value="$PROJECT_DIR$/Behavior.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
         <option value="$PROJECT_DIR$/Validation.py" />
@@ -1716,23 +1690,24 @@
         <option value="$PROJECT_DIR$/Neural_Networks/Classic_Time_Series_Forecasting.py" />
         <option value="$PROJECT_DIR$/Neural_Networks/LSTM.py" />
         <option value="$PROJECT_DIR$/Pattern_Mining/FP_growth.py" />
-        <option value="$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py" />
         <option value="$PROJECT_DIR$/Neural_Networks/create_Time_Series.py" />
         <option value="$PROJECT_DIR$/Neural_Networks/Window_LSTM.py" />
         <option value="$PROJECT_DIR$/Time_Series/LSTM.py" />
         <option value="$PROJECT_DIR$/Time_Series/Classic_Time_Series_Forecasting.py" />
         <option value="$PROJECT_DIR$/Time_Series/Window_LSTM.py" />
         <option value="$PROJECT_DIR$/Time_Series/Prophet_forecaster.py" />
-        <option value="$PROJECT_DIR$/Pattern_Mining/test.py" />
-        <option value="$PROJECT_DIR$/DES/Activity.py" />
-        <option value="$PROJECT_DIR$/input/HH/hh101/dataset.csv" />
+        <option value="$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py" />
         <option value="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" />
+        <option value="$PROJECT_DIR$/Pattern_Mining/test.py" />
+        <option value="$PROJECT_DIR$/input/HH/hh101/dataset.csv" />
+        <option value="$PROJECT_DIR$/Utils.py" />
+        <option value="$PROJECT_DIR$/DES/Activity.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="867" />
-    <option name="y" value="121" />
+    <option name="x" value="716" />
+    <option name="y" value="-8" />
     <option name="width" value="974" />
     <option name="height" value="725" />
   </component>
@@ -1766,13 +1741,6 @@
               <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
               <item name="input" type="462c0819:PsiDirectoryNode" />
               <item name="HH" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="input" type="462c0819:PsiDirectoryNode" />
-              <item name="HH" type="462c0819:PsiDirectoryNode" />
-              <item name="hh101" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
@@ -1838,8 +1806,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Extract_Macro_Activities">
-    <configuration name="Classic_Time_Series_Forecasting" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.Activity">
+    <configuration name="Activity" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -1847,11 +1815,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Time_Series" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/DES" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Time_Series\Prophet_forecaster.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/DES/Activity.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -2011,19 +1979,19 @@
       <item itemvalue="Python.Toulouse_Drift" />
       <item itemvalue="Python.Utils" />
       <item itemvalue="Python.hh113_behavior_drift" />
-      <item itemvalue="Python.Classic_Time_Series_Forecasting" />
       <item itemvalue="Python.Prophet_forecaster" />
       <item itemvalue="Python.LSTM" />
       <item itemvalue="Python.test" />
       <item itemvalue="Python.Extract_Macro_Activities" />
+      <item itemvalue="Python.Activity" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Extract_Macro_Activities" />
+        <item itemvalue="Python.Activity" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.Extract_Macro_Activities" />
         <item itemvalue="Python.LSTM" />
         <item itemvalue="Python.Prophet_forecaster" />
-        <item itemvalue="Python.Classic_Time_Series_Forecasting" />
       </list>
     </recent_temporary>
   </component>
@@ -2040,20 +2008,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1521208662820</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Graph Drawing from a manual pattern">
-      <created>1522771629051</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1522771629051</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Own label management for graphs">
-      <created>1522925269161</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1522925269161</updated>
     </task>
     <task id="LOCAL-00006" summary="Graph construction Finished">
       <created>1523273095419</created>
@@ -2384,7 +2338,21 @@
       <option name="project" value="LOCAL" />
       <updated>1558018097514</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="add 'episode_occurrences' and 'events' to macro-activities">
+      <created>1558018546258</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1558018546258</updated>
+    </task>
+    <task id="LOCAL-00054" summary="add 'episode_occurrences' and 'events' to macro-activities">
+      <created>1558020070491</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1558020070491</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2405,22 +2373,22 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.5692996" visible="true" weight="0.13435195" />
-      <window_info id="Structure" order="1" sideWeight="0.43070045" side_tool="true" visible="true" weight="0.13435195" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.5678092" visible="true" weight="0.13435195" />
+      <window_info id="Structure" order="1" sideWeight="0.43219075" side_tool="true" visible="true" weight="0.13435195" />
       <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48946258" weight="0.32502595" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4873551" weight="0.32502595" />
       <window_info anchor="bottom" id="Statistic" order="2" sideWeight="0.49789253" weight="0.46936655" />
-      <window_info anchor="bottom" x="961" y="31" width="958" height="1048" id="Run" order="3" sideWeight="0.5995785" weight="0.37279335" />
-      <window_info active="true" anchor="bottom" id="Debug" order="4" sideWeight="0.44889358" visible="true" weight="0.3032191" />
+      <window_info anchor="bottom" x="961" y="31" width="958" height="1048" id="Run" order="3" sideWeight="0.93256056" weight="0.37279335" />
+      <window_info active="true" anchor="bottom" id="Debug" order="4" sideWeight="0.44520548" visible="true" weight="0.3032191" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49841937" weight="0.31879544" />
-      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.49525815" weight="0.3032191" />
-      <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.49420443" weight="0.3281412" />
+      <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49789253" weight="0.31879544" />
+      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.5995785" weight="0.3032191" />
+      <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.49315068" weight="0.3281412" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32883817" />
       <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.49525815" weight="0.2596054" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.55110645" side_tool="true" visible="true" weight="0.3032191" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.55479455" side_tool="true" visible="true" weight="0.3032191" />
       <window_info anchor="bottom" id="Thumbnails" order="13" sideWeight="0.49947312" weight="0.32917964" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -2501,7 +2469,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Refactoring of the Simulation Model in fewer files" />
     <MESSAGE value="Add basic Time Series Forecasting" />
     <MESSAGE value="Adding 'Aruba' Input files" />
     <MESSAGE value="Adding 'Aruba' Replications results files" />
@@ -2526,7 +2493,8 @@
     <MESSAGE value="Add jupyter file for toy datasets result generation" />
     <MESSAGE value="Time Windows parallel execution implemented" />
     <MESSAGE value="Add 'episode_occurrence' and 'events' to macro_activities" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add 'episode_occurrence' and 'events' to macro_activities" />
+    <MESSAGE value="add 'episode_occurrences' and 'events' to macro-activities" />
+    <option name="LAST_COMMIT_MESSAGE" value="add 'episode_occurrences' and 'events' to macro-activities" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -2551,12 +2519,12 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DES/Activity.py</url>
-          <line>364</line>
+          <line>256</line>
           <option name="timeStamp" value="671" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DES/Activity.py</url>
-          <line>368</line>
+          <line>260</line>
           <option name="timeStamp" value="672" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -2659,7 +2627,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py</url>
-          <line>105</line>
+          <line>106</line>
           <option name="timeStamp" value="1029" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -2668,19 +2636,19 @@
           <option name="timeStamp" value="1031" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DES/Activity.py</url>
-          <line>92</line>
-          <option name="timeStamp" value="1033" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Time_Series/Prophet_forecaster.py</url>
           <line>54</line>
           <option name="timeStamp" value="1037" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py</url>
-          <line>335</line>
-          <option name="timeStamp" value="1039" />
+          <url>file://$PROJECT_DIR$/Pattern_Mining/test.py</url>
+          <line>25</line>
+          <option name="timeStamp" value="1040" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/DES/Activity.py</url>
+          <line>189</line>
+          <option name="timeStamp" value="1046" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -2694,6 +2662,31 @@
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>sorted(self.episode).index('dress')</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>sorted(self.episode).index['dress']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>sorted(self.episode)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.episode.sort()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.episode</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>dt.datetime.combine(start_date, dt.datetime.min.time())</expression-string>
         <language-id>Python</language-id>
@@ -2711,31 +2704,6 @@
       </expression>
       <expression>
         <expression-string>thread_args(0)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>thread_args[0]</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>sns.scatterplot(x='ratio_dataset', y='score', size=&quot;nb_occ&quot;, data=comparaison_df)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>sns.scatterplot(x='ratio_dataset', y='score', size='nb_occ', data=comparaison_df)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>sns.scatterplot(x='ratio_dataset', y='score', size='ratio_dataset', data=comparaison_df)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>sns.scatterplot(x='nb_occ', y='score', size='ratio_dataset', data=comparaison_df)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -3015,13 +2983,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2288">
-          <caret line="160" column="4" selection-start-line="160" selection-start-column="4" selection-end-line="160" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Toy_validation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -3110,13 +3071,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="11" column="25" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Time_Series/Prophet_forecaster.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="112">
@@ -3161,30 +3115,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Pattern_Mining/test.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/multiprocessing/pool.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="185">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
+          <caret line="273" selection-start-line="273" selection-end-line="273" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DES/Activity.py">
+    <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="882">
-          <caret line="294" selection-start-line="294" selection-end-line="294" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1027">
+          <caret line="160" column="4" selection-start-line="160" selection-start-column="4" selection-end-line="160" selection-end-column="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Utils.py">
+    <entry file="file://$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="624">
-          <caret line="39" selection-start-line="39" selection-end-line="39" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="185">
+          <caret line="221" column="4" selection-start-line="221" selection-start-column="4" selection-end-line="221" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="16">
+          <caret line="11" column="25" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
         </state>
       </provider>
     </entry>
@@ -3193,38 +3148,51 @@
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
       <provider selected="true" editor-type-id="csv-text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="56" selection-start-line="14" selection-start-column="56" selection-end-line="14" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/multiprocessing/pool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="273" selection-start-line="273" selection-end-line="273" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3392">
-          <caret line="221" column="4" selection-start-line="221" selection-start-column="4" selection-end-line="221" selection-end-column="4" />
+        <state>
+          <caret column="19" lean-forward="true" selection-start-column="19" selection-end-column="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pattern_Mining/FP_growth.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="524">
-          <caret line="302" selection-start-line="302" selection-end-line="302" />
+        <state relative-caret-position="188">
+          <caret line="281" lean-forward="true" selection-start-line="281" selection-end-line="281" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pattern_Mining/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="5" column="18" lean-forward="true" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="61" column="43" selection-start-line="61" selection-start-column="43" selection-end-line="61" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="308" column="4" selection-start-line="308" selection-start-column="4" selection-end-line="308" selection-end-column="4" />
+        <state relative-caret-position="511">
+          <caret line="340" selection-start-line="340" selection-end-line="340" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DES/Activity.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="185" column="53" lean-forward="true" selection-start-line="185" selection-start-column="53" selection-end-line="185" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -100,7 +100,8 @@ def extract_tw_macro_activities(dataset, support_min, tep, period, window_durati
     :param period:
     :param window_duration:
     :param tw_id:
-    :return:
+    :return: tw_id (id of the time window), macro_activities_episode (A dict-like object with 'episode' as key and the
+    tuple of dataframes (episode_occurrences, events) as value)
     """
 
     print('Time window {} started'.format(tw_id))
@@ -111,11 +112,12 @@ def extract_tw_macro_activities(dataset, support_min, tep, period, window_durati
 
     tw_dataset = dataset.loc[(dataset.date >= window_start_date) & (dataset.date < window_end_date)].copy()
 
-    tw_macro_activities = extract_macro_activities(dataset=tw_dataset, support_min=support_min, tep=tep, period=period)
+    tw_macro_activities_episodes = extract_macro_activities(dataset=tw_dataset, support_min=support_min, tep=tep,
+                                                            period=period)
 
     print('Time window {} finished'.format(tw_id))
 
-    return tw_id, tw_macro_activities
+    return tw_id, tw_macro_activities_episodes
 
     # results[tw_id] = tw_macro_activities
     #
@@ -129,7 +131,7 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False, d
     :param support_min: Minimum number of episode occurrences
     :param tep: Duration max of an episode occurrence
     :param period: periodicity
-    :return: A dict-like object with 'episode' as key and the tuple of dataframes (episode_occurrences, episode_occurrences) as value
+    :return: A dict-like object with 'episode' as key and the tuple of dataframes (episode_occurrences, events) as value
     """
 
     macro_activities = {}
@@ -320,20 +322,24 @@ def compute_episode_occurrences(dataset, episode, tep):
     if len(episode) == 1:
         return data, data
 
-    episode_occurrences = pd.DataFrame(columns=["date", "end_date", "label"])
-    time_occurrences = Candidate_Study.find_occurrences(data, episode, tep)
+    events = pd.DataFrame(columns=["date", "end_date", "label"])
+    episode_occurrences = Candidate_Study.find_occurrences(data, episode, tep)
 
-    for index, occurrence in time_occurrences.iterrows():
+    for index, occurrence in episode_occurrences.iterrows():
         start_date = occurrence["date"]
         end_date = start_date + dt.timedelta(minutes=tep)
         mini_data = data.loc[(data.date >= start_date) & (data.date < end_date)].copy()
 
         mini_data.drop_duplicates(["label"], keep='first', inplace=True)
-        episode_occurrences = episode_occurrences.append(mini_data, ignore_index=True)
+        events = events.append(mini_data, ignore_index=True)
 
-    episode_occurrences.sort_values(["date"], ascending=True, inplace=True)
+    events.sort_values(["date"], ascending=True, inplace=True)
 
-    return time_occurrences, episode_occurrences
+    # reset indexes
+    episode_occurrences.reset_index(inplace=True)
+    events.reset_index(inplace=True)
+
+    return episode_occurrences, events
 
 
 def identify_pareto(scores):

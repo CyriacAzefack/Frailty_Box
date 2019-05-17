@@ -6,23 +6,34 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
+from DES import Activity
+
 sns.set_style('darkgrid')
 
 def main():
-    dataset_name = 'aruba'
+    dataset_name = 'hh101'
     tstep = dt.timedelta(minutes=5)
+    period = dt.timedelta(days=1)
 
     all_macro_activities = pickle.load(open('../output/{}/all_macro_activities'.format(dataset_name), 'rb'))
 
     all_macro_activities = dict(sorted(all_macro_activities.items(), key=operator.itemgetter(0)))
 
+    manager = Activity.ActivityObjectManager(name=dataset_name, period=period, time_step=tstep)
+
     for tw_id, macro_activities in all_macro_activities.items():
         for episode, df_tuple in macro_activities.items():
-            time_occurrences = df_tuple[0]
-            episode_occurrences = df_tuple[1]
+            episode_occurrences = df_tuple[0]
+            events = df_tuple[1]
 
-            print(time_occurrences)
+            if len(episode) > 2:
+                print(episode)
+            # if set(episode) not in known_macro:
+            #     known_macro.append(set(episode))
 
+            # print(episode_occurrences)
+
+    # print(known_macro)
 
 def plot_episode_discovery(all_macro_activities):
     """

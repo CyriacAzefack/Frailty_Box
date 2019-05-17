@@ -219,15 +219,15 @@ def modulo_datetime(date, period):
     return remainder.total_seconds()
 
 
-def find_occurrences(data, episode, Tep=30):
+def find_occurrences(data, episode, tep=30):
     """
     Find the occurences of the  episode
     :param data: Event log data
     :param episode: list of labels
-    :param Tep : Maximum duration of an occurrence
+    :param tep : Maximum duration of an occurrence
     :return : A dataframe of occurrences with one date column
     """
-    Tep = dt.timedelta(minutes=Tep)
+    tep = dt.timedelta(minutes=tep)
 
     data = data[data.label.isin(episode)].copy()
     data.sort_values(by=['date'], inplace=True)
@@ -237,7 +237,7 @@ def find_occurrences(data, episode, Tep=30):
 
     data['identical_next_label'] = data['label'].shift(-1) == data['label']
 
-    data['enough_time'] = (data['date'].shift(-1) - data['date']) <= Tep
+    data['enough_time'] = (data['date'].shift(-1) - data['date']) <= tep
 
     occurrences = pd.DataFrame(columns=["date", "end_date"])
 
@@ -246,7 +246,7 @@ def find_occurrences(data, episode, Tep=30):
         return true if there is an occurrence of the episode starting at this timestamp
         """
         start_time = row.date
-        end_time = row.date + Tep
+        end_time = row.date + tep
 
         date_condition = (data.date >= start_time) & (data.date < end_time)
 

@@ -2,7 +2,8 @@ import seaborn as sns
 
 from Graph_Model import Acyclic_Graph
 from Graph_Model.Pattern2Graph import *
-from Pattern_Mining.Candidate_Study import modulo_datetime, find_occurrences
+from Pattern_Mining.Candidate_Study import modulo_datetime
+from Pattern_Mining.Extract_Macro_Activities import compute_episode_occurrences
 from Pattern_Mining.Pattern_Discovery import pick_dataset
 
 sns.set_style('darkgrid')
@@ -11,20 +12,21 @@ sns.set_style('darkgrid')
 # np.random.seed(1996)
 
 def main():
-    dataset = pick_dataset('aruba')
+    dataset = pick_dataset('hh101')
 
     # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/Simulation results 1/dataset_simulation_10.csv"
     # dataset = pick_custom_dataset(path)
 
-    label = ('sleeping',)
+    episode = ('dress', 'personal_hygiene', 'sleep')
     period = dt.timedelta(days=1)
     time_step = dt.timedelta(minutes=10)
-    occurrences = find_occurrences(data=dataset, episode=label)
+    tep = 30
 
-    print('{} occurrences of the episode {}'.format(len(occurrences), label))
-    activity = Activity(label=label, occurrences=occurrences, period=period, time_step=time_step,
-                        start_time_window_id=0,
-                        display=True)
+    occurrences, events = compute_episode_occurrences(dataset=dataset, episode=episode, tep=tep)
+
+    print('{} occurrences of the episode {}'.format(len(occurrences), episode))
+    activity = MacroActivity(episode=episode, occurrences=occurrences, events=events, period=period,
+                             time_step=time_step, start_time_window_id=0, tep=tep, display=True)
 
     # start_date = occurrences.date.min().to_pydatetime()
     # future_date = start_date + dt.timedelta(days=30)
@@ -35,66 +37,55 @@ def main():
     # pickle.dump(activity.occurrences, open("occurrences.pickle", 'wb'))
 
 
-class Activity:
+class MacroActivity:
     ID = 0
 
-    def __init__(self, label, occurrences, period, time_step, start_time_window_id, display=False):
+    def __init__(self, episode, occurrences, events, period, time_step, start_time_window_id, tep=30, display=False):
         '''
-        Creation of an activity
-        :param label: label of the activity
-        :param occurrences: Dataframe representing the occurrences of the activity
-        :param period: [dt.timedelta] Frequency of the analysis
-        :param time_step: [dt.timedelta] discrete time step for the simulation
+        Creation of a Macro-Activity
+        :param episode:
+        :param occurrences:
+        :param events:
+        :param period:
+        :param time_step:
+        :param start_time_window_id:
+        :param tep:
+        :param display:
         '''
 
         print('\n')
-        print("####################################")
-        print(" Creation of the Activity '{}'".format(label))
-        print("####################################")
+        print("##################################################")
+        print("## Creation of the Macro-Activity '{}' ##".format(episode))
+        print("####################################################")
         print('\n')
-        self.label = label
+        self.episode = episode
         self.period = period
         self.time_step = time_step
         self.index = np.arange(int(period.total_seconds() / time_step.total_seconds()) + 1)
+        self.tep = dt.timedelta(minutes=30)
 
         # Initialize the count_histogram
         colums = ['tw_id'] + ['ts_{}'.format(ts_id) for ts_id in self.index]
-        self.count_histogram = pd.DataFrame(columns=colums)
+        self.count_histogram = pd.DataFrame(columns=colums)  # For daily profiles
 
-        self.duration_law = {}
+        self.duration_distrib = {}  # For activity duration laws
 
-        if len(label) == 1:
-            self.duration_law[self.label] = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
+        for label in self.episode:
+            # Stored as Gaussian Distribution
+            self.duration_distrib[label] = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
 
-            self.add_time_window(occurrences, start_time_window_id, display=display)
+        self.occurrence_order = pd.DataFrame(
+            columns=['tw_id'])  # For execution orders, the columns of the df are like '0132'
+
+        self.add_time_window(occurrences, events, start_time_window_id, display=display)
 
         # self.build_histogram(occurrences, display=display)
 
-        Activity.ID += 1
+        MacroActivity.ID += 1
 
-    def add_time_window(self, occurrences, time_window_id, display=False):
-        """
-        Update the ocurrence time Histogram and the duration laws history with the new time window data
-        :param occurrences:
-        :return:
-        """
-        occurrences = self.preprocessing(occurrences)
-
-        # Update histogram count history
-        hist = self.build_histogram(occurrences, display=display)
-        self.count_histogram.loc[time_window_id] = [time_window_id] + list(hist.values.T)
-
-        # Update duration law
-        mean_duration = np.mean(occurrences.activity_duration)
-        std_duration = np.std(occurrences.activity_duration)
-        self.duration_law.loc[time_window_id] = [time_window_id, mean_duration, std_duration]
-
-
-
-
-    def preprocessing(self, occurrences):
+    def preprocessing(self, occurrences, events):
         '''
-        Preprocessing the occurrences
+        Preprocessing the occurrences and the events
         :param occurrences:
         :return:
         '''
@@ -105,7 +96,10 @@ class Activity:
         occurrences['activity_duration'] = occurrences.end_date - occurrences.date
         occurrences['activity_duration'] = occurrences['activity_duration'].apply(lambda x: x.total_seconds())
 
-        return occurrences
+        events['activity_duration'] = events.end_date - events.date
+        events['activity_duration'] = events['activity_duration'].apply(lambda x: x.total_seconds())
+
+        return occurrences, events
 
     def build_histogram(self, occurrences, display=False):
         '''
@@ -128,173 +122,65 @@ class Activity:
         if display:
             plt.bar(hist.index, hist.values)
             plt.title(
-                '--'.join(self.label) + '\nTime step : {} min'.format(round(self.time_step.total_seconds() / 60, 1)))
+                '--'.join(self.episode) + '\nTime step : {} min'.format(round(self.time_step.total_seconds() / 60, 1)))
             plt.ylabel('Probability')
             plt.show()
 
         return hist
 
-
-    def get_label(self):
+    def add_time_window(self, occurrences, events, time_window_id, display=False):
         """
-        :return: The episode of the Activity
-        """
-        return self.label
-
-    # TODO Update this method
-    def get_stats_from_date(self, date, time_step_id, hist=True):
-        '''
-        Estimate the number of time the current activity started at time_step_id in the last Sliding_Window
-        :param date:
-        :param time_step_id:
-        :param hist: if True, return only the Hist_count, otherwise everything
-        :return: a dict with the value of indicators {'hist_count':..., 'mean_duration':..., 'std_duration':...}
-        '''
-
-        if hist:
-            indicators = ['hist_count']
-        else:
-            indicators = ['mean_duration', 'std_duration']
-
-        stats = {
-            'hist_count': None,
-            'mean_duration': None,
-            'std_duration': None
-        }
-
-        date = date.date()
-        time_step_forecaster = self.forecasters_per_index[time_step_id]
-
-        # future_start_date = self.time_evo_per_index[time_step_id].index.max().to_pydatetime()
-        future_end_date = date
-        # future = pd.date_range(future_start_date, future_end_date, freq='1D')
-        future = pd.DataFrame(np.array([future_end_date], dtype=np.datetime64))
-
-        future.columns = ['ds']
-
-        for indicator in indicators:
-            forecaster = time_step_forecaster[indicator]
-            forecast = forecaster.predict(future)
-            row_prediction = forecast.iloc[-1]
-            indicator_value = np.random.triangular(row_prediction.yhat_lower, row_prediction.yhat,
-                                                   row_prediction.yhat_upper)
-            indicator_value = max(0, indicator_value)
-            stats[indicator] = indicator_value
-
-        return stats
-
-
-    def get_stats(self, time_step_id):
-        '''
-        Get parameters at this time_step_id
-        :param time_step_id:
-        :return:
-        '''
-        stats = {
-            'hist_count': None,
-            'hist_prob': None,
-            'mean_duration': None,
-            'std_duration': None
-        }
-
-        stats['hist_count'] = self.histogram.loc[time_step_id]
-        stats['hist_prob'] = self.histogram.loc[time_step_id] / len(self.histogram)
-        stats['mean_duration'] = self.activity_duration_model.loc[time_step_id].mean_duration
-        stats['std_duration'] = self.activity_duration_model.loc[time_step_id].std_duration
-
-        return stats
-
-    # TODO : Build a simple method according to the new structure
-    def simulate(self, date, time_step_id):
-        """
-        Generate the events for the activity
-        :param date:
-        :param time_step_id:
-        :return:
-        """
-
-        simulation_result = pd.DataFrame(columns=['date', 'end_date', 'label'])
-
-        while True:  # To prevent cases where the date is OutOfDatetimeBounds
-
-            generated_duration = self.duration_generation(date, time_step_id, method=self.duration_gen)
-
-            if generated_duration == 0:
-                break
-
-            # print("Time spent for prediction: {}".format(
-            #     dt.timedelta(seconds=round(t.process_time() - start_time, 1))))
-            try:
-                event_start_date = date
-                event_end_date = event_start_date + dt.timedelta(seconds=generated_duration)
-                simulation_result.loc[len(simulation_result)] = [event_start_date, event_end_date,
-                                                                 '--'.join(self.label)]
-                break
-            except ValueError as er:
-                print("OOOps ! Date Overflow. Let's try again...")
-
-        return simulation_result, generated_duration
-
-    def duration_generation(self, date, ts_id, method='Gaussian'):
-        """
-        Generate the duration of the activity
-        :param date:
-        :param ts_id:
-        :param method:
-            'Gaussian' : Static normal distribution of the duration at each time step id
-            'Forecast Normal' : Static normal distribution of the duration at each time step id forecasted for this specific date
-            'TS Forecast' : Use a Time series forecasting model to predict the duration at this specific date (by one time step)
-        :return:
-        """
-        generated_duration = -1
-
-        if method == 'Gaussian':
-            stats = self.get_stats(time_step_id=ts_id)
-            mean_duration = stats['mean_duration']
-            std_duration = stats['std_duration']
-            generated_duration = np.random.normal(mean_duration, std_duration)
-
-        elif method == 'Forecast Normal':
-            stats = self.get_stats_from_date(date=date, time_step_id=ts_id, hist=False)
-            mean_duration = stats['mean_duration']
-            std_duration = stats['std_duration']
-            generated_duration = np.random.normal(mean_duration, std_duration)
-
-        elif method == 'TS Forecast':
-            day_date = date.date()
-            relative_date = modulo_datetime(date, self.period)
-            time_step_id = math.floor(relative_date / self.time_step.total_seconds())
-            row = self.duration_forecasts.loc[(self.duration_forecasts.day_date == day_date) & (
-                    self.duration_forecasts.time_step_id == time_step_id), 'pred_duration']
-            generated_duration = row.values[0]
-
-        if generated_duration < 0:
-            generated_duration = 0
-
-        return generated_duration
-
-
-class MacroActivity(Activity):
-
-    def __init__(self, episode, occurrences, events, period, time_step, display=False):
-        '''
-        Create a Macro Activity
-        :param episode:
-        :param dataset:
+        Update the ocurrence time Histogram and the duration laws history with the new time window data
         :param occurrences:
-        :param period:
-        :param time_step:
-        :param start_date:
-        :param end_date:
-        :param display:
-        :param Tep:
-        '''
-        Activity.__init__(self, episode, occurrences, period, time_step, display=display)
+        :return:
+        """
+        occurrences, events = self.preprocessing(occurrences, events)
 
+        # Update histogram count history
+        hist = self.build_histogram(occurrences, display=display)
+        self.count_histogram.at[time_window_id] = [time_window_id] + list(hist.values.T)
 
+        print('Histogram count [UPDATED]')
 
-        # TODO : Build a graph for every time_step_id
-        self.graph = self.build_activities_graph(episode=episode, events=events, period=period, display=display)
+        # Update duration laws
+        for label in self.episode:
+            label_df = events[events.label == label]
+            duration_df = self.duration_distrib[label]
+
+            mean_duration = np.mean(label_df.activity_duration)
+            std_duration = np.std(label_df.activity_duration)
+            duration_df.at[time_window_id] = [time_window_id, mean_duration, std_duration]
+
+        print('Duration Gaussian Distribution [UPDATED]')
+
+        # Update execution order
+
+        occ_order_probability_dict = {}
+
+        # Replace labels by their alphabetic identifier
+        for label in self.episode:
+            events.loc[events.label == label, 'alph_id'] = sorted(self.episode).index(label)
+
+        for id, occ_row in occurrences.iterrows():
+            start_date = occ_row.date
+            end_date = start_date + self.tep
+            arr = list(events.loc[(events.date >= start_date) & (events.date < end_date), 'alph_id'].values)
+            # remove duplicates
+            arr = list(dict.fromkeys(arr))
+            occ_order_str = ''.join([str(int(x)) for x in arr])
+
+            if occ_order_str in occ_order_probability_dict:
+                occ_order_probability_dict[occ_order_str] += 1 / len(occurrences)
+            else:
+                occ_order_probability_dict[occ_order_str] = 1 / len(occurrences)
+
+        self.occurrence_order.at[time_window_id, 'tw_id'] = time_window_id
+        for occ_order_str, prob in occ_order_probability_dict.items():
+            self.occurrence_order.at[time_window_id, occ_order_str] = prob
+
+        self.occurrence_order.fillna(0, inplace=True)
+
+        print('Execution Order Probability [UPDATED]')
 
     def simulate(self, date, time_step_id):
         '''
@@ -430,34 +316,41 @@ class MacroActivity(Activity):
         return acyclic_graph
 
 
-class suppress_stdout_stderr(object):
-    '''
-    A context manager for doing a "deep suppression" of stdout and stderr in
-    Python, i.e. will suppress all print, even if the print originates in a
-    compiled C/Fortran sub-function.
-       This will not suppress raised exceptions, since exceptions are printed
-    to stderr just before a script exits, and after the context manager has
-    exited (at least, I think that is why it lets exceptions through).
+class ActivityObjectManager:
+    """
+    Manage the macro-activities created in the time windows
+    """
 
-    '''
-    def __init__(self):
-        # Open a pair of null files
-        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
-        # Save the actual stdout (1) and stderr (2) file descriptors.
-        self.save_fds = [os.dup(1), os.dup(2)]
+    def __init__(self, name, period, time_step):
+        """
+        Initialisation of the Manager
+        :param name:
+        :param period:
+        :param time_step:
+        """
+        self.name = name
+        self.period = period
+        self.time_step = time_step
+        self.discovered_episodes = []  # All the episodes discovered until then
+        self.activity_objects = {}  # The Activity/MacroActivity objects
 
-    def __enter__(self):
-        # Assign the null pointers to stdout and stderr.
-        os.dup2(self.null_fds[0], 1)
-        os.dup2(self.null_fds[1], 2)
+    def update(self, episode, occurrences, events, time_window_id):
+        """
+        Update the Macro-Activity Object related to the macro-activity discovered if they already exist OR create a new Object
+        :param macro_activities_list:
+        :param time_window_id:
+        :return:
+        """
 
-    def __exit__(self, *_):
-        # Re-assign the real stdout/stderr back to (1) and (2)
-        os.dup2(self.save_fds[0], 1)
-        os.dup2(self.save_fds[1], 2)
-        # Close the null files
-        for fd in self.null_fds + self.save_fds:
-            os.close(fd)
+        set_episode = frozenset(episode)
+
+        if set_episode not in self.discovered_episodes:  # Create a new Macro-Activity Object
+            activity_object = MacroActivity(episode, occurrences, events, self.period, self.time_step, display=False)
+            self.discovered_episodes.append(set_episode)
+            self.activity_objects[set_episode] = activity_object
+        else:
+            activity_object = self.activity_objects[set_episode]
+            activity_object.add_time_window(episode, occurrences, events, time_window_id)
 
 
 if __name__ == '__main__':
