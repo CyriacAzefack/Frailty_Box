@@ -12,28 +12,29 @@ sns.set_style('darkgrid')
 
 def main():
     dataset_name = 'hh101'
-    tstep = dt.timedelta(minutes=5)
+    t_step = dt.timedelta(minutes=60)
     period = dt.timedelta(days=1)
+    tep = 30
 
     all_macro_activities = pickle.load(open('../output/{}/all_macro_activities'.format(dataset_name), 'rb'))
 
     all_macro_activities = dict(sorted(all_macro_activities.items(), key=operator.itemgetter(0)))
 
-    manager = Activity.ActivityObjectManager(name=dataset_name, period=period, time_step=tstep)
+    activityManager = Activity.ActivityObjectManager(name=dataset_name, period=period, time_step=t_step, tep=tep)
 
     for tw_id, macro_activities in all_macro_activities.items():
+
+        print('UPDATE for Time Window {}!!'.format(tw_id))
         for episode, df_tuple in macro_activities.items():
+            # if ('eat_breakfast' in episode) and ('cook_breakfast' in episode) :
             episode_occurrences = df_tuple[0]
             events = df_tuple[1]
 
-            if len(episode) > 2:
-                print(episode)
-            # if set(episode) not in known_macro:
-            #     known_macro.append(set(episode))
+            activityManager.update(episode=episode, occurrences=episode_occurrences, events=events,
+                                   time_window_id=tw_id)
 
-            # print(episode_occurrences)
-
-    # print(known_macro)
+    activityManager.build_forecasting_models(train_ratio=0.8, method=Activity.MacroActivity.SARIMAX, display=True)
+    
 
 def plot_episode_discovery(all_macro_activities):
     """

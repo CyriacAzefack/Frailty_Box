@@ -86,6 +86,8 @@ def data_drift(dataset_name, window_size, behavior_type, drift_method, plot, deb
 
     data = pick_dataset(dataset_name)
 
+    data = data[data.label == 'Wc'].copy()
+
     time_window_size = dt.timedelta(days=window_size)
 
     inhabitant_behavior = Behavior(dataset=data, time_window_duration=time_window_size)
@@ -258,8 +260,8 @@ class Behavior:
                 print('Duration : '.ljust(20) + str(change['duration'][cluster_id]) + ' days')
 
             if plot:
-                sns.set(font_scale=5)
-                plt.rcParams['figure.figsize'] = [20, 20]
+                # sns.set(font_scale=5)
+                # plt.rcParams['figure.figsize'] = [20, 20]
                 activity_behavior = self.activities_behavior[label]
                 activity_behavior.display_behavior_evolution(change['clusters'], change['colors'])
                 activity_behavior.display_drift(change['clusters'], change['colors'], behavior_type)
@@ -710,9 +712,13 @@ class ActivityBehavior(Behavior):
 
             time_periods = self.time_periods_from_windows(window_ids)
 
+            print("Cluster {} :".format(cluster_id))
             for period in time_periods:
                 start_date = self.begin_date + dt.timedelta(days=period[0])
                 end_date = self.begin_date + dt.timedelta(days=period[1] + 1)
+
+                print("\t{} - {}".format(start_date, end_date))
+
 
                 if time_periods.index(period) == 0:
                     plt.text(dat.date2num(start_date), lvl, 'Behavior {}'.format(cluster_id), fontsize=16)
@@ -920,8 +926,16 @@ class ActivityBehavior(Behavior):
             # elif behavior_type == Behavior.DURATION:
             #     std_max = dt.timedelta(minutes=30)
 
-            if len(data) <= 2:
-                clusters_interpretations[cluster_id] = {}  # No interpretation
+            interpretation = {}
+            if len(data) == 0:
+                clusters_interpretations[cluster_id] = interpretation  # No interpretation
+                continue
+            elif len(data) <= 2:
+                mu = np.mean(data)
+                sigma = np.std(data)
+
+                interpretation[str(dt.timedelta(seconds=mu))] = str(dt.timedelta(seconds=sigma))
+                clusters_interpretations[cluster_id] = interpretation
                 continue
 
             data_clusters = univariate_clustering(data)

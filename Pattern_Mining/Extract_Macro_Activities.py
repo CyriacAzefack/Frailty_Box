@@ -22,7 +22,7 @@ def main():
     :return:
     """
 
-    dataset_name = 'hh101'
+    dataset_name = 'aruba'
     output_folder = '../output/{}/'.format(dataset_name)
     dataset = pick_dataset(dataset_name)
     support_min = 15

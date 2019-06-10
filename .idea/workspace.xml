@@ -4,13 +4,14 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Behavior_Drift.py" line="379" />
+    <bookmark url="file://$PROJECT_DIR$/Behavior_Drift.py" line="381" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="add 'episode_occurrences' and 'events' to macro-activities">
+    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Macro-Activity Structure updated : &#10;- History count added (and updatable with time windows)&#10;- duration laws added&#10;- occurrence order prob added">
+      <change afterPath="$PROJECT_DIR$/Time_Series/ARIMA.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Behavior_Drift.py" beforeDir="false" afterPath="$PROJECT_DIR$/Behavior_Drift.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DES/Activity.py" beforeDir="false" afterPath="$PROJECT_DIR$/DES/Activity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pattern_Mining/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Mining/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.py" afterDir="false" />
@@ -1518,19 +1519,22 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
+        <entry file="file://$PROJECT_DIR$/Behavior_Drift.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="16">
-              <caret line="11" column="25" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
+            <state relative-caret-position="12816">
+              <caret line="819" column="53" selection-start-line="819" selection-start-column="53" selection-end-line="819" selection-end-column="53" />
+              <folding>
+                <element signature="e#0#38#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/DES/Activity.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="185" column="53" lean-forward="true" selection-start-line="185" selection-start-column="53" selection-end-line="185" selection-end-column="53" />
+            <state relative-caret-position="2496">
+              <caret line="163" column="50" selection-start-line="163" selection-start-column="50" selection-end-line="163" selection-end-column="50" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -1538,29 +1542,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1027">
-              <caret line="160" column="4" selection-start-line="160" selection-start-column="4" selection-end-line="160" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Pattern_Mining/test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="80">
-              <caret line="5" column="18" lean-forward="true" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="511">
-              <caret line="340" selection-start-line="340" selection-end-line="340" />
+            <state relative-caret-position="267">
+              <caret line="60" column="8" selection-start-line="60" selection-start-column="4" selection-end-line="60" selection-end-column="8" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -1580,8 +1566,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>accura</find>
-      <find>as_ma</find>
       <find>str(epi</find>
       <find>enough_time</find>
       <find>relative</find>
@@ -1610,6 +1594,8 @@
       <find>self.label</find>
       <find>occ_id</find>
       <find>loc</find>
+      <find>self.tep</find>
+      <find>self.exog</find>
     </findStrings>
     <replaceStrings>
       <replace>labels</replace>
@@ -1646,13 +1632,11 @@
     <setting file="file://$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/Validation.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/DES/Activity.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/DES/Activity.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="D:/cyriac.azefack/Documents/Meygal/algo_ml.py" />
-        <option value="$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py" />
         <option value="$PROJECT_DIR$/xED/ML_idea.py" />
         <option value="$PROJECT_DIR$/ML_idea/ML_idea.py" />
         <option value="$PROJECT_DIR$/ML_idea/Custom_Classifier.py" />
@@ -1697,16 +1681,18 @@
         <option value="$PROJECT_DIR$/Time_Series/Window_LSTM.py" />
         <option value="$PROJECT_DIR$/Time_Series/Prophet_forecaster.py" />
         <option value="$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py" />
-        <option value="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" />
-        <option value="$PROJECT_DIR$/Pattern_Mining/test.py" />
         <option value="$PROJECT_DIR$/input/HH/hh101/dataset.csv" />
-        <option value="$PROJECT_DIR$/Utils.py" />
+        <option value="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" />
+        <option value="$PROJECT_DIR$/Time_Series/ARIMA.py" />
+        <option value="$PROJECT_DIR$/Pattern_Mining/test.py" />
         <option value="$PROJECT_DIR$/DES/Activity.py" />
+        <option value="$PROJECT_DIR$/Behavior_Drift.py" />
+        <option value="$PROJECT_DIR$/Utils.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="716" />
+    <option name="x" value="466" />
     <option name="y" value="-8" />
     <option name="width" value="974" />
     <option name="height" value="725" />
@@ -1729,28 +1715,7 @@
             <path>
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
               <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="DES" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="input" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="input" type="462c0819:PsiDirectoryNode" />
-              <item name="HH" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
               <item name="Pattern_Mining" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="Time_Series" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
@@ -1777,7 +1742,7 @@
     <property name="last_opened_file_path" value="D:/cyriac.azefack/Documents/Coursera/Discrete Optimization" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.statistic.project.settings" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -1806,7 +1771,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Activity">
+  <component name="RunManager" selected="Python.toulouse_drift_stat_test">
+    <configuration name="ARIMA" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Time_Series" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Time_Series/ARIMA.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Activity" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -1870,27 +1856,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Prophet_forecaster" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Time_Series" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Time_Series/Prophet_forecaster.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="Toulouse_Drift" type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -1933,27 +1898,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="hh113_behavior_drift" type="PythonConfigurationType" factoryName="Python">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Data_Drift" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Behavior_Drift.py" />
-      <option name="PARAMETERS" value="--dataset_name hh113 --window_size 28 --behavior start_time --drift_method stat_test" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -1975,23 +1919,66 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="toulouse_drift_density" type="PythonConfigurationType" factoryName="Python">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Data_Drift" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Behavior_Drift.py" />
+      <option name="PARAMETERS" value="--dataset_name toulouse --window_size 28 --behavior duration --drift_method density_intersect --plot" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="toulouse_drift_stat_test" type="PythonConfigurationType" factoryName="Python">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Data_Drift" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Behavior_Drift.py" />
+      <option name="PARAMETERS" value="--dataset_name toulouse --window_size 28 --behavior start_time --drift_method stat_test --plot" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
+      <item itemvalue="Python.ARIMA" />
+      <item itemvalue="Python.Activity" />
+      <item itemvalue="Python.Extract_Macro_Activities" />
+      <item itemvalue="Python.LSTM" />
       <item itemvalue="Python.Toulouse_Drift" />
       <item itemvalue="Python.Utils" />
-      <item itemvalue="Python.hh113_behavior_drift" />
-      <item itemvalue="Python.Prophet_forecaster" />
-      <item itemvalue="Python.LSTM" />
       <item itemvalue="Python.test" />
-      <item itemvalue="Python.Extract_Macro_Activities" />
-      <item itemvalue="Python.Activity" />
+      <item itemvalue="Python.toulouse_drift_density" />
+      <item itemvalue="Python.toulouse_drift_stat_test" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Activity" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.Activity" />
+        <item itemvalue="Python.ARIMA" />
         <item itemvalue="Python.Extract_Macro_Activities" />
         <item itemvalue="Python.LSTM" />
-        <item itemvalue="Python.Prophet_forecaster" />
       </list>
     </recent_temporary>
   </component>
@@ -2008,13 +1995,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1521208662820</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Graph construction Finished">
-      <created>1523273095419</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1523273095419</updated>
     </task>
     <task id="LOCAL-00007" summary="Add More infos in Graph display">
       <created>1523275962686</created>
@@ -2352,7 +2332,14 @@
       <option name="project" value="LOCAL" />
       <updated>1558020070491</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Macro-Activity Structure updated : &#10;- History count added (and updatable with time windows)&#10;- duration laws added&#10;- occurrence order prob added">
+      <created>1558105363820</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1558105363821</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2373,22 +2360,22 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.5678092" visible="true" weight="0.13435195" />
-      <window_info id="Structure" order="1" sideWeight="0.43219075" side_tool="true" visible="true" weight="0.13435195" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.55794704" visible="true" weight="0.14857745" />
+      <window_info id="Structure" order="1" sideWeight="0.442053" side_tool="true" visible="true" weight="0.14857745" />
       <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4873551" weight="0.32502595" />
-      <window_info anchor="bottom" id="Statistic" order="2" sideWeight="0.49789253" weight="0.46936655" />
-      <window_info anchor="bottom" x="961" y="31" width="958" height="1048" id="Run" order="3" sideWeight="0.93256056" weight="0.37279335" />
-      <window_info active="true" anchor="bottom" id="Debug" order="4" sideWeight="0.44520548" visible="true" weight="0.3032191" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48630136" weight="0.32502595" />
+      <window_info anchor="bottom" id="Statistic" order="2" sideWeight="0.49736565" weight="0.46936655" />
+      <window_info active="true" anchor="bottom" x="961" y="31" width="958" height="1048" id="Run" order="3" sideWeight="0.9167545" visible="true" weight="0.37279335" />
+      <window_info anchor="bottom" id="Debug" order="4" sideWeight="0.7655427" weight="0.3032191" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.49789253" weight="0.31879544" />
       <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.5995785" weight="0.3032191" />
-      <window_info anchor="bottom" id="Python Console" order="9" sideWeight="0.49315068" weight="0.3281412" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.32883817" />
-      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.49525815" weight="0.2596054" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.55479455" side_tool="true" visible="true" weight="0.3032191" />
+      <window_info anchor="bottom" id="Messages" order="9" weight="0.32883817" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4915701" weight="0.20145379" />
+      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.4947313" weight="0.2596054" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.08324552" side_tool="true" visible="true" weight="0.37279335" />
       <window_info anchor="bottom" id="Thumbnails" order="13" sideWeight="0.49947312" weight="0.32917964" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -2469,7 +2456,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Add basic Time Series Forecasting" />
     <MESSAGE value="Adding 'Aruba' Input files" />
     <MESSAGE value="Adding 'Aruba' Replications results files" />
     <MESSAGE value="Change histogram validation to functions" />
@@ -2494,7 +2480,8 @@
     <MESSAGE value="Time Windows parallel execution implemented" />
     <MESSAGE value="Add 'episode_occurrence' and 'events' to macro_activities" />
     <MESSAGE value="add 'episode_occurrences' and 'events' to macro-activities" />
-    <option name="LAST_COMMIT_MESSAGE" value="add 'episode_occurrences' and 'events' to macro-activities" />
+    <MESSAGE value="Macro-Activity Structure updated : &#10;- History count added (and updatable with time windows)&#10;- duration laws added&#10;- occurrence order prob added" />
+    <option name="LAST_COMMIT_MESSAGE" value="Macro-Activity Structure updated : &#10;- History count added (and updatable with time windows)&#10;- duration laws added&#10;- occurrence order prob added" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -2516,16 +2503,6 @@
           <url>file://D:/cyriac.azefack/Documents/Meygal/algo_ml.py</url>
           <line>44</line>
           <option name="timeStamp" value="665" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DES/Activity.py</url>
-          <line>256</line>
-          <option name="timeStamp" value="671" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/DES/Activity.py</url>
-          <line>260</line>
-          <option name="timeStamp" value="672" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Graph_Model/Pattern2Graph.py</url>
@@ -2561,16 +2538,6 @@
           <url>file://$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py</url>
           <line>202</line>
           <option name="timeStamp" value="881" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Behavior_Drift.py</url>
-          <line>926</line>
-          <option name="timeStamp" value="883" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Behavior_Drift.py</url>
-          <line>88</line>
-          <option name="timeStamp" value="884" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DES/Digital Twin Model.py</url>
@@ -2641,14 +2608,19 @@
           <option name="timeStamp" value="1037" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pattern_Mining/test.py</url>
-          <line>25</line>
-          <option name="timeStamp" value="1040" />
+          <url>file://$PROJECT_DIR$/Time_Series/ARIMA.py</url>
+          <line>32</line>
+          <option name="timeStamp" value="1050" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/DES/Activity.py</url>
-          <line>189</line>
-          <option name="timeStamp" value="1046" />
+          <line>240</line>
+          <option name="timeStamp" value="1062" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Utils.py</url>
+          <line>169</line>
+          <option name="timeStamp" value="1067" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -2663,47 +2635,47 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
       <expression>
-        <expression-string>sorted(self.episode).index('dress')</expression-string>
+        <expression-string>labels[labels &gt;= 0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>sorted(self.episode).index['dress']</expression-string>
+        <expression-string>labels = labels[labels &gt;= 0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>sorted(self.episode)</expression-string>
+        <expression-string>X[labels &gt;= 0, 0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.episode.sort()</expression-string>
+        <expression-string>X[labels &gt;= 0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self.episode</expression-string>
+        <expression-string>Z = X[labels &gt;= 0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>dt.datetime.combine(start_date, dt.datetime.min.time())</expression-string>
+        <expression-string>sorted(clusters.items(), key=lambda x: clusters[x[0]].mean())</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>hist.values.T</expression-string>
+        <expression-string>sorted_clusters = sorted(clusters.items(), key=lambda x: clusters[x[0]].mean())</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>thread_args</expression-string>
+        <expression-string>sorted_clusters = sorted(clusters.items(), key=lambda x: clusters[x[1]].mean())</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>thread_args(0)</expression-string>
+        <expression-string>sorted_clusters = sorted(clusters.items(), key=lambda x: clusters[x].mean())</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -2836,139 +2808,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/keras/layers/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="577">
-          <caret line="547" column="8" selection-start-line="547" selection-start-column="8" selection-end-line="547" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/keras/engine/training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-912">
-          <caret line="36" column="22" selection-start-line="36" selection-start-column="22" selection-end-line="36" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/keras/optimizers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="457" column="8" selection-start-line="457" selection-start-column="8" selection-end-line="457" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/core/nanops.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="73" selection-start-line="73" selection-end-line="73" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/core/frame.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="6981" selection-start-line="6981" selection-end-line="6981" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/neighbors/kde.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-          <folding>
-            <element signature="e#115#133#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/scipy/signal/_peak_finding.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49">
-          <caret line="196" column="4" selection-start-line="196" selection-start-column="4" selection-end-line="196" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/nonparametric/kde.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="883">
-          <caret line="85" column="52" selection-start-line="85" selection-start-column="36" selection-end-line="85" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/mixture/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="241" column="19" selection-start-line="241" selection-start-column="15" selection-end-line="241" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/matplotlib/patches.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-527">
-          <caret line="1507" column="8" selection-start-line="1507" selection-start-column="8" selection-end-line="1507" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/tsa/statespace/mlemodel.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="2371" column="8" selection-start-line="2371" selection-start-column="8" selection-end-line="2371" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/-1728110072/numpy/core/multiarray.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/tsa/statespace/varmax.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1201">
-          <caret line="349" selection-start-line="349" selection-end-line="349" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/tsa/vector_ar/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/tsa/vector_ar/vecm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-671">
-          <caret line="530" column="4" selection-start-line="530" selection-start-column="4" selection-end-line="530" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/tsa/vector_ar/var_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-431">
-          <caret line="569" column="8" selection-start-line="569" selection-start-column="8" selection-end-line="569" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/keras/engine/training_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="262" column="32" lean-forward="true" selection-start-line="262" selection-start-column="32" selection-end-line="262" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/keras/losses.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="12" column="22" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="22" />
-          <folding>
-            <element signature="e#32#70#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/aruba_periodicity.PNG" />
-    <entry file="file://$PROJECT_DIR$/Validation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13424">
-          <caret line="847" selection-start-line="846" selection-start-column="8" selection-end-line="846" selection-end-column="104" />
-          <folding>
-            <element signature="e#24#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/mixture/gaussian_mixture.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2401">
@@ -3088,26 +2927,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Time_Series/Window_LSTM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="26" column="22" selection-start-line="26" selection-start-column="4" selection-end-line="26" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Time_Series/LSTM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16">
-          <caret line="21" column="18" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Time_Series/create_Time_Series.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="256">
@@ -3122,24 +2941,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Pattern_Mining/FP_growth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="281" lean-forward="true" selection-start-line="281" selection-end-line="281" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/DES/Digital Twin Model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1027">
+        <state relative-caret-position="2288">
           <caret line="160" column="4" selection-start-line="160" selection-start-column="4" selection-end-line="160" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="221" column="4" selection-start-line="221" selection-start-column="4" selection-end-line="221" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16">
-          <caret line="11" column="25" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
         </state>
       </provider>
     </entry>
@@ -3149,28 +2961,206 @@
       </provider>
       <provider selected="true" editor-type-id="csv-text-editor">
         <state>
-          <caret column="19" lean-forward="true" selection-start-column="19" selection-end-column="19" />
+          <caret column="13" selection-start-column="13" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Pattern_Mining/FP_growth.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/core/internals/blocks.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="281" lean-forward="true" selection-start-line="281" selection-end-line="281" />
+        <state relative-caret-position="215">
+          <caret line="753" selection-start-line="753" selection-end-line="753" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/tools/plotting.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/metrics/regression.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="721">
+          <caret line="183" column="4" selection-start-line="183" selection-start-column="4" selection-end-line="183" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/plotting/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/plotting/_misc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2161">
+          <caret line="599" column="4" selection-start-line="599" selection-start-column="4" selection-end-line="599" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/tsa/arima_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="1007" column="31" selection-start-line="1007" selection-start-column="31" selection-end-line="1007" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/numpy/core/function_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="24" column="4" selection-start-line="24" selection-start-column="4" selection-end-line="24" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Time_Series/Window_LSTM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-548">
+          <caret line="15" column="4" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/core/frame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="215">
+          <caret line="3818" column="8" selection-start-line="3818" selection-start-column="8" selection-end-line="3818" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Simulation_Model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="11" column="25" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/tsa/statespace/sarimax.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2383">
+          <caret line="768" column="29" selection-start-line="768" selection-start-column="20" selection-end-line="768" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/tsa/statespace/mlemodel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="324" column="8" selection-start-line="324" selection-start-column="8" selection-end-line="324" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Pattern_Mining/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="5" column="18" lean-forward="true" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+        <state relative-caret-position="176">
+          <caret line="29" column="28" selection-start-line="29" selection-start-column="28" selection-end-line="29" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DES/Activity.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="228" column="54" selection-start-line="228" selection-start-column="54" selection-end-line="228" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Time_Series/ARIMA.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="32" column="35" selection-start-line="32" selection-start-column="35" selection-end-line="32" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data_Drift/Drift_Detector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/cluster/k_means_.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="914" column="8" selection-start-line="914" selection-start-column="8" selection-end-line="914" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Time_Series/LSTM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="19" column="15" selection-start-line="19" selection-start-column="15" selection-end-line="19" selection-end-column="15" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pattern_Mining/Candidate_Study.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="200" column="10" lean-forward="true" selection-start-line="200" selection-start-column="10" selection-end-line="200" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/cluster/dbscan_.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1777">
+          <caret line="288" column="8" selection-start-line="288" selection-start-column="8" selection-end-line="288" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/utils/validation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="551" selection-start-line="551" selection-end-line="551" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/numpy/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/-1728110072/numpy/core/multiarray.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="4428" column="8" selection-start-line="4428" selection-start-column="8" selection-end-line="4428" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/cluster/mean_shift_.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="30" column="34" selection-start-line="30" selection-start-column="26" selection-end-line="30" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Behavior_Drift.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12816">
+          <caret line="819" column="53" selection-start-line="819" selection-start-column="53" selection-end-line="819" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="61" column="43" selection-start-line="61" selection-start-column="43" selection-end-line="61" selection-end-column="43" />
+        <state relative-caret-position="2496">
+          <caret line="163" column="50" selection-start-line="163" selection-start-column="50" selection-end-line="163" selection-end-column="50" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
@@ -3179,20 +3169,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="511">
-          <caret line="340" selection-start-line="340" selection-end-line="340" />
+        <state relative-caret-position="267">
+          <caret line="60" column="8" selection-start-line="60" selection-start-column="4" selection-end-line="60" selection-end-column="8" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DES/Activity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="185" column="53" lean-forward="true" selection-start-line="185" selection-start-column="53" selection-end-line="185" selection-end-column="53" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>

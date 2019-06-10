@@ -33,6 +33,7 @@ def pick_dataset(name, nb_days=-1):
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
         dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
 
+
     elif name.startswith('hh'):
         path = os.path.join(my_path, "./input/HH/{}/dataset.csv".format(name))
         dataset = pd.read_csv(path, delimiter=',')
@@ -147,7 +148,7 @@ def stringify_keys(d):
     return d
 
 
-def univariate_clustering(x, quantile=0.6):
+def univariate_clustering(x):
     """
     1d - Clustering
     :param x:
@@ -156,13 +157,21 @@ def univariate_clustering(x, quantile=0.6):
     """
 
     X = np.array(list(zip(x, np.zeros(len(x)))), dtype=np.int)
-    bandwidth = estimate_bandwidth(X, quantile=quantile)
+
+    if len(X) <= 2:
+        X.reshape(-1, 1)
+    bandwidth = estimate_bandwidth(X, quantile=0.3)
     if bandwidth == 0:
         return {}
-    ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
+
+    ms = MeanShift(bandwidth=bandwidth, bin_seeding=False, cluster_all=False)
     ms.fit(X)
     labels = ms.labels_
-    cluster_centers = ms.cluster_centers_
+    # cluster_centers = ms.cluster_centers_
+
+    X = X[labels >= 0]  # Filter '-1' label, outliers
+
+    labels = labels[labels >= 0]  # Filter '-1' label, outliers
 
     labels_unique = np.unique(labels)
     n_clusters_ = len(labels_unique)
@@ -178,4 +187,6 @@ def univariate_clustering(x, quantile=0.6):
 
         clusters[k] = cluster_array
 
-    return clusters
+    sorted_clusters = dict(sorted(clusters.items(), key=lambda x: clusters[x[0]].mean()))
+
+    return sorted_clusters
