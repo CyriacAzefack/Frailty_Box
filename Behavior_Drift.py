@@ -9,9 +9,7 @@ import matplotlib.dates as dat
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
-from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
-from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 
 from Data_Drift.Features_Extraction import *
@@ -19,6 +17,7 @@ from Data_Drift.MCL import mcl_clusterinig
 from Utils import *
 
 sns.set_style('darkgrid')
+sns.set(font_scale=2)
 
 
 def main():
@@ -69,7 +68,7 @@ def main():
     debug = options.debug
 
     labels = None
-    # labels = [' resperate']
+    labels = ['eating']
 
     df = data_drift(dataset_name, window_size, behavior_type, drift_method, plot, debug, labels)
 
@@ -85,8 +84,6 @@ def data_drift(dataset_name, window_size, behavior_type, drift_method, plot, deb
     print("Mode debug : {}".format(debug))
 
     data = pick_dataset(dataset_name)
-
-    data = data[data.label == 'Wc'].copy()
 
     time_window_size = dt.timedelta(days=window_size)
 
@@ -132,7 +129,7 @@ def data_drift(dataset_name, window_size, behavior_type, drift_method, plot, deb
 
 
 class Behavior:
-    OCC_TIME = 'Activity Occurrence Time'
+    OCC_TIME = 'Activity Starting Time'
     DURATION = 'Duration'
     NB_OCC = 'Number of Occurrences'
 
@@ -241,7 +238,7 @@ class Behavior:
         changes = dict(sorted(changes.items(), key=lambda kv: kv[1]['silhouette'], reverse=True))
 
         print(' +' * 20)
-        print(' +' + 'RESULTS'.format(label.upper()).center(30, ' ') + ' +')
+        print(' +' + 'RESULTS'.center(30, ' ') + ' +')
         print(' +' * 20)
 
         for label, change in changes.items():
@@ -670,6 +667,8 @@ class ActivityBehavior(Behavior):
             ax2.set_xlabel('Hour of the day')
             ax2.set_xlim(0, 24)
 
+            plt.xticks(np.arange(0, 24, 2))
+
         elif behavior_type == Behavior.DURATION:
             ax1.set_title("{}\nCluster : Activity Duration distribution".format(self.label))
             ax1.set_xlabel('Duration (Minutes)')
@@ -916,27 +915,22 @@ class ActivityBehavior(Behavior):
             durations = np.asarray(list(set(durations))).reshape(-1, 1)
             occ_times = np.asarray(list(set(occ_times))).reshape(-1, 1)
 
-            if behavior_type == Behavior.OCC_TIME:
-                data = occ_times
-            else:
+            if behavior_type == Behavior.DURATION:
                 data = durations
-
-            # if behavior_type == Behavior.OCC_TIME:
-            #     std_max = dt.timedelta(hours=1)
-            # elif behavior_type == Behavior.DURATION:
-            #     std_max = dt.timedelta(minutes=30)
-
-            interpretation = {}
-            if len(data) == 0:
-                clusters_interpretations[cluster_id] = interpretation  # No interpretation
-                continue
-            elif len(data) <= 2:
+                interpretation = {}
                 mu = np.mean(data)
                 sigma = np.std(data)
-
                 interpretation[str(dt.timedelta(seconds=mu))] = str(dt.timedelta(seconds=sigma))
                 clusters_interpretations[cluster_id] = interpretation
                 continue
+
+            else:
+                data = occ_times
+
+            if len(data) <= 2:
+                clusters_interpretations[cluster_id] = {}  # No interpretation
+                continue
+
 
             data_clusters = univariate_clustering(data)
 

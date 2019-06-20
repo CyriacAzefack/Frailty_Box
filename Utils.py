@@ -148,7 +148,7 @@ def stringify_keys(d):
     return d
 
 
-def univariate_clustering(x):
+def univariate_clustering(x, quantile=0.5):
     """
     1d - Clustering
     :param x:
@@ -158,20 +158,13 @@ def univariate_clustering(x):
 
     X = np.array(list(zip(x, np.zeros(len(x)))), dtype=np.int)
 
-    if len(X) <= 2:
-        X.reshape(-1, 1)
-    bandwidth = estimate_bandwidth(X, quantile=0.3)
+    bandwidth = estimate_bandwidth(X, quantile=quantile)
     if bandwidth == 0:
         return {}
-
-    ms = MeanShift(bandwidth=bandwidth, bin_seeding=False, cluster_all=False)
+    ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
     ms.fit(X)
     labels = ms.labels_
-    # cluster_centers = ms.cluster_centers_
-
-    X = X[labels >= 0]  # Filter '-1' label, outliers
-
-    labels = labels[labels >= 0]  # Filter '-1' label, outliers
+    cluster_centers = ms.cluster_centers_
 
     labels_unique = np.unique(labels)
     n_clusters_ = len(labels_unique)
