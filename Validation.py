@@ -5,17 +5,19 @@ from random import randint
 
 import seaborn as sns
 from Bio import pairwise2
+# Import format_alignment method
+from Bio.pairwise2 import format_alignment
 
 from Data_Drift.Features_Extraction import *
 from Pattern_Mining.Candidate_Study import *
 
-# Import format_alignment method
-
 # Import pairwise2 module
 
 sns.set_style("darkgrid")
-sns.set(font_scale=1.4)
-plt.xkcd()
+sns.set(font_scale=1.8)
+
+
+# plt.xkcd()
 
 def main():
 
@@ -51,6 +53,7 @@ def main():
     # compare_models(models, period=period, time_step=time_step)
 
     dataset_name = 'aruba'
+    training_ratio = 0.8
     # Original data
     original_dataset = pick_dataset(dataset_name)
 
@@ -62,13 +65,13 @@ def main():
 
     # Compute the number of periods
     nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
-    training_days = nb_days
+    training_days = int(nb_days * training_ratio)
 
     training_start_date = start_date
     training_end_date = start_date + dt.timedelta(days=training_days)
 
-    testing_start_date = training_start_date
-    testing_duration = dt.timedelta(days=nb_days)
+    testing_start_date = training_end_date
+    testing_duration = dt.timedelta(days=nb_days - training_days)
     testing_end_date = testing_start_date + testing_duration
 
     training_dataset = original_dataset[
@@ -83,25 +86,26 @@ def main():
     print("# EVALUATION OF THE MODEL on the {} HOUSE Dataset #".format(dataset_name))
     print("##########################################################################")
 
-    # activity = "sleeping"
-    #
+    activity = "sleeping"
+
     simulation_id = 1
     pattern_folder_id = 0
 
     dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
                                                                             pattern_folder_id)
-    # labels = original_dataset.label.unique()
-    #
-    # labels.sort()
-    #
-    # results_df = pd.DataFrame(columns=['hist_inters', 'density_area', 'rmse'])
-    #
-    # for label in labels:
-    #     results_df.loc[label] = validation_periodic_time_distribution(label=label, real_dataset=testing_dataset,
-    #                                                                   replications_directory=dirname,
-    #                                                                   period=period, bin_width=5, display=True)
-    #
-    # results_df.to_csv(dirname + '../Aruba_label_validation_5mn_bin.csv', sep=";", index=True)
+    labels = original_dataset.label.unique()
+
+    labels.sort()
+
+    results_df = pd.DataFrame(columns=['Hist', 'KDE', 'rmse'])
+
+    for label in labels:
+        results_df.loc[label] = validation_periodic_time_distribution(label=label, real_dataset=testing_dataset,
+                                                                      replications_directory=dirname,
+                                                                      period=period, bin_width=5, display=False)
+
+    results_df.sort_values(['Hist'], ascending=False, inplace=True)
+    results_df.to_csv(dirname + '../Aruba_label_validation_5mn_bin.csv', sep=";", index=True)
 
     print("###################################")
     print("#  SEQUENCE ALIGNMENT VALIDATION  #")
@@ -128,17 +132,17 @@ def main():
         alphabet[labels[i]] = chr(ord('A') + i)
         print('\t{} : {}'.format(chr(ord('A') + i), labels[i]))
 
-    letter_similarity = {}
+    # letter_similarity = {}
+    #
+    # for i in range(len(labels)):
+    #     for j in range(len(labels)):
+    #         letter1 = alphabet[labels[i]]
+    #         letter2 = alphabet[labels[j]]
+    #
+    #         letter_similarity[(letter1, letter2)] = label_similarity_matrix[i][j]
 
-    for i in range(len(labels)):
-        for j in range(len(labels)):
-            letter1 = alphabet[labels[i]]
-            letter2 = alphabet[labels[j]]
-
-            letter_similarity[(letter1, letter2)] = label_similarity_matrix[i][j]
-
-    # sequence_alignement_validation(original_data=testing_dataset, directory=dirname, period=period, alphabet=alphabet,
-    #                                letter_similarity=letter_similarity, display=True)
+    sequence_alignement_validation(original_data=testing_dataset, directory=dirname, period=period, alphabet=alphabet,
+                                   display=True)
 
 
     # Duration Validation
@@ -312,6 +316,9 @@ def validation_periodic_time_distribution(label, real_dataset, replications_dire
     # Original Dataset
     original_ts_array = periodic_time_distribution(real_dataset, label, period, display=False)
 
+    validation_start_date = real_dataset.date.min().to_pydatetime()
+    validation_end_date = real_dataset.date.max().to_pydatetime()
+
     # Simulation replications
     list_files = glob.glob(replications_directory + '*.csv')
     if len(list_files) == 0:
@@ -323,6 +330,7 @@ def validation_periodic_time_distribution(label, real_dataset, replications_dire
     repl_rmse = []
     for filename in list_files:
         dataset = pick_custom_dataset(filename)
+        dataset = dataset[(dataset.date >= validation_start_date) & (dataset.date <= validation_end_date)].copy()
         repl_ts_array = periodic_time_distribution(data=dataset, label=label, period=period,
                                                    display=False)
         intersect_area = histogram_intersection(original_ts_array, repl_ts_array, bin_width)
@@ -387,7 +395,7 @@ def validation_periodic_time_distribution(label, real_dataset, replications_dire
     return intersect_area, den_area, rmse
 
 
-def activity_duration_validation(label, original_dataset, replications_directory, confidence=0.9,
+def activity_duration_validation(label, original_dataset, replications_directory, confidence=0.95,
                                  display=True):
     """
     Validation of the simulation replications using the Duration of the activity throughout the data
@@ -665,18 +673,16 @@ def plot_ambulatogram(data, labels, start_date=None, nb_days=1, display=False):
     return data[['date', 'label_id']]
 
 
-
-
-def compute_stochastic(row, error_confidence=0.9):
+def compute_stochastic(row, error_confidence=0.95):
     array = row.values
 
     # We remove all the 'NaN' values
     array = array[~np.isnan(array)]
 
-    return compute_stochastic_error(array=array, confidence=0.9)
+    return compute_stochastic_error(array=array, confidence=error_confidence)
 
 
-def compute_stochastic_error(array, confidence=0.9):
+def compute_stochastic_error(array, confidence=0.95):
     '''
     Compute the stochastic error given by the array
     :param array: an array of numbers
@@ -694,7 +700,7 @@ def compute_stochastic_error(array, confidence=0.9):
     return mean, error
 
 
-def sequence_alignement_validation(original_data, directory, period, alphabet, letter_similarity, display=True):
+def sequence_alignement_validation(original_data, directory, period, alphabet, display=True):
     """
     Compute the alignement between real life dataset and simulation replication event logs
     :param original_data:
@@ -703,20 +709,22 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
     :return:
     """
 
-    start_date = original_data.date.min().to_pydatetime()
-    start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, period=dt.timedelta(days=1)))
-    end_date = original_data.end_date.max().to_pydatetime()
+    validation_start_date = original_data.date.min().to_pydatetime()
+    validation_start_date = validation_start_date - dt.timedelta(
+        seconds=modulo_datetime(validation_start_date, period=dt.timedelta(days=1)))
+    validation_end_date = original_data.end_date.max().to_pydatetime()
 
-    repl_scores = pd.DataFrame(index=pd.date_range(start=start_date, end=end_date, freq='D'))
+    repl_scores = pd.DataFrame(index=pd.date_range(start=validation_start_date, end=validation_end_date, freq='D'))
 
     list_files = glob.glob(directory + '*.csv')
     for filename in list_files:
         i = list_files.index(filename)
 
         dataset = pick_custom_dataset(filename)
+        dataset = dataset[(dataset.date >= validation_start_date) & (dataset.date <= validation_end_date)].copy()
         alignement_df = sequence_alignment(original_data=original_data, sim_data=dataset, alphabet=alphabet,
-                                           period=period, start_date=start_date,
-                                           end_date=end_date)
+                                           period=period, start_date=validation_start_date,
+                                           end_date=validation_end_date)
 
         alignement_df.columns = ["score_rep_{}".format(i)]
         repl_scores = pd.concat([repl_scores, alignement_df], axis=1)
@@ -726,7 +734,7 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
         sys.stdout.flush()
     sys.stdout.write("\n")
 
-    rand_repl_scores = pd.DataFrame(index=pd.date_range(start=start_date, end=end_date, freq='D'))
+    rand_repl_scores = pd.DataFrame(index=pd.date_range(start=validation_start_date, end=validation_end_date, freq='D'))
 
     list_files = glob.glob(directory + '*.csv')
     for filename in list_files:
@@ -734,8 +742,8 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
 
         dataset = pick_custom_dataset(filename)
         alignement_df = sequence_alignment(original_data=original_data, sim_data=dataset, alphabet=alphabet,
-                                           period=period, start_date=start_date,
-                                           end_date=end_date, random=True)
+                                           period=period, start_date=validation_start_date,
+                                           end_date=validation_end_date, random=True)
 
         alignement_df.columns = ["score_rep_{}".format(i)]
         rand_repl_scores = pd.concat([rand_repl_scores, alignement_df], axis=1)
@@ -756,44 +764,60 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
     # plt.xlabel("Days")
     # plt.ylabel("Alignment score")
     # plt.show()
+    #
+    # repl_scores['min_score'] = repl_scores.apply(lambda x: min(x), axis=1)
+    # repl_scores['max_score'] = repl_scores.apply(lambda x: max(x), axis=1)
+    # repl_scores['mean_score'] = repl_scores.apply(lambda x: np.mean(x), axis=1)
 
-    repl_scores['min_score'] = repl_scores.apply(lambda x: min(x), axis=1)
-    repl_scores['max_score'] = repl_scores.apply(lambda x: max(x), axis=1)
-    repl_scores['mean_score'] = repl_scores.apply(lambda x: np.mean(x), axis=1)
+    repl_scores['stoc_results'] = repl_scores.apply(compute_stochastic, args=(0.95,), axis=1)
+    repl_scores['stoc_mean'] = repl_scores.stoc_results.apply(lambda x: x[0])
+    repl_scores['stoc_lower'] = repl_scores.stoc_results.apply(
+        lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
+    repl_scores['stoc_upper'] = repl_scores.stoc_results.apply(
+        lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
 
-    rand_repl_scores['min_score'] = rand_repl_scores.apply(lambda x: min(x), axis=1)
-    rand_repl_scores['max_score'] = rand_repl_scores.apply(lambda x: max(x), axis=1)
-    rand_repl_scores['mean_score'] = rand_repl_scores.apply(lambda x: np.mean(x), axis=1)
+    rand_repl_scores['stoc_results'] = rand_repl_scores.apply(compute_stochastic, args=(0.95,), axis=1)
+    rand_repl_scores['stoc_mean'] = rand_repl_scores.stoc_results.apply(lambda x: x[0])
+    rand_repl_scores['stoc_lower'] = rand_repl_scores.stoc_results.apply(
+        lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
+    rand_repl_scores['stoc_upper'] = rand_repl_scores.stoc_results.apply(
+        lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
 
     repl_scores.drop(repl_scores.tail(1).index, inplace=True)  # drop last row
+    rand_repl_scores.drop(rand_repl_scores.tail(1).index, inplace=True)  # drop last row
 
     if display:
         fig, ax = plt.subplots()
-        ax.plot(np.arange(len(repl_scores)), repl_scores.mean_score, label="Simulated Sequence", color='blue')
-        ax.plot(np.arange(len(rand_repl_scores)), rand_repl_scores.mean_score, label="Random Sequence", color='red')
+        ax.plot(np.arange(len(repl_scores)), repl_scores.stoc_mean, label="RB-STPN Sequence", linestyle="-")
 
-        # ax.fill_between(np.arange(len(repl_scores)), repl_scores.min_score, repl_scores.max_score,
-        #                 label='Alignment Min - Max', color='k', alpha=.2, hatch='//')
+        ax.plot(np.arange(len(rand_repl_scores)), rand_repl_scores.stoc_mean, label="Random Sequence", linestyle='-')
 
-        alignment_mean = np.mean(repl_scores.mean_score)
-        rand_alignment_mean = np.mean(rand_repl_scores.mean_score)
+        ax.fill_between(np.arange(len(repl_scores)), repl_scores.stoc_lower, repl_scores.stoc_upper,
+                        label='95% Confidence Interval', color='k', alpha=.2, hatch='//')
+
+        ax.fill_between(np.arange(len(rand_repl_scores)), rand_repl_scores.stoc_lower, rand_repl_scores.stoc_upper,
+                        color='k', alpha=.2, hatch='//')
+
+        alignment_mean = np.mean(repl_scores.stoc_mean)
+        random_mean = np.mean(rand_repl_scores.stoc_mean)
         ax.axhline(alignment_mean, color='black', lw=2, linestyle='dashed')
-        ax.axhline(rand_alignment_mean, color='black', lw=2, linestyle='dashed')
+        ax.axhline(random_mean, color='black', lw=2, linestyle='dashed')
 
         plt.draw()
 
         labels = [round(i, 2) for i in list(np.arange(0, 1, step=0.1)) + [1]]
         locs = list(np.arange(0, 1, step=0.1)) + [1]
-        labels += [round(alignment_mean, 2), round(rand_alignment_mean, 2)]
-        locs += [alignment_mean, rand_alignment_mean]
+        labels += [round(alignment_mean, 2)]
+        labels += [round(random_mean, 2)]
+        locs += [alignment_mean, random_mean]
         ax.set_yticklabels(labels)
         ax.set_yticks(locs)
 
         plt.xlabel("Days")
         plt.ylabel("Normalized alignment score")
-        # plt.ylim(0, 1)
+        plt.ylim(0, 1)
         plt.legend(loc=1)
-        plt.xticks(np.arange(0, len(repl_scores) + 10, step=10))
+        plt.xticks(np.arange(0, len(repl_scores), step=5))
 
         plt.show()
 
@@ -807,7 +831,7 @@ def sequence_alignment(original_data, sim_data, alphabet, period, start_date, en
     :param simu_data:
     :param label_similarity_matrix:
     :param period:
-    :return: a pandas Series with 'day_date as index and 'score' as column
+    :return: a pandas Series with day_date as index and align score as column
     """
 
     # # SMITH-WATERMAN ALGORITHM
@@ -824,39 +848,41 @@ def sequence_alignment(original_data, sim_data, alphabet, period, start_date, en
         seq1 = original_data[
             (original_data.date >= current_date) & (original_data.date < current_end_date)].label.values
 
-        real_seq = "".join([alphabet[label] for label in seq1])
+        X = "".join([alphabet[label] for label in seq1])
+
+        # seq2 = sim_data[(sim_data.date >= current_date) & (sim_data.date < current_end_date)].label.values
 
         if not random:
             seq2 = sim_data[(sim_data.date >= current_date) & (sim_data.date < current_end_date)].label.values
-            sim_seq = "".join([alphabet[label] for label in seq2])
+            Y = "".join([alphabet[label] for label in seq2])
         else:
-            sim_seq = ''
+            Y = ''
             letters = list(alphabet.values())
-            for _ in real_seq:
+            for _ in seq1:
                 rand_letter = letters[randint(0, len(letters) - 1)]
-                sim_seq += rand_letter
+                Y += rand_letter
 
-        if len(real_seq) == 0 or len(sim_seq) == 0:
+        if len(X) == 0 or len(Y) == 0:
             score = 0
             align_df.loc[len(align_df)] = [current_date, score]
             current_date = current_end_date
             continue
 
-        # alignments = pairwise2.align.globalds(real_seq, sim_seq, letter_similarity, -0.1, -0.1, one_alignment_only=True)
+        # alignments = pairwise2.align.globalds(X, Y, letter_similarity, -0.1, -0.1, one_alignment_only=True)
 
-        alignments = pairwise2.align.globalms(real_seq, sim_seq, 8, -2, -2, -2, one_alignment_only=True)
+        alignments = pairwise2.align.globalms(X, Y, 8, -2, -2, -2, one_alignment_only=True)
 
         score = alignments[0][2]
-        # perfect_score = pairwise2.align.globalds(real_seq, real_seq, letter_similarity, -0.1, -0.1, score_only=True)
-        perfect_score = pairwise2.align.globalms(real_seq, real_seq, 8, -2, -2, -2, score_only=True)
-
-        null_score = -2 * max(len(real_seq), len(sim_seq))
+        # perfect_score = pairwise2.align.globalds(X, X, letter_similarity, -0.1, -0.1, score_only=True)
+        perfect_score = pairwise2.align.globalms(X, X, 8, -2, -2, -2, score_only=True)
+        null_score = -2 * max(len(Y), len(X))
 
         ratio_score = (score - null_score) / (perfect_score - null_score)
+
         # ratio_score = score / perfect_score
 
-        # print('Ratio score={:.2f}'.format(ratio_score))
-        # print(format_alignment(*alignments[0]))
+        print('Ratio score={:.2f}'.format(ratio_score))
+        print(format_alignment(*alignments[0]))
 
         align_df.loc[len(align_df)] = [current_date, ratio_score]
 

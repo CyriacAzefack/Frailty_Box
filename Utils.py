@@ -148,7 +148,7 @@ def stringify_keys(d):
     return d
 
 
-def univariate_clustering(x, quantile=0.5):
+def univariate_clustering(x):
     """
     1d - Clustering
     :param x:
@@ -158,13 +158,20 @@ def univariate_clustering(x, quantile=0.5):
 
     X = np.array(list(zip(x, np.zeros(len(x)))), dtype=np.int)
 
-    bandwidth = estimate_bandwidth(X, quantile=quantile)
+    if len(X) <= 2:
+        X.reshape(-1, 1)
+    bandwidth = estimate_bandwidth(X, quantile=0.3)
     if bandwidth == 0:
         return {}
-    ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
+
+    ms = MeanShift(bandwidth=bandwidth, bin_seeding=False, cluster_all=False)
     ms.fit(X)
     labels = ms.labels_
-    cluster_centers = ms.cluster_centers_
+    # cluster_centers = ms.cluster_centers_
+
+    X = X[labels >= 0]  # Filter '-1' label, outliers
+
+    labels = labels[labels >= 0]  # Filter '-1' label, outliers
 
     labels_unique = np.unique(labels)
     n_clusters_ = len(labels_unique)
@@ -183,3 +190,65 @@ def univariate_clustering(x, quantile=0.5):
     sorted_clusters = dict(sorted(clusters.items(), key=lambda x: clusters[x[0]].mean()))
 
     return sorted_clusters
+
+
+def find_occurrences(data, episode, tep=30):
+    """
+    Find the occurrences of the episode in the event log
+    :param data: Event log data
+    :param episode: list of labels
+    :param tep : Maximum duration of an occurrence
+    :return : A dataframe of occurrences with one date column
+    """
+    tep = dt.timedelta(minutes=tep)
+
+    data = data[data.label.isin(episode)].copy()
+    data.sort_values(by=['date'], inplace=True)
+
+    if len(episode) == 1:
+        return data[['date', 'end_date']]
+
+    data['identical_next_label'] = data['label'].shift(-1) == data['label']
+
+    data['enough_time'] = (data['date'].shift(-1) - data['date']) <= tep
+
+    occurrences = pd.DataFrame(columns=["date", "end_date"])
+
+    def sliding_window(row):
+        """
+        return true if there is an occurrence of the episode starting at this timestamp
+        """
+        start_time = row.date
+        end_time = row.date + tep
+
+        date_condition = (data.date >= start_time) & (data.date < end_time)
+
+        next_labels = set(data[date_condition].label.values)
+
+        return set(episode).issubset(next_labels)
+
+    condition = (data.identical_next_label == False) & (data.enough_time == True)
+
+    data.loc[condition, "occurrence"] = data[condition].apply(sliding_window, axis=1)
+
+    data.fillna(False, inplace=True)
+
+    while (len(data[data.occurrence == True]) > 0):
+        # Add a new occurrence
+        occ_time = data[data.occurrence == True].date.min().to_pydatetime()
+
+        # Marked the occurrences treated as "False"
+        # TODO: can be improved
+        indexes = []
+        for s in episode:
+            i = data[(data.date >= occ_time) & (data.label == s)].date.idxmin()
+            indexes.append(i)
+
+        data.loc[indexes, 'occurrence'] = False
+
+        end_occ_time = data.loc[indexes, "end_date"].max().to_pydatetime()
+        # data.drop(indexes, inplace=True)
+        occurrences.loc[len(occurrences)] = [occ_time, end_occ_time]
+
+    occurrences.sort_values(by=['date'], ascending=True, inplace=True)
+    return occurrences

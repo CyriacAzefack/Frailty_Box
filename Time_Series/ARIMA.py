@@ -6,14 +6,14 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 
 def main():
-    activity = 'meal_preparation'
+    activity = 'sleep'
     raw_dataset = pd.read_csv('./data/{}_dataset.csv'.format(activity)).head(30)
 
     nb_tstep = len(raw_dataset.columns)
 
     dataset = raw_dataset.values.flatten()
 
-    ratio = 0.9
+    ratio = 0.8
     train_size = int(len(dataset) * ratio)
 
     train, test = dataset[:train_size], dataset[train_size:]

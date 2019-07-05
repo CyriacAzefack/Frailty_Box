@@ -13,9 +13,13 @@ import numpy as np
 import pandas as pd
 import scipy.signal as signal
 
-from DES import Activity
-from Pattern_Mining.Candidate_Study import find_occurrences, modulo_datetime
-from Pattern_Mining.Pattern_Discovery import pick_dataset
+import Pattern_Mining
+import Utils
+from Simulation import MacroActivity
+
+
+# from Pattern_Mining.Candidate_Study import find_occurrences, modulo_datetime
+# from Pattern_Mining.Extract_Macro_Activities import extract_macro_activities
 
 
 # random.seed(1996)
@@ -28,31 +32,27 @@ def main():
     # Characteristics :
     #   - Single Activity Implementation
     #   - No time evolution
-    #   - Training Dataset : the Whole Original dataset
-    #   - Test Dataset : The Whole Original dataset
+    #   - Training Dataset : 80% of the Original dataset
+    #   - Test Dataset : 20% left of the Original dataset
 
 
     period = dt.timedelta(days=1)
-    simulation_id = 1
 
     parser = OptionParser(usage='Usage of the Digital Twin Simulation model algorihtm: %prog <options>')
     parser.add_option('-n', '--dataset_name', help='Name of the Input event log', dest='dataset_name', action='store',
                       type='string')
-    parser.add_option('--activity_gen', help='Method of Macro-Activity generation', dest='activity_gen',
-                      action='store', type='choice', choices=['simple', 'macro'], default='macro')
-    parser.add_option('--duration_model', help='Model for event duration', dest='duration_model',
-                      action='store', type='choice', choices=['gaussian', 'forecast_norm', 'ts_forecast'],
-                      default='gaussian')
-
-    parser.add_option('--time_step', help='Number of minutes per time step', dest='time_step', action='store',
+    parser.add_option('--without_macro', help='Build the model on simple activities', dest='no_macro',
+                      action='store_true',
+                      default=False)
+    parser.add_option('--time_step', help='Number of minutes per simulation_step', dest='time_step', action='store',
                       type=int, default=5)
     parser.add_option('--sim', help='Number of replications', dest='nb_sim', action='store',
                       type=int, default=5)
-    parser.add_option('-t', '--tep', help='Duration max of an occurrence (in minutes)', dest='tep', action='store',
-                      type=int, default=30)
-    parser.add_option('--pattern_id', help='Identifier of the patterns used', dest='pattern_id', action='store',
-                      type=int, default=0)
-    parser.add_option('-d', '--debug', help='Display all the intermediate steps', dest='debug', action='store_true',
+    parser.add_option('-r', '--training_ratio', help='Ratio of the data to use for the training', dest='training_ratio',
+                      action='store', type=float, default=0.8)
+    parser.add_option('--tep', help='Duration max of an episode occurrence (in minutes)', dest='tep',
+                      action='store', type=int, default=30)
+    parser.add_option('--debug', help='Display all the intermediate steps', dest='debug', action='store_true',
                       default=False)
 
     (options, args) = parser.parse_args()
@@ -63,37 +63,36 @@ def main():
         exit(-1)
 
     dataset_name = options.dataset_name
-    activity_gen = options.activity_gen
-    duration_model = options.duration_model
-    time_step = dt.timedelta(minutes=options.time_step)
+    simu_time_step = dt.timedelta(minutes=options.time_step)
     nb_replications = options.nb_sim
-    pattern_id = options.pattern_id
+    use_macro = not options.no_macro
     Tep = options.tep
     debug = options.debug
+    training_ratio = options.training_ratio
 
     print('#' + 'PARAMETERS'.center(28, ' ') + '#')
     print("Dataset Name : {}".format(dataset_name.upper()))
-    print("Pattern ID : {}".format(pattern_id))
     print("Tep (mn): {}".format(Tep))
-    print("Activity Generation : {}".format(activity_gen))
-    print("Event duration model : {}".format(duration_model))
-    print("Time step duration (mn) : {}".format(int(time_step.total_seconds() / 60)))
+    print("Training ratio : {}".format(training_ratio))
+    print("Simulation time step (mn) : {}".format(int(simu_time_step.total_seconds() / 60)))
     print("Number of replications : {}".format(nb_replications))
     print("Debug Mode: {}".format(debug))
 
-
-    dataset = pick_dataset(dataset_name)
+    dataset = Utils.pick_dataset(dataset_name)
 
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime()
 
     # Compute the number of periods
+
     nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
     # training_days = int(math.floor(nb_days*0.9)) # 90% for training, 10% for test
-    training_days = nb_days
+    training_days = int(nb_days * training_ratio)
 
-    output = "../output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
-                                                                            pattern_id)
+    testing_days = nb_days - training_days + 5  # Extra days just in case
+
+    output = "../output/{}/Simulation/CASE_step_{}mn_{}/".format(dataset_name, options.time_step,
+                                                                 'MACRO_ACTIVITIES' if use_macro else 'SINGLE_ACTIVITIES')
 
     # Create the folder if it does not exist yet
     if not os.path.exists(os.path.dirname(output)):
@@ -106,19 +105,20 @@ def main():
     training_start_date = start_date
     training_end_date = start_date + dt.timedelta(days=training_days)
 
-    simulation_start_date = training_start_date
-    simulation_duration = dt.timedelta(days=training_days)
+    simulation_start_date = training_end_date
+    simulation_duration = dt.timedelta(days=testing_days)
 
     training_dataset = dataset[(dataset.date >= training_start_date) & (dataset.date < training_end_date)].copy()
 
-    digital_twin_model = build_Activities(dataset_name, dataset=training_dataset, folder_id=pattern_id, period=period,
-                                          time_step=time_step, output=output, model=activity_gen,
-                                          duration_model=duration_model, Tep=Tep, display=debug)
+    activity_manager = create_activity_manager(dataset_name=dataset_name, dataset=training_dataset, period=period,
+                                               simu_time_step=simu_time_step, output=output, with_macro=use_macro,
+                                               Tep=Tep,
+                                               display=debug)
 
-    # validate_simulation(digital_twin_model, original_data=dataset, period=period, time_step=time_step)
+    # validate_simulation(macro_activities_list, original_data=dataset, period=period, time_step=time_step)
 
     # We can load them instead
-    # all_activities = pickle.load(open(output + '/digital_twin_model.pkl', 'rb'))
+    # all_activities = pickle.load(open(output + '/macro_activities_list.pkl', 'rb'))
     # print('Digital Twin Model  Loaded !!')
 
 
@@ -142,8 +142,8 @@ def main():
         print('# Simulation replication N°{}     #'.format(replication + 1))
         print('###################################')
 
-        simulated_dataset = launch_simulation(digital_twin_model, simulation_duration=simulation_duration,
-                                              time_step=time_step, start_date=simulation_start_date, period=period)
+        simulated_dataset = launch_simulation(activity_manager, simulation_duration=simulation_duration,
+                                              time_step=simu_time_step, start_date=simulation_start_date, period=period)
 
         filename = output + "dataset_simulation_rep_{}.csv".format(replication + 1)
 
@@ -158,110 +158,66 @@ def main():
         print("Time elapsed for the simulation : {}".format(elapsed_time))
 
 
-def build_Activities(dataset_name, dataset, period, time_step, output, folder_id, Tep, model='Macro',
-                     duration_model='gaussian', display=False):
+def create_activity_manager(dataset_name, dataset, period, simu_time_step, output, Tep, with_macro=True, display=False):
     """
-    Generate activities according to the method chosen
-    :param dataset_name:
-    :param dataset:
-    :param period:
-    :param time_step:
-    :param output:
-    :param model: 'Macro' pick the pattern episodes on their ranking and discover the temporality in the data
-                  'Temporaral_Macro' pick the pattern episodes and their temporal occurrences on their ranking
-    :param duration_model:
-    :param Tep:
+    Generate Activities/Macro-Activities from the input event log
+    :param dataset: Input event log
+    :param period: periodicity
+    :param simu_time_step: simulation time step
+    :param output: Output folder for the simulation
+    :param Tep: Duration max of an episode occurrence
+    :param with_macro: If True, create macro-activities
+    :param display:
     :return:
     """
 
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime()
 
-    all_activities = []
-    train_dataset = dataset.copy()
+    nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
 
-    if model == 'macro':  # Mining Macro activities first
-        input = "../output/{}/ID_{}/patterns.pickle".format(dataset_name, folder_id)
+    ActivityManager = MacroActivity.ActivityObjectManager(name=dataset_name, period=period, time_step=simu_time_step,
+                                                          tep=Tep)
 
-        patterns = pd.read_pickle(input)
+    if with_macro:  # Mining Macro-Activities first
 
-        patterns['Validity Duration'] = patterns['Validity Duration'].apply(lambda x: x.total_seconds())
+        print("Mining for macro-activities...")
 
-        # Rank the macro-activities
-        patterns['sort_key'] = patterns['Compression Power'] * patterns['Accuracy']
-        # patterns['sort_key'] = patterns['Episode'].apply(lambda x: len(x))  # * patterns['Accuracy']
-        patterns.sort_values(['sort_key'], ascending=False, inplace=True)
+        all_macro_activities = Pattern_Mining.Extract_Macro_Activities.extract_macro_activities(dataset=dataset,
+                                                                                                support_min=nb_days,
+                                                                                                tep=Tep,
+                                                                                                period=period,
+                                                                                                verbose=True)
 
-        for index, pattern in patterns.iterrows():  # Create one Macro/Single Activity per row
-            start_time = t.process_time()
-            episode = list(pattern['Episode'])
-
-            occurrences = find_occurrences(data=train_dataset, episode=episode)
-
-            if occurrences.empty:
-                continue
-
-            if len(episode) > 1:
-                activity = Activity.MacroActivity(episode=episode, dataset=train_dataset, occurrences=occurrences,
-                                                  period=period, duration_model=duration_model, time_step=time_step,
-                                                  start_date=start_date, end_date=end_date, display=display, Tep=Tep)
+        for episode, (episode_occurrences, events) in all_macro_activities.items():
+            ActivityManager.update(episode=episode, occurrences=episode_occurrences, events=events)
 
 
-            else:
-                activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=time_step,
-                                             start_date=start_date, end_date=end_date, display=display)
+    else:
+        labels = dataset.label.unique()
+
+        for label in labels:
+            episode = (label,)
+            events = dataset[dataset.label == label].copy()
+            episode_occurrences = events.drop(['label'], axis=1)
+            ActivityManager.update(episode=episode, occurrences=episode_occurrences, events=events)
 
 
-            all_activities.append(activity)
 
-            # Find the events corresponding to the expected occurrences
-            mini_factorised_events = pd.DataFrame(columns=["date", "label"])
-            for index, occurrence in occurrences.iterrows():
-                occ_start_date = occurrence["date"]
-                occ_end_date = occ_start_date + dt.timedelta(minutes=Tep)
-                mini_data = train_dataset.loc[(train_dataset.label.isin(episode))
-                                              & (train_dataset.date >= occ_start_date)
-                                              & (train_dataset.date < occ_end_date)].copy()
-                mini_data.sort_values(["date"], ascending=True, inplace=True)
-                mini_data.drop_duplicates(["label"], keep='first', inplace=True)
-                mini_factorised_events = mini_factorised_events.append(mini_data, ignore_index=True)
 
-            train_dataset = pd.concat([train_dataset, mini_factorised_events], sort=False).drop_duplicates(keep=False)
-
-            print(
-                "Time spent for activity {}: {}".format(episode,
-                                                        dt.timedelta(seconds=round(t.process_time() - start_time, 1))))
-
-    # Mining of Single activities
-
-    single_episodes = list(train_dataset.label.unique())
-
-    for activity in single_episodes:
-        start_time = t.process_time()
-        episode = (activity,)
-        occurrences = find_occurrences(data=train_dataset, episode=episode)
-        activity = Activity.Activity(label=episode, occurrences=occurrences, period=period, time_step=time_step,
-                                     start_date=start_date, end_date=end_date)
-        all_activities.append(activity)
-        print("Time spent for activity {}: {}".format(episode,
-                                                      dt.timedelta(
-                                                          seconds=round(t.process_time() - start_time, 1))))
 
     log_filename = output + "/parameters.txt"
 
     with open(log_filename, 'w+') as file:
         file.write("Parameters :\n")
-        file.write("Pattern ID : {}\n".format(folder_id))
-        file.write("Activities generation Method : {}\n".format(model))
-        file.write("Duration generation Method : {}\n".format(duration_model))
-        file.write("Time Step : {} min\n".format(time_step.total_seconds() / 60))
+        file.write("Macro-Activities Activated : {}\n".format(with_macro))
+        file.write("Time Step : {} min\n".format(simu_time_step.total_seconds() / 60))
         file.write("Tep : {}\n".format(Tep))
 
+    pickle.dump(ActivityManager, open(output + "/Activity_Manager.pkl", 'wb'))
+    print('Activity Manager Built & Ready!!')
 
-    pickle.dump(all_activities, open(output + "/digital_twin_model.pkl", 'wb'))
-    print('Digital Twin Model Created & Saved!!')
-
-    return all_activities
+    return ActivityManager
 
 
 def launch_simulation(digital_twin_model, simulation_duration, time_step, start_date, period=dt.timedelta(days=1),

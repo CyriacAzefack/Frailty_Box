@@ -22,13 +22,24 @@ def main():
     :return:
     """
 
-    dataset_name = 'aruba'
+    dataset_name = 'hh101'
     output_folder = '../output/{}/'.format(dataset_name)
     dataset = pick_dataset(dataset_name)
-    support_min = 15
-    tep = 30
+
+    # TIME WINDOW PARAMETERS
+    nb_days_per_window = 30
+    time_window_duration = dt.timedelta(days=nb_days_per_window)
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime() - time_window_duration
+
+    # SIM_MODEL PARAMETERS
     period = dt.timedelta(days=1)
-    time_window_duration = dt.timedelta(days=30)
+    tep = 30
+    support_min = nb_days_per_window
+
+
+
+
     nb_processes = 2 * mp.cpu_count()  # For parallel computing
 
     if not os.path.exists(os.path.dirname(output_folder)):
@@ -49,10 +60,8 @@ def main():
     print('## MACRO ACTIVITIES EXTRACTION : {} ##'.format(dataset_name.upper()))
     print('##########################################')
 
-    start_time = t.time()
+    monitoring_start_time = t.time()
 
-    start_date = dataset.date.min().to_pydatetime()
-    end_date = dataset.date.max().to_pydatetime() - time_window_duration
 
     nb_tw = math.floor((end_date - start_date) / period)  # Number of time windows available
 
@@ -70,8 +79,7 @@ def main():
 
     print("All Time Windows Treated")
 
-
-    elapsed_time = dt.timedelta(seconds=round(t.time() - start_time, 1))
+    elapsed_time = dt.timedelta(seconds=round(t.time() - monitoring_start_time, 1))
 
     print("###############################")
     print("Elapsed time : {}".format(elapsed_time))
@@ -124,7 +132,7 @@ def extract_tw_macro_activities(dataset, support_min, tep, period, window_durati
     #
 
 
-def extract_macro_activities(dataset, support_min, tep, period, verbose=False, display=False):
+def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
     """
     Extract the tupe (episode, occurrences) from the input dataset
     :param dataset: input dataset
@@ -139,25 +147,36 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False, d
     i = 0
     while len(dataset) > 0:
         i += 1
-        episode, nb_occ, ratio, score = find_best_episode(dataset=dataset, tep=tep, support_min=support_min,
-                                                          period=period, display=display)
+        # episode, nb_occ, ratio, score = find_best_episode(dataset=dataset, tep=tep, support_min=support_min,
+        #                                                   period=period, display=display)
+        # Most frequents episode
+        frequent_episodes = FP_growth.find_frequent_episodes(dataset, support_min, tep)
 
-        if episode is None:
+        if len(frequent_episodes) == 0:  # No more frequent episode present
             break
 
-        episode_occurrences, events = compute_episode_occurrences(dataset=dataset, episode=episode, tep=tep)
+        # ordered_frequent_episodes = [(k, frequent_episodes[k]) for k in sorted(frequent_episodes,
+        #                                                                        key=frequent_episodes.get, reverse=True)]
 
-        macro_activities[tuple(episode)] = (episode_occurrences, events)
+        # TODO : Set a GOOD episode selection policy
+        ordered_frequent_episodes = sorted(frequent_episodes.items(), key=lambda t: (len(t[0]) - 1) * t[1],
+                                           reverse=True)
 
-        GMM_desc = compute_episode_description(dataset=dataset, episode=episode, period=period, tep=tep)
+        best_episode, nb_occ = ordered_frequent_episodes[0]
+
+        episode_occurrences, events = compute_episode_occurrences(dataset=dataset, episode=best_episode, tep=tep)
+
+        macro_activities[tuple(best_episode)] = (episode_occurrences, events)
+
+        GMM_desc = compute_episode_description(dataset=dataset, episode=best_episode, period=period, tep=tep)
 
         if verbose:
             print("########################################")
             print("Run N°{}".format(i))
-            print("Best episode found {}.".format(episode))
+            print("Best episode found {}.".format(best_episode))
             print("Nb Occurrences : \t{}".format(nb_occ))
-            print("Ratio Dataset : \t{}".format(ratio))
-            print("Accuracy score : \t{:.2f}".format(score))
+            # print("Ratio Dataset : \t{}".format(ratio))
+            # print("Accuracy score : \t{:.2f}".format(score))
             for mu, sigma in GMM_desc.items():
                 print('Mean : {} - Sigma : {}'.format(dt.timedelta(seconds=int(mu)), dt.timedelta(seconds=int(sigma))))
 
@@ -334,10 +353,6 @@ def compute_episode_occurrences(dataset, episode, tep):
         events = events.append(mini_data, ignore_index=True)
 
     events.sort_values(["date"], ascending=True, inplace=True)
-
-    # reset indexes
-    episode_occurrences.reset_index(inplace=True)
-    events.reset_index(inplace=True)
 
     return episode_occurrences, events
 

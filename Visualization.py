@@ -17,6 +17,8 @@ sns.set_style('darkgrid')
 def main():
     dataset_name = 'aruba'
     replication_id = 1
+
+    dataset = pick_dataset(dataset_name)
     #
     # activities_generation_method = 'Macro'
     # duration_generation_method = 'Normal'
@@ -27,9 +29,9 @@ def main():
     #                                                                                                      duration_generation_method,
     #                                                                                                      time_step_min,
     #                                                                                                      replication_id)
-    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simulation/Simulation_X1_Pattern_ID_0/dataset_simulation_rep_{}.csv".format(
-        dataset_name, replication_id)
-    dataset = pick_custom_dataset(path)
+    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simulation/Simulation_X1_Pattern_ID_0/dataset_simulation_rep_{}.csv".format(
+    #     dataset_name, replication_id)
+    # dataset = pick_custom_dataset(path)
     # dataset = pick_dataset(dataset_name)
 
     start_date = dataset.date.min().to_pydatetime()
@@ -52,7 +54,11 @@ def visualize(data, start_date, end_date):
     # Turn the dataset into an activity dataset
 
     data['duration'] = data['end_date'] - data['date']
-    data['duration'] = data['duration'].apply(lambda x: x.total_seconds())
+    data['duration'] = data['duration'].apply(lambda x: x.total_seconds() / 60)
+
+    print(data.describe())
+    sns.distplot(data.duration)
+    plt.show()
 
     activities = list(data.groupby(['label'], as_index=False).agg({'duration': 'sum'}).sort_values("duration",
                                                                                                    ascending=False).label.values)
