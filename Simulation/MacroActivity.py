@@ -14,10 +14,10 @@ sns.set_style('darkgrid')
 # np.random.seed(1996)
 
 def main():
-    dataset = pick_dataset('aruba')
+    dataset = pick_dataset('aruba', nb_days=50)
 
     # SIM_MODEL PARAMETERS
-    episode = ('relax',)
+    episode = ('relax', 'meal_preparation')
     period = dt.timedelta(days=1)
     time_step = dt.timedelta(minutes=60)
     tep = 30
@@ -35,6 +35,7 @@ def main():
 
     activity = MacroActivity(episode=episode, period=period, time_step=time_step, tep=tep)
 
+
     tw_id = 0
     while window_start_date < end_date:
         window_end_date = window_start_date + time_window_duration
@@ -45,6 +46,10 @@ def main():
 
         # print('{} occurrences of the episode {}'.format(len(occurrences), episode))
         activity.add_time_window(occurrences=occurrences, events=events, time_window_id=tw_id, display=False)
+
+        x = activity.get_count_histogram(time_window_id=tw_id)
+        x.drop(['tw_id'], axis=1, inplace=True)
+        x.index = [frozenset(episode)]
 
         window_start_date += period
         tw_id += 1
@@ -117,6 +122,19 @@ class MacroActivity:
         # self.build_histogram(occurrences, display=display)
 
         MacroActivity.ID += 1
+
+    def __repr__(self):
+
+        str = ''
+        if len(self.episode) > 1:
+            str += 'MACRO-ACTIVITY'
+        else:
+            str += 'SINGLE-ACTIVITY'
+        str += '{' + ' -- '.join(self.episode) + '}'
+        return str
+
+    def get_set_episode(self):
+        return frozenset(self.episode)
 
     def preprocessing(self, occurrences, events):
         '''
@@ -235,6 +253,13 @@ class MacroActivity:
 
         # print('Execution Order Probability [UPDATED]')
 
+    def get_count_histogram(self, time_window_id):
+        """
+        :param time_window_id: time window identifier
+        :return: the histogram count at a specific time window
+        """
+        return self.count_histogram.loc[[time_window_id]]
+
     def fit_history_count_forecasting_model(self, train_ratio, method, display=False):
         """
         Fit a time series forecasting model to the history count data
@@ -281,115 +306,39 @@ class MacroActivity:
 
         return error
 
-    def simulate(self, date, time_step_id):
-        '''
-        Simulate the activities on the macro-activity
-        :param date:
+    def simulate(self, start_date, time_step_id, time_window_id):
+        """
+        Generate events on the macro-activity
+        :param start_date:
         :param time_step_id:
-        :return: simulations results, macro-activity duration
-        '''
-
-        # TODO : Fix this graph MESSSS
-        graph_sim = self.graph.simulate(date, date + self.Tep)
-
-        # graph_sim['time_before_next_event'] = graph_sim['date'].shift(-1) - graph_sim['date']
-        # graph_sim['time_before_next_event'] = graph_sim['time_before_next_event'].apply(lambda x: x.total_seconds())
-        # graph_sim.fillna(0, inplace=True)
-
-        # simulation_results = pd.DataFrame(columns=['label', 'date', 'end_date'])
-        #
-        # for _, row in graph_sim.iterrows():
-        #     activity = self.activities[row.label]
-        #     _, activity_duration = activity.simulate(date, time_step_id)
-        #     end_date = date + dt.timedelta(seconds=activity_duration)
-        #     simulation_results.loc[len(simulation_results)] = [row.label, date, end_date]
-        #     date = date + dt.timedelta(seconds=row.time_before_next_event)
-        #
-        # duration = (simulation_results.end_date.max().to_pydatetime() - date).total_seconds()
-
-        duration = (graph_sim.end_date.max().to_pydatetime() - date).total_seconds()
-
-        return graph_sim, duration
-
-
-
-
-class ActivityObjectManager:
-    """
-    Manage the macro-activities created in the time windows
-    """
-
-    def __init__(self, name, period, time_step, tep):
-        """
-        Initialisation of the Manager
-        :param name:
-        :param period:
-        :param time_step:
-        """
-        self.name = name
-        self.period = period
-        self.tep = tep
-        self.time_step = time_step
-        self.discovered_episodes = []  # All the episodes discovered until then
-        self.activity_objects = {}  # The Activity/MacroActivity objects
-
-    def update(self, episode, occurrences, events, time_window_id=0):
-        """
-        Update the Macro-Activity Object related to the macro-activity discovered if they already exist OR create a new Object
-        :param episode:
-        :param occurrences:
-        :param events:
         :param time_window_id:
         :return:
         """
 
-        set_episode = frozenset(episode)
+        events = pd.DataFrame(columns=['date', 'end_date', 'label'])
 
-        if set_episode not in self.discovered_episodes:  # Create a new Macro-Activity Object
-            activity_object = MacroActivity(episode=episode, period=self.period, time_step=self.time_step, tep=self.tep)
+        current_date = start_date
 
-            self.discovered_episodes.append(set_episode)
-            self.activity_objects[set_episode] = activity_object
+        for label in self.episode:
+            mean = self.duration_distrib[label].loc[time_window_id]['mean']
+            std = self.duration_distrib[label].loc[time_window_id]['std']
 
-        activity_object = self.activity_objects[set_episode]
-        activity_object.add_time_window(occurrences=occurrences, events=events,
-                                        time_window_id=time_window_id, display=False)
+            # To avoid negative durations
+            duration = -1
+            while duration < 0:
+                duration = math.ceil(np.random.normal(mean, std))
 
-    def get_MacroActivity_object(self, episode):
-        """
-        return the MacroActivity Object related to the episode
-        :param episode:
-        :return:
-        """
+            end_date = current_date + dt.timedelta(seconds=duration)
+            events.loc[len(events)] = [current_date, end_date, label]
 
-        set_episode = frozenset(episode)
+            current_date = end_date
 
-        return self.activity_objects[set_episode]
+        return events
 
-    def build_forecasting_models(self, train_ratio, method=MacroActivity.LSTM, display=False):
-        """
-        Build forecasting models for Macro-Activity parameters
-        :param method: method to use, choose betwen LSTM, ARIMA, ...
-        :return:
-        """
 
-        error_df = pd.DataFrame(columns=['episode', 'error'])
-        i = 0
-        for set_episode, macro_activity_object in self.activity_objects.items():
-            i += 1
-            # print('Forecasting Model for : {}!!'.format(set_episode))
-            error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio, method=method,
-                                                                              display=display)
-            error_df.at[len(error_df)] = [tuple(set_episode), error]
 
-            sys.stdout.write(
-                "\r{}/{} Macro-Activities Forecasting models done...".format(i, len(self.activity_objects)))
-            sys.stdout.flush()
-        sys.stdout.write("\n")
 
-        plt.hist(list(error_df.error.values))
-        plt.title('NMSE Distribution for all macro_activities forecasting models')
-        plt.show()
+
 
 
 

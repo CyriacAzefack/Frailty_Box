@@ -14,7 +14,9 @@ from Pattern_Mining.Candidate_Study import *
 # Import pairwise2 module
 
 sns.set_style("darkgrid")
-sns.set(font_scale=1.8)
+
+
+# sns.set(font_scale=1.8)
 
 
 # plt.xkcd()
@@ -86,13 +88,12 @@ def main():
     print("# EVALUATION OF THE MODEL on the {} HOUSE Dataset #".format(dataset_name))
     print("##########################################################################")
 
-    activity = "sleeping"
+    # dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
+    #                                                                         pattern_folder_id)
 
-    simulation_id = 1
-    pattern_folder_id = 0
+    dirname = "./output/{}/Simulation/CASE_step_15mn_MACRO_ACTIVITIES/".format(dataset_name)
 
-    dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
-                                                                            pattern_folder_id)
+
     labels = original_dataset.label.unique()
 
     labels.sort()
@@ -102,10 +103,16 @@ def main():
     for label in labels:
         results_df.loc[label] = validation_periodic_time_distribution(label=label, real_dataset=testing_dataset,
                                                                       replications_directory=dirname,
-                                                                      period=period, bin_width=5, display=False)
+                                                                      period=period, bin_width=15, display=False)
 
-    results_df.sort_values(['Hist'], ascending=False, inplace=True)
-    results_df.to_csv(dirname + '../Aruba_label_validation_5mn_bin.csv', sep=";", index=True)
+    results_df['label'] = results_df.index
+    results_df.drop(['rmse'], axis=1, inplace=True)
+    results_df.sort_values(['KDE'], ascending=False, inplace=True)
+
+    df = results_df.melt('label', var_name='cols', value_name='vals')
+    sns.barplot(x='label', y='vals', hue='cols', data=df)
+    plt.show()
+    # results_df.to_csv(dirname + '../Aruba_label_validation_5mn_bin.csv', sep=";", index=False)
 
     print("###################################")
     print("#  SEQUENCE ALIGNMENT VALIDATION  #")
@@ -115,7 +122,7 @@ def main():
     training_dataset['relative_date'] = training_dataset.date.apply(
         lambda x: modulo_datetime(x.to_pydatetime(), dt.timedelta(days=1)))
 
-    labels = training_dataset.label.unique()
+    # labels = original_dataset.label.unique()
 
     label_similarity_matrix = np.zeros((len(labels), len(labels)))
 
@@ -769,6 +776,9 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, d
     # repl_scores['max_score'] = repl_scores.apply(lambda x: max(x), axis=1)
     # repl_scores['mean_score'] = repl_scores.apply(lambda x: np.mean(x), axis=1)
 
+    repl_scores.drop(repl_scores.tail(1).index, inplace=True)  # drop last row
+    rand_repl_scores.drop(rand_repl_scores.tail(1).index, inplace=True)  # drop last row
+
     repl_scores['stoc_results'] = repl_scores.apply(compute_stochastic, args=(0.95,), axis=1)
     repl_scores['stoc_mean'] = repl_scores.stoc_results.apply(lambda x: x[0])
     repl_scores['stoc_lower'] = repl_scores.stoc_results.apply(
@@ -782,9 +792,6 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, d
         lambda x: x[0] - (x[1] if not math.isnan(x[1]) else 0))
     rand_repl_scores['stoc_upper'] = rand_repl_scores.stoc_results.apply(
         lambda x: x[0] + (x[1] if not math.isnan(x[1]) else 0))
-
-    repl_scores.drop(repl_scores.tail(1).index, inplace=True)  # drop last row
-    rand_repl_scores.drop(rand_repl_scores.tail(1).index, inplace=True)  # drop last row
 
     if display:
         fig, ax = plt.subplots()

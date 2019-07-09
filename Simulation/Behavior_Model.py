@@ -15,7 +15,7 @@ import scipy.signal as signal
 
 import Pattern_Mining
 import Utils
-from Simulation import MacroActivity
+from Simulation import ActivityManager
 
 
 # from Pattern_Mining.Candidate_Study import find_occurrences, modulo_datetime
@@ -52,6 +52,8 @@ def main():
                       action='store', type=float, default=0.8)
     parser.add_option('--tep', help='Duration max of an episode occurrence (in minutes)', dest='tep',
                       action='store', type=int, default=30)
+    parser.add_option('--plot', help='Display all the important steps', dest='plot', action='store_true',
+                      default=False)
     parser.add_option('--debug', help='Display all the intermediate steps', dest='debug', action='store_true',
                       default=False)
 
@@ -68,14 +70,17 @@ def main():
     use_macro = not options.no_macro
     Tep = options.tep
     debug = options.debug
+    plot = options.plot
     training_ratio = options.training_ratio
 
     print('#' + 'PARAMETERS'.center(28, ' ') + '#')
     print("Dataset Name : {}".format(dataset_name.upper()))
     print("Tep (mn): {}".format(Tep))
     print("Training ratio : {}".format(training_ratio))
+    print("Use Macro-Activities : {}".format(use_macro))
     print("Simulation time step (mn) : {}".format(int(simu_time_step.total_seconds() / 60)))
     print("Number of replications : {}".format(nb_replications))
+    print("Display Mode : {}".format(plot))
     print("Debug Mode: {}".format(debug))
 
     dataset = Utils.pick_dataset(dataset_name)
@@ -112,8 +117,13 @@ def main():
 
     activity_manager = create_activity_manager(dataset_name=dataset_name, dataset=training_dataset, period=period,
                                                simu_time_step=simu_time_step, output=output, with_macro=use_macro,
-                                               Tep=Tep,
-                                               display=debug)
+                                               Tep=Tep, display=plot, debug=debug)
+
+    # simulated_dataset = activity_manager.simulate(start_date=simulation_start_date, end_date=simulation_start_date
+    #                                                                                          +simulation_duration)
+    #
+    # filename = output + "test.csv"
+    # simulated_dataset.to_csv(filename, index=False, sep=';')
 
     # validate_simulation(macro_activities_list, original_data=dataset, period=period, time_step=time_step)
 
@@ -132,8 +142,7 @@ def main():
     # SIMULATION ##############
     ###########################
 
-
-
+    #
     for replication in range(nb_replications):
 
         time_start = t.process_time()
@@ -142,8 +151,8 @@ def main():
         print('# Simulation replication N°{}     #'.format(replication + 1))
         print('###################################')
 
-        simulated_dataset = launch_simulation(activity_manager, simulation_duration=simulation_duration,
-                                              time_step=simu_time_step, start_date=simulation_start_date, period=period)
+        simulated_dataset = activity_manager.simulate(start_date=simulation_start_date, end_date=simulation_start_date
+                                                                                                 + simulation_duration)
 
         filename = output + "dataset_simulation_rep_{}.csv".format(replication + 1)
 
@@ -158,7 +167,8 @@ def main():
         print("Time elapsed for the simulation : {}".format(elapsed_time))
 
 
-def create_activity_manager(dataset_name, dataset, period, simu_time_step, output, Tep, with_macro=True, display=False):
+def create_activity_manager(dataset_name, dataset, period, simu_time_step, output, Tep, with_macro=True, display=False,
+                            debug=False):
     """
     Generate Activities/Macro-Activities from the input event log
     :param dataset: Input event log
@@ -168,6 +178,7 @@ def create_activity_manager(dataset_name, dataset, period, simu_time_step, outpu
     :param Tep: Duration max of an episode occurrence
     :param with_macro: If True, create macro-activities
     :param display:
+    :param debug:
     :return:
     """
 
@@ -176,8 +187,8 @@ def create_activity_manager(dataset_name, dataset, period, simu_time_step, outpu
 
     nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
 
-    ActivityManager = MacroActivity.ActivityObjectManager(name=dataset_name, period=period, time_step=simu_time_step,
-                                                          tep=Tep)
+    activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=simu_time_step,
+                                                       tep=Tep)
 
     if with_macro:  # Mining Macro-Activities first
 
@@ -187,22 +198,52 @@ def create_activity_manager(dataset_name, dataset, period, simu_time_step, outpu
                                                                                                 support_min=nb_days,
                                                                                                 tep=Tep,
                                                                                                 period=period,
-                                                                                                verbose=True)
-
+                                                                                                verbose=debug)
         for episode, (episode_occurrences, events) in all_macro_activities.items():
-            ActivityManager.update(episode=episode, occurrences=episode_occurrences, events=events)
+            activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
 
+        # input = "../output/{}/ID_{}/patterns.pickle".format(dataset_name, 0)
+        #
+        # patterns = pd.read_pickle(input)
+        #
+        # patterns['Validity Duration'] = patterns['Validity Duration'].apply(lambda x: x.total_seconds())
+        #
+        # # patterns['sort_key'] = patterns['Validity Duration'] * patterns['Accuracy']
+        # patterns['sort_key'] = patterns['Episode'].apply(lambda x: len(x))  # * patterns['Accuracy']
+        # # Rank the macro-activities
+        # patterns['sort_key'] = patterns['Compression Power'] * patterns['Accuracy']
+        # # patterns['sort_key'] = patterns['Episode'].apply(lambda x: len(x))  # * patterns['Accuracy']
+        # patterns.sort_values(['sort_key'], ascending=False, inplace=True)
+        #
+        # for index, pattern in patterns.iterrows():  # Create one Macro/Single Activity per row
+        #
+        #     episode = list(pattern['Episode'])
+        #
+        #     episode_occurrences, events = Pattern_Mining.Extract_Macro_Activities.compute_episode_occurrences(
+        #         dataset=dataset, episode=episode, tep=Tep)
+        #
+        #     activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
+        #
+        #     mini_factorised_events = pd.DataFrame(columns=["date", "label"])
+        #     for index, occurrence in episode_occurrences.iterrows():
+        #         occ_start_date = occurrence["date"]
+        #         occ_end_date = occ_start_date + dt.timedelta(minutes=Tep)
+        #         mini_data = dataset.loc[(dataset.label.isin(episode))
+        #                                       & (dataset.date >= occ_start_date)
+        #                                       & (dataset.date < occ_end_date)].copy()
+        #         mini_data.sort_values(["date"], ascending=True, inplace=True)
+        #         mini_data.drop_duplicates(["label"], keep='first', inplace=True)
+        #         mini_factorised_events = mini_factorised_events.append(mini_data, ignore_index=True)
+        #
+        #     dataset = pd.concat([dataset, mini_factorised_events], sort=False).drop_duplicates(keep=False)
 
-    else:
-        labels = dataset.label.unique()
+    labels = dataset.label.unique()
 
-        for label in labels:
-            episode = (label,)
-            events = dataset[dataset.label == label].copy()
-            episode_occurrences = events.drop(['label'], axis=1)
-            ActivityManager.update(episode=episode, occurrences=episode_occurrences, events=events)
-
-
+    for label in labels:
+        episode = (label,)
+        events = dataset[dataset.label == label].copy()
+        episode_occurrences = events.drop(['label'], axis=1)
+        activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events)
 
 
 
@@ -214,10 +255,10 @@ def create_activity_manager(dataset_name, dataset, period, simu_time_step, outpu
         file.write("Time Step : {} min\n".format(simu_time_step.total_seconds() / 60))
         file.write("Tep : {}\n".format(Tep))
 
-    pickle.dump(ActivityManager, open(output + "/Activity_Manager.pkl", 'wb'))
+    pickle.dump(activity_manager, open(output + "/Activity_Manager.pkl", 'wb'))
     print('Activity Manager Built & Ready!!')
 
-    return ActivityManager
+    return activity_manager
 
 
 def launch_simulation(digital_twin_model, simulation_duration, time_step, start_date, period=dt.timedelta(days=1),

@@ -2,12 +2,15 @@ import datetime as dt
 import os
 
 import matplotlib
+import matplotlib.pyplot as plt
+import networkx as nx
 import numpy as np
 import pandas as pd
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 
 def pick_dataset(name, nb_days=-1):
+    name = name.lower()
     my_path = os.path.abspath(os.path.dirname(__file__))
 
     dataset = None
@@ -252,3 +255,27 @@ def find_occurrences(data, episode, tep=30):
 
     occurrences.sort_values(by=['date'], ascending=True, inplace=True)
     return occurrences
+
+
+def plot_graph(matrix, labels, plot=True):
+    rows, cols = np.where(matrix > 0)
+
+    gr = nx.Graph()
+
+    for label in labels:
+        gr.add_node(label)
+
+    for i in range(len(rows)):
+        row = rows[i]
+        col = cols[i]
+
+        gr.add_edge(labels[row], labels[col], weight=matrix[row][col])
+
+    # gr.add_edges_from(edges)
+    # nx.draw(gr, node_size=500, labels=labels, with_labels=True)
+
+    if plot:
+        nx.draw(gr, node_size=800, with_labels=True)
+        plt.show()
+
+    return gr

@@ -4,7 +4,6 @@ import pickle
 import time as t
 
 import math
-import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.signal import argrelextrema
 from sklearn.mixture import GaussianMixture
@@ -145,42 +144,62 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
     macro_activities = {}
 
     i = 0
-    while len(dataset) > 0:
+    while (len(dataset) > 0):
         i += 1
         # episode, nb_occ, ratio, score = find_best_episode(dataset=dataset, tep=tep, support_min=support_min,
         #                                                   period=period, display=display)
         # Most frequents episode
+
         frequent_episodes = FP_growth.find_frequent_episodes(dataset, support_min, tep)
 
-        if len(frequent_episodes) == 0:  # No more frequent episode present
-            break
-
-        # ordered_frequent_episodes = [(k, frequent_episodes[k]) for k in sorted(frequent_episodes,
-        #                                                                        key=frequent_episodes.get, reverse=True)]
 
         # TODO : Set a GOOD episode selection policy
-        ordered_frequent_episodes = sorted(frequent_episodes.items(), key=lambda t: (len(t[0]) - 1) * t[1],
+        ordered_frequent_episodes = sorted(frequent_episodes.items(), key=lambda t: (len(t[0]) - 1) * 100000 + t[1],
                                            reverse=True)
 
         best_episode, nb_occ = ordered_frequent_episodes[0]
+
+        if len(best_episode) == 1:
+            break
+
 
         episode_occurrences, events = compute_episode_occurrences(dataset=dataset, episode=best_episode, tep=tep)
 
         macro_activities[tuple(best_episode)] = (episode_occurrences, events)
 
-        GMM_desc = compute_episode_description(dataset=dataset, episode=best_episode, period=period, tep=tep)
+        print("########################################")
+        print("Run N°{}".format(i))
+        print("Best episode found {}.".format(best_episode))
+        print("Nb Occurrences : \t{}".format(nb_occ))
 
         if verbose:
-            print("########################################")
-            print("Run N°{}".format(i))
-            print("Best episode found {}.".format(best_episode))
-            print("Nb Occurrences : \t{}".format(nb_occ))
+
             # print("Ratio Dataset : \t{}".format(ratio))
             # print("Accuracy score : \t{:.2f}".format(score))
-            for mu, sigma in GMM_desc.items():
-                print('Mean : {} - Sigma : {}'.format(dt.timedelta(seconds=int(mu)), dt.timedelta(seconds=int(sigma))))
+            if len(episode_occurrences) > 2:
+                GMM_desc = compute_episode_description(dataset=dataset, episode=best_episode, period=period, tep=tep)
+
+                for mu, sigma in GMM_desc.items():
+                    print('Mean : {} - Sigma : {}'.format(dt.timedelta(seconds=int(mu)),
+                                                          dt.timedelta(seconds=int(sigma))))
 
         dataset = pd.concat([dataset, events]).drop_duplicates(keep=False)
+
+    # Macro-Activities finished, now mining single episode
+
+    labels = dataset.label.unique()
+
+    for label in labels:
+        events = dataset[dataset.label == label].copy()
+        episode_occurrences = events[['date', 'end_date']].copy()
+
+        macro_activities[(label,)] = (episode_occurrences, events)
+
+        print("########################################")
+        print("Run N°{}".format(i))
+        print("Best episode found {}.".format((label,)))
+        print("Nb Occurrences : \t{}".format(len(events)))
+
 
     return macro_activities
 

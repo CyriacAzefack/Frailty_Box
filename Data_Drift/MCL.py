@@ -2,13 +2,11 @@
 Markov Clustering Algorithm Implementation
 """
 import glob
-import math
 import os.path
 
 # import imageio
 import markov_clustering as mc
-import matplotlib.pyplot as plt
-import networkx as nx
+import math
 
 from Utils import *
 
@@ -118,28 +116,7 @@ def translate_clustering(matrix, labels):
     return clusters_dict, clusters_graph
 
 
-def plot_graph(matrix, labels, plot=False):
-    rows, cols = np.where(matrix > 0)
 
-    gr = nx.Graph()
-
-    for label in labels:
-        gr.add_node(label)
-
-    for i in range(len(rows)):
-        row = rows[i]
-        col = cols[i]
-
-        gr.add_edge(labels[row], labels[col], weight=matrix[row][col])
-
-    # gr.add_edges_from(edges)
-    # nx.draw(gr, node_size=500, labels=labels, with_labels=True)
-
-    if plot:
-        nx.draw(gr, node_size=800, with_labels=True)
-        plt.show()
-
-    return gr
 
 
 def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, plot=True, gif=False):
