@@ -14,12 +14,11 @@ sns.set_style('darkgrid')
 # np.random.seed(1996)
 
 def main():
-    dataset = pick_dataset('aruba', nb_days=50)
-
+    dataset = pick_dataset('aruba')
     # SIM_MODEL PARAMETERS
-    episode = ('relax', 'meal_preparation')
+    episode = ('sleeping',)
     period = dt.timedelta(days=1)
-    time_step = dt.timedelta(minutes=60)
+    time_step = dt.timedelta(minutes=15)
     tep = 30
 
     # PREDICTION PARAMETERS
@@ -29,7 +28,7 @@ def main():
     time_window_duration = dt.timedelta(days=30)
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime() - time_window_duration
-    window_start_date = start_date
+
 
     nb_days = int((end_date - start_date) / period) + 1
 
@@ -37,8 +36,12 @@ def main():
 
 
     tw_id = 0
-    while window_start_date < end_date:
+    while True:
+        window_start_date = start_date + tw_id * period
         window_end_date = window_start_date + time_window_duration
+
+        if window_start_date >= end_date:
+            break
 
         window_dataset = dataset[(dataset.date >= window_start_date) & (dataset.date < window_end_date)].copy()
 
@@ -47,11 +50,7 @@ def main():
         # print('{} occurrences of the episode {}'.format(len(occurrences), episode))
         activity.add_time_window(occurrences=occurrences, events=events, time_window_id=tw_id, display=False)
 
-        x = activity.get_count_histogram(time_window_id=tw_id)
-        x.drop(['tw_id'], axis=1, inplace=True)
-        x.index = [frozenset(episode)]
 
-        window_start_date += period
         tw_id += 1
 
         sys.stdout.write("\r{}/{} Time Windows CAPTURED".format(tw_id, nb_days))
@@ -62,8 +61,7 @@ def main():
     print("#####################################")
     print("#    FORECASTING MODEL TRAINING     #")
     print("#####################################")
-    error = activity.fit_history_count_forecasting_model(train_ratio=train_ratio, method=MacroActivity.SARIMAX,
-                                                         display=True)
+    error = activity.fit_history_count_forecasting_model(train_ratio=train_ratio, display=True)
 
     print("Prediction Error (NMSE) : {:.2f}".format(error))
 
@@ -194,18 +192,20 @@ class MacroActivity:
         hist = self.build_histogram(occurrences, display=display)
 
         if len(self.count_histogram) > 1:
-            max_tw_id = self.count_histogram.tw_id.max()
+            last_filled_tw_id = self.count_histogram.tw_id.max()
+        else:
+            last_filled_tw_id = -1
 
-            # Fill the missing time windows data
+        # Fill the missing time windows data
 
-            for tw_id in range(max_tw_id + 1, time_window_id):
-                self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(len(hist)))
+        for tw_id in range(last_filled_tw_id + 1, time_window_id):
+            self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(len(hist)))
 
-                for label in self.episode:
-                    duration_df = self.duration_distrib[label]
-                    duration_df.at[tw_id] = [tw_id, 0, 0]
+            for label in self.episode:
+                duration_df = self.duration_distrib[label]
+                duration_df.at[tw_id] = [tw_id, 0, 0]
 
-                self.occurrence_order.at[tw_id, 'tw_id'] = tw_id
+            self.occurrence_order.at[tw_id, 'tw_id'] = tw_id
 
 
 
@@ -260,7 +260,7 @@ class MacroActivity:
         """
         return self.count_histogram.loc[[time_window_id]]
 
-    def fit_history_count_forecasting_model(self, train_ratio, method, display=False):
+    def fit_history_count_forecasting_model(self, train_ratio, display=False):
         """
         Fit a time series forecasting model to the history count data
         :param method:
@@ -269,9 +269,11 @@ class MacroActivity:
         raw_dataset = self.count_histogram.drop(['tw_id'], axis=1)
         nb_tstep = len(raw_dataset.columns)
 
-        if len(raw_dataset) < 10:  # Can't train such less data
-            return -10
+
         dataset = raw_dataset.values.flatten()
+
+        if len(dataset) < 10:  # Can't train on such less data
+            return None
 
         dataset = dataset.astype(int)
 
@@ -279,18 +281,31 @@ class MacroActivity:
 
         train, test = dataset[:train_size], dataset[train_size:]
 
-        if method == MacroActivity.SARIMAX:
-            model = SARIMAX(train, order=(4, 1, 4), seasonal_order=(1, 0, 0, nb_tstep), enforce_stationarity=False,
-                            enforce_invertibility=False)
+        monitoring_start_time = t.time()
+        # if method == MacroActivity.SARIMAX:
+        model = SARIMAX(train, order=(4, 1, 4), seasonal_order=(1, 0, 0, 1), enforce_stationarity=False,
+                        enforce_invertibility=False)
 
-            if np.sum(model.start_params) == 0:  # We switch to a simple ARIMA model
-                model = ARIMA(train, order=(4, 1, 4))
-                # print(mode)
-                model_fit = model.fit(disp=False)
-                forecast = model_fit.forecast(len(test))[0]
-            else:
-                model_fit = model.fit(disp=False)
-                forecast = model_fit.forecast(len(test))
+        if np.sum(model.start_params) == 0:  # We switch to a simple ARIMA model
+            print('Simple ARIMA Model')
+            model = ARIMA(train, order=(4, 1, 4))
+            # print(mode)
+            model_fit = model.fit(disp=False)
+            forecast = model_fit.forecast(len(test))[0]
+        else:
+
+            # burnin_model = SARIMAX(train, order=(4, 1, 4), seasonal_order=(1, 0, 0, 1), enforce_stationarity=False,
+            #                        enforce_invertibility=False)
+            # start_params = burnin_model.fit(return_params=True, disp=False)
+            #
+            # start_params = np.asarray(list(start_params) + [0]*(len(model.start_params) - len(start_params)))
+
+            model_fit = model.fit(disp=False)
+            forecast = model_fit.forecast(len(test))
+
+        elapsed_time = dt.timedelta(seconds=round(t.time() - monitoring_start_time, 1))
+
+        print("Forecasting Model Training Time: {}".format(elapsed_time))
 
         error = mean_squared_error(test, forecast) / np.mean(test)
         if display:

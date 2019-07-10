@@ -101,7 +101,7 @@ class ActivityManager:
 
         return matrix
 
-    def build_forecasting_models(self, train_ratio, method=MacroActivity.LSTM, display=False):
+    def build_forecasting_models(self, train_ratio, display=False):
         """
         Build forecasting models for Macro-Activity parameters
         :param train_ratio: ratio of data used for training
@@ -115,8 +115,9 @@ class ActivityManager:
         for set_episode, macro_activity_object in self.activity_objects.items():
             i += 1
             # print('Forecasting Model for : {}!!'.format(set_episode))
-            error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio, method=method,
-                                                                              display=display)
+            error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio, display=display)
+            if error is None:
+                error = -10
             error_df.at[len(error_df)] = [tuple(set_episode), error]
 
             sys.stdout.write(
@@ -124,9 +125,12 @@ class ActivityManager:
             sys.stdout.flush()
         sys.stdout.write("\n")
 
+
         plt.hist(list(error_df.error.values))
         plt.title('NMSE Distribution for all macro_activities forecasting models')
         plt.show()
+
+        return error_df
 
     def get_activity_daily_profiles(self, time_window_id=0):
         """
@@ -168,7 +172,7 @@ class ActivityManager:
         simulation_duration = (end_date - start_date).total_seconds()
 
         macro_ADPs = self.get_activity_daily_profiles(time_window_id=time_window_id)
-        transition_matrix = self.build_transition_matrix(time_window_id=time_window_id)
+        # transition_matrix = self.build_transition_matrix(time_window_id=time_window_id)
 
         while current_date < end_date:
 
@@ -189,11 +193,11 @@ class ActivityManager:
             scores_episodes = []
 
             for set_episode, macro_activity in self.activity_objects.items():
-                # Transition probability
-                if previous_event == None:
-                    prob_score = 1
-                else:
-                    prob_score = transition_matrix.loc[str(previous_event.get_set_episode())][str(set_episode)]
+                # # Transition probability
+                # if previous_event == None:
+                #     prob_score = 1
+                # else:
+                #     prob_score = transition_matrix.loc[str(previous_event.get_set_episode())][str(set_episode)]
 
                 # ADP score
                 ADP_value = macro_ADPs[set_episode][time_step_id]
@@ -213,6 +217,7 @@ class ActivityManager:
 
             rand = random.random()
 
+            chosen_set_episode = None
             for i in range(len(scores_episodes)):
                 if rand <= scores_episodes[i]:
                     chosen_set_episode = set_episodes[i]
@@ -220,6 +225,10 @@ class ActivityManager:
 
             # # Pick the episode with the max score
             # chosen_set_episode = max(scores.items(), key=operator.itemgetter(1))[0]
+
+            if chosen_set_episode is None:  # Nothing happens
+                current_date += self.time_step
+                continue
 
             chosen_macro_activity = self.get_macro_activity_from_name(chosen_set_episode)
 
@@ -233,7 +242,7 @@ class ActivityManager:
 
             current_date = simulated_dataset.end_date.max().to_pydatetime()
 
-            previous_event = chosen_macro_activity
+            # previous_event = chosen_macro_activity
 
         sys.stdout.write("\n")
 

@@ -111,7 +111,7 @@ def extract_tw_macro_activities(dataset, support_min, tep, period, window_durati
     tuple of dataframes (episode_occurrences, events) as value)
     """
 
-    print('Time window {} started'.format(tw_id))
+    print('Time window {} Macro-Activities screening started...'.format(tw_id))
     start_date = dataset.date.min().to_pydatetime()
 
     window_start_date = start_date + tw_id * period
@@ -122,7 +122,7 @@ def extract_tw_macro_activities(dataset, support_min, tep, period, window_durati
     tw_macro_activities_episodes = extract_macro_activities(dataset=tw_dataset, support_min=support_min, tep=tep,
                                                             period=period)
 
-    print('Time window {} finished'.format(tw_id))
+    print('Time window {} screening finished.'.format(tw_id))
 
     return tw_id, tw_macro_activities_episodes
 
@@ -167,21 +167,22 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
 
         macro_activities[tuple(best_episode)] = (episode_occurrences, events)
 
-        print("########################################")
-        print("Run N°{}".format(i))
-        print("Best episode found {}.".format(best_episode))
-        print("Nb Occurrences : \t{}".format(nb_occ))
+
 
         if verbose:
+            print("########################################")
+            print("Run N°{}".format(i))
+            print("Best episode found {}.".format(best_episode))
+            print("Nb Occurrences : \t{}".format(nb_occ))
 
             # print("Ratio Dataset : \t{}".format(ratio))
-            # print("Accuracy score : \t{:.2f}".format(score))
-            if len(episode_occurrences) > 2:
-                GMM_desc = compute_episode_description(dataset=dataset, episode=best_episode, period=period, tep=tep)
-
-                for mu, sigma in GMM_desc.items():
-                    print('Mean : {} - Sigma : {}'.format(dt.timedelta(seconds=int(mu)),
-                                                          dt.timedelta(seconds=int(sigma))))
+            # # print("Accuracy score : \t{:.2f}".format(score))
+            # if len(episode_occurrences) > 2:
+            #     GMM_desc = compute_episode_description(dataset=dataset, episode=best_episode, period=period, tep=tep)
+            #
+            #     for mu, sigma in GMM_desc.items():
+            #         print('Mean : {} - Sigma : {}'.format(dt.timedelta(seconds=int(mu)),
+            #                                               dt.timedelta(seconds=int(sigma))))
 
         dataset = pd.concat([dataset, events]).drop_duplicates(keep=False)
 
@@ -195,10 +196,11 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
 
         macro_activities[(label,)] = (episode_occurrences, events)
 
-        print("########################################")
-        print("Run N°{}".format(i))
-        print("Best episode found {}.".format((label,)))
-        print("Nb Occurrences : \t{}".format(len(events)))
+        if verbose:
+            print("########################################")
+            print("Run N°{}".format(i))
+            print("Best episode found {}.".format((label,)))
+            print("Nb Occurrences : \t{}".format(len(events)))
 
 
     return macro_activities
