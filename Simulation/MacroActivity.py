@@ -2,6 +2,7 @@ import seaborn as sns
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.stattools import acf, pacf
 
 from Graph_Model.Pattern2Graph import *
 from Pattern_Mining.Candidate_Study import modulo_datetime
@@ -18,7 +19,7 @@ def main():
     # SIM_MODEL PARAMETERS
     episode = ('sleeping',)
     period = dt.timedelta(days=1)
-    time_step = dt.timedelta(minutes=15)
+    time_step = dt.timedelta(minutes=60)
     tep = 30
 
     # PREDICTION PARAMETERS
@@ -61,7 +62,7 @@ def main():
     print("#####################################")
     print("#    FORECASTING MODEL TRAINING     #")
     print("#####################################")
-    error = activity.fit_history_count_forecasting_model(train_ratio=train_ratio, display=True)
+    error = activity.fit_history_count_forecasting_model(train_ratio=0.95, display=True)
 
     print("Prediction Error (NMSE) : {:.2f}".format(error))
 
@@ -281,9 +282,10 @@ class MacroActivity:
 
         train, test = dataset[:train_size], dataset[train_size:]
 
+
         monitoring_start_time = t.time()
         # if method == MacroActivity.SARIMAX:
-        model = SARIMAX(train, order=(4, 1, 4), seasonal_order=(1, 0, 0, 1), enforce_stationarity=False,
+        model = SARIMAX(train, order=(2, 0, 0), seasonal_order=(2, 1, 0, nb_tstep), enforce_stationarity=False,
                         enforce_invertibility=False)
 
         if np.sum(model.start_params) == 0:  # We switch to a simple ARIMA model
@@ -351,8 +353,59 @@ class MacroActivity:
         return events
 
 
+def find_ARIMA_params(data, seasonality):
+    """
 
+    :param data:
+    :param seasonality:
+    :return:
+    """
 
+    diff_train = pd.Series(np.log(data))
+
+    diff_train = diff_train.diff(periods=seasonality)[seasonality:]
+    diff_train.replace([np.inf, -np.inf], np.nan, inplace=True)
+
+    diff_train = diff_train.fillna(0)
+
+    # # train = diff_train
+    #
+    # diff_test = pd.Series(np.log(test))
+    #
+    # diff_test = diff_test.diff(periods=nb_tstep)[nb_tstep:]
+    # diff_test.replace([np.inf, -np.inf], np.nan, inplace=True)
+    #
+    # diff_test = diff_test.fillna(0)
+
+    # test = diff_test
+    #
+    # plt.plot(diff_train)
+    # plt.show()
+    #
+    lag_acf = acf(diff_train, nlags=seasonality)
+    lag_pacf = pacf(diff_train, nlags=seasonality, method='ols')
+
+    # Plot ACF:
+    plt.figure(figsize=(15, 5))
+    plt.subplot(121)
+    plt.stem(lag_acf)
+    plt.axhline(y=0, linestyle='-', color='black')
+    plt.axhline(y=-1.96 / np.sqrt(len(diff_train)), linestyle='--', color='gray')
+    plt.axhline(y=1.96 / np.sqrt(len(diff_train)), linestyle='--', color='gray')
+    plt.xlabel('Lag')
+    plt.ylabel('ACF')
+
+    # Plot PACF :
+    plt.subplot(122)
+    plt.stem(lag_pacf)
+    plt.axhline(y=0, linestyle='-', color='black')
+    plt.axhline(y=-1.96 / np.sqrt(len(diff_train)), linestyle='--', color='gray')
+    plt.axhline(y=1.96 / np.sqrt(len(diff_train)), linestyle='--', color='gray')
+    plt.xlabel('Lag')
+    plt.ylabel('PACF')
+
+    plt.tight_layout()
+    plt.show()
 
 
 
