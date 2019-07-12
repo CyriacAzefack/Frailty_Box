@@ -32,6 +32,7 @@ class ActivityManager:
         self.discovered_episodes = []  # All the episodes discovered until then
         self.activity_objects = {}  # The Activity/MacroActivity objects
         self.mixed_occurrences = pd.DataFrame(columns=['date', 'end_date', 'label', 'tw_id'])
+        self.last_time_window_id = 0
 
     def update(self, episode, occurrences, events, time_window_id=0, display=False):
         """
@@ -63,6 +64,10 @@ class ActivityManager:
             [self.mixed_occurrences, occurrences[['date', 'end_date', 'label', 'tw_id']]]).drop_duplicates(keep=False)
 
         self.mixed_occurrences.sort_values(['date'], inplace=True)
+
+        self.last_time_window_id = time_window_id
+
+
 
     def get_macro_activity_from_name(self, set_episode):
         """
@@ -115,7 +120,9 @@ class ActivityManager:
         for set_episode, macro_activity_object in self.activity_objects.items():
             i += 1
             # print('Forecasting Model for : {}!!'.format(set_episode))
-            error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio, display=display)
+            error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio,
+                                                                              last_time_window_id=self.last_time_window_id,
+                                                                              display=display)
             if error is None:
                 error = -10
             error_df.at[len(error_df)] = [tuple(set_episode), error]

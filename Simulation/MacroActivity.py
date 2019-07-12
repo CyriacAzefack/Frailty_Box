@@ -15,9 +15,9 @@ sns.set_style('darkgrid')
 # np.random.seed(1996)
 
 def main():
-    dataset = pick_dataset('aruba')
+    dataset = pick_dataset('hh101')
     # SIM_MODEL PARAMETERS
-    episode = ('sleeping',)
+    episode = ('cook_breakfast', 'eat_breakfast', 'watch_tv')
     period = dt.timedelta(days=1)
     time_step = dt.timedelta(minutes=60)
     tep = 30
@@ -261,16 +261,24 @@ class MacroActivity:
         """
         return self.count_histogram.loc[[time_window_id]]
 
-    def fit_history_count_forecasting_model(self, train_ratio, display=False):
+    def fit_history_count_forecasting_model(self, train_ratio, last_time_window_id, display=False):
         """
         Fit a time series forecasting model to the history count data
         :param method:
         :return: Normalised Mean Squared Error (NMSE)
         """
+
+        nb_tstep = len(self.count_histogram.columns) - 1
+
+        # Fill history count df unti last time window registered
+
+        last_filled_tw_id = self.count_histogram.tw_id.max()
+
+        for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
+            self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(nb_tstep))
+
+
         raw_dataset = self.count_histogram.drop(['tw_id'], axis=1)
-        nb_tstep = len(raw_dataset.columns)
-
-
         dataset = raw_dataset.values.flatten()
 
         if len(dataset) < 10:  # Can't train on such less data
@@ -307,7 +315,7 @@ class MacroActivity:
 
         elapsed_time = dt.timedelta(seconds=round(t.time() - monitoring_start_time, 1))
 
-        print("Forecasting Model Training Time: {}".format(elapsed_time))
+        print("Training Time: {}".format(elapsed_time))
 
         error = mean_squared_error(test, forecast) / np.mean(test)
         if display:
@@ -321,6 +329,7 @@ class MacroActivity:
             plt.axvline(x=train_size, color='black')
             plt.show()
 
+        self.hist_count_forecasting_model = model_fit
         return error
 
     def simulate(self, start_date, time_step_id, time_window_id):
