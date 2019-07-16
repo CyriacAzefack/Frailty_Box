@@ -18,7 +18,7 @@ class ActivityManager:
     Manage the macro-activities created in the time windows
     """
 
-    def __init__(self, name, period, time_step, tep):
+    def __init__(self, name, period, time_step, tep, dynamic=False):
         """
         Initialisation of the Manager
         :param name:
@@ -33,6 +33,7 @@ class ActivityManager:
         self.activity_objects = {}  # The Activity/MacroActivity objects
         self.mixed_occurrences = pd.DataFrame(columns=['date', 'end_date', 'label', 'tw_id'])
         self.last_time_window_id = 0
+        self.dynamic = dynamic
 
     def update(self, episode, occurrences, events, time_window_id=0, display=False):
         """
@@ -188,6 +189,7 @@ class ActivityManager:
 
         simulation_duration = (end_date - start_date).total_seconds()
 
+        macro_ADPs = self.get_activity_daily_profiles(time_window_id=time_window_id)
 
         # transition_matrix = self.build_transition_matrix(time_window_id=time_window_id)
 
@@ -198,9 +200,11 @@ class ActivityManager:
             sys.stdout.flush()
 
             # Compute the time window id
-            current_time_window_id = time_window_id + int((current_date - start_date) / self.period)
-
-            macro_ADPs = self.get_activity_daily_profiles(time_window_id=current_time_window_id)
+            if self.dynamic:
+                current_time_window_id = time_window_id + int((current_date - start_date) / self.period)
+                macro_ADPs = self.get_activity_daily_profiles(time_window_id=current_time_window_id)
+            else:
+                current_time_window_id = time_window_id
 
             # Compute the time step id
 
@@ -249,7 +253,7 @@ class ActivityManager:
             # chosen_set_episode = max(scores.items(), key=operator.itemgetter(1))[0]
 
             if chosen_set_episode is None:  # Nothing happens
-                current_date += dt.timedelta(minutes=idle_duration)
+                current_date += idle_duration
                 continue
 
             chosen_macro_activity = self.get_macro_activity_from_name(chosen_set_episode)

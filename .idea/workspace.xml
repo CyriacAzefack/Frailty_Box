@@ -4,12 +4,11 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Faster Time series Forecast model training">
+    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Dynamic Behavior model ready">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Simulation/ActivityManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/ActivityManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Simulation/Behavior_Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/Behavior_Model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/MacroActivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/MacroActivity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Time_Series/Prophet_forecaster.py" beforeDir="false" afterPath="$PROJECT_DIR$/Time_Series/Prophet_forecaster.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -1516,7 +1515,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="-528">
               <caret line="201" column="30" selection-start-line="201" selection-start-column="30" selection-end-line="201" selection-end-column="30" />
             </state>
           </provider>
@@ -1525,8 +1524,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Simulation/Behavior_Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-96">
-              <caret line="138" selection-start-line="138" selection-end-line="138" />
+            <state relative-caret-position="235">
+              <caret line="287" column="76" selection-start-line="287" selection-start-column="76" selection-end-line="287" selection-end-column="76" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -1543,11 +1545,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Simulation/ActivityManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1727">
-              <caret line="173" column="8" selection-start-line="173" selection-start-column="8" selection-end-line="173" selection-end-column="8" />
+            <state relative-caret-position="75">
+              <caret line="191" column="83" selection-start-line="191" selection-start-column="83" selection-end-line="191" selection-end-column="83" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -1558,17 +1560,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Validation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="25" column="33" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="33" />
+            <state relative-caret-position="400">
+              <caret line="97" selection-start-line="97" selection-end-line="97" />
+              <folding>
+                <element signature="e#24#35#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Simulation/MacroActivity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="612" column="61" selection-start-line="612" selection-start-column="61" selection-end-line="612" selection-end-column="61" />
+            <state relative-caret-position="160">
+              <caret line="269" selection-start-line="269" selection-end-line="269" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -1579,11 +1584,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Time_Series/Prophet_forecaster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="14" column="33" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="33" />
-              <folding>
-                <element signature="e#27#58#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="208">
+              <caret line="13" column="33" selection-start-line="13" selection-start-column="33" selection-end-line="13" selection-end-column="33" />
             </state>
           </provider>
         </entry>
@@ -1612,7 +1614,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>mean</find>
       <find>history</find>
       <find>plt.</find>
       <find>scatter</find>
@@ -1642,6 +1643,7 @@
       <find>concat</find>
       <find>predict(self</find>
       <find>ols</find>
+      <find>negative</find>
     </findStrings>
     <replaceStrings>
       <replace>labels</replace>
@@ -1723,16 +1725,16 @@
         <option value="$PROJECT_DIR$/Data_Drift/MCL.py" />
         <option value="$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py" />
         <option value="$PROJECT_DIR$/Utils.py" />
-        <option value="$PROJECT_DIR$/Validation.py" />
         <option value="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" />
         <option value="D:/cyriac.azefack/Documents/Wilfried/econeval-master/econeval/gui/jupyter_gui.py" />
         <option value="D:/cyriac.azefack/Documents/Wilfried/econeval-master/econeval/core/testmodel_mesa_healthv21.py" />
-        <option value="$PROJECT_DIR$/input/HH/hh101/dataset.csv" />
         <option value="$PROJECT_DIR$/Time_Series/ARIMA.py" />
-        <option value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
-        <option value="$PROJECT_DIR$/Simulation/ActivityManager.py" />
         <option value="$PROJECT_DIR$/Time_Series/Prophet_forecaster.py" />
         <option value="$PROJECT_DIR$/Simulation/MacroActivity.py" />
+        <option value="$PROJECT_DIR$/input/HH/hh101/dataset.csv" />
+        <option value="$PROJECT_DIR$/Validation.py" />
+        <option value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
+        <option value="$PROJECT_DIR$/Simulation/ActivityManager.py" />
       </list>
     </option>
   </component>
@@ -1757,6 +1759,11 @@
             <path>
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
               <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="input" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
@@ -1821,7 +1828,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Behavior_Model_ARUBA_DYNAMIC">
+  <component name="RunManager" selected="Python.Behavior_Model_HH101_STATIC">
     <configuration name="ARIMA" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -1906,27 +1913,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Behavior_Model_HH101" type="PythonConfigurationType" factoryName="Python">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Simulation" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
-      <option name="PARAMETERS" value="--dataset_name HH101 --time_step 60 --sim 10 --training_ratio 0.8 --tep 30 --window_days 30" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="Behavior_Model_HH101_DYNAMIC" type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -1941,6 +1927,27 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
       <option name="PARAMETERS" value="--dataset_name hh101 --time_step 60 --simu_step 15 --sim 10 --training_ratio 0.8 --tep 30 --window_days 30" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Behavior_Model_HH101_STATIC" type="PythonConfigurationType" factoryName="Python">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Simulation" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
+      <option name="PARAMETERS" value="--dataset_name hh101 --time_step 15 --sim 10 --training_ratio 0.8 --tep 30 --static_learning" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -2095,7 +2102,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="decision_tree" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="Validation" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -2103,11 +2110,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="D:/cyriac.azefack/Documents/Wilfried/econeval-master/econeval/core" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="D:/cyriac.azefack/Documents/Wilfried/econeval-master/econeval/core/decision_tree.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Validation.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -2161,28 +2168,28 @@
     <list>
       <item itemvalue="Python.Aruba_drift_hist_duration" />
       <item itemvalue="Python.Aruba_drift_hist_start_time" />
-      <item itemvalue="Python.Behavior_Model_HH101" />
       <item itemvalue="Python.Behavior_Model_HH115" />
       <item itemvalue="Python.Behavior_Model_KA_DYNAMIC" />
       <item itemvalue="Python.Behavior_Model_ARUBA_DYNAMIC" />
       <item itemvalue="Python.Behavior_Model_HH101_DYNAMIC" />
       <item itemvalue="Python.Behavior_Model_KA_STATIC" />
+      <item itemvalue="Python.Behavior_Model_HH101_STATIC" />
       <item itemvalue="Python.Toulouse_Drift" />
       <item itemvalue="Python.Utils" />
       <item itemvalue="Python.toulouse_drift_stat_test" />
       <item itemvalue="Python.ARIMA" />
       <item itemvalue="Python.MacroActivity" />
-      <item itemvalue="Python.decision_tree" />
       <item itemvalue="Python.testmodel_mesa_healthv21" />
       <item itemvalue="Python.Prophet_forecaster" />
+      <item itemvalue="Python.Validation" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Validation" />
         <item itemvalue="Python.MacroActivity" />
         <item itemvalue="Python.Prophet_forecaster" />
         <item itemvalue="Python.ARIMA" />
         <item itemvalue="Python.testmodel_mesa_healthv21" />
-        <item itemvalue="Python.decision_tree" />
       </list>
     </recent_temporary>
   </component>
@@ -2199,20 +2206,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1521208662820</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Add argument '--graph_plot'">
-      <created>1524829301493</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1524829301493</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Plot Probability matrix time evolution">
-      <created>1525268498773</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1525268498773</updated>
     </task>
     <task id="LOCAL-00017" summary="Fix some merge issues">
       <created>1526982073489</created>
@@ -2543,7 +2536,21 @@
       <option name="project" value="LOCAL" />
       <updated>1562937474337</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="Dynamic Behavior model ready">
+      <created>1563263656564</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1563263656565</updated>
+    </task>
+    <task id="LOCAL-00065" summary="Change time_window_id through simulation">
+      <created>1563269143854</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1563269143854</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2565,21 +2572,21 @@
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.53119427" visible="true" weight="0.20073763" />
-      <window_info id="Structure" order="1" sideWeight="0.4688057" side_tool="true" visible="true" weight="0.20073763" />
+      <window_info active="true" id="Structure" order="1" sideWeight="0.4688057" side_tool="true" visible="true" weight="0.20073763" />
       <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48314014" weight="0.32502595" />
       <window_info anchor="bottom" id="Statistic" order="2" sideWeight="0.49736565" weight="0.46936655" />
-      <window_info active="true" anchor="bottom" x="961" y="31" width="958" height="1048" id="Run" order="3" sideWeight="0.88883036" visible="true" weight="0.41744548" />
+      <window_info anchor="bottom" x="961" y="31" width="958" height="1048" id="Run" order="3" sideWeight="0.88830346" visible="true" weight="0.41744548" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" auto_hide="true" id="Debug" order="6" sideWeight="0.71812433" weight="0.3032191" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.4947313" weight="0.31879544" />
       <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.6996839" weight="0.55140185" />
       <window_info anchor="bottom" id="Messages" order="9" weight="0.32883817" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4889357" weight="0.20145379" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.48840886" weight="0.20145379" />
       <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.4926238" weight="0.2596054" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.11116965" side_tool="true" visible="true" weight="0.41744548" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.11169652" side_tool="true" visible="true" weight="0.41744548" />
       <window_info anchor="bottom" id="Thumbnails" order="13" sideWeight="0.49947312" weight="0.32917964" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -2639,8 +2646,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="All drift methods implemented&#10;Toy_generation no changes implemented" />
-    <MESSAGE value="Drift methods validation ongoing" />
     <MESSAGE value="Validation ongoing : Davies–Bouldin index [DONE]" />
     <MESSAGE value="- All Validation scores Implemented&#10;- Re-generation of toy_data according to the article written&#10;- Set up of MCL parameters for histogram_intersect method" />
     <MESSAGE value="Good MCL parameters for all methods" />
@@ -2664,7 +2669,9 @@
     <MESSAGE value="fix hh101" />
     <MESSAGE value="Faster Time series Forecast model training" />
     <MESSAGE value="Last time window id for forecasting" />
-    <option name="LAST_COMMIT_MESSAGE" value="Last time window id for forecasting" />
+    <MESSAGE value="Dynamic Behavior model ready" />
+    <MESSAGE value="Change time_window_id through simulation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Change time_window_id through simulation" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -2760,12 +2767,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Simulation/ActivityManager.py</url>
-          <line>250</line>
+          <line>260</line>
           <option name="timeStamp" value="1095" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Simulation/ActivityManager.py</url>
-          <line>238</line>
+          <line>248</line>
           <option name="timeStamp" value="1096" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -2780,7 +2787,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Simulation/MacroActivity.py</url>
-          <line>389</line>
+          <line>386</line>
           <option name="timeStamp" value="1126" />
         </line-breakpoint>
       </breakpoints>
@@ -2978,16 +2985,6 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/cluster/dbscan_.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1777">
-          <caret line="288" column="8" selection-start-line="288" selection-start-column="8" selection-end-line="288" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/numpy/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/cluster/mean_shift_.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="185">
@@ -3204,13 +3201,6 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="201" column="30" selection-start-line="201" selection-start-column="30" selection-end-line="201" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="912">
@@ -3238,16 +3228,6 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/input/HH/hh101/dataset.csv">
-      <provider selected="true" editor-type-id="csv-text-editor">
-        <state>
-          <caret column="13" selection-start-column="13" selection-end-column="13" />
-        </state>
-      </provider>
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/statsmodels/tsa/arima_model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-302">
@@ -3271,11 +3251,8 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
     </entry>
     <entry file="file://$PROJECT_DIR$/Time_Series/Prophet_forecaster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="33" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="33" />
-          <folding>
-            <element signature="e#27#58#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="208">
+          <caret line="13" column="33" selection-start-line="13" selection-start-column="33" selection-end-line="13" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -3293,13 +3270,6 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Validation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="25" column="33" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Simulation/Forecasting_Models_Errors.csv">
       <provider selected="true" editor-type-id="csv-text-editor" />
       <provider editor-type-id="csv-table-editor">
@@ -3313,17 +3283,51 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Simulation/Behavior_Model.py">
+    <entry file="file://$PROJECT_DIR$/input/HH/hh101/dataset.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state>
+          <caret column="13" selection-start-column="13" selection-end-column="13" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/Bio/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-96">
-          <caret line="138" selection-start-line="138" selection-end-line="138" />
+        <state relative-caret-position="144">
+          <caret line="30" column="77" selection-start-line="30" selection-start-column="77" selection-end-line="30" selection-end-column="77" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Simulation/ActivityManager.py">
+    <entry file="file://$PROJECT_DIR$/Validation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1727">
-          <caret line="173" column="8" selection-start-line="173" selection-start-column="8" selection-end-line="173" selection-end-column="8" />
+        <state relative-caret-position="400">
+          <caret line="97" selection-start-line="97" selection-end-line="97" />
+          <folding>
+            <element signature="e#24#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/-1728110072/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="82">
+          <caret line="1128" column="8" selection-start-line="1128" selection-start-column="8" selection-end-line="1128" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-528">
+          <caret line="201" column="30" selection-start-line="201" selection-start-column="30" selection-end-line="201" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Simulation/Behavior_Model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="235">
+          <caret line="287" column="76" selection-start-line="287" selection-start-column="76" selection-end-line="287" selection-end-column="76" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
@@ -3332,8 +3336,18 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
     </entry>
     <entry file="file://$PROJECT_DIR$/Simulation/MacroActivity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="612" column="61" selection-start-line="612" selection-start-column="61" selection-end-line="612" selection-end-column="61" />
+        <state relative-caret-position="160">
+          <caret line="269" selection-start-line="269" selection-end-line="269" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Simulation/ActivityManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="191" column="83" selection-start-line="191" selection-start-column="83" selection-end-line="191" selection-end-column="83" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>

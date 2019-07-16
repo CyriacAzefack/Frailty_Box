@@ -196,7 +196,7 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
     nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
 
     activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=simu_time_step,
-                                                       tep=Tep)
+                                                       tep=Tep, dynamic=False)
 
     print("Mining for macro-activities...")
 
@@ -285,7 +285,7 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
     """
 
     activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=time_step,
-                                                       tep=Tep)
+                                                       tep=Tep, dynamic=True)
 
     time_window_duration = dt.timedelta(days=nb_days_per_window)
     start_date = dataset.date.min().to_pydatetime()
