@@ -1,5 +1,4 @@
 # Facebook Prophet example
-import matplotlib.pyplot as plt
 import seaborn as sns
 from fbprophet import Prophet
 
@@ -9,7 +8,7 @@ sns.set_style('darkgrid')
 
 
 def main():
-    activity = 'eating'
+    activity = 'sleeping'
     raw_dataset = pd.read_csv('./data/{}_dataset.csv'.format(activity))
 
     period = dt.timedelta(days=1)

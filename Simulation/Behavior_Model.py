@@ -41,7 +41,9 @@ def main():
                       default=False)
     parser.add_option('--window_days', help='Number of days per time windows', dest='window_days', type=int, default=30)
     parser.add_option('--time_step', help='Number of minutes per simulation_step', dest='time_step', action='store',
-                      type=int, default=5)
+                      type=int, default=60)
+    parser.add_option('--simu_step', help='Number of minutes per simulation step', dest='simu_step', action='store',
+                      type=int, default=15)
     parser.add_option('--sim', help='Number of replications', dest='nb_sim', action='store',
                       type=int, default=5)
     parser.add_option('-r', '--training_ratio', help='Ratio of the data to use for the training', dest='training_ratio',
@@ -61,7 +63,8 @@ def main():
         exit(-1)
 
     dataset_name = options.dataset_name
-    simu_time_step = dt.timedelta(minutes=options.time_step)
+    simu_time_step = dt.timedelta(minutes=options.simu_step)
+    forecast_time_step = dt.timedelta(minutes=options.time_step)
     nb_replications = options.nb_sim
     static_learning = options.static_learning
     window_days = options.window_days
@@ -76,6 +79,7 @@ def main():
     print("Training ratio : {}".format(training_ratio))
     print("Static Learning (no time evolution) : {}".format(static_learning))
     print("Simulation time step (mn) : {}".format(int(simu_time_step.total_seconds() / 60)))
+    print("ADP time step (mn) : {}".format(int(forecast_time_step.total_seconds() / 60)))
     print("Number of replications : {}".format(nb_replications))
     print("Display Mode : {}".format(plot))
     print("Debug Mode: {}".format(debug))
@@ -122,17 +126,17 @@ def main():
         print('##############################')
         activity_manager = create_static_activity_manager(dataset_name=dataset_name, dataset=training_dataset,
                                                           period=period, simu_time_step=simu_time_step, output=output,
-                                                          Tep=Tep, display=plot)
+                                                          Tep=Tep, debug=debug)
     else:
         print('##############################')
         print("#     DYNAMIC LEARNING       #")
         print('##############################')
         activity_manager = create_dynamic_activity_manager(dataset_name=dataset_name, dataset=training_dataset,
-                                                           period=period, simu_time_step=simu_time_step, output=output,
-                                                           Tep=Tep, nb_days_per_window=window_days, display=plot)
+                                                           period=period, time_step=forecast_time_step, output=output,
+                                                           Tep=Tep, nb_days_per_window=window_days, debug=debug)
 
         print("## Building forecasting models ... ##")
-        error_df = activity_manager.build_forecasting_models(train_ratio=0.9, display=True)
+        error_df = activity_manager.build_forecasting_models(train_ratio=0.9, display=plot)
 
         error_df.to_csv('Forecasting_Models_Errors.csv', sep=';', index=False)
 
@@ -149,8 +153,14 @@ def main():
         print('# Simulation replication N°{}     #'.format(replication + 1))
         print('###################################')
 
-        simulated_dataset = activity_manager.simulate(start_date=simulation_start_date, end_date=simulation_start_date
-                                                                                                 + simulation_duration)
+        next_time_window_id = activity_manager.last_time_window_id
+
+        if not static_learning:
+            next_time_window_id += 1
+
+        simulated_dataset = activity_manager.simulate(start_date=simulation_start_date,
+                                                      end_date=simulation_start_date + simulation_duration,
+                                                      idle_duration=simu_time_step, time_window_id=next_time_window_id)
 
         filename = output + "dataset_simulation_rep_{}.csv".format(replication + 1)
 
@@ -165,7 +175,7 @@ def main():
         print("Time elapsed for the simulation : {}".format(elapsed_time))
 
 
-def create_static_activity_manager(dataset_name, dataset, period, simu_time_step, output, Tep, display=False):
+def create_static_activity_manager(dataset_name, dataset, period, simu_time_step, output, Tep, debug=False):
     """
     Generate Activities/Macro-Activities from the input event log
     :param dataset: Input event log
@@ -193,9 +203,9 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
                                                                                             support_min=nb_days,
                                                                                             tep=Tep,
                                                                                             period=period,
-                                                                                            verbose=display)
+                                                                                            verbose=debug)
     for episode, (episode_occurrences, events) in all_macro_activities.items():
-        activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=display)
+        activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
 
     # input = "../output/{}/ID_{}/patterns.pickle".format(dataset_name, 0)
     #
@@ -258,14 +268,14 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
     return activity_manager
 
 
-def create_dynamic_activity_manager(dataset_name, dataset, period, simu_time_step, output, Tep, nb_days_per_window,
-                                    display=False):
+def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, output, Tep, nb_days_per_window,
+                                    debug=False):
     """
     Generate Activities/Macro-Activities from the input event log
     :param dataset_name: Name of the dataset
     :param dataset:
     :param period:
-    :param simu_time_step:
+    :param time_step:
     :param output:
     :param Tep:
     :param nb_days_per_window: Number of days in a time window
@@ -273,7 +283,7 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, simu_time_ste
     :return:
     """
 
-    activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=simu_time_step,
+    activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=time_step,
                                                        tep=Tep)
 
     time_window_duration = dt.timedelta(days=nb_days_per_window)
@@ -304,7 +314,7 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, simu_time_ste
 
             for episode, (episode_occurrences, events) in macro_activities.items():
                 activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events,
-                                        time_window_id=tw_id, display=display)
+                                        time_window_id=tw_id, display=debug)
             print('Activities updates on Time Window {}/{} Done !'.format(tw_id + 1, nb_tw))
 
     print("All Time Windows Treated")

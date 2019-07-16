@@ -106,7 +106,7 @@ class ActivityManager:
 
         return matrix
 
-    def build_forecasting_models(self, train_ratio, display=False):
+    def build_forecasting_models(self, train_ratio, nb_periods_to_forecast=5, display=False):
         """
         Build forecasting models for Macro-Activity parameters
         :param train_ratio: ratio of data used for training
@@ -115,27 +115,34 @@ class ActivityManager:
         :return:
         """
 
-        error_df = pd.DataFrame(columns=['episode', 'error'])
+        error_df = pd.DataFrame(columns=['episode', 'ADP'])
         i = 0
         for set_episode, macro_activity_object in self.activity_objects.items():
             i += 1
             # print('Forecasting Model for : {}!!'.format(set_episode))
-            error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio,
-                                                                              last_time_window_id=self.last_time_window_id,
-                                                                              display=display)
-            if error is None:
-                error = -10
-            error_df.at[len(error_df)] = [tuple(set_episode), error]
+            ADP_error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio,
+                                                                                  last_time_window_id=self.last_time_window_id,
+                                                                                  nb_periods_to_forecast=nb_periods_to_forecast,
+                                                                                  display=display)
+
+            # TODO : Monitor the error on forecasting models for duration
+            mean_duration_error, std_duration_error = macro_activity_object.fit_duration_distrub_forecasting_model(
+                train_ratio=train_ratio, last_time_window_id=self.last_time_window_id,
+                nb_periods_to_forecast=nb_periods_to_forecast, display=display)
+
+            if ADP_error is None or np.isnan(ADP_error):
+                ADP_error = -10
+            error_df.at[len(error_df)] = [tuple(set_episode), round(ADP_error, 3)]
+
 
             sys.stdout.write(
                 "\r{}/{} Macro-Activities Forecasting models done...".format(i, len(self.activity_objects)))
             sys.stdout.flush()
         sys.stdout.write("\n")
 
-
-        plt.hist(list(error_df.error.values))
-        plt.title('NMSE Distribution for all macro_activities forecasting models')
-        plt.show()
+        # plt.hist(list(error_df.error.values))
+        # plt.title('NMSE Distribution for all macro_activities forecasting models')
+        # plt.show()
 
         return error_df
 
@@ -163,16 +170,19 @@ class ActivityManager:
 
         return macro_ADPs
 
-    def simulate(self, start_date, end_date, time_window_id=0):
+    def simulate(self, start_date, end_date, idle_duration, time_window_id=0):
         """
         Generate data between two dates using the model parameters for the selected time_window_id
         :param start_date: Start date of the simulation
         :param end_date: end date
+        :param idle_duration: duration of a idle period of time
         :param time_window_id: selected time window id
         :return:
         """
 
         simulated_dataset = pd.DataFrame(columns=['date', 'end_date', 'label'])
+
+        # Use
         previous_event = None
         current_date = start_date
 
@@ -234,7 +244,7 @@ class ActivityManager:
             # chosen_set_episode = max(scores.items(), key=operator.itemgetter(1))[0]
 
             if chosen_set_episode is None:  # Nothing happens
-                current_date += self.time_step
+                current_date += dt.timedelta(minutes=idle_duration)
                 continue
 
             chosen_macro_activity = self.get_macro_activity_from_name(chosen_set_episode)
