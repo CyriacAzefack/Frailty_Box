@@ -136,7 +136,8 @@ def main():
                                                            Tep=Tep, nb_days_per_window=window_days, debug=debug)
 
         print("## Building forecasting models ... ##")
-        error_df = activity_manager.build_forecasting_models(train_ratio=0.9, display=plot)
+        error_df = activity_manager.build_forecasting_models(train_ratio=0.9, nb_periods_to_forecast=testing_days + 5,
+                                                             display=plot)
 
         error_df.to_csv('Forecasting_Models_Errors.csv', sep=';', index=False)
 

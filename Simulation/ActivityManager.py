@@ -188,7 +188,7 @@ class ActivityManager:
 
         simulation_duration = (end_date - start_date).total_seconds()
 
-        macro_ADPs = self.get_activity_daily_profiles(time_window_id=time_window_id)
+
         # transition_matrix = self.build_transition_matrix(time_window_id=time_window_id)
 
         while current_date < end_date:
@@ -196,6 +196,11 @@ class ActivityManager:
             evolution_percentage = round(100 * ((current_date - start_date).total_seconds() / simulation_duration), 2)
             sys.stdout.write("\r{} %% of Simulation done!!".format(evolution_percentage))
             sys.stdout.flush()
+
+            # Compute the time window id
+            current_time_window_id = time_window_id + int((current_date - start_date) / self.period)
+
+            macro_ADPs = self.get_activity_daily_profiles(time_window_id=current_time_window_id)
 
             # Compute the time step id
 
@@ -254,7 +259,7 @@ class ActivityManager:
 
             # Simulate the MACRO-ACTIVITY
             macro_activity_events = chosen_macro_activity.simulate(start_date=current_date, time_step_id=time_step_id,
-                                                                   time_window_id=time_window_id)
+                                                                   time_window_id=current_time_window_id)
             simulated_dataset = simulated_dataset.append(macro_activity_events)
 
             current_date = simulated_dataset.end_date.max().to_pydatetime()
