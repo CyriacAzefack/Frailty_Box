@@ -28,7 +28,7 @@ def main():
 
     simu_time_step = 15
 
-    label = 'eating'
+    label = 'bed_to_toilet'
 
     period = dt.timedelta(days=1)
 
@@ -38,6 +38,8 @@ def main():
 
     labels = original_dataset.label.unique()
     labels.sort()
+
+    print(labels)
 
     start_date = original_dataset.date.min().to_pydatetime()
     end_date = original_dataset.date.max().to_pydatetime()
@@ -82,17 +84,17 @@ def main():
         activity_duration_validation(label, original_dataset=testing_dataset, replications_directory=dirname,
                                      confidence=0.95, display=True)
 
-        # results_df = pd.DataFrame(columns=['KDE'])
-        #
-        # for label in labels:
-        #     intersect_area, den_area, rmse = validation_periodic_time_distribution(label=label,
-        #                                                                            real_dataset=testing_dataset,
-        #                                                                            replications_directory=dirname,
-        #                                                                            period=period,
-        #                                                                            bin_width=simu_time_step,
-        #                                                                            display=False)
-        #     results_df.loc[label] = [den_area]
-        # modes_results.append(results_df)
+        results_df = pd.DataFrame(columns=['KDE'])
+
+        for label in labels:
+            intersect_area, den_area, rmse = validation_periodic_time_distribution(label=label,
+                                                                                   real_dataset=testing_dataset,
+                                                                                   replications_directory=dirname,
+                                                                                   period=period,
+                                                                                   bin_width=simu_time_step,
+                                                                                   display=False)
+            results_df.loc[label] = [den_area]
+        modes_results.append(results_df)
 
     all_result = modes_results[0].join(modes_results[1], lsuffix='_' + modes[0], rsuffix='_' + modes[1])
 
@@ -475,8 +477,8 @@ def activity_duration_validation(label, original_dataset, replications_directory
     ####################
 
     if display:
-        # Turn the seconds into hours
-        repl_durations = repl_durations / 3600
+        # Turn the seconds into minutes
+        repl_durations = repl_durations / 60
         fig, (ax1, ax2) = plt.subplots(2)
 
         # TIME STEP PLOT
@@ -496,8 +498,8 @@ def activity_duration_validation(label, original_dataset, replications_directory
                          label='{0:.0f}% Confidence Error'.format(confidence * 100), color='k', alpha=.25)
 
         ax1.title.set_text("Event duration for activity '{}'".format(label))
-        ax1.set_ylabel('Duration (hours)')
-        ax2.set_ylabel('Duration (hours)')
+        ax1.set_ylabel('Duration (Minutes)')
+        ax2.set_ylabel('Duration (Minutes)')
         ax2.set_xlabel('Date')
         ax2.set_title('Cumulative Evolution')
         ax1.legend(loc="upper left")
