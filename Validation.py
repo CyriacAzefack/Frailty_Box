@@ -5,11 +5,11 @@ from random import randint
 
 import seaborn as sns
 from Bio import pairwise2
-# Import format_alignment method
-from Bio.pairwise2 import format_alignment
 
 from Data_Drift.Features_Extraction import *
 from Pattern_Mining.Candidate_Study import *
+
+# Import format_alignment method
 
 # Import pairwise2 module
 
@@ -22,39 +22,16 @@ sns.set_style("darkgrid")
 # plt.xkcd()
 
 def main():
+    dataset_name = 'aruba'
+
+    modes = ['DYNAMIC', 'STATIC']
+
+    simu_time_step = 15
+
+    label = 'eating'
 
     period = dt.timedelta(days=1)
-    time_step = dt.timedelta(minutes=5)
 
-    #####################
-    #  COMPARE MODELS   #
-    ####################
-
-    # models = []
-    # models.append({
-    #     'name': 'aruba',
-    #     'label': 'Aruba',
-    #     'sim_id': 2,
-    #     'pattern_id': 0
-    # })
-    #
-    # models.append({
-    #     'name': 'hh101',
-    #     'label': 'HH101',
-    #     'sim_id': 2,
-    #     'pattern_id': 0
-    # })
-    #
-    # models.append({
-    #     'name': 'KA',
-    #     'label': 'KA',
-    #     'sim_id': 2,
-    #     'pattern_id': 0
-    # })
-    #
-    # compare_models(models, period=period, time_step=time_step)
-
-    dataset_name = 'aruba'
     training_ratio = 0.8
     # Original data
     original_dataset = pick_dataset(dataset_name)
@@ -91,28 +68,45 @@ def main():
     # dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
     #                                                                         pattern_folder_id)
 
-    dirname = "./output/{}/Simulation/CASE_step_15mn_MACRO_ACTIVITIES/".format(dataset_name)
+
 
 
     labels = original_dataset.label.unique()
 
     labels.sort()
 
-    results_df = pd.DataFrame(columns=['Hist', 'KDE', 'rmse'])
+    modes_results = []
+    for mode in modes:
+        dirname = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, mode, simu_time_step)
 
-    for label in labels:
-        results_df.loc[label] = validation_periodic_time_distribution(label=label, real_dataset=testing_dataset,
-                                                                      replications_directory=dirname,
-                                                                      period=period, bin_width=15, display=False)
+        activity_duration_validation(label, original_dataset=testing_dataset, replications_directory=dirname,
+                                     confidence=0.95, display=True)
 
-    results_df['label'] = results_df.index
-    results_df.drop(['rmse'], axis=1, inplace=True)
-    results_df.sort_values(['KDE'], ascending=False, inplace=True)
+        # results_df = pd.DataFrame(columns=['KDE'])
+        #
+        # for label in labels:
+        #     intersect_area, den_area, rmse = validation_periodic_time_distribution(label=label,
+        #                                                                            real_dataset=testing_dataset,
+        #                                                                            replications_directory=dirname,
+        #                                                                            period=period,
+        #                                                                            bin_width=simu_time_step,
+        #                                                                            display=False)
+        #     results_df.loc[label] = [den_area]
+        # modes_results.append(results_df)
 
-    df = results_df.melt('label', var_name='cols', value_name='vals')
+    all_result = modes_results[0].join(modes_results[1], lsuffix='_' + modes[0], rsuffix='_' + modes[1])
+
+    all_result['label'] = all_result.index
+    # results_df.drop(['rmse'], axis=1, inplace=True)
+    # results_df.sort_values(['KDE'], ascending=False, inplace=True)
+
+    df = all_result.melt('label', var_name='cols', value_name='vals')
     sns.barplot(x='label', y='vals', hue='cols', data=df)
+    plt.ylim((0, 1))
+
+    plt.title('Aruba\nActivities Daily Profile Matching')
     plt.show()
-    # results_df.to_csv(dirname + '../Aruba_label_validation_5mn_bin.csv', sep=";", index=False)
+    # all_result.to_csv(dirname + '../Aruba_label_validation_15mn_bin.csv', sep=";", index=False)
 
     print("###################################")
     print("#  SEQUENCE ALIGNMENT VALIDATION  #")
@@ -148,47 +142,54 @@ def main():
     #
     #         letter_similarity[(letter1, letter2)] = label_similarity_matrix[i][j]
 
-    sequence_alignement_validation(original_data=testing_dataset, directory=dirname, period=period, alphabet=alphabet,
-                                   display=True)
+    for mode in modes:
+        dirname = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, mode, simu_time_step)
 
+        print("MODE : {}".format(mode))
+        sequence_alignement_validation(original_data=testing_dataset, directory=dirname, period=period,
+                                       alphabet=alphabet,
+                                       display=True)
 
-    # Duration Validation
-    # confidence_error = 0.9
-    labels_count_df = pd.DataFrame(columns=['duration'])
-
-    for label in labels:
-        labels_count_df.loc[label] = len(original_dataset[original_dataset.label == label])
-
-    labels_count_df.sort_values(by=['duration'], ascending=False, inplace=True)
-
-    explode = (0, 0, 0, 0, 0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5)
-
-    fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
-
-    cmap = plt.get_cmap('tab20c')
-    colors = cmap(np.linspace(0., 1., len(labels_count_df)))
-    labels_count_df.duration.plot(kind='pie', fontsize=18, explode=explode, colors=colors, startangle=90)
-
-    # wedges, texts = ax.pie(labels_count_df.duration, wedgeprops=dict(width=0.5), startangle=0, colors=colors)
-    # bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
-    # kw = dict(xycoords='data', textcoords='data', arrowprops=dict(arrowstyle="-"),
-    #           bbox=bbox_props, zorder=0, va="center")
-    # for i, p in enumerate(wedges):
-    #     ang = (p.theta2 - p.theta1) / 2. + p.theta1
-    #     y = np.sin(np.deg2rad(ang))
-    #     x = np.cos(np.deg2rad(ang))
-    #     horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
-    #     connectionstyle = "angle,angleA=0,angleB={}".format(ang)
-    #     kw["arrowprops"].update({"connectionstyle": connectionstyle})
-    #     ax.annotate(labels_count_df.index[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
-    #                 horizontalalignment=horizontalalignment, **kw)
-
-    # plt.legend(labels=labels_count_df.index, loc="best")
-    plt.axis('equal')
-    plt.tight_layout()
-    plt.ylabel('')
-
-    plt.show()
+    #####################################
+    #   Activities Frequency Pie Chart  #
+    #####################################
+    # # Duration Validation
+    # # confidence_error = 0.9
+    # labels_count_df = pd.DataFrame(columns=['duration'])
+    #
+    # for label in labels:
+    #     labels_count_df.loc[label] = len(original_dataset[original_dataset.label == label])
+    #
+    # labels_count_df.sort_values(by=['duration'], ascending=False, inplace=True)
+    #
+    # explode = (0, 0, 0, 0, 0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5)
+    #
+    # fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
+    #
+    # cmap = plt.get_cmap('tab20c')
+    # colors = cmap(np.linspace(0., 1., len(labels_count_df)))
+    # labels_count_df.duration.plot(kind='pie', fontsize=18, explode=explode, colors=colors, startangle=90)
+    #
+    # # wedges, texts = ax.pie(labels_count_df.duration, wedgeprops=dict(width=0.5), startangle=0, colors=colors)
+    # # bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
+    # # kw = dict(xycoords='data', textcoords='data', arrowprops=dict(arrowstyle="-"),
+    # #           bbox=bbox_props, zorder=0, va="center")
+    # # for i, p in enumerate(wedges):
+    # #     ang = (p.theta2 - p.theta1) / 2. + p.theta1
+    # #     y = np.sin(np.deg2rad(ang))
+    # #     x = np.cos(np.deg2rad(ang))
+    # #     horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
+    # #     connectionstyle = "angle,angleA=0,angleB={}".format(ang)
+    # #     kw["arrowprops"].update({"connectionstyle": connectionstyle})
+    # #     ax.annotate(labels_count_df.index[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
+    # #                 horizontalalignment=horizontalalignment, **kw)
+    #
+    # # plt.legend(labels=labels_count_df.index, loc="best")
+    # plt.axis('equal')
+    # plt.tight_layout()
+    # plt.ylabel('')
+    #
+    # plt.show()
 
 
 def all_activities_validation(original_dataset, dirname, period, time_step, display=True):
@@ -888,8 +889,8 @@ def sequence_alignment(original_data, sim_data, alphabet, period, start_date, en
 
         # ratio_score = score / perfect_score
 
-        print('Ratio score={:.2f}'.format(ratio_score))
-        print(format_alignment(*alignments[0]))
+        # print('Ratio score={:.2f}'.format(ratio_score))
+        # print(format_alignment(*alignments[0]))
 
         align_df.loc[len(align_df)] = [current_date, ratio_score]
 

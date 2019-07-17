@@ -78,6 +78,8 @@ def main():
     print("Tep (mn): {}".format(Tep))
     print("Training ratio : {}".format(training_ratio))
     print("Static Learning (no time evolution) : {}".format(static_learning))
+    if not static_learning:
+        print("Time Window Duration : {} days".format(options.window_days))
     print("Simulation time step (mn) : {}".format(int(simu_time_step.total_seconds() / 60)))
     print("ADP time step (mn) : {}".format(int(forecast_time_step.total_seconds() / 60)))
     print("Number of replications : {}".format(nb_replications))
@@ -98,7 +100,7 @@ def main():
     testing_days = nb_days - training_days + 5  # Extra days just in case
 
     output = "../output/{}/Simulation/{}_step_{}mn/".format(dataset_name, 'STATIC' if static_learning else 'DYNAMIC',
-                                                            options.time_step)
+                                                            options.simu_step)
 
     # Create the folder if it does not exist yet
     if not os.path.exists(os.path.dirname(output)):
@@ -136,10 +138,12 @@ def main():
                                                            Tep=Tep, nb_days_per_window=window_days, debug=debug)
 
         print("## Building forecasting models ... ##")
-        error_df = activity_manager.build_forecasting_models(train_ratio=0.9, nb_periods_to_forecast=testing_days + 5,
-                                                             display=plot)
+        ADP_error_df, duration_error_df = activity_manager.build_forecasting_models(train_ratio=0.9,
+                                                                                    nb_periods_to_forecast=testing_days + 5,
+                                                                                    display=plot, debug=debug)
 
-        error_df.to_csv('Forecasting_Models_Errors.csv', sep=';', index=False)
+        ADP_error_df.to_csv(output + '/../ADP_Forecasting_Models_Errors.csv', sep=';', index=False)
+        duration_error_df.to_csv(output + '/../Duration_Forecasting_Models_Errors.csv', sep=';', index=False)
 
     ###############
     # SIMULATION  #

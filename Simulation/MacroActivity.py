@@ -1,7 +1,6 @@
-import seaborn as sns
+# import seaborn as sns
 from fbprophet import Prophet
 from sklearn.metrics import mean_squared_error
-from sklearn.metrics import r2_score
 from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import acf, pacf
@@ -11,7 +10,8 @@ from Pattern_Mining.Candidate_Study import modulo_datetime
 from Pattern_Mining.Extract_Macro_Activities import compute_episode_occurrences
 from Pattern_Mining.Pattern_Discovery import pick_dataset
 
-sns.set_style('darkgrid')
+
+# sns.set_style('darkgrid')
 
 
 # np.random.seed(1996)
@@ -333,6 +333,7 @@ class MacroActivity:
 
         error = mean_squared_error(test, forecast) / np.mean(test)
 
+
         # self.hist_count_forecasting_model = model_fit
 
         # Fill the forecasting
@@ -372,7 +373,7 @@ class MacroActivity:
         :param last_time_window_id:
         :param nb_periods_to_forecast:
         :param display:
-        :return:
+        :return: Two dict like object {label: r2_score}
         """
         mean_duration_errors = {}
         std_duration_errors = {}
@@ -583,7 +584,9 @@ def prophet_forecaster(start_date, data, train_ratio, nb_period_to_forecast, dis
 
     model = Prophet(interval_width=0.95, daily_seasonality=False)
 
-    model.fit(train_dataset)
+    with suppress_stdout_stderr():
+        model.fit(train_dataset)
+
 
     freq = '{}S'.format(int(period.total_seconds()))
     future = model.make_future_dataframe(periods=len(test_dataset) + nb_period_to_forecast, freq=freq)
@@ -594,8 +597,8 @@ def prophet_forecaster(start_date, data, train_ratio, nb_period_to_forecast, dis
 
     test = test_dataset['y'].values
 
-    # error = mean_squared_error(test, validation_forecast) / np.mean(test)
-    error = r2_score(test, validation_forecast)
+    error = mean_squared_error(test, validation_forecast) / np.mean(test)
+
 
     error = round(error, 3)
 
@@ -619,6 +622,36 @@ def prophet_forecaster(start_date, data, train_ratio, nb_period_to_forecast, dis
 
     return error, real_forecast
 
+
+class suppress_stdout_stderr(object):
+    '''
+    A context manager for doing a "deep suppression" of stdout and stderr in
+    Python, i.e. will suppress all print, even if the print originates in a
+    compiled C/Fortran sub-function.
+       This will not suppress raised exceptions, since exceptions are printed
+    to stderr just before a script exits, and after the context manager has
+    exited (at least, I think that is why it lets exceptions through).
+
+    '''
+
+    def __init__(self):
+        # Open a pair of null files
+        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
+        # Save the actual stdout (1) and stderr (2) file descriptors.
+        self.save_fds = (os.dup(1), os.dup(2))
+
+    def __enter__(self):
+        # Assign the null pointers to stdout and stderr.
+        os.dup2(self.null_fds[0], 1)
+        os.dup2(self.null_fds[1], 2)
+
+    def __exit__(self, *_):
+        # Re-assign the real stdout/stderr back to (1) and (2)
+        os.dup2(self.save_fds[0], 1)
+        os.dup2(self.save_fds[1], 2)
+        # Close the null files
+        os.close(self.null_fds[0])
+        os.close(self.null_fds[1])
 
 
 if __name__ == '__main__':

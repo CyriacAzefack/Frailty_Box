@@ -4,10 +4,20 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Dynamic Behavior model ready">
+    <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Add HH115">
+      <change afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input/HH/hh115/README.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input/HH/hh115/ann.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input/HH/hh115/dataset.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input/HH/hh115/rawdata.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pattern_Mining/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Mining/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Simulation/ActivityManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/ActivityManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/Behavior_Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/Behavior_Model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Simulation/Behavior_Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Behavior_Model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Simulation/MacroActivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/MacroActivity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Simulation/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Simulation_Model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" afterDir="false" />
     </list>
@@ -1513,21 +1523,21 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py">
+        <entry file="file://$PROJECT_DIR$/Behavior_Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-528">
-              <caret line="201" column="30" selection-start-line="201" selection-start-column="30" selection-end-line="201" selection-end-column="30" />
+            <state relative-caret-position="144">
+              <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Simulation/Behavior_Model.py">
+        <entry file="file://$PROJECT_DIR$/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="235">
-              <caret line="287" column="76" selection-start-line="287" selection-start-column="76" selection-end-line="287" selection-end-column="76" />
+            <state relative-caret-position="64">
+              <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
               <folding>
-                <element signature="e#0#21#0" expanded="true" />
+                <element signature="e#0#10#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1536,23 +1546,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="912">
-              <caret line="65" selection-start-line="65" selection-end-line="65" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="48">
+              <caret line="3" selection-start-line="3" selection-start-column="2" selection-end-line="4" selection-end-column="33" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Simulation/ActivityManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="191" column="83" selection-start-line="191" selection-start-column="83" selection-end-line="191" selection-end-column="83" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="176">
+              <caret line="11" column="23" lean-forward="true" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -1560,8 +1564,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Validation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="97" selection-start-line="97" selection-end-line="97" />
+            <state relative-caret-position="1312">
+              <caret line="82" column="42" selection-start-line="82" selection-start-column="37" selection-end-line="82" selection-end-column="42" />
               <folding>
                 <element signature="e#24#35#0" expanded="true" />
               </folding>
@@ -1569,34 +1573,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Simulation/MacroActivity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="269" selection-start-line="269" selection-end-line="269" />
+            <state relative-caret-position="224">
+              <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
               <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Time_Series/Prophet_forecaster.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="13" column="33" selection-start-line="13" selection-start-column="33" selection-end-line="13" selection-end-column="33" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Time_Series/ARIMA.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="417">
-              <caret line="101" selection-start-line="92" selection-start-column="5" selection-end-line="101" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
+                <element signature="e#24#53#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1614,8 +1597,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>history</find>
-      <find>plt.</find>
       <find>scatter</find>
       <find>inverse</find>
       <find>time</find>
@@ -1644,6 +1625,8 @@
       <find>predict(self</find>
       <find>ols</find>
       <find>negative</find>
+      <find>r2</find>
+      <find>mean_s</find>
     </findStrings>
     <replaceStrings>
       <replace>labels</replace>
@@ -1684,12 +1667,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_3.py" />
-        <option value="$PROJECT_DIR$/Data_Drift/Behavior_change_detection.py" />
-        <option value="$USER_HOME$/Google Drive/TP k-means/TP-kMeans-resources/test.py" />
         <option value="$PROJECT_DIR$/../Smart Homes DataSets/Preprocessing CASAS -HH- Datasets .py" />
         <option value="$PROJECT_DIR$/Drift_Methods_Toy_Validation.ipynb" />
-        <option value="$PROJECT_DIR$/__init__.py" />
         <option value="$PROJECT_DIR$/Data_Drift/__init__.py" />
         <option value="$PROJECT_DIR$/Data_Drift/Behavior.py" />
         <option value="$PROJECT_DIR$/Data_Drift/Drift_Detector.py" />
@@ -1719,22 +1698,26 @@
         <option value="$PROJECT_DIR$/DES/Activity.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
         <option value="$PROJECT_DIR$/Behavior_Drift.py" />
-        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$PROJECT_DIR$/Pattern_Mining/test.py" />
         <option value="$PROJECT_DIR$/Graph_Model/Markov_Graph.py" />
         <option value="$PROJECT_DIR$/Data_Drift/MCL.py" />
         <option value="$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py" />
-        <option value="$PROJECT_DIR$/Utils.py" />
         <option value="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" />
         <option value="D:/cyriac.azefack/Documents/Wilfried/econeval-master/econeval/gui/jupyter_gui.py" />
         <option value="D:/cyriac.azefack/Documents/Wilfried/econeval-master/econeval/core/testmodel_mesa_healthv21.py" />
         <option value="$PROJECT_DIR$/Time_Series/ARIMA.py" />
         <option value="$PROJECT_DIR$/Time_Series/Prophet_forecaster.py" />
-        <option value="$PROJECT_DIR$/Simulation/MacroActivity.py" />
-        <option value="$PROJECT_DIR$/input/HH/hh101/dataset.csv" />
+        <option value="$PROJECT_DIR$/input/HH/hh115/dataset.csv" />
         <option value="$PROJECT_DIR$/Validation.py" />
+        <option value="$PROJECT_DIR$/input/HH/hh101/dataset.csv" />
+        <option value="$PROJECT_DIR$/Simulation/__init__.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
+        <option value="$PROJECT_DIR$/__init__.py" />
+        <option value="$PROJECT_DIR$/Pattern_Mining/__init__.py" />
+        <option value="$PROJECT_DIR$/Utils.py" />
         <option value="$PROJECT_DIR$/Simulation/ActivityManager.py" />
+        <option value="$PROJECT_DIR$/Simulation/MacroActivity.py" />
       </list>
     </option>
   </component>
@@ -1752,7 +1735,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -1763,17 +1745,17 @@
             <path>
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
               <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="input" type="462c0819:PsiDirectoryNode" />
+              <item name="Data_Drift" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
+              <item name="Graph_Model" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
               <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
               <item name="Simulation" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Frailty_Box" type="462c0819:PsiDirectoryNode" />
-              <item name="Time_Series" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Frailty_Box" type="b2602c69:ProjectViewProjectNode" />
@@ -1788,6 +1770,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1802,18 +1785,18 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box" />
+      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Pattern_Mining" />
+      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\ML_idea" />
+      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\DES" />
+      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\xED_Algorithm" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Temporal_patterns" />
       <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\DES" />
       <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box" />
       <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Graph_Model" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Pattern_Mining" />
-      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box" />
-      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\ML_idea" />
-      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\DES" />
-      <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\xED_Algorithm" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -1828,28 +1811,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Behavior_Model_HH101_STATIC">
-    <configuration name="ARIMA" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Time_Series" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Time_Series/ARIMA.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.Behavior_Model_KA_DYNAMIC">
     <configuration name="Aruba_drift_hist_duration" type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -1904,7 +1866,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Behavior_Model.py" />
       <option name="PARAMETERS" value="--dataset_name aruba --time_step 60 --simu_step 15 --sim 10 --training_ratio 0.8 --tep 30 --window_days 30" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1925,8 +1887,8 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
-      <option name="PARAMETERS" value="--dataset_name hh101 --time_step 60 --simu_step 15 --sim 10 --training_ratio 0.8 --tep 30 --window_days 30" />
+      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Behavior_Model.py" />
+      <option name="PARAMETERS" value="--dataset_name hh101 --time_step 60 --simu_step 15 --sim 10 --training_ratio 0.8 --tep 30 --window_days 30 --plot" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -1946,7 +1908,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Behavior_Model.py" />
       <option name="PARAMETERS" value="--dataset_name hh101 --time_step 15 --sim 10 --training_ratio 0.8 --tep 30 --static_learning" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1967,7 +1929,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Behavior_Model.py" />
       <option name="PARAMETERS" value="--dataset_name HH115 --time_step 15 --sim 10 --training_ratio 0.8 --tep 30" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1988,8 +1950,8 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
-      <option name="PARAMETERS" value="--dataset_name KA --time_step 60 --simu_step 15 --sim 10 --training_ratio 0.8 --tep 30 --window_days 10" />
+      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Behavior_Model.py" />
+      <option name="PARAMETERS" value="--dataset_name KA --time_step 60 --simu_step 15 --sim 10 --training_ratio 0.8 --tep 30 --window_days 10 --plot" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -2009,7 +1971,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/Behavior_Model.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Behavior_Model.py" />
       <option name="PARAMETERS" value="--dataset_name KA --time_step 15 --sim 10 --training_ratio 0.8 --tep 30 --static_learning" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -2123,7 +2085,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="testmodel_mesa_healthv21" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="__init__" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -2131,11 +2093,32 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="D:/cyriac.azefack/Documents/Wilfried/econeval-master/econeval/core" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/__init__.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="scratch" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="D:/cyriac.azefack/Documents/Wilfried/econeval-master/econeval/core/testmodel_mesa_healthv21.py" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -2177,19 +2160,19 @@
       <item itemvalue="Python.Toulouse_Drift" />
       <item itemvalue="Python.Utils" />
       <item itemvalue="Python.toulouse_drift_stat_test" />
-      <item itemvalue="Python.ARIMA" />
       <item itemvalue="Python.MacroActivity" />
-      <item itemvalue="Python.testmodel_mesa_healthv21" />
       <item itemvalue="Python.Prophet_forecaster" />
       <item itemvalue="Python.Validation" />
+      <item itemvalue="Python.scratch" />
+      <item itemvalue="Python.__init__" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.__init__" />
+        <item itemvalue="Python.scratch" />
         <item itemvalue="Python.Validation" />
         <item itemvalue="Python.MacroActivity" />
         <item itemvalue="Python.Prophet_forecaster" />
-        <item itemvalue="Python.ARIMA" />
-        <item itemvalue="Python.testmodel_mesa_healthv21" />
       </list>
     </recent_temporary>
   </component>
@@ -2206,13 +2189,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1521208662820</updated>
-    </task>
-    <task id="LOCAL-00017" summary="Fix some merge issues">
-      <created>1526982073489</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1526982073489</updated>
     </task>
     <task id="LOCAL-00018" summary="Tentatives de modèles">
       <created>1528721252273</created>
@@ -2550,7 +2526,14 @@
       <option name="project" value="LOCAL" />
       <updated>1563269143854</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="Fix Static Model">
+      <created>1563270386512</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1563270386513</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2569,24 +2552,23 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.53119427" visible="true" weight="0.20073763" />
-      <window_info active="true" id="Structure" order="1" sideWeight="0.4688057" side_tool="true" visible="true" weight="0.20073763" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.5259467" visible="true" weight="0.20073763" />
+      <window_info id="Structure" order="1" sideWeight="0.4740533" side_tool="true" visible="true" weight="0.20073763" />
       <window_info id="Favorites" order="2" sideWeight="0.54281765" side_tool="true" weight="0.21496312" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48314014" weight="0.32502595" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48208642" weight="0.32502595" />
       <window_info anchor="bottom" id="Statistic" order="2" sideWeight="0.49736565" weight="0.46936655" />
-      <window_info anchor="bottom" x="961" y="31" width="958" height="1048" id="Run" order="3" sideWeight="0.88830346" visible="true" weight="0.41744548" />
+      <window_info anchor="bottom" x="961" y="31" width="958" height="1048" id="Run" order="3" sideWeight="0.8840885" weight="0.41744548" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" auto_hide="true" id="Debug" order="6" sideWeight="0.71812433" weight="0.3032191" />
+      <window_info anchor="bottom" auto_hide="true" id="Debug" order="6" sideWeight="0.71285564" weight="0.3032191" />
       <window_info anchor="bottom" id="TODO" order="7" sideWeight="0.4947313" weight="0.31879544" />
       <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.6996839" weight="0.55140185" />
       <window_info anchor="bottom" id="Messages" order="9" weight="0.32883817" />
       <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.48840886" weight="0.20145379" />
-      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.4926238" weight="0.2596054" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.11169652" side_tool="true" visible="true" weight="0.41744548" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" sideWeight="0.49209693" visible="true" weight="0.2596054" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.50790304" side_tool="true" visible="true" weight="0.2596054" />
       <window_info anchor="bottom" id="Thumbnails" order="13" sideWeight="0.49947312" weight="0.32917964" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -2646,8 +2628,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
-    <MESSAGE value="Validation ongoing : Davies–Bouldin index [DONE]" />
-    <MESSAGE value="- All Validation scores Implemented&#10;- Re-generation of toy_data according to the article written&#10;- Set up of MCL parameters for histogram_intersect method" />
     <MESSAGE value="Good MCL parameters for all methods" />
     <MESSAGE value="Real Life Datasets results ongoing" />
     <MESSAGE value="Refactoring of the Simulation_Model algorithm" />
@@ -2671,7 +2651,9 @@
     <MESSAGE value="Last time window id for forecasting" />
     <MESSAGE value="Dynamic Behavior model ready" />
     <MESSAGE value="Change time_window_id through simulation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Change time_window_id through simulation" />
+    <MESSAGE value="Fix Static Model" />
+    <MESSAGE value="Add HH115" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add HH115" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -2681,12 +2663,12 @@
       <breakpoints>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>600</line>
+          <line>602</line>
           <option name="timeStamp" value="651" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>283</line>
+          <line>285</line>
           <option name="timeStamp" value="661" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -2731,7 +2713,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>440</line>
+          <line>442</line>
           <option name="timeStamp" value="939" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -2762,17 +2744,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>781</line>
+          <line>783</line>
           <option name="timeStamp" value="1088" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Simulation/ActivityManager.py</url>
-          <line>260</line>
+          <line>281</line>
           <option name="timeStamp" value="1095" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Simulation/ActivityManager.py</url>
-          <line>248</line>
+          <line>269</line>
           <option name="timeStamp" value="1096" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -2781,14 +2763,14 @@
           <option name="timeStamp" value="1113" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Simulation/Behavior_Model.py</url>
-          <line>138</line>
-          <option name="timeStamp" value="1125" />
+          <url>file://$PROJECT_DIR$/Validation.py</url>
+          <line>99</line>
+          <option name="timeStamp" value="1127" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Simulation/MacroActivity.py</url>
-          <line>386</line>
-          <option name="timeStamp" value="1126" />
+          <url>file://$PROJECT_DIR$/Simulation/ActivityManager.py</url>
+          <line>159</line>
+          <option name="timeStamp" value="1128" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -2802,6 +2784,46 @@
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string># sns.kdeplot(ADPs_rmse, shade_lowest=False, shade=True, label='ADP Errors')
+sns.kdeplot(mean_durations_rmse, shade_lowest=False, shade=True, label='Mean Duration Errors')
+sns.kdeplot(std_durations_rmse, shade_lowest=False, shade=True, label='std Duration Errors')
+
+plt.show()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string># sns.kdeplot(ADPs_rmse, shade_lowest=False, shade=True, label='ADP Errors')
+sns.kdeplot(mean_durations_rmse, shade_lowest=False, shade=True, label='Mean Duration Errors')
+plt.show()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>sns.kdeplot(ADPs_rmse, shade_lowest=False, shade=True, label='ADP Errors')
+sns.kdeplot(mean_durations_rmse, shade_lowest=False, shade=True, label='Mean Duration Errors')
+plt.show()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>sns.kdeplot(ADPs_rmse, shade_lowest=False, shade=True, label='ADP Errors')</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>sns.distplot(ADPs_rmse, norm_hist=True, kde=True, label='ADP_Errors')
+plt.show()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>sns.distplot(ADPs_rmse, norm_hist=True, kde=False, label='ADP_Errors')
+plt.show()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>a = activity_manager.get_macro_activity_from_name(frozenset(('go to bed', 'use toilet', )))
 a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8, nb_periods_to_forecast=10)
@@ -2817,42 +2839,6 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
       </expression>
       <expression>
         <expression-string>activity_manager.get_macro_activity_from_name(frozenset(('go to bed', 'use toilet', )))</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
-    print('a')</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>mean_squared_error(test, validation_forecast)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>mean_squared_error(test, validation_forecast) / np.mean(test)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>np.log(list(data))</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>np.log(data.flatten())</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>data.flatten()</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>np.log(np.asarray(data))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -2985,65 +2971,12 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/cluster/mean_shift_.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="30" column="34" selection-start-line="30" selection-start-column="26" selection-end-line="30" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pyclustering/cluster/center_initializer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-335">
-          <caret line="172" column="8" selection-start-line="172" selection-start-column="8" selection-end-line="172" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pyclustering/cluster/xmeans.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="168" selection-start-line="168" selection-end-line="168" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/-1728110072/numpy/core/multiarray.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="2443" column="4" selection-start-line="2443" selection-start-column="4" selection-end-line="2443" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/utils/validation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="551" selection-start-line="551" selection-end-line="551" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/cluster/k_means_.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="914" column="8" selection-start-line="914" selection-start-column="8" selection-end-line="914" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Behavior_Drift.py" />
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="192">
           <caret line="17" column="15" selection-start-line="17" selection-start-column="15" selection-end-line="17" selection-end-column="15" />
           <folding>
             <element signature="e#1#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
-          <caret line="38" column="78" selection-start-line="38" selection-start-column="78" selection-end-line="38" selection-end-column="78" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3063,24 +2996,6 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="32">
           <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Simulation/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Pattern_Mining/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3129,9 +3044,6 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
           <caret line="233" selection-start-line="233" selection-end-line="233" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graph_Model/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Graph_Model/Build_Graph.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -3201,30 +3113,10 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="912">
-          <caret line="65" selection-start-line="65" selection-end-line="65" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2019.1/system/python_stubs/-1728110072/numpy/core/umath.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="215">
           <caret line="2962" column="4" selection-start-line="2962" selection-start-column="4" selection-end-line="2962" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Time_Series/ARIMA.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="417">
-          <caret line="101" selection-start-line="92" selection-start-column="5" selection-end-line="101" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3249,13 +3141,6 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Time_Series/Prophet_forecaster.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="13" column="33" selection-start-line="13" selection-start-column="33" selection-end-line="13" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pandas/core/indexing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="178">
@@ -3271,10 +3156,10 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Simulation/Forecasting_Models_Errors.csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
     </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/sklearn/metrics/regression.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -3283,30 +3168,10 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/input/HH/hh101/dataset.csv">
-      <provider selected="true" editor-type-id="csv-text-editor">
-        <state>
-          <caret column="13" selection-start-column="13" selection-end-column="13" />
-        </state>
-      </provider>
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/Bio/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
           <caret line="30" column="77" selection-start-line="30" selection-start-column="77" selection-end-line="30" selection-end-column="77" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Validation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="97" selection-start-line="97" selection-end-line="97" />
-          <folding>
-            <element signature="e#24#35#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3317,39 +3182,139 @@ a.fit_duration_distrub_forecasting_model(train_ratio=0.9, last_time_window_id=8,
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/input/HH/hh115/dataset.csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state>
+          <caret column="13" selection-start-column="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-528">
+        <state relative-caret-position="3024">
           <caret line="201" column="30" selection-start-line="201" selection-start-column="30" selection-end-line="201" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Simulation/Behavior_Model.py">
+    <entry file="file://$PROJECT_DIR$/Time_Series/Prophet_forecaster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="235">
-          <caret line="287" column="76" selection-start-line="287" selection-start-column="76" selection-end-line="287" selection-end-column="76" />
+        <state relative-caret-position="160">
+          <caret line="13" column="33" selection-start-line="13" selection-start-column="33" selection-end-line="13" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Time_Series/ARIMA.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1504">
+          <caret line="101" selection-start-line="92" selection-start-column="5" selection-end-line="101" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Simulation/MacroActivity.py">
+    <entry file="file://$PROJECT_DIR$/input/HH/hh101/dataset.csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state>
+          <caret column="13" selection-start-column="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/seaborn/distributions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="269" selection-start-line="269" selection-end-line="269" />
+        <state relative-caret-position="215">
+          <caret line="41" column="4" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="296">
+          <caret line="37" column="76" selection-start-line="37" selection-end-line="37" selection-end-column="76" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/ntpath.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1186">
+          <caret line="240" column="4" selection-start-line="240" selection-start-column="4" selection-end-line="240" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="64">
+          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pattern_Mining/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Simulation/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Temp/BvSshSftp/Bv00182a/Bv0019bb/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Time_Series/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data_Drift/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graph_Model/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="3" selection-start-line="3" selection-start-column="2" selection-end-line="4" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Validation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1312">
+          <caret line="82" column="42" selection-start-line="82" selection-start-column="37" selection-end-line="82" selection-end-column="42" />
+          <folding>
+            <element signature="e#24#35#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Simulation/ActivityManager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="191" column="83" selection-start-line="191" selection-start-column="83" selection-end-line="191" selection-end-column="83" />
+        <state relative-caret-position="176">
+          <caret line="11" column="23" lean-forward="true" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Behavior_Model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Simulation/MacroActivity.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#24#53#0" expanded="true" />
           </folding>
         </state>
       </provider>

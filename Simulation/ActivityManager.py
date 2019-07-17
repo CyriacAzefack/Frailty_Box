@@ -1,14 +1,19 @@
 import datetime as dt
 import random
 import sys
+from os.path import dirname
 from subprocess import check_call
 
 import math
-import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
+# import matplotlib.image as mpimg
+# import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
+
+# import seaborn as sns
+sys.path.append(dirname(__file__))
+
 
 from Simulation.MacroActivity import MacroActivity
 
@@ -107,7 +112,7 @@ class ActivityManager:
 
         return matrix
 
-    def build_forecasting_models(self, train_ratio, nb_periods_to_forecast=5, display=False):
+    def build_forecasting_models(self, train_ratio, nb_periods_to_forecast=5, display=False, debug=False):
         """
         Build forecasting models for Macro-Activity parameters
         :param train_ratio: ratio of data used for training
@@ -116,7 +121,9 @@ class ActivityManager:
         :return:
         """
 
-        error_df = pd.DataFrame(columns=['episode', 'ADP'])
+        ADP_error_df = pd.DataFrame(columns=['episode', 'rmse'])
+        duration_error_df = pd.DataFrame(columns=['episode', 'mean_rmse', 'std_rmse', 'label'])
+
         i = 0
         for set_episode, macro_activity_object in self.activity_objects.items():
             i += 1
@@ -124,16 +131,18 @@ class ActivityManager:
             ADP_error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio,
                                                                                   last_time_window_id=self.last_time_window_id,
                                                                                   nb_periods_to_forecast=nb_periods_to_forecast,
-                                                                                  display=display)
+                                                                                  display=debug)
 
             # TODO : Monitor the error on forecasting models for duration
             mean_duration_error, std_duration_error = macro_activity_object.fit_duration_distrub_forecasting_model(
                 train_ratio=train_ratio, last_time_window_id=self.last_time_window_id,
-                nb_periods_to_forecast=nb_periods_to_forecast, display=display)
+                nb_periods_to_forecast=nb_periods_to_forecast, display=debug)
 
-            if ADP_error is None or np.isnan(ADP_error):
-                ADP_error = -10
-            error_df.at[len(error_df)] = [tuple(set_episode), round(ADP_error, 3)]
+            for label in macro_activity_object.episode:
+                duration_error_df.loc[len(duration_error_df)] = [tuple(set_episode), mean_duration_error[label],
+                                                                 std_duration_error[label], label]
+
+            ADP_error_df.at[len(ADP_error_df)] = [tuple(set_episode), ADP_error]
 
 
             sys.stdout.write(
@@ -141,11 +150,24 @@ class ActivityManager:
             sys.stdout.flush()
         sys.stdout.write("\n")
 
+        if display:
+            # Drop NAN
+            ADPs_rmse = ADP_error_df.replace([np.inf, -np.inf], np.nan).dropna().rmse.values
+            mean_durations_rmse = duration_error_df.replace([np.inf, -np.inf], np.nan).dropna().mean_rmse.values
+            std_durations_rmse = duration_error_df.replace([np.inf, -np.inf], np.nan).dropna().std_rmse.values
+
+            sns.kdeplot(ADPs_rmse, shade_lowest=False, shade=True, label='ADP Errors')
+            plt.show()
+            sns.kdeplot(mean_durations_rmse, shade_lowest=False, shade=True, label='Mean Duration Errors')
+            sns.kdeplot(std_durations_rmse, shade_lowest=False, shade=True, label='STD Duration Errors')
+            plt.show()
+
+
         # plt.hist(list(error_df.error.values))
         # plt.title('NMSE Distribution for all macro_activities forecasting models')
         # plt.show()
 
-        return error_df
+        return ADP_error_df, duration_error_df
 
     def get_activity_daily_profiles(self, time_window_id=0):
         """
