@@ -1,12 +1,11 @@
 import datetime as dt
 import errno
+import math
 import multiprocessing as mp
 import os
 import pickle
 import time as t
 from optparse import OptionParser
-
-import math
 
 import Pattern_Mining
 import Utils
@@ -276,7 +275,7 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
 def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, output, Tep, nb_days_per_window,
                                     debug=False):
     """
-    Generate Activities/Macro-Activities from the input event log
+    Generate Dynamic Macro-Activities from the input event log
     :param dataset_name: Name of the dataset
     :param dataset:
     :param period:
@@ -298,17 +297,17 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
     support_min = nb_days_per_window
 
     nb_processes = 2 * mp.cpu_count()  # For parallel computing
-
     monitoring_start_time = t.time()
 
     nb_tw = math.floor((end_date - start_date) / period)  # Number of time windows available
 
-    # nb_tw = 1
+    # For each Time Windows Log, we extract the macro-activities and update them
+    #############################################################################
 
+    # Arguments for the "extract_tw_macro_activities" method
     args = [(dataset, support_min, Tep, period, time_window_duration, tw_id) for tw_id in range(nb_tw)]
 
     with mp.Pool(processes=nb_processes) as pool:
-
         # return tw_id, tw_macro_activities
         all_time_windows_macro_activities = pool.starmap(
             Pattern_Mining.Extract_Macro_Activities.extract_tw_macro_activities, args)
@@ -318,11 +317,12 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
             macro_activities = result[1]
 
             for episode, (episode_occurrences, events) in macro_activities.items():
+                # Update of the macro-activity if it exist OR creation if not
                 activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events,
                                         time_window_id=tw_id, display=debug)
             print('Activities updates on Time Window {}/{} Done !'.format(tw_id + 1, nb_tw))
 
-    print("All Time Windows Treated")
+    print("Final Macro-Activities List ready")
 
     elapsed_time = dt.timedelta(seconds=round(t.time() - monitoring_start_time, 1))
 

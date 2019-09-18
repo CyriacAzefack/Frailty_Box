@@ -1,8 +1,8 @@
 import datetime as dt
 import os
 
-# import matplotlib
-# import matplotlib.pyplot as plt
+import matplotlib
+import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -115,8 +115,8 @@ def generate_random_color(n):
     colors = []
     cmap = matplotlib.cm.get_cmap('Spectral')
     # cmap = plt.get_cmap('Spectral')
-    for i in range(1, n + 1):
-        rgb = cmap(1 / i)
+    for i in range(0, n):
+        rgb = cmap(i / n)
         rgb = [int(256 * x) % 256 for x in rgb]
         color = '#%02x%02x%02x' % (rgb[0], rgb[1], rgb[2])
         colors.append(color)

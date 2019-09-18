@@ -1,17 +1,17 @@
 import datetime as dt
+import math
 import random
 import sys
 from os.path import dirname
 from subprocess import check_call
 
-import math
-# import matplotlib.image as mpimg
-# import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
-# import seaborn as sns
 sys.path.append(dirname(__file__))
 
 
@@ -28,7 +28,7 @@ class ActivityManager:
         Initialisation of the Manager
         :param name:
         :param period:
-        :param time_step:
+        :param time_step: Time discretization parameter
         """
         self.name = name
         self.period = period

@@ -1,9 +1,9 @@
 import errno
+import math
 import multiprocessing as mp
 import pickle
 import time as t
 
-import math
 import seaborn as sns
 from scipy.signal import argrelextrema
 from sklearn.mixture import GaussianMixture
@@ -162,12 +162,9 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
         if len(best_episode) == 1:
             break
 
-
         episode_occurrences, events = compute_episode_occurrences(dataset=dataset, episode=best_episode, tep=tep)
 
         macro_activities[tuple(best_episode)] = (episode_occurrences, events)
-
-
 
         if verbose:
             print("########################################")

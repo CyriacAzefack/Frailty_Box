@@ -28,7 +28,7 @@ def main():
 
     simu_time_step = 15
 
-    label = 'bed_to_toilet'
+    label = 'sleeping'
 
     period = dt.timedelta(days=1)
 
@@ -86,14 +86,14 @@ def main():
 
         results_df = pd.DataFrame(columns=['KDE'])
 
-        for label in labels:
-            intersect_area, den_area, rmse = validation_periodic_time_distribution(label=label,
+        for label_str in labels:
+            intersect_area, den_area, rmse = validation_periodic_time_distribution(label=label_str,
                                                                                    real_dataset=testing_dataset,
                                                                                    replications_directory=dirname,
                                                                                    period=period,
                                                                                    bin_width=simu_time_step,
                                                                                    display=False)
-            results_df.loc[label] = [den_area]
+            results_df.loc[label_str] = [den_area]
         modes_results.append(results_df)
 
     all_result = modes_results[0].join(modes_results[1], lsuffix='_' + modes[0], rsuffix='_' + modes[1])

@@ -1,4 +1,4 @@
-# import seaborn as sns
+import seaborn as sns
 from fbprophet import Prophet
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.arima_model import ARIMA
@@ -17,18 +17,47 @@ from Pattern_Mining.Pattern_Discovery import pick_dataset
 # np.random.seed(1996)
 
 def main():
-    dataset = pick_dataset('HH101')
+    dataset = pick_dataset('aruba')
     # SIM_MODEL PARAMETERS
-    episode = ('sleep',)
+    episode = ('sleeping',)
     period = dt.timedelta(days=1)
-    time_step = dt.timedelta(minutes=60)
+    time_step = dt.timedelta(minutes=10)
     tep = 30
+    ###########################
+    index = np.arange(int(period.total_seconds() / time_step.total_seconds()))
 
+    colums = ['ts_{}'.format(i) for i in index]
+    labels = dataset.label.unique()
+
+    df = pd.DataFrame(columns=colums)
+
+    for label in labels:
+        activity = MacroActivity(episode=(label,), period=period, time_step=time_step, tep=tep)
+        occurrences = dataset[dataset.label == label][['date', 'end_date']].copy()
+        events = dataset[dataset.label == label].copy()
+        activity.add_time_window(occurrences=occurrences, events=events, time_window_id=0, display=False)
+
+        hist = activity.get_count_histogram(time_window_id=0)
+
+        df.loc[label] = hist.values[0][1:]
+    df = df.div(df.sum(axis=1), axis=0)
+
+    label = episode[0]
+    hist = df.loc[label]
+    plt.plot(index, hist)
+    plt.title('Activity : {}\nTime step : {}'.format(label, time_step))
+    plt.ylabel('Probability of occurrence')
+    plt.xticks(np.arange(0, len(hist), 10))
+    # plt.xlim(0, len(hist))
+    plt.xlabel('Time step id')
+    plt.show()
+
+    ############################
     # PREDICTION PARAMETERS
     train_ratio = 0.8
 
     # TIME WINDOW PARAMETERS
-    time_window_duration = dt.timedelta(days=21)
+    time_window_duration = dt.timedelta(days=180)
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime() - time_window_duration
 
@@ -88,9 +117,9 @@ class MacroActivity:
         Creation of a Macro-Activity
         :param episode:
         :param occurrences: dataset of occurrences of the episode
-        :param events: sublog of events from the input event log
+        :param events: Sublog of events from the input event log
         :param period: periodicity of the analysis
-        :param time_step: Time step for the histogram (used for the prediction)
+        :param time_step: Time discretization parameter
         :param start_time_window_id:
         :param tep:
         :param display:
@@ -302,7 +331,7 @@ class MacroActivity:
 
         train, test = dataset[:train_size], dataset[train_size:]
 
-
+        nb_steps_to_forecast = len(test) + nb_periods_to_forecast * nb_tstep
         monitoring_start_time = t.time()
 
         # find_ARIMA_params(train, seasonality=nb_tstep)
@@ -315,7 +344,8 @@ class MacroActivity:
             model = ARIMA(train, order=(4, 1, 4))
             # print(mode)
             model_fit = model.fit(disp=False)
-            forecast = model_fit.forecast(len(test))[0]
+            validation_forecast = model_fit.forecast(len(test))[0]
+            raw_forecast = model_fit.forecast(nb_steps_to_forecast)[0][len(test):]
         else:
 
             # burnin_model = SARIMAX(train, order=(4, 1, 4), seasonal_order=(1, 0, 0, 1), enforce_stationarity=False,
@@ -325,21 +355,15 @@ class MacroActivity:
             # start_params = np.asarray(list(start_params) + [0]*(len(model.start_params) - len(start_params)))
 
             model_fit = model.fit(disp=False)
-            forecast = model_fit.forecast(len(test))
+            validation_forecast = model_fit.forecast(len(test))
+            raw_forecast = model_fit.forecast(nb_steps_to_forecast)[len(test):]
 
         elapsed_time = dt.timedelta(seconds=round(t.time() - monitoring_start_time, 1))
 
         print("Training Time: {}".format(elapsed_time))
 
-        error = mean_squared_error(test, forecast) / np.mean(test)
+        error = mean_squared_error(test, validation_forecast) / np.mean(test)
 
-
-        # self.hist_count_forecasting_model = model_fit
-
-        # Fill the forecasting
-
-        nb_steps_to_forecast = len(test) + nb_periods_to_forecast * nb_tstep
-        raw_forecast = model_fit.forecast(nb_steps_to_forecast)[len(test):]
 
         # Replace all negative values by 0
         raw_forecast = np.where(raw_forecast > 0, raw_forecast, 0)
@@ -353,7 +377,7 @@ class MacroActivity:
 
         if display:
             plt.figure(figsize=(10, 5))
-            plt.plot(np.arange(train_size, train_size + len(forecast)), forecast, 'r')
+            plt.plot(np.arange(train_size, train_size + len(validation_forecast)), validation_forecast, 'r')
             plt.plot(dataset, 'b', alpha=0.5)
             plt.plot(np.arange(len(dataset), len(dataset) + len(raw_forecast)), raw_forecast, 'red', alpha=0.7)
 
