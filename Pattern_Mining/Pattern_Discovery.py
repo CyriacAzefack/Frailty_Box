@@ -21,7 +21,7 @@ def main():
     ######################
 
     """
-    The dataframe should have 1 index (date as datetime) and 1 feature (label)
+    The dataframe should have 1 period_ts_index (date as datetime) and 1 feature (label)
     """
 
     parser = OptionParser(usage='Usage of the Pattern Discovery algorihtm: %prog <options>')
@@ -123,7 +123,7 @@ def pattern_discovery(data, Tep=30, support_min=2, accuracy_min=0.5,
     """
     Implementation of the extended Discovery Algorithm designed by Julie Soulas U{https://hal.archives-ouvertes.fr/tel-01356217/}
 
-    :param data : Starting dataframe, date[datetime] as index and 1 column named "label"
+    :param data : Starting dataframe, date[datetime] as period_ts_index and 1 column named "label"
     :param Tep : [in Minutes] Maximal time interval between events in an episode occurrence. Should correspond to the maximal duration of the ADLs.
     :param support_min : [greater than 1] Minimal number of occurrences of an episode, for that episode to be considered as frequent.
     :param accuracy_min : [between 0 and 1] Minimal accuracy for a periodicity description to be considered as interesting, and thus factorized

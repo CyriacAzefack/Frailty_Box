@@ -354,7 +354,7 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list)
     #             label_2 = Graph_Pattern.Graph.node2label(node_2)
     #             p = nb / nb_max
     #             if p != 0:
-    #                 prob_matrix[nodes.index(node_1)][graph_labels.index(label_2)] = p
+    #                 prob_matrix[nodes.period_ts_index(node_1)][graph_labels.period_ts_index(label_2)] = p
 
     # Checking the validity of the transition (sum output = 1 OR 0)
 

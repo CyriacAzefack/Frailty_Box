@@ -379,11 +379,11 @@ def identify_pareto(scores):
     """
     identify the pareto front from data
     :param scores: 2D numpy array representing solutions
-    :return: the list of index for non-dominated solutions
+    :return: the list of period_ts_index for non-dominated solutions
     """
     # Count number of items
     population_size = scores.shape[0]
-    # Create a NumPy index for scores on the pareto front (zero indexed)
+    # Create a NumPy period_ts_index for scores on the pareto front (zero indexed)
     population_ids = np.arange(population_size)
     # Create a starting list of items on the Pareto front
     # All items start off as being labelled as on the Pareto front

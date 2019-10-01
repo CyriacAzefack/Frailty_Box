@@ -143,7 +143,7 @@ class Graph:
             # Add Edge with waiting time label
             # G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v > 0.5 else 1, label=v,
             #                 color='blue' if v > 0.5 else 'black',
-            #                 headlabel=self.time_matrix[self.graph_nodes.index(tmp_origin)][self.labels.index(destination_label)])
+            #                 headlabel=self.time_matrix[self.graph_nodes.period_ts_index(tmp_origin)][self.labels.period_ts_index(destination_label)])
         if debug:
             print('Edges:')
             pprint(G.edges(data=True))
@@ -312,12 +312,13 @@ class Graph:
 
         time_evo_prob_matrix = [
             [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + 'D'),
-                          columns=['probability']).fillna(0) for j in range(l)] for i in range(n)]  # Date as index
+                          columns=['probability']).fillna(0) for j in range(l)] for i in
+            range(n)]  # Date as period_ts_index
 
         time_evo_time_matrix = [
             [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + 'D'),
                           columns=['mean_time', 'sigma_time']).fillna(0) for j in range(l)] for i in
-            range(n)]  # Date as index
+            range(n)]  # Date as period_ts_index
 
         # We take the time window into account for the end_date
         end_date = end_date - self.sliding_time_window

@@ -1,4 +1,5 @@
 import math
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -26,7 +27,7 @@ def main():
         values += list(row.values)
 
     dataset = pd.DataFrame(values, columns=['count'])
-    # dataset['ts'] = dataset.index
+    # dataset['ts'] = dataset.period_ts_index
 
     dataset = dataset.values
 

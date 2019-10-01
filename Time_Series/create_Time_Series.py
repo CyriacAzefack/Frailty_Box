@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-
 from Pattern_Mining import Candidate_Study
 from Utils import *
 
@@ -62,7 +60,7 @@ def main():
         window_start_date += period
         i += 1
 
-    # built_dataset.to_csv('{}_dataset.csv'.format(activity), index=False)
+    # built_dataset.to_csv('{}_dataset.csv'.format(activity), period_ts_index=False)
 
     for feat in features:
         plt.plot(built_dataset.index, built_dataset[feat], label=feat)

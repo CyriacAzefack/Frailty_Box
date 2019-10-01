@@ -224,7 +224,7 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
     # # patterns['sort_key'] = patterns['Episode'].apply(lambda x: len(x))  # * patterns['Accuracy']
     # patterns.sort_values(['sort_key'], ascending=False, inplace=True)
     #
-    # for index, pattern in patterns.iterrows():  # Create one Macro/Single Activity per row
+    # for period_ts_index, pattern in patterns.iterrows():  # Create one Macro/Single Activity per row
     #
     #     episode = list(pattern['Episode'])
     #
@@ -234,7 +234,7 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
     #     activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
     #
     #     mini_factorised_events = pd.DataFrame(columns=["date", "label"])
-    #     for index, occurrence in episode_occurrences.iterrows():
+    #     for period_ts_index, occurrence in episode_occurrences.iterrows():
     #         occ_start_date = occurrence["date"]
     #         occ_end_date = occ_start_date + dt.timedelta(minutes=Tep)
     #         mini_data = dataset.loc[(dataset.label.isin(episode))

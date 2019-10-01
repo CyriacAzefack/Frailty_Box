@@ -108,7 +108,7 @@ def main():
 
     plt.title('Aruba\nActivities Daily Profile Matching')
     plt.show()
-    # all_result.to_csv(dirname + '../Aruba_label_validation_15mn_bin.csv', sep=";", index=False)
+    # all_result.to_csv(dirname + '../Aruba_label_validation_15mn_bin.csv', sep=";", period_ts_index=False)
 
     print("###################################")
     print("#  SEQUENCE ALIGNMENT VALIDATION  #")
@@ -183,10 +183,10 @@ def main():
     # #     horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
     # #     connectionstyle = "angle,angleA=0,angleB={}".format(ang)
     # #     kw["arrowprops"].update({"connectionstyle": connectionstyle})
-    # #     ax.annotate(labels_count_df.index[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
+    # #     ax.annotate(labels_count_df.period_ts_index[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
     # #                 horizontalalignment=horizontalalignment, **kw)
     #
-    # # plt.legend(labels=labels_count_df.index, loc="best")
+    # # plt.legend(labels=labels_count_df.period_ts_index, loc="best")
     # plt.axis('equal')
     # plt.tight_layout()
     # plt.ylabel('')
@@ -433,7 +433,7 @@ def activity_duration_validation(label, original_dataset, replications_directory
 
     original_data_evaluation = compute_activity_time(data=original_dataset, label=label, end_date=end_drawing_date)
 
-    # Build a large Dataframe with a date range index
+    # Build a large Dataframe with a date range period_ts_index
     start_date = original_data_evaluation.index[0]
     end_date = original_data_evaluation.index[-1]
     repl_durations = pd.DataFrame(index=pd.date_range(start=start_date, end=end_date, freq='D'))
@@ -768,7 +768,7 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, d
 
 
     # plt.plot(alignement_df.day_date, alignement_df.score,
-    #               label="Replication N°{}".format(list_files.index(filename)), linestyle="-")
+    #               label="Replication N°{}".format(list_files.period_ts_index(filename)), linestyle="-")
     #
     # plt.title("Daily Sequence Alignement")
     # plt.xlabel("Days")
@@ -841,7 +841,7 @@ def sequence_alignment(original_data, sim_data, alphabet, period, start_date, en
     :param simu_data:
     :param label_similarity_matrix:
     :param period:
-    :return: a pandas Series with day_date as index and align score as column
+    :return: a pandas Series with day_date as period_ts_index and align score as column
     """
 
     # # SMITH-WATERMAN ALGORITHM

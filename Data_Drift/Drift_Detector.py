@@ -18,7 +18,7 @@ def main():
 
     # windows_dataset = activity_drift_detector(data, window_size, label, plot=True, gif=False)
 
-    # windows_dataset.to_csv("{}_windows_data.csv".format(data_name), index=False)
+    # windows_dataset.to_csv("{}_windows_data.csv".format(data_name), period_ts_index=False)
 
     plt.show()
 

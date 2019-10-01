@@ -1,9 +1,11 @@
 import seaborn as sns
 from fbprophet import Prophet
+from scipy.stats import expon
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import acf, pacf
+from statsmodels.tsa.stattools import adfuller
 
 from Graph_Model.Pattern2Graph import *
 from Pattern_Mining.Candidate_Study import modulo_datetime
@@ -17,55 +19,27 @@ from Pattern_Mining.Pattern_Discovery import pick_dataset
 # np.random.seed(1996)
 
 def main():
-    dataset = pick_dataset('aruba')
+    dataset_name = 'aruba'
+    dataset = pick_dataset(dataset_name)
     # SIM_MODEL PARAMETERS
-    episode = ('sleeping',)
+    # episode = ('toilet', 'dress')
+    episode = ('bed_to_toilet', 'sleeping')
     period = dt.timedelta(days=1)
     time_step = dt.timedelta(minutes=10)
     tep = 30
-    ###########################
-    index = np.arange(int(period.total_seconds() / time_step.total_seconds()))
-
-    colums = ['ts_{}'.format(i) for i in index]
-    labels = dataset.label.unique()
-
-    df = pd.DataFrame(columns=colums)
-
-    for label in labels:
-        activity = MacroActivity(episode=(label,), period=period, time_step=time_step, tep=tep)
-        occurrences = dataset[dataset.label == label][['date', 'end_date']].copy()
-        events = dataset[dataset.label == label].copy()
-        activity.add_time_window(occurrences=occurrences, events=events, time_window_id=0, display=False)
-
-        hist = activity.get_count_histogram(time_window_id=0)
-
-        df.loc[label] = hist.values[0][1:]
-    df = df.div(df.sum(axis=1), axis=0)
-
-    label = episode[0]
-    hist = df.loc[label]
-    plt.plot(index, hist)
-    plt.title('Activity : {}\nTime step : {}'.format(label, time_step))
-    plt.ylabel('Probability of occurrence')
-    plt.xticks(np.arange(0, len(hist), 10))
-    # plt.xlim(0, len(hist))
-    plt.xlabel('Time step id')
-    plt.show()
 
     ############################
     # PREDICTION PARAMETERS
     train_ratio = 0.8
 
     # TIME WINDOW PARAMETERS
-    time_window_duration = dt.timedelta(days=180)
+    time_window_duration = dt.timedelta(days=21)
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime() - time_window_duration
-
 
     nb_days = int((end_date - start_date) / period) + 1
 
     activity = MacroActivity(episode=episode, period=period, time_step=time_step, tep=tep)
-
 
     tw_id = 0
     while True:
@@ -79,15 +53,42 @@ def main():
 
         occurrences, events = compute_episode_occurrences(dataset=window_dataset, episode=episode, tep=tep)
 
+        if len(occurrences) == 0:
+            print('No occurrences found !!')
+            continue
         # print('{} occurrences of the episode {}'.format(len(occurrences), episode))
         activity.add_time_window(occurrences=occurrences, events=events, time_window_id=tw_id, display=False)
-
 
         tw_id += 1
 
         sys.stdout.write("\r{}/{} Time Windows CAPTURED".format(tw_id, nb_days))
         sys.stdout.flush()
     sys.stdout.write("\n")
+
+    # Dump Parameters
+    output = '../output/{}/Activity_{}/'.format(dataset_name, episode)
+    # Create the folder if it does not exist yet
+    if not os.path.exists(os.path.dirname(output)):
+        try:
+            os.makedirs(os.path.dirname(output))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+    # Dump Activity Daily Profile
+    pickle.dump(activity.count_histogram, open(output + "/daily_profile.pkl", 'wb'))
+
+    # Dump Activity Durations
+    pickle.dump(activity.duration_distrib, open(output + "/durations_distrib.pkl", 'wb'))
+
+    # Dump Execution order
+    pickle.dump(activity.occurrence_order, open(output + "/execution_order.pkl", 'wb'))
+
+    # Dump INTER-EVENTS duration
+    pickle.dump(activity.expon_lambda, open(output + "/inter_events.pkl", 'wb'))
+
+    activity.plot_time_series()
+
 
     # Build the model with a lot of time windows
     print("#####################################")
@@ -96,14 +97,12 @@ def main():
     # error = activity.fit_history_count_forecasting_model(train_ratio=train_ratio, last_time_window_id=tw_id-1,
     #                                                      nb_periods_to_forecast=30, display=True)
 
-    mean_duration_error, std_duration_error = activity.fit_duration_distrub_forecasting_model(train_ratio=train_ratio,
-                                                                                              last_time_window_id=tw_id - 1,
-                                                                                              nb_periods_to_forecast=10,
-                                                                                              display=True)
+    # mean_duration_error, std_duration_error = activity.fit_duration_distrub_forecasting_model(train_ratio=train_ratio,
+    #                                                                                           last_time_window_id=tw_id - 1,
+    #                                                                                           nb_periods_to_forecast=10,
+    #                                                                                           display=True)
 
     # print("Prediction Error (NMSE) : {:.2f}".format(error))
-
-
 
 
 class MacroActivity:
@@ -133,12 +132,12 @@ class MacroActivity:
         self.episode = episode
         self.period = period
         self.time_step = time_step
-        self.index = np.arange(int(period.total_seconds() / time_step.total_seconds()))
+        self.period_ts_index = np.arange(int(period.total_seconds() / time_step.total_seconds()))
         self.tep = dt.timedelta(minutes=tep)
 
         # ACTIVITY DAILY PROFILE
         # Initialize the histogram for the activity periodicity profile
-        hist_columns = ['tw_id'] + ['ts_{}'.format(ts_id) for ts_id in self.index]
+        hist_columns = ['tw_id'] + ['ts_{}'.format(ts_id) for ts_id in self.period_ts_index]
         self.count_histogram = pd.DataFrame(columns=hist_columns)  # For daily profiles
 
         # ACTIVITY DURATION PROBABILITY DISTRIBUTIONS
@@ -149,9 +148,12 @@ class MacroActivity:
             # Stored as Gaussian Distribution
             self.duration_distrib[label] = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
 
-        # TREE GRAPH TRANSITION MATRIX
+        # EXECUTION ORDER
         self.occurrence_order = pd.DataFrame(
             columns=['tw_id'])  # For execution orders, the columns of the df are like '0132'
+
+        # INTER-EVENTS DURATIONS
+        self.expon_lambda = pd.DataFrame(columns=['tw_id', 'lambda'])
 
         # self.add_time_window(occurrences, events, start_time_window_id, display=display)
 
@@ -200,9 +202,9 @@ class MacroActivity:
 
         hist = occurrences.groupby(['time_step_id']).count()['date']
 
-        # Create an index to have every time steps in the period
+        # Create an period_ts_index to have every time steps in the period
 
-        hist = hist.reindex(self.index)
+        hist = hist.reindex(self.period_ts_index)
 
         hist.fillna(0, inplace=True)
 
@@ -224,10 +226,8 @@ class MacroActivity:
         :param occurrences:
         :return:
         """
-        occurrences, events = self.preprocessing(occurrences, events)
 
-        # Update histogram count history
-        hist = self.build_histogram(occurrences, display=display)
+        occurrences, events = self.preprocessing(occurrences, events)
 
         if len(self.count_histogram) > 0:
             last_filled_tw_id = self.count_histogram.tw_id.max()
@@ -235,7 +235,7 @@ class MacroActivity:
             last_filled_tw_id = -1
 
         # Fill the missing time windows data
-
+        hist = self.build_histogram(occurrences, display=display)
         for tw_id in range(last_filled_tw_id + 1, time_window_id):
             self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(len(hist)))
 
@@ -244,14 +244,15 @@ class MacroActivity:
                 duration_df.at[tw_id] = [tw_id, 0, 0]
 
             self.occurrence_order.at[tw_id, 'tw_id'] = tw_id
+            self.expon_lambda.at[tw_id] = [tw_id, 0]
 
-
-
+        ## ACTIVITY DAILY PROFILE & ACTIVITIES DURATIONS
+        # Update histogram count history
         self.count_histogram.at[time_window_id] = [time_window_id] + list(hist.values.T)
 
         # print('Histogram count [UPDATED]')
         #
-        # Update duration laws
+        # UPDATE DURATIONS LAWS
         for label in self.episode:
             label_df = events[events.label == label]
             duration_df = self.duration_distrib[label]
@@ -262,8 +263,7 @@ class MacroActivity:
 
         # print('Duration Gaussian Distribution [UPDATED]')
 
-        # Update execution order
-
+        ## UPDATE EXECUTION ORDER
         occ_order_probability_dict = {}
 
         # Replace labels by their alphabetic identifier
@@ -291,6 +291,23 @@ class MacroActivity:
 
         # print('Execution Order Probability [UPDATED]')
 
+        ## UPDATE INTER-EVENTS DURATION
+        # Add occ_id to events
+        events["occ_id"] = events.index
+        events["occ_id"] = events.occ_id.apply(lambda x: math.floor(x / len(self.episode)))
+
+        events = events.join(events.groupby(['occ_id'])[['date']].shift(-1).add_suffix('_next'))
+        events.rename(columns={events.columns[-1]: "date_next"}, inplace=True)
+
+        events.dropna(inplace=True)
+        inter_event_durations = (events.date_next - events.date).apply(lambda x: x.total_seconds()).values
+
+        # Fit an exponential distribution
+        loc, scale = expon.fit(inter_event_durations.astype(np.float64), floc=0)
+
+        self.expon_lambda.at[time_window_id] = [time_window_id, 1 / scale]
+
+
     def get_count_histogram(self, time_window_id):
         """
         :param time_window_id: time window identifier
@@ -317,7 +334,6 @@ class MacroActivity:
 
         for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
             self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(nb_tstep))
-
 
         raw_dataset = self.count_histogram.drop(['tw_id'], axis=1)
         dataset = raw_dataset.values.flatten()
@@ -364,7 +380,6 @@ class MacroActivity:
 
         error = mean_squared_error(test, validation_forecast) / np.mean(test)
 
-
         # Replace all negative values by 0
         raw_forecast = np.where(raw_forecast > 0, raw_forecast, 0)
         real_forecast = raw_forecast.reshape((nb_periods_to_forecast, nb_tstep))
@@ -373,7 +388,6 @@ class MacroActivity:
         for hist_count in real_forecast:
             current_tw_id += 1
             self.count_histogram.at[current_tw_id] = [current_tw_id] + list(hist_count)
-
 
         if display:
             plt.figure(figsize=(10, 5))
@@ -414,6 +428,7 @@ class MacroActivity:
 
             # Fit & Predict Duration Mean values
             mean_duration_data = list(self.duration_distrib[label]['mean'].values)
+
 
             # TODO : Use the real 'start_date'
             start_date = dt.datetime.now().date()
@@ -505,6 +520,61 @@ class MacroActivity:
 
         return events
 
+    def plot_time_series(self):
+        """
+        Display all the time series present in the Macro-Activity
+        :return:
+        """
+
+        ## ACTIVITY DAILY PROFILE Time Series
+        ######################################
+
+        raw_dataset = self.count_histogram.drop(['tw_id'], axis=1)
+        dataset = raw_dataset.values.flatten()
+
+        plt.figure()
+        plt.plot(dataset)
+        plt.title("Histogram Count")
+
+        ## ACTIVITY DURATIONS
+        #####################
+        plt.figure()
+        for label in self.episode:
+            df = self.duration_distrib[label]
+            df['mean'] /= 60
+            plt.plot(df.tw_id, df['mean'], label=label)
+            # sns.lineplot(x='tw_id', y='mean', data=df, label=label)
+        plt.title('Mean Activity Duration')
+        plt.xlabel('Time Windows ID')
+        plt.ylabel('Duration (min)')
+        plt.legend()
+
+        # EXECUTION ORDER
+        # plt.figure()
+        df = self.occurrence_order
+        df = df.melt('tw_id', var_name='cols', value_name='vals')
+        g = sns.factorplot(x="tw_id", y="vals", hue='cols', data=df)
+
+        plt.xlabel('Time Windows ID')
+        plt.ylabel('Probability')
+        plt.title("Execution Order : {}".format(self.episode))
+        plt.legend()
+
+        # INTER-EVENTS DURATIONS
+        plt.figure()
+        df = self.expon_lambda
+        plt.plot(df['tw_id'], df['lambda'])
+        # sns.lineplot(x='tw_id', y='lambda', data=df)
+
+        plt.xlabel('Time Windows ID')
+        plt.ylabel('Lambda')
+        plt.title('Exponenital Distrib Parameter')
+
+        plt.show()
+
+
+
+
 
 def fit_and_forecast(data, train_ratio, nb_periods_predict):
     """
@@ -533,6 +603,134 @@ def fit_and_forecast(data, train_ratio, nb_periods_predict):
     real_forecast = model_fit.forecast(len(test) + nb_periods_predict)[0][len(test):]
 
     return error, real_forecast
+
+
+def univariate_ts_forecasting(data, seasonality, label, nb_periods_forecast=20, train_ratio=.8, display=False):
+    """
+    Use SARIMAX for univariate time_series forecasting
+    :param data: Dataframe with 2 columns ['period', 'y']
+    :param seasonality:
+    :param train_ratio:
+    :return:
+    """
+    start_date = data.period.min().to_pydatetime()
+
+    # Compute the split date
+    train_size = int(len(data) * train_ratio)
+    split_date = start_date + dt.timedelta(days=train_size)
+    train_range = data[data.period < split_date].index
+    test_range = data[(data.period >= split_date)].index
+
+    # Find the ARIMA (p, d, q) parameters
+
+    # if display:
+    #     decompfreq = seasonality
+    #     model = 'additive'
+    #
+    #     decomposition = seasonal_decompose(
+    #         data.set_index("period").y.interpolate("linear"),
+    #         freq=decompfreq,
+    #         model=model)
+    #
+    #     decomposition.plot()
+    #     # fig.set_size_inches(16, 8)
+    #     plt.show()
+
+    train = data.loc[train_range].y.values
+
+    for d in range(1, 5):
+        diff_train = pd.Series(np.log(train))
+        diff_train = diff_train.diff(periods=d)[d:]
+        diff_train.replace([np.inf, -np.inf], np.nan, inplace=True)
+        diff_train = diff_train.fillna(0)
+
+        adf_test = adfuller(diff_train)
+        p_value = adf_test[1]
+        if p_value < 0.05:
+            break
+
+    lag_acf = acf(diff_train, nlags=10)
+    lag_pacf = pacf(diff_train, nlags=10, method='ols')
+
+    cutting_value = 1.96 / np.sqrt(len(diff_train))
+
+    if True in abs(lag_acf[1:]) > cutting_value:
+        p = 1 + next((i for i, j in enumerate(abs(lag_acf[1:]) >= cutting_value) if j), None)
+    else:
+        p = 1
+
+    if True in abs(lag_pacf[1:]) > cutting_value:
+        q = 1 + next((i for i, j in enumerate(abs(lag_pacf[1:]) >= cutting_value) if j), None)
+    else:
+        q = 0
+
+    print('(p, d, q) = ({}, {}, {})'.format(p, d, q))
+
+    for D in range(1, 5):
+        diff_train = pd.Series(np.log(train))
+        diff_train = diff_train.diff(periods=D * seasonality)[d * seasonality:]
+        diff_train.replace([np.inf, -np.inf], np.nan, inplace=True)
+        diff_train = diff_train.fillna(0)
+
+        adf_test = adfuller(diff_train)
+        p_value = adf_test[1]
+        if p_value < 0.05:
+            break
+
+    lag_acf = acf(diff_train, nlags=10)
+    lag_pacf = pacf(diff_train, nlags=10, method='ols')
+
+    cutting_value = 1.96 / np.sqrt(len(diff_train))
+
+    if True in abs(lag_acf[1:]) > cutting_value:
+        P = 1 + next((i for i, j in enumerate(abs(lag_acf[1:]) >= cutting_value) if j), None)
+    else:
+        P = 1
+
+    if True in abs(lag_pacf[1:]) > cutting_value:
+        Q = 1 + next((i for i, j in enumerate(abs(lag_pacf[1:]) >= cutting_value) if j), None)
+    else:
+        Q = 0
+
+    print('(P, D, Q) = ({}, {}, {})'.format(P, D, Q))
+
+    train_data = pd.Series(np.log(df.loc[train_range].set_index("period").y))
+    train_data.replace([np.inf, -np.inf], np.nan, inplace=True)
+    train_data = train_data.fillna(0)
+    model = sarimax.SARIMAX(train_data,
+                            trend='n',
+                            order=(p, d, q),
+                            seasonal_order=(P, D, Q, seasonality),
+                            enforce_stationarity=True,
+                            enforce_invertibility=True)
+    results = model.fit()
+    # print(results.summary())
+
+    steps = test_range.shape[0]
+
+    forecast = results.get_forecast(steps=steps + nb_periods_forecast)
+
+    yhat_test = np.exp(forecast.predicted_mean).values[:steps]
+    forecast_periods = np.exp(forecast.predicted_mean).values[steps:]
+    y_test = df.loc[test_range].y.values
+
+    rmse_error = math.sqrt(mean_squared_error(y_test, yhat_test)) / np.std(y_test)
+
+    if display:
+        fig, ax = plt.subplots()
+        ax.plot(pd.to_datetime(data.loc[test_range].period.values), yhat_test,
+                color="green", label="predicted")
+
+        plt.axvline(pd.to_datetime(str(data.loc[test_range].period.values[0])), c='red', ls='--', lw=1)
+        data.plot(x="period", y="y", ax=ax, label="observed")
+
+        plt.legend(loc='best')
+        plt.title('{}\nError NMSE:{:.3f}'.format(label, rmse_error))
+
+        # plt.savefig('images/stochastic-forecast-testrange.png')
+        plt.show()
+
+    return rmse_error, forecast_periods
 
 
 def find_ARIMA_params(data, seasonality):
@@ -611,7 +809,6 @@ def prophet_forecaster(start_date, data, train_ratio, nb_period_to_forecast, dis
     with suppress_stdout_stderr():
         model.fit(train_dataset)
 
-
     freq = '{}S'.format(int(period.total_seconds()))
     future = model.make_future_dataframe(periods=len(test_dataset) + nb_period_to_forecast, freq=freq)
     forecast = model.predict(future)
@@ -622,7 +819,6 @@ def prophet_forecaster(start_date, data, train_ratio, nb_period_to_forecast, dis
     test = test_dataset['y'].values
 
     error = mean_squared_error(test, validation_forecast) / np.mean(test)
-
 
     error = round(error, 3)
 

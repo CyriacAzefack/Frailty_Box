@@ -74,7 +74,7 @@ def pick_dataset(name, nb_days=-1):
     # dataset = dataset[['id_patient', 'duree', 'evt', 'nbjours']]
     #
     #
-    # dataset.to_csv('./{}_hugo_dataset.csv'.format(name), index=False, sep=";")
+    # dataset.to_csv('./{}_hugo_dataset.csv'.format(name), period_ts_index=False, sep=";")
 
     return dataset
 
@@ -206,6 +206,11 @@ def find_occurrences(data, episode, tep=30):
     tep = dt.timedelta(minutes=tep)
 
     data = data[data.label.isin(episode)].copy()
+    occurrences = pd.DataFrame(columns=["date", "end_date"])
+
+    if len(data) == 0:
+        return occurrences
+
     data.sort_values(by=['date'], inplace=True)
 
     if len(episode) == 1:
@@ -214,8 +219,6 @@ def find_occurrences(data, episode, tep=30):
     data['identical_next_label'] = data['label'].shift(-1) == data['label']
 
     data['enough_time'] = (data['date'].shift(-1) - data['date']) <= tep
-
-    occurrences = pd.DataFrame(columns=["date", "end_date"])
 
     def sliding_window(row):
         """

@@ -373,7 +373,7 @@ class ActivityOccurrencesGraph:
         #     horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
         #     connectionstyle = "angle,angleA=0,angleB={}".format(ang)
         #     kw["arrowprops"].update({"connectionstyle": connectionstyle})
-        #     ax.annotate(labels_count_df.index[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
+        #     ax.annotate(labels_count_df.period_ts_index[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
         #                 horizontalalignment=horizontalalignment, **kw)
 
         plt.legend(labels=labels_count_df.index, loc="best")

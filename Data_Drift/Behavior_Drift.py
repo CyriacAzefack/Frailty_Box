@@ -1,12 +1,11 @@
 from __future__ import absolute_import
 
 import json
+import math
 import time as t
 from optparse import OptionParser
 
-import math
 import matplotlib.dates as dat
-import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
 from sklearn.cluster import KMeans
@@ -814,7 +813,7 @@ class ActivityBehavior(Behavior):
             intra_cluster_distance[cluster_id] = np.mean(distance_to_centroid)
 
         ########################
-        # Davies?Bouldin index #
+        # Davies?Bouldin period_ts_index #
         ########################
 
         # Based on https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
@@ -846,7 +845,7 @@ class ActivityBehavior(Behavior):
         db_index = np.mean(R_ij.max(axis=1))
 
         ##############
-        # Dunn index #
+        # Dunn period_ts_index #
         ##############
 
         # Based on https://en.wikipedia.org/wiki/Dunn_index
@@ -856,7 +855,7 @@ class ActivityBehavior(Behavior):
         dunn_index = fake_inter_cluster_distance.min() / intra_cluster_distance.max()
 
         ##########################
-        # Silhouette Score index #
+        # Silhouette Score period_ts_index #
         ##########################
 
         # Based on https://en.wikipedia.org/wiki/Silhouette_(clustering)

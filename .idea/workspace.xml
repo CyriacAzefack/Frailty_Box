@@ -5,18 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Add HH115">
-      <change afterPath="$PROJECT_DIR$/Omwave/aesio_retrieve_data.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Simulation/test.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Time_Series/gakhov-time-series-forecasting-with-python.pdf" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/HH/hh115/README.txt" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/HH/hh115/ann.txt" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/HH/hh115/dataset.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/HH/hh115/rawdata.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/cyriac_azefack.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/cyriac_azefack.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/HH115/Activity_('bed_toilet_transition', 'sleep').pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/HH115/Activity_('toilet', 'dress').pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/HH115/Activity_('toilet', 'dress')/daily_profile.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/HH115/Activity_('toilet', 'dress')/durations_distrib.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/HH115/Activity_('toilet', 'dress')/execution_order.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/HH115/Activity_('toilet', 'dress')/inter_events.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/aruba/Activity_('bed_to_toilet', 'sleeping')/daily_profile.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/aruba/Activity_('bed_to_toilet', 'sleeping')/durations_distrib.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/aruba/Activity_('bed_to_toilet', 'sleeping')/execution_order.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/aruba/Activity_('bed_to_toilet', 'sleeping')/inter_events.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Behavior_Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Behavior_Model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_Drift/Behavior_Drift.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Drift/Behavior_Drift.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_Drift/Drift_Detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Drift/Drift_Detector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Model/Acyclic_Graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Model/Graph_Pattern.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/Graph_Model/Pattern2Graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Mining/Extract_Macro_Activities.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/ActivityManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/ActivityManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pattern_Mining/Pattern_Discovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/Pattern_Mining/Pattern_Discovery.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Simulation/MacroActivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/MacroActivity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Time_Series/LSTM.py" beforeDir="false" afterPath="$PROJECT_DIR$/Time_Series/LSTM.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Time_Series/create_Time_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/Time_Series/create_Time_Series.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/Visualization.py" afterDir="false" />
@@ -1593,7 +1609,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.aesio_retrieve_data">
+  <component name="RunManager" selected="Python.scratch">
+    <configuration name="ARIMA" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Time_Series" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Time_Series/ARIMA.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Aruba_drift_hist_duration" type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -1648,7 +1685,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Behavior_Model.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Behavior_Model.py" />
       <option name="PARAMETERS" value="--dataset_name aruba --time_step 60 --simu_step 15 --sim 10 --training_ratio 0.8 --tep 30 --window_days 30" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1783,6 +1820,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="MacroActivity" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Simulation" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Simulation/MacroActivity.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Toulouse_Drift" type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -1817,27 +1875,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Utils.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Validation" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Validation.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1888,7 +1925,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="scratch_2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="scratch" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -1900,28 +1937,7 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_2.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="scratch_3" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_3.py" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1964,19 +1980,19 @@
       <item itemvalue="Python.Toulouse_Drift" />
       <item itemvalue="Python.Utils" />
       <item itemvalue="Python.toulouse_drift_stat_test" />
-      <item itemvalue="Python.Validation" />
       <item itemvalue="Python.aesio_retrieve_data" />
-      <item itemvalue="Python.scratch_2" />
       <item itemvalue="Python.salma" />
-      <item itemvalue="Python.scratch_3" />
+      <item itemvalue="Python.MacroActivity" />
+      <item itemvalue="Python.scratch" />
+      <item itemvalue="Python.ARIMA" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.scratch" />
+        <item itemvalue="Python.MacroActivity" />
+        <item itemvalue="Python.ARIMA" />
         <item itemvalue="Python.aesio_retrieve_data" />
         <item itemvalue="Python.salma" />
-        <item itemvalue="Python.scratch_3" />
-        <item itemvalue="Python.scratch_2" />
-        <item itemvalue="Python.Validation" />
       </list>
     </recent_temporary>
   </component>
@@ -1993,13 +2009,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1521208662820</updated>
-    </task>
-    <task id="LOCAL-00020" summary="- DES Macro Activities Model finishes&#10;- Results looks good, significant improvement">
-      <created>1530265306659</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1530265306659</updated>
     </task>
     <task id="LOCAL-00021" summary="- DES Macro Activities Model finishes&#10;- Results looks good, significant improvement">
       <created>1531815128074</created>
@@ -2337,7 +2346,14 @@
       <option name="project" value="LOCAL" />
       <updated>1563357644396</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="Come back after Vacations">
+      <created>1568813163594</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1568813163595</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TodoView">
@@ -2390,7 +2406,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Refactoring of the Simulation_Model algorithm" />
     <MESSAGE value="START OF DIGITAL TWIN II" />
     <MESSAGE value="LSTM init" />
     <MESSAGE value="GPU test for Neural Networks" />
@@ -2415,7 +2430,8 @@
     <MESSAGE value="Add HH115" />
     <MESSAGE value="Almost Cluster Ready" />
     <MESSAGE value="Dynamic vs Static Vallidation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dynamic vs Static Vallidation" />
+    <MESSAGE value="Come back after Vacations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Come back after Vacations" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -2450,18 +2466,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Visualization.py</url>
-          <line>158</line>
+          <line>157</line>
           <option name="timeStamp" value="779" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Data_Drift/Drift_Detector.py</url>
           <line>263</line>
           <option name="timeStamp" value="783" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py</url>
-          <line>52</line>
-          <option name="timeStamp" value="879" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/input/HH/Preprocessing CASAS -HH- Datasets .py</url>
@@ -2495,23 +2506,18 @@
           <option name="timeStamp" value="1031" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py</url>
-          <line>20</line>
-          <option name="timeStamp" value="1068" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
           <line>784</line>
           <option name="timeStamp" value="1088" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Simulation/ActivityManager.py</url>
-          <line>281</line>
+          <line>280</line>
           <option name="timeStamp" value="1095" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Simulation/ActivityManager.py</url>
-          <line>269</line>
+          <line>268</line>
           <option name="timeStamp" value="1096" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -2521,8 +2527,28 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Visualization.py</url>
-          <line>336</line>
+          <line>332</line>
           <option name="timeStamp" value="1134" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Simulation/MacroActivity.py</url>
+          <line>271</line>
+          <option name="timeStamp" value="1144" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Simulation/MacroActivity.py</url>
+          <line>59</line>
+          <option name="timeStamp" value="1145" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Utils.py</url>
+          <line>239</line>
+          <option name="timeStamp" value="1146" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py</url>
+          <line>206</line>
+          <option name="timeStamp" value="1153" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
