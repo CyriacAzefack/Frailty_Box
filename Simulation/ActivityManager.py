@@ -61,7 +61,7 @@ class ActivityManager:
 
         activity_object = self.activity_objects[set_episode]
         activity_object.add_time_window(occurrences=occurrences, events=events,
-                                        time_window_id=time_window_id, display=display)
+                                        time_window_id=time_window_id, display=False)
 
         occurrences['label'] = [str(set_episode) for _ in range(len(occurrences))]
         occurrences['tw_id'] = time_window_id
@@ -124,15 +124,18 @@ class ActivityManager:
         ADP_error_df = pd.DataFrame(columns=['episode', 'rmse'])
         duration_error_df = pd.DataFrame(columns=['episode', 'mean_rmse', 'std_rmse', 'label'])
 
+        # Build forecasting models
         i = 0
         for set_episode, macro_activity_object in self.activity_objects.items():
             i += 1
-            # print('Forecasting Model for : {}!!'.format(set_episode))
+            # ACTIVITY DAILY PROFILE FORECASTING
             ADP_error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio,
                                                                                   last_time_window_id=self.last_time_window_id,
                                                                                   nb_periods_to_forecast=nb_periods_to_forecast,
                                                                                   display=debug)
+            ADP_error_df.at[len(ADP_error_df)] = [tuple(set_episode), ADP_error]
 
+            # ACTIVITIES DURATIONS FORECASTING
             # TODO : Monitor the error on forecasting models for duration
             mean_duration_error, std_duration_error = macro_activity_object.fit_duration_distrub_forecasting_model(
                 train_ratio=train_ratio, last_time_window_id=self.last_time_window_id,
@@ -142,7 +145,15 @@ class ActivityManager:
                 duration_error_df.loc[len(duration_error_df)] = [tuple(set_episode), mean_duration_error[label],
                                                                  std_duration_error[label], label]
 
-            ADP_error_df.at[len(ADP_error_df)] = [tuple(set_episode), ADP_error]
+            # STOP HERE IF SINGLE-ACTIVITY
+            if len(set_episode) < 2:
+                break
+
+            # EXECUTION ORDER FORECASTING
+            # exec_order_error = macro_activity_object.fit_execution_order_forecasting_model(
+            #     train_ratio=train_ratio, last_time_window_id=self.last_time_window_id,
+            #     nb_periods_to_forecast=nb_periods_to_forecast, debug=debug)
+
 
 
             sys.stdout.write(

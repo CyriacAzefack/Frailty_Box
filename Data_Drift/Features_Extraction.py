@@ -90,19 +90,19 @@ def ks_similarity(arrayA, arrayB):
     return p_val
 
 
-def activities_features(window_data, activity_labels):
+def activities_features(data, activity_labels):
     """
     Comptue the mean_time, std_time and nb_occ for all labels
-    :param window_data:
+    :param data:
     :param activity_labels:
     :return: all the features
     """
     features = {}
 
-    # nb_days = np.ceil((window_data.end_date.max() - window_data.date.min()) / dt.timedelta(days=1))
+    # nb_days = np.ceil((data.end_date.max() - data.date.min()) / dt.timedelta(days=1))
 
     for label in activity_labels:
-        label_data = window_data[window_data.label == label]
+        label_data = data[data.label == label]
         ## 1 - Features on activities occurrence time
         label_occ_time = label_data.timestamp.values
         features[label + "_mean_occ_time"] = [np.mean(label_occ_time)]

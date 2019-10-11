@@ -18,7 +18,7 @@ sns.set_style('darkgrid')
 def main():
     dataset_name = 'aruba'
 
-    dataset = pick_dataset(dataset_name)
+    dataset = pick_dataset(dataset_name, nb_days=1)
 
     output_directory = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simulation/DYNAMIC_step_15mn/dataset_simulation_rep_8.csv".format(
         dataset_name)
@@ -26,13 +26,14 @@ def main():
 
     start_date = simu_dataset.date.min().to_pydatetime()
 
+    visualize(dataset)
+
     simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
 
     real_graph = ActivityOccurrencesGraph(dataset_name, dataset, nb_days=-1)
 
 
-
-def visualize(data, start_date, end_date):
+def visualize(data, start_date=None, end_date=None):
     '''
     Visualize the log dataset
     :param data:
@@ -40,6 +41,12 @@ def visualize(data, start_date, end_date):
     :param end_date:
     :return:
     '''
+
+    if start_date is None:
+        start_date = data.date.min().to_pydatetime()
+
+    if end_date is None:
+        end_date = data.date.max().to_pydatetime()
 
     data = data[(data.date >= start_date) & (data.date <= end_date)].copy()
     # Turn the dataset into an activity dataset
@@ -59,6 +66,7 @@ def visualize(data, start_date, end_date):
     df_data = pd.DataFrame(columns=['activity', 'start', 'end', 'level'])
 
     fig = plt.figure()
+    # fig.set_size_inches(1800 / 1200, 1, forward=False)
     ax = fig.add_subplot(111)
     xfmt = dat.DateFormatter('%d-%m-%y %H:%M')
     ax.xaxis.set_major_formatter(xfmt)
@@ -82,6 +90,7 @@ def visualize(data, start_date, end_date):
         # df_data = pd.concat([df_data, result], axis=0)
     # plt.legend()
 
+    plt.savefig('out.png', transparent=True)
     plt.show()
 
     print("done")
@@ -327,7 +336,7 @@ class ActivityOccurrencesGraph:
                 segments = [tuple(x) for x in segments]
 
                 label_dataset = day_dataset[day_dataset.label == label]
-                plt.hlines(day_id, label_dataset.start_second, label_dataset.end_second, linewidth=200 / self.nb_days,
+                plt.hlines(day_id, label_dataset.start_second, label_dataset.end_second, linewidth=300 / self.nb_days,
                            color=self.label_color[label])
                 # for seg in segments:
                 #     plt.plot(seg, [day_id, day_id], color=self.label_color[label])

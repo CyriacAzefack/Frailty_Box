@@ -1,4 +1,5 @@
 import math
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -35,6 +36,7 @@ def main():
     nb_output = 1 * nb_feat
 
     score, scores, predictions = evaluate_model(train, test, n_input=nb_input, n_output=nb_output, display=True)
+
 
     train = train.reshape(train.shape[0], nb_feat)
     test = test.reshape(test.shape[0], nb_feat)
@@ -93,12 +95,15 @@ def build_model(train, test, n_input, n_output, display=False):
     # prepare data
     train_x, train_y = to_supervised(train, n_input, n_output)
     test_x, test_y = to_supervised(test, n_input, n_output)
+
+    print('Features Training : ', train_x.shape)
+    print('Target Training : ', train_y.shape)
     # define parameters
     verbose, epochs, batch_size = 2, 50, len(train)
-    n_timesteps, n_features, n_outputs = train_x.shape[1], train_x.shape[2], train_y.shape[1]
+    n_inputs, n_features, n_outputs = train_x.shape[1], train_x.shape[2], train_y.shape[1]
     # define model
     model = Sequential()
-    model.add(LSTM(10, activation='relu', return_sequences=True, input_shape=(n_timesteps, n_features)))
+    model.add(LSTM(10, activation='relu', return_sequences=True, input_shape=(n_inputs, n_features)))
     model.add(Dropout(0.2))
     model.add(LSTM(10, activation='relu', return_sequences=True))
     model.add(LSTM(10, activation='relu', return_sequences=False))

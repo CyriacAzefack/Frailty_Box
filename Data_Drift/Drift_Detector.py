@@ -201,7 +201,7 @@ def features_clustering(time_windows_data, activity_labels, plot=True):
     data_features = pd.DataFrame()  # Dataset for clustering
     for window_id in range(nb_windows):
         tw_data = time_windows_data[window_id]
-        tw_features = activities_features(window_data=tw_data, activity_labels=activity_labels)
+        tw_features = activities_features(data=tw_data, activity_labels=activity_labels)
 
         tw_df = pd.DataFrame.from_dict(tw_features, orient='columns')
         if len(data_features) == 0:

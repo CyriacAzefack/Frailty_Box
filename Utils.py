@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 
-def pick_dataset(name, nb_days=-1):
+def pick_dataset(name, nb_days=-1, ):
     name = name.lower()
     my_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -31,6 +31,13 @@ def pick_dataset(name, nb_days=-1):
 
     elif name == 'toulouse':
         path = os.path.join(my_path, "./input/Toulouse/toulouse_dataset.csv")
+        dataset = pd.read_csv(path, delimiter=';')
+        date_format = '%Y-%m-%d %H:%M:%S.%f'
+        dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+        dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
+
+    elif name == 'mauricette':
+        path = os.path.join(my_path, "./input/Mauricette/dataset.csv")
         dataset = pd.read_csv(path, delimiter=';')
         date_format = '%Y-%m-%d %H:%M:%S.%f'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
@@ -282,3 +289,16 @@ def plot_graph(matrix, labels, plot=True):
         plt.show()
 
     return gr
+
+
+def convert_data_XES_log(name):
+    data = pick_dataset(name)
+    # ID for each day date : 'YYYYMMDD'
+    data['case_id'] = data['date'].apply(lambda x: "{}{}{}".format(x.year, x.month, x.day))
+
+    log = data[['case_id', 'date', 'end_date', 'label']]
+
+    log.to_csv('./input/XES/XES_log_{}.csv'.format(name), index=False, sep=';')
+
+
+convert_data_XES_log('aruba')
