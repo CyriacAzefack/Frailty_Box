@@ -56,10 +56,10 @@ def main():
     train_ratio = 0.8
     test_ratio = 0.1
 
-    # plt.plot(dataset)
+    # plt.plot(log_dataset)
     # plt.show()
 
-    # normalize the dataset
+    # normalize the log_dataset
     scaler = MinMaxScaler(feature_range=(0, 1))
     dataset = scaler.fit_transform(dataset)
 
@@ -67,11 +67,11 @@ def main():
 
     train, test, validate = np.split(dataset,
                                      [int(train_ratio * len(dataset)), int((train_ratio + test_ratio) * len(dataset))])
-    # train_size = int(len(dataset) * train_ratio)
-    # test_size = len(dataset) - train_size
-    # train, test = dataset[0:train_size, :], dataset[train_size:len(dataset), :]
+    # train_size = int(len(log_dataset) * train_ratio)
+    # test_size = len(log_dataset) - train_size
+    # train, test = log_dataset[0:train_size, :], log_dataset[train_size:len(log_dataset), :]
 
-    print('Original dataset', train.shape)
+    print('Original log_dataset', train.shape)
 
     # reshape into X=t and Y=t+1
     trainX, trainY = create_lookback_dataset(train, look_back)
@@ -150,7 +150,7 @@ def main():
     plt.show()
 
 
-# convert an array of values into a dataset matrix
+# convert an array of values into a log_dataset matrix
 def create_lookback_dataset(dataset, look_back=1):
     dataX, dataY = [], []
     for i in range(len(dataset) - look_back - 1):

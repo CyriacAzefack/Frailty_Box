@@ -26,8 +26,8 @@ def main():
     # Characteristics :
     #   - Single Activity Implementation
     #   - No time evolution
-    #   - Training Dataset : 80% of the Original dataset
-    #   - Test Dataset : 20% left of the Original dataset
+    #   - Training Dataset : 80% of the Original log_dataset
+    #   - Test Dataset : 20% left of the Original log_dataset
 
 
     period = dt.timedelta(days=1)
@@ -229,7 +229,7 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
     #     episode = list(pattern['Episode'])
     #
     #     episode_occurrences, events = Pattern_Mining.Extract_Macro_Activities.compute_episode_occurrences(
-    #         dataset=dataset, episode=episode, tep=Tep)
+    #         log_dataset=log_dataset, episode=episode, tep=Tep)
     #
     #     activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
     #
@@ -237,20 +237,20 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
     #     for period_ts_index, occurrence in episode_occurrences.iterrows():
     #         occ_start_date = occurrence["date"]
     #         occ_end_date = occ_start_date + dt.timedelta(minutes=Tep)
-    #         mini_data = dataset.loc[(dataset.label.isin(episode))
-    #                                       & (dataset.date >= occ_start_date)
-    #                                       & (dataset.date < occ_end_date)].copy()
+    #         mini_data = log_dataset.loc[(log_dataset.label.isin(episode))
+    #                                       & (log_dataset.date >= occ_start_date)
+    #                                       & (log_dataset.date < occ_end_date)].copy()
     #         mini_data.sort_values(["date"], ascending=True, inplace=True)
     #         mini_data.drop_duplicates(["label"], keep='first', inplace=True)
     #         mini_factorised_events = mini_factorised_events.append(mini_data, ignore_index=True)
     #
-    #     dataset = pd.concat([dataset, mini_factorised_events], sort=False).drop_duplicates(keep=False)
+    #     log_dataset = pd.concat([log_dataset, mini_factorised_events], sort=False).drop_duplicates(keep=False)
 
-    # labels = dataset.label.unique()
+    # labels = log_dataset.label.unique()
     #
     # for label in labels:
     #     episode = (label,)
-    #     events = dataset[dataset.label == label].copy()
+    #     events = log_dataset[log_dataset.label == label].copy()
     #     episode_occurrences = events.drop(['label'], axis=1)
     #     activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events)
 
@@ -276,7 +276,7 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
                                     debug=False):
     """
     Generate Dynamic Macro-Activities from the input event log
-    :param dataset_name: Name of the dataset
+    :param dataset_name: Name of the log_dataset
     :param dataset:
     :param period:
     :param time_step:

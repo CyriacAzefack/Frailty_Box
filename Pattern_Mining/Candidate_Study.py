@@ -4,11 +4,10 @@ Created on Thu Mar 15 09:41:33 2018
 
 @author: cyriac.azefack
 """
+import math
 import os
 import sys
 
-import math
-import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 from sklearn.mixture import GaussianMixture
 
@@ -220,7 +219,7 @@ def modulo_datetime(date, period):
 
 def find_occurrences_fast(data, episode, Tep=30):
     """
-    Fetch the occurrences of the episode in the dataset
+    Fetch the occurrences of the episode in the log_dataset
     :param data:
     :param episode:
     :param Tep:

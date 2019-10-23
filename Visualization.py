@@ -18,7 +18,7 @@ sns.set_style('darkgrid')
 def main():
     dataset_name = 'aruba'
 
-    dataset = pick_dataset(dataset_name, nb_days=1)
+    dataset = pick_dataset(dataset_name, nb_days=-1)
 
     output_directory = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simulation/DYNAMIC_step_15mn/dataset_simulation_rep_8.csv".format(
         dataset_name)
@@ -26,16 +26,16 @@ def main():
 
     start_date = simu_dataset.date.min().to_pydatetime()
 
-    visualize(dataset)
+    # visualize(dataset)
 
-    simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
+    # simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
 
-    real_graph = ActivityOccurrencesGraph(dataset_name, dataset, nb_days=-1)
+    real_graph = ActivityOccurrencesGraph(dataset_name, dataset, nb_days=30)
 
 
 def visualize(data, start_date=None, end_date=None):
     '''
-    Visualize the log dataset
+    Visualize the log log_dataset
     :param data:
     :param start_date:
     :param end_date:
@@ -49,7 +49,7 @@ def visualize(data, start_date=None, end_date=None):
         end_date = data.date.max().to_pydatetime()
 
     data = data[(data.date >= start_date) & (data.date <= end_date)].copy()
-    # Turn the dataset into an activity dataset
+    # Turn the log_dataset into an activity log_dataset
 
     data['duration'] = data['end_date'] - data['date']
     data['duration'] = data['duration'].apply(lambda x: x.total_seconds() / 60)
@@ -158,7 +158,7 @@ def plot_activiy_duration(data, label, start_date=None, end_date=None):
 
 def distribution_evolution(data, time_window_duration, label, output_folder="./output/videos"):
     """
-    Plot the evolution of the occurrence time and duration distribution through the dataset
+    Plot the evolution of the occurrence time and duration distribution through the log_dataset
     :param data:
     :param time_window_duration:
     :param label:
@@ -264,7 +264,7 @@ class ActivityOccurrencesGraph:
 
     def extract_days(self):
         """
-        Extract each days from the dataset,
+        Extract each days from the log_dataset,
         :return:
         """
 
@@ -287,10 +287,6 @@ class ActivityOccurrencesGraph:
             # day_dataset.drop(dropping_indexes, axis=0, inplace=True)
 
             days_data.append(day_dataset)
-
-        def nightly(row):
-            self.dataset.loc[len(self.dataset)] = [end_date, row.end_date, row.label]
-            day_dataset.loc[len(day_dataset)] = [row.date, end_date, row.label]
 
         return days_data
 

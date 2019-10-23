@@ -65,7 +65,7 @@ def main():
         # Compute Time Evolution
         start_time = t.process_time()  # To compute time spent building the graph
         for pattern_graph in pattern_graphs:
-            #     # pattern_graph.compute_time_evolution(dataset, len(mini_list))
+            #     # pattern_graph.compute_time_evolution(log_dataset, len(mini_list))
             sim = pattern_graph.simulate(simulation_result, start_date, end_date)
             simulation_result = pd.concat([simulation_result, sim], ignore_index=True)
         #
@@ -87,7 +87,7 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
                   output_directory='./', display_graph=False):
     '''
     Turn a pattern to a graph
-    :param data: Input dataset
+    :param data: Input log_dataset
     :param labels: list of labels included in the pattern
     :param time_description: time description of the pattern {mu1 : sigma1, mu2 : sigma2, ...}
     :param tolerance_ratio: tolerance ratio to get the expected occurrences

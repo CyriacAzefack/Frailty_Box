@@ -85,7 +85,7 @@ def main():
     print("###############################")
     print("Time to discover the patterns : {}".format(elapsed_time))
     print(
-        "{}% of the {} dataset data explained by the patterns discovered".format(ratio_data_treated, dataset_name))
+        "{}% of the {} log_dataset data explained by the patterns discovered".format(ratio_data_treated, dataset_name))
     print("##############################")
     print("\n")
 
@@ -103,8 +103,8 @@ def main():
         file.write("Accuracy Min : {}\n".format(accuracy_min))
         file.write("Tep : {}\n".format(Tep))
         file.write("Time to process all the tries : {}\n".format(elapsed_time))
-        file.write("{}% of the {} dataset explained by the patterns discovered\n".format(ratio_data_treated,
-                                                                                         dataset_name))
+        file.write("{}% of the {} log_dataset explained by the patterns discovered\n".format(ratio_data_treated,
+                                                                                             dataset_name))
         file.write("{} Patterns found\n".format(len(patterns)))
 
     # Dump the results in pickle files to re-use them later
@@ -130,7 +130,7 @@ def pattern_discovery(data, Tep=30, support_min=2, accuracy_min=0.5,
     :param std_max : Standard deviation max for a description (ratio of the period)
     :param tolerance_ratio : [greater than 0] An event expected to happen at time t (with standard deviation sigma) occurs as expected if it occurs in the interval [t - tolerance_ratio*sigma, t + tolerance_ratio*sigma]
     :param delta_Tmax_ratio : If there is a gap > delta_Tmax_ratio * Period between two occurrences of an episode, theoccurrences before and after the gap are split (different validity intervals).
-    :return The compressed dataset
+    :return The compressed log_dataset
     """
     compressed = True
 
@@ -276,7 +276,7 @@ def pattern_discovery(data, Tep=30, support_min=2, accuracy_min=0.5,
 
 def find_missing_events(data, episode, occurrences, description, period, tolerance_ratio):
     """
-    Find missing occurrences of the episode description in the original dataset
+    Find missing occurrences of the episode description in the original log_dataset
     :return the missing events
     """
 

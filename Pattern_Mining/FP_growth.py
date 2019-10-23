@@ -285,7 +285,7 @@ def generate_association_rules(patterns, confidence_threshold):
 
 def find_frequent_episodes(data, support_min, Tep):
     """
-    Find all the frequent episodes in the dataset
+    Find all the frequent episodes in the log_dataset
     
     """
 

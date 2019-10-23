@@ -18,7 +18,7 @@ def main():
     activity = 'meal_preparation'
     raw_dataset = pd.read_csv('./data/{}_dataset.csv'.format(activity))
 
-    # normalize the dataset
+    # normalize the log_dataset
     scaler = MinMaxScaler(feature_range=(0, 1))
     dataset = scaler.fit_transform(raw_dataset)
 

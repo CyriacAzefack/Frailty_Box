@@ -50,10 +50,10 @@ def main():
     n_features = len(features_names)
 
     dataset = dataset.values
-    # dataset = dataset.values.reshape((len(dataset), n_features, 1))
+    # log_dataset = log_dataset.values.reshape((len(log_dataset), n_features, 1))
     #
     # scaler = MinMaxScaler(feature_range=(0, 1))
-    # dataset = scaler.fit_transform(dataset)
+    # log_dataset = scaler.fit_transform(log_dataset)
 
     print(features_names)
     look_back = 5

@@ -300,5 +300,4 @@ def convert_data_XES_log(name):
 
     log.to_csv('./input/XES/XES_log_{}.csv'.format(name), index=False, sep=';')
 
-
-convert_data_XES_log('aruba')
+# convert_data_XES_log('aruba')

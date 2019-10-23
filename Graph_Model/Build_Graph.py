@@ -70,7 +70,7 @@ def build_graph(data, labels, period, start_date, end_date, Tep=30,
                 output_directory='./', display_graph=False):
     '''
     Turn a pattern to a graph
-    :param data: Input dataset
+    :param data: Input log_dataset
     :param labels: list of labels included in the pattern
     :param time_description: time description of the pattern {mu1 : sigma1, mu2 : sigma2, ...}
     :param tolerance_ratio: tolerance ratio to get the expected occurrences

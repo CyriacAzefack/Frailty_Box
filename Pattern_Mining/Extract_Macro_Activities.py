@@ -48,7 +48,7 @@ def main():
             if exc.errno != errno.EEXIST:
                 raise
 
-    # tw_macro_activities = extract_macro_activities(dataset=dataset, support_min=support_min, tep=tep, period=period,
+    # tw_macro_activities = extract_macro_activities(log_dataset=log_dataset, support_min=support_min, tep=tep, period=period,
     #                                             verbose=True, display=False)
     # elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
     #
@@ -133,8 +133,8 @@ def extract_tw_macro_activities(dataset, support_min, tep, period, window_durati
 
 def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
     """
-    Extract the tupe (episode, occurrences) from the input dataset
-    :param dataset: input dataset
+    Extract the tupe (episode, occurrences) from the input log_dataset
+    :param dataset: input log_dataset
     :param support_min: Minimum number of episode occurrences
     :param tep: Duration max of an episode occurrence
     :param period: periodicity
@@ -146,7 +146,7 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
     i = 0
     while (len(dataset) > 0):
         i += 1
-        # episode, nb_occ, ratio, score = find_best_episode(dataset=dataset, tep=tep, support_min=support_min,
+        # episode, nb_occ, ratio, score = find_best_episode(log_dataset=log_dataset, tep=tep, support_min=support_min,
         #                                                   period=period, display=display)
         # Most frequents episode
 
@@ -175,7 +175,7 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
             # print("Ratio Dataset : \t{}".format(ratio))
             # # print("Accuracy score : \t{:.2f}".format(score))
             # if len(episode_occurrences) > 2:
-            #     GMM_desc = compute_episode_description(dataset=dataset, episode=best_episode, period=period, tep=tep)
+            #     GMM_desc = compute_episode_description(log_dataset=log_dataset, episode=best_episode, period=period, tep=tep)
             #
             #     for mu, sigma in GMM_desc.items():
             #         print('Mean : {} - Sigma : {}'.format(dt.timedelta(seconds=int(mu)),
@@ -225,7 +225,7 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
 
     # Compute the sparsity of the episode occurrence time
     for episode, nb_occ in frequent_episodes.items():
-        ratio_dataset = len(episode) * nb_occ / len(dataset)  # ratio in the dataset
+        ratio_dataset = len(episode) * nb_occ / len(dataset)  # ratio in the log_dataset
 
         # find the episode occurrences
         occurrences = Candidate_Study.find_occurrences(dataset, episode, tep)
@@ -347,7 +347,7 @@ def compute_episode_description(dataset, episode, period, tep):
 
 def compute_episode_occurrences(dataset, episode, tep):
     """
-    Compute the episode occurrences in the dataset
+    Compute the episode occurrences in the log_dataset
     :param dataset:
     :param episode:
     :param tep:

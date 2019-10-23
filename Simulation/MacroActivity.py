@@ -114,7 +114,7 @@ class MacroActivity:
         '''
         Creation of a Macro-Activity
         :param episode:
-        :param occurrences: dataset of occurrences of the episode
+        :param occurrences: log_dataset of occurrences of the episode
         :param events: Sublog of events from the input event log
         :param period: periodicity of the analysis
         :param time_step: Time discretization parameter

@@ -2,11 +2,11 @@
 Markov Clustering Algorithm Implementation
 """
 import glob
+import math
 import os.path
 
-# import imageio
+import imageio
 import markov_clustering as mc
-import math
 
 from Utils import *
 

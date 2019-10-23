@@ -4,13 +4,31 @@
 # In[2]:
 
 
+import pickle
+# import PIL
 import time
 
+import cv2
+# import gc
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 from IPython import display
+
+# import imageio
+# import glob
+#
+# from sklearn.cluster import KMeans
+# from sklearn.metrics import confusion_matrix
+# from sklearn.manifold import TSNE
+# from sklearn.decomposition import PCA
+#
+# from sklearn.datasets import make_blobs
+# from sklearn.metrics import silhouette_samples, silhouette_score
+# import matplotlib.cm as cm
+#
+# import itertools
+# import random
 
 tf.enable_eager_execution()
 
@@ -59,14 +77,14 @@ class AE(tf.keras.Model):
 
         loss_list = []
 
-        for epoch in range(1, epochs + 1):
+        for epoch in range(1, epochs + 1):      
             for train_x in train_dataset:
                 start_time = time.time()
                 gradients, loss = self.compute_gradients(train_x)
                 apply_gradients(optimizer, gradients, model.trainable_variables)
                 end_time = time.time()
 
-            if epoch % freq_print == 0:
+            if epoch % freq_print == 0:            
 
                 test_vector_for_generation = []
                 encoded_points = []
@@ -90,14 +108,14 @@ class AE(tf.keras.Model):
                                                                 loss_value,
                                                                 end_time - start_time))
 
-                # Plot Elbo graph
-                fig = plt.figure(figsize=(20, 5))
-                plt.plot(loss_list, c='black')
-                fig.patch.set_facecolor('white')
-                plt.yscale('log')
-                plt.grid(True)
-                plt.show()
-
+        # Plot Elbo graph
+        fig = plt.figure(figsize=(20, 5))
+        plt.plot(loss_list, c='black')
+        fig.patch.set_facecolor('white')
+        plt.yscale('log')
+        plt.grid(True)
+        plt.show()
+                
         return model
 
     def compute_loss(self, x):
@@ -113,27 +131,44 @@ class AE(tf.keras.Model):
 # ## Data
 
 # Loading the data
-patients = pd.read_csv('./data_train.csv', sep=',', engine='python')
-dae_data = np.array(
-    patients.iloc[:, 1:-1])  # dismiss id_sejour and id_cluster from the data we'll pass to the autoencoder
-clust_dae = patients.iloc[:, -1]
-dae_data = dae_data.astype('float32')
-print('Done loading dataset, shape=', np.shape(dae_data))
+# patients = pd.read_csv('./data_train.csv', sep = ',', engine = 'python')
+# dae_data = np.array(patients.iloc[:,1:-1])    # dismiss id_sejour and id_cluster from the data we'll pass to the autoencoder
+# clust_dae = patients.iloc[:,-1]
+# dae_data = dae_data.astype('float32')
+# print('Done loading dataset, shape=',np.shape(dae_data))
+
+name = 'aruba'
+train_ratio = .9
+input_folder = f"../output/{name}/Daily_Images/"
+binary_matrixes = pickle.load(open(input_folder + "binary_matrixes.pkl", 'rb'))
+
+dataset = []
+
+height, width = 0, 0
+for matrix in binary_matrixes:
+    height, width = matrix.shape
+    dataset.append(matrix.flatten())
+
+dataset = np.asarray(dataset, dtype='float32')
+
+print('Done loading dataset, shape=', np.shape(dataset))
+
+
 
 # Loading the data
 
 ## TO DO 
 # dae_data = 
 
-TRAIN_BUF = int(dae_data.shape[0] * 0.8)
-dae_data_train = dae_data[:TRAIN_BUF]
-dae_data_test = dae_data[TRAIN_BUF:]
+TRAIN_BUF = int(dataset.shape[0] * 0.8)
+dae_data_train = dataset[:TRAIN_BUF]
+dae_data_test = dataset[TRAIN_BUF:]
 
-num_examples_to_generate = nb_features = dae_data.shape[1]
+num_examples_to_generate = nb_features = dataset.shape[1]
 
-batch_size = 1000
+batch_size = 100
 
-epochs = 500
+epochs = 209
 latent_dim = 20
 optimizer = tf.keras.optimizers.Adam(1e-4)
 
@@ -147,3 +182,26 @@ model = AE(latent_dim)
 model = model.train(optimizer, train_dataset, test_dataset,
                     latent_dim, epochs, batch_size, nb_features,
                     freq_print=10)
+
+x = dae_data_train[0].reshape(1, height * width)
+y = model.encode(x)
+z = model.decode(y).numpy().reshape(height, width)
+print(z.shape)
+
+fig, ax = plt.subplots(1, 2)
+
+images = [x.reshape(height, width), z]
+
+new_size = 144
+
+for i in range(2):
+    images[i] = cv2.resize(images[i], (28, 28))
+#
+images = np.asarray(images)
+images = images.reshape((2, 28, 28))
+for axi, img in zip(ax.flat, images):
+    axi.set(xticks=[], yticks=[])
+
+    axi.imshow(img, interpolation='nearest', cmap='gray')
+
+plt.show()

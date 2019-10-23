@@ -24,8 +24,8 @@ def main():
 
     # # TIME WINDOW PARAMETERS
     # time_window_duration = dt.timedelta(days=30)
-    # start_date = dataset.date.min().to_pydatetime()
-    # end_date = dataset.date.max().to_pydatetime() - time_window_duration
+    # start_date = log_dataset.date.min().to_pydatetime()
+    # end_date = log_dataset.date.max().to_pydatetime() - time_window_duration
     # window_start_date = start_date
 
     all_macro_activities = pickle.load(open('../output/{}/all_macro_activities'.format(dataset_name), 'rb'))

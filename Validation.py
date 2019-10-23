@@ -291,7 +291,7 @@ def periodic_time_distribution(data, label, period, display=False):
         return np.asarray([])
 
     if occurrences.empty:
-        print('The label "{}" does not exist in the dataset'.format(label))
+        print('The label "{}" does not exist in the log_dataset'.format(label))
         return None
     occurrences['relative_date'] = occurrences.date.apply(lambda x: modulo_datetime(x.to_pydatetime(), period))
 
@@ -712,7 +712,7 @@ def compute_stochastic_error(array, confidence=0.95):
 
 def sequence_alignement_validation(original_data, directory, period, alphabet, display=True):
     """
-    Compute the alignement between real life dataset and simulation replication event logs
+    Compute the alignement between real life log_dataset and simulation replication event logs
     :param original_data:
     :param replications_directory:
     :param display:

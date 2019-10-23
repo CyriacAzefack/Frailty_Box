@@ -140,7 +140,7 @@ class Behavior:
         Create a Behavior corresponding to a house data
         :param dataset: event sequence
         :param time_window_duration: duration of the time_window for the drift detection
-        :param instant_events : True if events in the dataset have no durations
+        :param instant_events : True if events in the log_dataset have no durations
         """
 
         self.dataset = dataset
@@ -275,7 +275,7 @@ class Behavior:
         Slide a time window among the data and create the different time_windows
         :return: the list of time windows data
         """
-        data_start_time = self.dataset.date.min().to_pydatetime()  # Starting time of the dataset
+        data_start_time = self.dataset.date.min().to_pydatetime()  # Starting time of the log_dataset
 
         # Starting point of the last time window
         data_end_time = self.dataset.date.max().to_pydatetime() - self.time_window_duration
@@ -397,7 +397,7 @@ class ActivityBehavior(Behavior):
 
         data_features = pd.DataFrame()  # Dataset for clustering
 
-        # Build the features dataset for all time windows
+        # Build the features log_dataset for all time windows
         for window_id in range(nb_windows):
             tw_data = self.time_windows_data[window_id]
 
@@ -688,7 +688,7 @@ class ActivityBehavior(Behavior):
 
     def display_behavior_evolution(self, clusters, colors):
         """
-        Plot the evolution of the different behavior throughout the dataset
+        Plot the evolution of the different behavior throughout the log_dataset
         :param clusters:
         :param colors:
         :return:

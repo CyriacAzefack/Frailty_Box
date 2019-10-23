@@ -394,7 +394,7 @@ def create_time_windows(data, time_window_duration):
     Slide a time window among the data and create the different time_windows
     :return: the list of time windows data
     """
-    data_start_time = data.date.min().to_pydatetime()  # Starting time of the dataset
+    data_start_time = data.date.min().to_pydatetime()  # Starting time of the log_dataset
 
     # Starting point of the last time window
     data_end_time = data.date.max().to_pydatetime() - time_window_duration

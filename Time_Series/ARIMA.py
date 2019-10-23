@@ -71,9 +71,7 @@ def main():
     plt.show()
     #
 
-
-
-    # autocorrelation_plot(dataset)
+    # autocorrelation_plot(log_dataset)
     # plt.show()
 
     # train = np.log(train)
