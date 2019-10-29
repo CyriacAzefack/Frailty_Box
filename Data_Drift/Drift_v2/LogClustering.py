@@ -302,8 +302,8 @@ class LogClustering:
 
 
 class LogImageClustering(LogClustering):
-    HEIGHT = 144
-    WIDTH = 144
+    HEIGHT = 28
+    WIDTH = 28
 
     def __init__(self, name, log_dataset, nb_days=-1, frequency=dt.timedelta(seconds=5)):
         super(LogImageClustering, self).__init__(name, log_dataset, nb_days)

@@ -367,7 +367,7 @@ class ActivityOccurrencesGraph:
         # colors = cmap(np.linspace(0., 1., len(labels_count_df)))
         labels_count_df.duration.plot(kind='pie', fontsize=18, colors=colors, startangle=90)
 
-        # wedges, texts = ax.pie(labels_count_df.duration, wedgeprops=dict(width=0.5), startangle=0, colors=colors)
+        # wedges, texts = ax.pie(labels_count_df.duration, wedgeprops=dict(input_width=0.5), startangle=0, colors=colors)
         # bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
         # kw = dict(xycoords='data', textcoords='data', arrowprops=dict(arrowstyle="-"),
         #           bbox=bbox_props, zorder=0, va="center")

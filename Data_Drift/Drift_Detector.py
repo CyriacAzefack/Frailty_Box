@@ -52,7 +52,7 @@ def activity_drift_detector(data, time_window_duration, label, plot=True, gif=Fa
     ## Clustering Algorithm #
     #########################
 
-    # clusters, clusters_color = features_clustering(time_windows_data, activity_labels = [label])
+    # clusters, clusters_color = features_clustering(time_windows_logs, activity_labels = [label])
 
     clusters, clusters_color = similarity_clustering(time_windows_data, label=label, plot=True, gif=False)
 

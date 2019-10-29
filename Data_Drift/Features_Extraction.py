@@ -201,7 +201,7 @@ def histogram_intersection(array_A, array_B, bin_width=5 * 60, max_bin=24 * 3600
     Compute the intersection of 2 histograms
     :param array_A:
     :param array_B:
-    :param bin_width: width of a bin in seconds
+    :param bin_width: input_width of a bin in seconds
     :param max_bin: maximum value of the bin
     :return:
 
