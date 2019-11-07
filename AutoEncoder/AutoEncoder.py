@@ -42,7 +42,7 @@ def main():
     batch_size = 10
 
     ## BUILD THE MODEL
-    model = AutoEncoder(input_width=width, input_height=height, latent_dim=latent_dim)
+    model = AutoEncoderModel(input_width=width, input_height=height, latent_dim=latent_dim)
 
     # Model parameters
     optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
@@ -258,8 +258,8 @@ def silhouette_plots(data, display=True):
     return optimal_n_clusters
 
 
-class AutoEncoder(tf.keras.Model):
-    def __init__(self, input_width, input_height, latent_dim, name='AutoEncoder'):
+class AutoEncoderModel(tf.keras.Model):
+    def __init__(self, input_width, input_height, latent_dim, name='AutoEncoderModel'):
         super().__init__(name=name)
         self.input_width = input_width
         self.input_height = input_height
@@ -310,13 +310,13 @@ class AutoEncoder(tf.keras.Model):
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper right')
 
-        plt.figure()
-        plt.plot(history['root_mean_squared_error'])
-        plt.plot(history['val_root_mean_squared_error'])
-        plt.title('Model Accuracy')
-        plt.ylabel('RMSE')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper left')
+        # plt.figure()
+        # plt.plot(history['mean_squared_error'])
+        # plt.plot(history['val_mean_squared_error'])
+        # plt.title('Model Accuracy')
+        # plt.ylabel('Accuracy')
+        # plt.xlabel('epoch')
+        # plt.legend(['train', 'test'], loc='upper left')
         plt.show()
 
 

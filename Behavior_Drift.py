@@ -1,17 +1,27 @@
 from __future__ import absolute_import
 
 import errno
-import glob
+import pickle
 import sys
 from optparse import OptionParser
 
 import cv2
-import imageio
+import matplotlib.cm as cm
+import matplotlib.dates as dat
 import seaborn as sns
+import tensorflow as tf
+from matplotlib.collections import LineCollection
+from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
+from sklearn.cluster import SpectralClustering
+from sklearn.manifold import TSNE
+from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.preprocessing import StandardScaler
 
+from AutoEncoder.AutoEncoder import AutoEncoderModel
 from Utils import *
 
-sns.set_style('darkgrid')
+
+# sns.set_style('darkgrid')
 
 
 def main():
@@ -54,10 +64,10 @@ def main():
     # plot = options.plot
     # debug = options.debug
 
-    dataset_name = "aruba"
+    dataset_name = "Aruba"
     window_size = 30
-    time_step = dt.timedelta(minutes=30)
-    plot = False
+    time_step = dt.timedelta(minutes=60)
+    plot = True
     debug = False
 
     drift(dataset_name=dataset_name, window_size=window_size, window_step=dt.timedelta(days=1),
@@ -67,7 +77,7 @@ def main():
 def drift(dataset_name, window_size, window_step, time_step, plot, debug):
     print("Dataset Name : {}".format(dataset_name.upper()))
     print("Windows size : {}".format(window_size))
-    print("Window step : {}".format(window_step))
+    print("Time step : {}".format(time_step))
     print("Display : {}".format(plot))
     print("Mode debug : {}".format(debug))
 
@@ -78,61 +88,189 @@ def drift(dataset_name, window_size, window_step, time_step, plot, debug):
     behavior = ImageBehaviorClustering(name=dataset_name, dataset=data, time_window_step=window_step,
                                        time_window_duration=time_window_size, time_step=time_step)
 
-    heatmaps = behavior.extract_features(store=True)
+    behavior.extract_features(store=True, display=debug)
 
-    # if store:  # Create the GIF
-    list_files = glob.glob(behavior.output_folder + '*.png')
-    list_files.sort(key=os.path.getmtime, reverse=True)
-    images = []
+    n_clusters = 2
+    clusters_indices = behavior.time_windows_clustering(display=plot, debug=debug, n_clusters=n_clusters)
 
-    for filename in list_files:
-        images.append(imageio.imread(filename))
-    imageio.mimsave(behavior.output_folder + '___all.gif', images, duration=0.1)
-    print('GIF Created')
+    behavior.cluster_interpretability(clusters_indices=clusters_indices)
 
-    # changes = behavior_clustering.drift_detector(method=drift_method, plot=plot, debug=debug)
-    # changes_str = stringify_keys(changes)
-    # changes_str.pop('clusters', None)
-    # print(json.dumps(changes_str, indent=4))
+    for cluster_id, indices in clusters_indices.items():
+        behavior.plot_day_bars(sublogs_indices=indices, title=f"Days for Cluster {cluster_id}")
 
-    # df = pd.DataFrame(
-    #     columns=['label', 'nb_behaviors', 'behavior_duration', 'nb_drift_points', 'interpretation', 'silhouette'])
-    # for label, change in changes_str.items():
-    #     df.loc[len(df)] = [label, change['nb_clusters'], change['duration'], change['nb_drift_points'],
-    #                        change['interpretation'], '{:.2f}'.format(change['silhouette'])]
-    #
-    # # if not os.path.exists(outdir):
-    # #     os.mkdir(outdir)
-    #
-    # fullname = os.path.join(OUTDIR, '{}_{}_{}_W{}.csv'.format(dataset_name.upper(), behavior_type.replace(' ', '-'),
-    #                                                           drift_method, window_size))
-    #
-    # df.to_csv(fullname, index=False, sep=';')
+    cluster_colors = generate_random_color(len(clusters_indices))
+    behavior.display_behavior_evolution(clusters=clusters_indices, colors=cluster_colors)
+    plt.show()
+
+
+def clustering_algorithm(data, n_clusters):
+    """
+    Cluster the data
+    :param data:
+    :param n_clusters:
+    :return:
+    """
+
+    # transformed_data = TSNE(n_components=2).fit_transform(data)
+
+    # transformed_data = StandardScaler().fit_transform(data)
+
+    transformed_data = data
+
+    clustering = SpectralClustering(n_clusters=n_clusters, n_init=100, assign_labels='discretize').fit(transformed_data)
+
+    return transformed_data, clustering.labels_
+
+
+def silhouette_plots(data, display=True):
+    """
+    Plot the differents silhoutte values
+    :return:
+    """
+
+    range_n_clusters = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    filename = './output/encoded_data.csv'
+    outfile = open(filename, 'wb')
+    pickle.dump(data, outfile)
+    outfile.close()
+
+    tsne_data = TSNE(n_components=2).fit_transform(data)
+    # tsne_data = StandardScaler().fit_transform(tsne_data)
+
+    optimal_n_clusters = 1
+    avg_silhouette = 0
+
+    for n_clusters in range_n_clusters:
+
+        data, cluster_labels = clustering_algorithm(data, n_clusters=n_clusters)
+
+        silhouette_avg = silhouette_score(data, cluster_labels)
+        sample_silhouette_values = silhouette_samples(data, cluster_labels)
+        print("For n_clusters =", n_clusters,
+              "The average silhouette_score is :", silhouette_avg)
+
+        if silhouette_avg > avg_silhouette:
+            avg_silhouette = silhouette_avg
+            optimal_n_clusters = n_clusters
+
+        if display:
+            # Create a subplot with 1 row and 2 columns
+            fig, (ax1, ax2) = plt.subplots(1, 2)
+            # fig.set_size_inches(18, 7)
+
+            # The 1st subplot is the silhouette plot
+            # The silhouette coefficient can range from -1, 1 but in this example all
+            # lie within [-0.1, 1]
+            ax1.set_xlim([-0.1, 1])
+            # The (n_clusters+1)*10 is for inserting blank space between silhouette
+            # plots of individual clusters, to demarcate them clearly.
+            ax1.set_ylim([0, len(data) + (n_clusters + 1) * 10])
+
+            # Initialize the clusterer with n_clusters value and a random generator
+            # seed of 10 for reproducibility.
+
+            # The silhouette_score gives the average value for all the samples.
+            # This gives a perspective into the density and separation of the formed
+            # clusters
+
+            # Compute the silhouette scores for each sample
+
+            y_lower = 10
+            for i in range(n_clusters):
+                # Aggregate the silhouette scores for samples belonging to
+                # cluster i, and sort them
+                ith_cluster_silhouette_values = sample_silhouette_values[cluster_labels == i]
+
+                ith_cluster_silhouette_values.sort()
+
+                size_cluster_i = ith_cluster_silhouette_values.shape[0]
+                y_upper = y_lower + size_cluster_i
+
+                color = cm.nipy_spectral(float(i) / n_clusters)
+                ax1.fill_betweenx(np.arange(y_lower, y_upper),
+                                  0, ith_cluster_silhouette_values,
+                                  facecolor=color, edgecolor=color, alpha=0.7)
+
+                # Label the silhouette plots with their cluster numbers at the middle
+                ax1.text(-0.05, y_lower + 0.5 * size_cluster_i, str(i))
+
+                # Compute the new y_lower for next plot
+                y_lower = y_upper + 10  # 10 for the 0 samples
+
+            ax1.set_title("The silhouette plot for the various clusters.")
+            ax1.set_xlabel("The silhouette coefficient values")
+            ax1.set_ylabel("Cluster label")
+
+            # The vertical line for average silhouette score of all the values
+            ax1.axvline(x=silhouette_avg, color="red", linestyle="--")
+
+            ax1.set_yticks([])  # Clear the yaxis labels / ticks
+            ax1.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
+
+            # 2nd Plot showing the actual clusters formed
+            colors = cm.nipy_spectral(cluster_labels.astype(float) / n_clusters)
+            ax2.scatter(tsne_data[:, 0], tsne_data[:, 1], marker='.', s=100, lw=0, alpha=0.7,
+                        c=colors, edgecolor='k')
+
+            # # Labeling the clusters
+            # centers = clusterer.cluster_centers_
+            #
+            # # Draw white circles at cluster centers
+            # ax2.scatter(centers[:, 0], centers[:, 1], marker='o',
+            #             c="white", alpha=1, s=200, edgecolor='k')
+            #
+            # for i, c in enumerate(centers):
+            #     ax2.scatter(c[0], c[1], marker='$%d$' % i, alpha=1,
+            #                 s=50, edgecolor='k')
+
+            ax2.set_title("The visualization of the clustered data.")
+            ax2.set_xlabel("Feature space for the 1st feature")
+            ax2.set_ylabel("Feature space for the 2nd feature")
+
+            plt.suptitle(("Silhouette analysis for KMeans clustering on sample data "
+                          "with n_clusters = %d" % n_clusters),
+                         fontsize=8, fontweight='bold')
+    if display:
+        plt.show()
+
+    print()
+    print(f"Choose Number of Clusters : {optimal_n_clusters}")
+    # print(f"Choosen Number of PCA Components : {min_n_components}")
+
+    return optimal_n_clusters
 
 
 class BehaviorClustering:
 
     def __init__(self, name, dataset, time_window_duration, time_window_step):
         """
-        Create a Behavior corresponding to a house data
-        :param dataset: event sequence
-        :param time_window_duration: duration of the time_window for the drift detection
-        :param instant_events : True if events in the log_dataset have no durations
+        Clustering of the behavior
+        :param name: Name of the dataset
+        :param dataset: event log
+        :param time_window_duration: duration of a time window
+        :param time_window_step: Duration of the sliding step
         """
         self.name = name
-        self.dataset = dataset
+        self.log_dataset = dataset
         self.time_window_duration = time_window_duration
         self.time_window_step = time_window_step
 
-        self.start_date = self.dataset.date.min().to_pydatetime().replace(hour=0, minute=0, second=0, microsecond=0)
-        self.end_date = (self.dataset.date.max().to_pydatetime() + dt.timedelta(days=1)).replace(hour=0, minute=0,
-                                                                                                 second=0,
-                                                                                                 microsecond=0)
-
         self.data_preprocessing()
 
+        self.start_date = self.log_dataset.day_date.min().to_pydatetime()
+        self.end_date = self.log_dataset.day_date.max().to_pydatetime() + dt.timedelta(days=1)
+
         # Rank the label by decreasing order of durations
-        self.labels = dataset.groupby(['label'])['duration'].sum().sort_values().index
+        self.labels = self.log_dataset.groupby(['label'])['duration'].sum().sort_values().index
+
+        # We take the 10 most present activities
+        self.labels = self.labels
+
+        self.label_color = {}
+        colors = generate_random_color(len(self.labels))
+        for i in range(len(self.labels)):
+            self.label_color[self.labels[i]] = colors[i]
 
         self.time_windows_logs = self.create_time_windows()
         print("Time Windows Logs Extracted !!")
@@ -148,24 +286,62 @@ class BehaviorClustering:
                 if exc.errno != errno.EEXIST:
                     raise
 
-        self.dataset = None
-
-
     def data_preprocessing(self):
         """
         Pre-processing of the data
         Create the columns : day_date, timestamp(number of seconds since the start of the day), duration(in seconds)
         :return:
         """
-        self.dataset['day_date'] = self.dataset['date'].dt.date.apply(
+
+        indexes_to_drop = []
+
+        def nightly(row):
+            next_day_date = row.day_date + dt.timedelta(days=1)
+
+            # self.log_dataset.drop([row.name], inplace=True) # Remove old activity
+            indexes_to_drop.append(row.name)
+
+            # Add the first part
+            self.log_dataset = self.log_dataset.append(
+                {
+                    'date': row.date,
+                    'end_date': next_day_date,
+                    'label': row.label,
+                    'day_date': row.day_date,
+                    'start_ts': row.start_ts,
+                    'end_ts': dt.timedelta(days=1).total_seconds()
+                }, ignore_index=True)
+
+            # Add the second part
+            self.log_dataset = self.log_dataset.append(
+                {
+                    'date': next_day_date,
+                    'end_date': row.end_date,
+                    'label': row.label,
+                    'day_date': next_day_date,
+                    'start_ts': 0,
+                    'end_ts': (row.end_date - next_day_date).total_seconds()
+                }, ignore_index=True)
+
+        self.log_dataset['day_date'] = self.log_dataset['date'].dt.date.apply(
             lambda x: dt.datetime.combine(x, dt.datetime.min.time()))
-        self.dataset['start_ts'] = (self.dataset['date'] - self.dataset['day_date']).apply(
+        self.log_dataset['start_ts'] = (self.log_dataset['date'] - self.log_dataset['day_date']).apply(
             lambda x: x.total_seconds())  # In seconds
-        self.dataset['end_ts'] = (self.dataset['end_date'] - self.dataset['day_date']).apply(
+        self.log_dataset['end_ts'] = (self.log_dataset['end_date'] - self.log_dataset['day_date']).apply(
             lambda x: x.total_seconds())  # In seconds
 
-        self.dataset['duration'] = (self.dataset['end_date'] - self.dataset['date']).apply(
+        nightly_log = self.log_dataset[self.log_dataset.end_ts > dt.timedelta(hours=24).total_seconds()].copy(
+            deep=False)
+
+        nightly_log.apply(nightly, axis=1)
+
+        self.log_dataset.drop(indexes_to_drop, inplace=True)
+
+        self.log_dataset['duration'] = (self.log_dataset['end_date'] - self.log_dataset['date']).apply(
             lambda x: x.total_seconds())  # Duration in seconds
+
+        self.log_dataset.sort_values(['date'], ascending=True, inplace=True)
+        self.log_dataset.reset_index(inplace=True, drop=True)
 
     def time_windows_clustering(self, n_clusters=2):
         """
@@ -174,7 +350,6 @@ class BehaviorClustering:
         :return:
         """
         raise Exception("Not Implemented")
-
 
     def create_time_windows(self):
         """
@@ -191,12 +366,12 @@ class BehaviorClustering:
         while window_start_time <= self.end_date - self.time_window_duration:
             window_end_time = window_start_time + self.time_window_duration
 
-            window_data = self.dataset[
-                (self.dataset.date >= window_start_time) & (self.dataset.date < window_end_time)].copy()
+            window_data = self.log_dataset[
+                (self.log_dataset.date >= window_start_time) & (self.log_dataset.date <= window_end_time)].copy()
 
             time_windows_logs.append(window_data)
 
-            window_start_time += self.time_window_step  # We slide the time window by 1 day
+            window_start_time += self.time_window_step  # We slide the time window by the time window step
 
         return time_windows_logs
 
@@ -236,13 +411,80 @@ class BehaviorClustering:
         sorted_clusters_id = [k for k in sorted(clusters_begin_tw, key=clusters_begin_tw.get, reverse=False)]
 
         sorted_clusters = {}
-        for i in range(len(sorted_clusters_id)):
+        for i in range(len(clusters)):
             sorted_clusters[i] = clusters[sorted_clusters_id[i]]
 
-        return sorted_clusters
+        return sorted_clusters, sorted_clusters_id
+
+    def plot_day_bars(self, sublogs_indices, title="Days"):
+        """
+        Plot the days bars
+        :return:
+        """
+
+        global dates_list
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        def timeTicks(x, pos):
+            d = dt.timedelta(seconds=x)
+            return int(d.seconds / 3600)
+
+        formatter = matplotlib.ticker.FuncFormatter(timeTicks)
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(plt.MultipleLocator(3600))  # Ticks every hour
+        ax.set_xlim(0, 24 * 3600)
+
+        yticks = []
+        yticks_labels = []
+
+        for label in self.labels:
+
+            label_segments = []
+
+            dates_list = []
+
+            kwargs = {'color': self.label_color[label], 'linewidth': 300 / len(sublogs_indices)}
+
+            for day_id in sublogs_indices:
+                plot_index = sublogs_indices.index(day_id)
+
+                day_start_date = self.start_date + day_id * dt.timedelta(days=1)
+                day_end_date = day_start_date + dt.timedelta(days=1)
+                day_dataset = self.log_dataset[(self.log_dataset.date >= day_start_date)
+                                               & (self.log_dataset.date <= day_end_date)
+                                               & (self.log_dataset.label == label)]
+
+                dates_list.append(day_start_date)
+
+                segments = list(day_dataset[['start_ts', 'end_ts']].values)
+
+                if len(segments) > 0:
+                    for x in segments:
+                        label_segments.append([x[0], plot_index, x[1], plot_index])
+
+            label_segments = np.asarray(label_segments)
+            if len(label_segments) > 0:
+                xs = label_segments[:, ::2]
+                ys = label_segments[:, 1::2]
+                lines = LineCollection([list(zip(x, y)) for x, y in zip(xs, ys)], label=label, **kwargs)
+                ax.add_collection(lines)
+
+        for i in range(len(sublogs_indices)):
+            yticks.append(i)
+            yticks_labels.append(sublogs_indices[i])
+
+        ax.legend()
+        ax.set_yticks(yticks)
+        ax.set_yticklabels(yticks_labels)
+        plt.xlabel("Hour of the day")
+        plt.title(title)
+        plt.legend(loc='upper left', fancybox=True, shadow=True, ncol=1, bbox_to_anchor=(1, 0.5))
 
 
 class ImageBehaviorClustering(BehaviorClustering):
+    DISPLAY_WIDTH = 1280
+    DISPLAY_HEIGHT = 1280
 
     def __init__(self, name, dataset, time_window_duration, time_window_step, time_step):
         super().__init__(name, dataset, time_window_duration, time_window_step)
@@ -258,21 +500,28 @@ class ImageBehaviorClustering(BehaviorClustering):
         tw_id = 0
         tw_heatmaps = []
 
+        nb_days_per_time_window = int(self.time_window_duration / dt.timedelta(days=1))
+
         for tw_log in self.time_windows_logs:
             tw_id += 1
-            heatmap = self.build_heatmap(tw_log, display=display)
+            heatmap = self.build_heatmap(log=tw_log, nb_days=nb_days_per_time_window, display=display)
             if store:
-                self.build_and_save_heatmap(heatmap, tw_id)
+                self.save_heatmap(heatmap, tw_id)
 
-            tw_heatmaps.append(heatmap)
+            days_range = [tw_id - 1 + i for i in range(nb_days_per_time_window)]
+
+            # self.plot_day_bars(days_range)
+            # plt.show()
+
+            tw_heatmaps.append(heatmap.values)
 
             sys.stdout.write(f"\r{tw_id}/{len(self.time_windows_logs)} Time Windows Heatmap Created")
             sys.stdout.flush()
         sys.stdout.write("\n")
 
-        self.dataset = np.asarray(tw_heatmaps)
+        self.sublogs_heatmaps = np.asarray(tw_heatmaps)
 
-    def build_heatmap(self, log, display=False):
+    def build_heatmap(self, log, nb_days, display=False):
         """
         Build a daily heatmap from an event log
         :param log:
@@ -281,8 +530,6 @@ class ImageBehaviorClustering(BehaviorClustering):
         """
         log['start_step'] = log.start_ts.apply(lambda x: int(x / self.time_step.total_seconds()))
         log['end_step'] = log.end_ts.apply(lambda x: int(x / self.time_step.total_seconds()))
-
-        nb_days_per_time_window = int(self.time_window_duration / dt.timedelta(days=1))
 
         heatmap = {}
         for label in self.labels:
@@ -293,7 +540,7 @@ class ImageBehaviorClustering(BehaviorClustering):
 
             steps_activity_ratio = []
             for step in range(self.nb_daily_steps):
-                ratio = actives_ts.count(step) / nb_days_per_time_window
+                ratio = actives_ts.count(step) / nb_days
                 steps_activity_ratio.append(ratio)
 
             heatmap[label] = steps_activity_ratio
@@ -307,24 +554,299 @@ class ImageBehaviorClustering(BehaviorClustering):
 
         return heatmap
 
-    def build_and_save_heatmap(self, heatmap, id):
+    def save_heatmap(self, heatmap, id):
         """
         Build and save heatmap
         :param heatmap:
         :return:
         """
 
-        image_matrix = heatmap.values * 255
+        image_matrix = cv2.resize(heatmap.values * 255,
+                                  (ImageBehaviorClustering.DISPLAY_HEIGHT, ImageBehaviorClustering.DISPLAY_WIDTH),
+                                  interpolation=cv2.INTER_AREA)
+
         img_path = self.output_folder + f'{self.name}_tw_{id}.png'
 
         if not cv2.imwrite(img_path, image_matrix):
             raise
 
-    def time_windows_clustering(self):
+    def time_windows_clustering(self, n_clusters=None, display=True, debug=False):
         """
         Clustering of the time windows
         :return: dict-like object with cluster id as key and tw_ids list as value
         """
+
+        latent_dim = 10
+
+        # Build the AutoEncoder Model
+        model = self.build_AE_model(latent_dim=latent_dim, display=display)
+
+        tensor_dataset = tf.data.Dataset.from_tensor_slices(self.sublogs_heatmaps).batch(len(self.sublogs_heatmaps))
+        encoded_points = []
+        for d in tensor_dataset:
+            z = model.encode(d)
+            encoded_points += [list(x) for x in z.numpy()]
+
+        encoded_points = np.asarray(encoded_points)
+
+        if not n_clusters:
+            n_clusters = silhouette_plots(encoded_points, display=debug)
+
+        # if not n_clusters:
+
+        norm_data = StandardScaler().fit_transform(encoded_points)
+        linked = linkage(norm_data, method='ward', metric='euclidean')
+        clusters = fcluster(linked, n_clusters, criterion='maxclust')  # first cluster #id is 1
+        clusters = [i - 1 for i in clusters]
+
+        if display:
+            dendrogram(
+                linked,
+                orientation='left',
+                # labels=time_windows_labels,
+                distance_sort='descending',
+                show_leaf_counts=True)
+
+            plt.title("Dendogram ")
+
+            plt.ylabel('Time Windows')
+
+            plt.show()
+
+        #
+        # kmeans = KMeans(n_clusters=n_clusters, n_init=100).fit(encoded_points)
+        # clusters = kmeans.predict(encoded_points)
+        # clusters = clustering_algorithm(encoded_points, n_clusters)
+
+        clusters_indices = {}
+        for n in range(n_clusters):
+            indices = [i for i, e in enumerate(clusters) if e == n]
+            clusters_indices[n] = indices
+
+        clusters_indices, sorted_clusters_id = self.sort_clusters(clusters_indices)
+
+        silhouette_avg = silhouette_score(encoded_points, clusters)
+
+        print("For n_clusters =", n_clusters,
+              "The average silhouette_score is :", silhouette_avg)
+
+        return clusters_indices
+
+    def cluster_interpretability(self, clusters_indices, display=True):
+        """
+        Details the differences between the clustes.
+        Hightlight the changes in the resident behavior
+        :param clusters_indices:
+        :return:
+        """
+
+        n_clusters = len(clusters_indices)
+        decoded_centers = self.compute_clusters_centers(clusters_indices)
+
+        if display:
+            fig, ax = plt.subplots(n_clusters, 1)
+            fig.suptitle("Clusters Centers", fontsize=14)
+
+            img_centers = []
+            for i in range(n_clusters):
+                img = decoded_centers[i]
+                # img[img >= .5] = 1.
+                # img[img < .5] = 0.
+                img_centers.append(img)
+                # img_centers.append(cv2.resize(img, (ImageBehaviorClustering.DISPLAY_HEIGHT,
+                #                                     ImageBehaviorClustering.DISPLAY_WIDTH),
+                #                               interpolation=cv2.INTER_AREA))
+            img_centers = np.asarray(img_centers)
+            yticks = []
+            yticks_labels = []
+            for i in range(len(self.labels)):
+                s = i * img_centers.shape[1] / len(self.labels)
+                e = (i + 1) * img_centers.shape[1] / len(self.labels)
+                # yticks.append((s + e) / 2)
+                yticks.append(s)
+                yticks_labels.append(self.labels[i])
+
+            i = 0
+            for axi, img in zip(ax.flat, img_centers):
+                axi.set(yticks=yticks)
+                axi.set_yticklabels(yticks_labels)
+                axi.imshow(img, vmin=0, vmax=1)
+                axi.set_title(f'Cluster {i}')
+                i += 1
+
+    def build_AE_model(self, train_ratio=0.9, latent_dim=10, display=False):
+        """
+        Build the AutoEncoderModel model
+        :param train_ratio:
+        :param latent_dim:
+        :return:
+        """
+
+        height = self.sublogs_heatmaps.shape[1]
+        width = self.sublogs_heatmaps.shape[2]
+
+        TRAIN_BUF = int(self.sublogs_heatmaps.shape[0] * train_ratio)
+        data_train = self.sublogs_heatmaps[:TRAIN_BUF]
+        data_test = self.sublogs_heatmaps[TRAIN_BUF:]
+
+        epochs = 1000
+        batch_size = 30
+
+        model = AutoEncoderModel(input_width=width, input_height=height, latent_dim=latent_dim)
+
+        # Model parameters
+        optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
+        # loss = tf.keras.losses.MeanSquaredError()
+        loss = tf.keras.losses.MeanSquaredError()
+        # loss = tf.keras.losses.SquaredHinge()
+        # metric = tf.keras.metrics.BinaryAccuracy()
+        metric = tf.keras.metrics.MeanSquaredError()
+        es_callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10, restore_best_weights=True)
+
+        checkpoint_path = f"./output/{self.name}/AutoEncoder_logs/checkpoint.ckpt"
+        checkpoint_dir = os.path.dirname(checkpoint_path)
+        save_model_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                                 save_weights_only=True,
+                                                                 verbose=display)
+
+        latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
+
+        model.compile(optimizer, loss=loss)
+
+        if latest_checkpoint:
+            model.load_weights(latest_checkpoint)
+
+        model.fit(data_train, data_train, epochs=epochs, batch_size=batch_size, validation_data=(data_test, data_test),
+                  shuffle=True, callbacks=[es_callback, save_model_callback], verbose=display)
+
+        if display:
+            model.plot_history()
+
+            # TEST THE ENCODE-DECODE OPERATION
+            nb_test = 5
+
+            x = np.asarray(random.choices(data_train, k=nb_test)).reshape((nb_test, height, width))
+
+            z = model.predict(x).reshape((nb_test, height, width))
+            print(z.shape)
+
+            fig, ax = plt.subplots(nb_test, 2)
+
+            ximg = []
+            zimg = []
+            for i in range(nb_test):
+                img = z[i]
+                # img[img < 0.5] = 0
+                # img[img > 0.5] = 1
+                ximg.append(cv2.resize(x[i], (1280, 1280), interpolation=cv2.INTER_AREA))
+                zimg.append(cv2.resize(img, (1280, 1280), interpolation=cv2.INTER_AREA))
+
+            # images = images.reshape((2, 1280, 1280))
+            for axi, xi, zi in zip(ax, ximg, zimg):
+                axi[0].set(xticks=[], yticks=[])
+                axi[1].set(xticks=[], yticks=[])
+                axi[0].imshow(xi, vmin=0, vmax=1)
+                axi[1].imshow(zi, vmin=0, vmax=1)
+
+            plt.show()
+
+        # accuracy = []
+        #
+        # for j in range(10):
+        #     prediction = model.predict(data_train)
+        #
+        #     flat_test = []
+        #     flat_prediction = []
+        #
+        #     for i in range(len(data_train)):
+        #         flat_test += list(data_train[i].flatten())
+        #         p = prediction[i].flatten()
+        #         p[p>0.1*j] = 1
+        #         p[p<0.1*j] = 0
+        #         flat_prediction += list(p)
+        #
+        #     accuracy.append(accuracy_score(flat_test, flat_prediction))
+        #
+        # plt.plot(accuracy)
+        # plt.title("Accuracy evolution with threshold")
+        # plt.show()
+        #
+        # best_threshold = np.argmax(accuracy)
+        # print(f"Reconstruction Binary Accuracy = {acc}")
+
+        return model
+
+    def display_behavior_evolution(self, clusters, colors):
+        """
+        Plot the evolution of the different behavior throughout the log_dataset
+        :param clusters:
+        :param colors:
+        :return:
+        """
+        fig, ax = plt.subplots()
+        # xfmt = dat.DateFormatter('%d-%m-%y')
+        # months = dat.MonthLocator()  # every month
+        # monthsFmt = dat.DateFormatter('%b %Y')  # Eg. Jan 2012
+
+        months = dat.AutoDateLocator()
+        monthsFmt = dat.AutoDateFormatter(locator=months)
+
+        # format the ticks
+        ax.xaxis.set_major_locator(months)
+        ax.xaxis.set_major_formatter(monthsFmt)
+        ax.xaxis.set_minor_locator(months)
+
+        for cluster_id, window_ids in clusters.items():
+            lvl = cluster_id * 2
+
+            time_periods = self.time_periods_from_windows(window_ids)
+
+            print("Cluster {} :".format(cluster_id))
+            for period in time_periods:
+                start_date = self.start_date + dt.timedelta(days=period[0])
+                end_date = self.start_date + dt.timedelta(days=period[1] + 1)
+
+                print("\t{} - {}".format(start_date, end_date))
+
+                if time_periods.index(period) == 0:
+                    plt.text(dat.date2num(start_date), lvl, 'Behavior {}'.format(cluster_id), fontsize=16)
+                ax.hlines(lvl, dat.date2num(start_date), dat.date2num(end_date), label='Behavior {}'.format(cluster_id),
+                          linewidth=75, color=colors[cluster_id])
+
+        ax.tick_params(axis='both', which='major', labelsize=12)
+        fig.autofmt_xdate()
+        # plt.title("Activity : '{}'".format(self.label))
+        plt.xlabel('Time')
+        plt.ylabel('Behaviors')
+
+    def compute_clusters_centers(self, clusters_indices):
+        """
+        Compute the center of each cluster
+        :param clusters_indices:
+        :return:
+        """
+
+        clusters_centers = []
+
+        for cluster_id, indices in clusters_indices.items():
+
+            cluster_heatmaps = []
+            for day_id in indices:
+                start_date = self.start_date + day_id * dt.timedelta(days=1)
+                end_date = start_date + dt.timedelta(days=1)
+                day_dataset = self.log_dataset[
+                    (self.log_dataset.date >= start_date) & (self.log_dataset.date <= end_date)]
+
+                heatmap = self.build_heatmap(day_dataset, nb_days=1)
+                cluster_heatmaps.append(heatmap.values)
+
+            cluster_center = np.mean(np.asarray(cluster_heatmaps), axis=0)
+            clusters_centers.append(cluster_center)
+
+        clusters_centers = np.asarray(clusters_centers)
+
+        return clusters_centers
+
 
 if __name__ == '__main__':
     main()

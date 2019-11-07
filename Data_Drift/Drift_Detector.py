@@ -16,7 +16,7 @@ def main():
 
     label = "leave_home"
 
-    # windows_dataset = activity_drift_detector(data, window_size, label, plot=True, gif=False)
+    windows_dataset = activity_drift_detector(data, window_size, label, plot=True, gif=False)
 
     # windows_dataset.to_csv("{}_windows_data.csv".format(data_name), period_ts_index=False)
 
@@ -179,9 +179,6 @@ def activity_drift_detector(data, time_window_duration, label, plot=True, gif=Fa
 
 
     plt.legend(loc='upper right')
-
-
-
 
     return None
 

@@ -23,7 +23,7 @@ class AE(tf.keras.Model):
     def __init__(self, latent_dim):
         super().__init__()
         self.latent_dim = latent_dim
-        self.name_model = 'AutoEncoder'
+        self.name_model = 'AutoEncoderModel'
         self.inference_net = tf.keras.Sequential(
             [
                 tf.keras.layers.InputLayer(input_shape=(nb_features,), dtype='float32'),

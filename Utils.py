@@ -1,5 +1,6 @@
 import datetime as dt
 import os
+import random
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -120,14 +121,13 @@ def generate_random_color(n):
     """
 
     colors = []
-    cmap = matplotlib.cm.get_cmap('Spectral')
+    # cmap = matplotlib.cm.get_cmap('nipy_spectral')
     # cmap = plt.get_cmap('Spectral')
-    for i in range(0, n):
-        rgb = cmap(i / n)
-        rgb = [int(256 * x) % 256 for x in rgb]
-        color = '#%02x%02x%02x' % (rgb[0], rgb[1], rgb[2])
+    for i in range(n):
+        color = matplotlib.cm.nipy_spectral(float(i) / n)
         colors.append(color)
 
+    random.shuffle(colors)
     return colors
 
 
