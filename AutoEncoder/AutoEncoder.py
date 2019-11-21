@@ -12,7 +12,7 @@ from sklearn.metrics import silhouette_samples, silhouette_score
 
 
 def main():
-    name = 'aruba'
+    name = 'hh113'
     train_ratio = .9
     input_folder = f"../output/{name}/tw_images/"
     list_files = glob.glob(input_folder + '*.png')
