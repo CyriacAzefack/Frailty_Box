@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Pause for Dynamic Digital Twin">
-      <change afterPath="$PROJECT_DIR$/Omwave/sensors.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Omwave/sensors_1.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/KA/AutoEncoder_logs/checkpoint.ckpt_temp_0265e440cb2d4c56bbfe9f189e99a5d9/part-00000-of-00001.data-00000-of-00001.tempstate6833138286949798592" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/KA/tw_images/KA_tw_1.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/KA/tw_images/KA_tw_10.png" afterDir="false" />
@@ -609,13 +607,7 @@
       <change afterPath="$PROJECT_DIR$/output/KA/tw_images/KA_tw_97.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/KA/tw_images/KA_tw_98.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/KA/tw_images/KA_tw_99.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Frailty_Box.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Frailty_Box.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoEncoder/AutoEncoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutoEncoder/AutoEncoder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Behavior_Drift.py" beforeDir="false" afterPath="$PROJECT_DIR$/Behavior_Drift.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Omwave/aesio_retrieve_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/Omwave/aesio_retrieve_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/HH/hh115/dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/HH/hh115/dataset.csv" afterDir="false" />
@@ -5308,13 +5300,6 @@
       <option name="presentableId" value="Default" />
       <updated>1521208662820</updated>
     </task>
-    <task id="LOCAL-00027" summary="Change histogram validation to functions">
-      <created>1537532497580</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1537532497580</updated>
-    </task>
     <task id="LOCAL-00028" summary="* Add HH datasets&#10;* Time distribution validation based on HeatMaps">
       <created>1538560992998</created>
       <option name="number" value="00028" />
@@ -5651,7 +5636,14 @@
       <option name="project" value="LOCAL" />
       <updated>1573580786693</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="Fix Omwave script for sensors data retrieval">
+      <created>1574356485959</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1574356485960</updated>
+    </task>
+    <option name="localTasksCounter" value="77" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -5695,7 +5687,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="add 'episode_occurrences' and 'events' to macro-activities" />
     <MESSAGE value="Macro-Activity Structure updated : &#10;- History count added (and updatable with time windows)&#10;- duration laws added&#10;- occurrence order prob added" />
     <MESSAGE value="Moving to learning Digital Twin Model" />
     <MESSAGE value="Added Activity Manager&#10;Changing ongoing on the overall simulation model&#10;Simpler Macro-activities mining (episode length x nb_occ)" />
@@ -5720,7 +5711,8 @@
     <MESSAGE value="AutoEncoder ready for &quot;Aruba&quot;" />
     <MESSAGE value="Hierarchical Clustering, Image Time Windows" />
     <MESSAGE value="Version 2 of Behavior Drift Finished" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version 2 of Behavior Drift Finished" />
+    <MESSAGE value="Fix Omwave script for sensors data retrieval" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix Omwave script for sensors data retrieval" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -5881,7 +5873,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/AutoEncoder/AutoEncoder.py</url>
-          <line>148</line>
+          <line>146</line>
           <option name="timeStamp" value="1253" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -5891,7 +5883,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Omwave/aesio_retrieve_data.py</url>
-          <line>38</line>
+          <line>39</line>
           <option name="timeStamp" value="1299" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
