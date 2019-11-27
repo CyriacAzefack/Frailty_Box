@@ -2,9 +2,11 @@ from __future__ import absolute_import
 
 import errno
 import pickle
+import random
 from optparse import OptionParser
 
 import cv2
+import matplotlib
 import matplotlib.cm as cm
 import matplotlib.dates as dat
 import seaborn as sns
@@ -17,6 +19,12 @@ from tqdm import trange
 
 from AutoEncoder.AutoEncoder import AutoEncoderModel
 from Utils import *
+
+font = {'family': 'normal',
+        'weight': 'bold',
+        'size': 14}
+
+matplotlib.rc('font', **font)
 
 
 # sns.set_style('darkgrid')
@@ -137,7 +145,6 @@ def silhouette_plots(data, display=True):
 
     tsne_data = PCA(n_components=2).fit_transform(data)
 
-
     optimal_n_clusters = 1
     avg_silhouette = 0
 
@@ -235,7 +242,6 @@ def silhouette_plots(data, display=True):
         print()
         print(f"Choose Number of Clusters : {optimal_n_clusters}")
         plt.show()
-
 
     # print(f"Choosen Number of PCA Components : {min_n_components}")
 
@@ -423,7 +429,6 @@ class BehaviorClustering:
         :return:
         """
 
-
         fig = plt.figure()
         ax = fig.add_subplot(111)
 
@@ -500,7 +505,6 @@ class ImageBehaviorClustering(BehaviorClustering):
         :return: list of the heatmap matrix
         """
 
-
         tw_heatmaps = []
 
         nb_days_per_time_window = int(self.time_window_duration / dt.timedelta(days=1))
@@ -512,8 +516,6 @@ class ImageBehaviorClustering(BehaviorClustering):
             heatmap = self.build_heatmap(log=tw_log, nb_days=nb_days_per_time_window, display=display)
             if store:
                 self.save_heatmap(heatmap, tw_id + 1)
-
-
 
             # self.plot_day_bars(days_range)
             # plt.show()
@@ -595,7 +597,6 @@ class ImageBehaviorClustering(BehaviorClustering):
 
         encoded_points = np.asarray(encoded_points)
 
-
         if not n_clusters:
             n_clusters = silhouette_plots(encoded_points, display=True)
 
@@ -648,7 +649,7 @@ class ImageBehaviorClustering(BehaviorClustering):
         n_clusters = len(clusters_indices)
         clusters_centers = self.compute_clusters_centers(clusters_indices)
 
-        fig, ax = plt.subplots(n_clusters, n_clusters, sharex=True, sharey=True)
+        fig, ax = plt.subplots(n_clusters, n_clusters, sharex=True, sharey=False)
         fig.suptitle("Clusters Differences", fontsize=14)
 
         for cluster_i in range(n_clusters):
@@ -665,11 +666,10 @@ class ImageBehaviorClustering(BehaviorClustering):
 
                 ax[cluster_i][cluster_j].set_title(f'Cluster {cluster_i} --> Cluster {cluster_j}')
                 ax[cluster_i][cluster_j].set_yticklabels(self.labels)
+                ax[cluster_i][cluster_j].set_yticks(np.arange(len(self.labels)))
 
         plt.yticks(rotation=45)
         plt.xticks(rotation=30)
-
-
 
         if display:
             fig, ax = plt.subplots(n_clusters, 1)
@@ -747,31 +747,31 @@ class ImageBehaviorClustering(BehaviorClustering):
         if display:
             model.plot_history()
 
-            # # TEST THE ENCODE-DECODE OPERATION
-            # nb_test = 5
-            #
-            # x = np.asarray(random.choices(data_train, k=nb_test)).reshape((nb_test, height, width))
-            #
-            # z = model.predict(x).reshape((nb_test, height, width))
-            # print(z.shape)
-            #
-            # fig, ax = plt.subplots(nb_test, 2)
-            #
-            # ximg = []
-            # zimg = []
-            # for i in range(nb_test):
-            #     img = z[i]
-            #     # img[img < 0.5] = 0
-            #     # img[img > 0.5] = 1
-            #     ximg.append(cv2.resize(x[i], (1280, 1280), interpolation=cv2.INTER_AREA))
-            #     zimg.append(cv2.resize(img, (1280, 1280), interpolation=cv2.INTER_AREA))
-            #
-            # # images = images.reshape((2, 1280, 1280))
-            # for axi, xi, zi in zip(ax, ximg, zimg):
-            #     axi[0].set(xticks=[], yticks=[])
-            #     axi[1].set(xticks=[], yticks=[])
-            #     axi[0].imshow(xi, vmin=0, vmax=1)
-            #     axi[1].imshow(zi, vmin=0, vmax=1)
+            # TEST THE ENCODE-DECODE OPERATION
+            nb_test = 5
+
+            x = np.asarray(random.choices(data_train, k=nb_test)).reshape((nb_test, height, width))
+
+            z = model.predict(x).reshape((nb_test, height, width))
+            print(z.shape)
+
+            fig, ax = plt.subplots(nb_test, 2)
+
+            ximg = []
+            zimg = []
+            for i in range(nb_test):
+                img = z[i]
+                # img[img < 0.5] = 0
+                # img[img > 0.5] = 1
+                ximg.append(cv2.resize(x[i], (1280, 1280), interpolation=cv2.INTER_AREA))
+                zimg.append(cv2.resize(img, (1280, 1280), interpolation=cv2.INTER_AREA))
+
+            # images = images.reshape((2, 1280, 1280))
+            for axi, xi, zi in zip(ax, ximg, zimg):
+                axi[0].set(xticks=[], yticks=[])
+                axi[1].set(xticks=[], yticks=[])
+                axi[0].imshow(xi, vmin=0, vmax=1)
+                axi[1].imshow(zi, vmin=0, vmax=1)
 
             plt.show()
 

@@ -26,6 +26,8 @@ def main():
 
     modes = ['DYNAMIC', 'STATIC']
 
+    confidence_error = 0.95
+
     simu_time_step = 15
 
     label = 'sleeping'
@@ -82,7 +84,7 @@ def main():
         dirname = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, mode, simu_time_step)
 
         activity_duration_validation(label, original_dataset=testing_dataset, replications_directory=dirname,
-                                     confidence=0.95, display=True)
+                                     confidence=confidence_error, display=True)
 
         results_df = pd.DataFrame(columns=['KDE'])
 
@@ -405,7 +407,7 @@ def validation_periodic_time_distribution(label, real_dataset, replications_dire
     return intersect_area, den_area, rmse
 
 
-def activity_duration_validation(label, original_dataset, replications_directory, confidence=0.95,
+def activity_duration_validation(label, original_dataset, replications_directory, confidence,
                                  display=True):
     """
     Validation of the simulation replications using the Duration of the activity throughout the data
@@ -683,7 +685,7 @@ def plot_ambulatogram(data, labels, start_date=None, nb_days=1, display=False):
     return data[['date', 'label_id']]
 
 
-def compute_stochastic(row, error_confidence=0.95):
+def compute_stochastic(row, error_confidence):
     array = row.values
 
     # We remove all the 'NaN' values
@@ -692,7 +694,7 @@ def compute_stochastic(row, error_confidence=0.95):
     return compute_stochastic_error(array=array, confidence=error_confidence)
 
 
-def compute_stochastic_error(array, confidence=0.95):
+def compute_stochastic_error(array, confidence):
     '''
     Compute the stochastic error given by the array
     :param array: an array of numbers

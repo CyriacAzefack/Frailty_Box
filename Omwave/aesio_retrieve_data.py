@@ -3,10 +3,8 @@ import json
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
-from time import sleep
 
 import dateutil.parser
-from tqdm import trange
 
 DEBUG = True
 brokerUrl = "https://broker.aesio.dev.omwave.me"
@@ -97,10 +95,10 @@ def getMessagesLoop(deviceAddrList, timestep, from_time=None):
     """
     to_time = datetime.now(timezone.utc)
 
-    print("Begin Warming!!")
-    for i in trange(120, desc="Warming the system"):
-        sleep(1)
-    print("End Warming!!")
+    # print("Begin Warming!!")
+    # for i in trange(120, desc="Warming the system"):
+    #     sleep(1)
+    # print("End Warming!!")
 
     while True:
         if from_time is None: from_time = to_time
