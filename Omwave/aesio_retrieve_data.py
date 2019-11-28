@@ -3,8 +3,10 @@ import json
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
+from time import sleep
 
 import dateutil.parser
+from tqdm import trange
 
 DEBUG = True
 brokerUrl = "https://broker.aesio.dev.omwave.me"
@@ -95,10 +97,10 @@ def getMessagesLoop(deviceAddrList, timestep, from_time=None):
     """
     to_time = datetime.now(timezone.utc)
 
-    # print("Begin Warming!!")
-    # for i in trange(120, desc="Warming the system"):
-    #     sleep(1)
-    # print("End Warming!!")
+    print("Begin Warming!!")
+    for i in trange(60, desc="Warming the system"):
+        sleep(1)
+    print("End Warming!!")
 
     while True:
         if from_time is None: from_time = to_time
@@ -131,23 +133,8 @@ subdevices = getSubdevices(gatewayAddress=gatewayAddress)
 deviceAddrList = getSubDevicesAddr(gatewayAddress)
 for subdevice in subdevices:
     print(f"\t{subdevice}")
-# print(deviceAddrList)
 
-
-# list messages from last day for this device
-# deviceAddr = subdevices[1]['bluetoothAddr']
-#
-# deviceAddr = "FB:22:F0:83:70:F5"
-# for m in getStatusMessages(deviceAddr, fromDate = datetime.now(timezone.utc) - timedelta(days=1)):
-#     printStatusMessage(deviceAddr, m)
-
-# # list all messages starting now, gathering them at 10 minutes interval 
-# for (deviceAddr, m) in getMessagesLoop(deviceAddrList, timestep=timedelta(seconds=5)):
-#     printStatusMessage(deviceAddr, m)
-
-# # list all messages starting 1 hour ago, gathering them at 5 seconds interval
-
-start_time = datetime.now(timezone.utc)
+start_time = datetime.now(timezone.utc) - timedelta(days=10)
 timestep = timedelta(seconds=10)
 
 with open(output, 'w+', newline='') as csvfile:
