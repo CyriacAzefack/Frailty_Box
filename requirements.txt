@@ -1,5 +1,4 @@
-anaconda-navigator==1.9.7
-anaconda-project==0.8.3
+
 astropy==3.2.1
 backports.os==0.1.1
 backports.shutil-get-terminal-size==1.0.0
