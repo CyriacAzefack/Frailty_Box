@@ -75,7 +75,7 @@ def main():
     time_step = dt.timedelta(minutes=5)
     window_step = dt.timedelta(days=1)
     latent_dim = 3
-    plot = True
+    plot = False
     debug = False
 
     drift(dataset_name=dataset_name, window_size=window_size, window_step=window_step, latent_dim=latent_dim,
