@@ -1,4 +1,5 @@
 import imageio
+import matplotlib
 import matplotlib.dates as dat
 import seaborn as sns
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -30,7 +31,7 @@ def main():
 
     # simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
 
-    real_graph = ActivityOccurrencesGraph(dataset_name, dataset, nb_days=30)
+    real_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
 
 
 def visualize(data, start_date=None, end_date=None):

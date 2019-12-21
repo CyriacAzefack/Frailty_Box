@@ -139,7 +139,7 @@ def main():
         print("## Building forecasting models ... ##")
         ADP_error_df, duration_error_df = activity_manager.build_forecasting_models(train_ratio=0.9,
                                                                                     nb_periods_to_forecast=testing_days + 5,
-                                                                                    display=plot, debug=debug)
+                                                                                    display=plot, debug=True)
 
         ADP_error_df.to_csv(output + '/../ADP_Forecasting_Models_Errors.csv', sep=';', index=False)
         duration_error_df.to_csv(output + '/../Duration_Forecasting_Models_Errors.csv', sep=';', index=False)

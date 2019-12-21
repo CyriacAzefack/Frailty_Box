@@ -72,7 +72,7 @@ def main():
 
     dataset_name = "aruba"
     window_size = 7
-    time_step = dt.timedelta(minutes=10)
+    time_step = dt.timedelta(minutes=5)
     window_step = dt.timedelta(days=1)
     latent_dim = 3
     plot = True
@@ -98,7 +98,7 @@ def drift(dataset_name, window_size, window_step, time_step, latent_dim, plot, d
 
     behavior.extract_features(store=True, display=debug)
 
-    n_clusters = None
+    n_clusters = 2
     clusters_indices = behavior.time_windows_clustering(display=plot, debug=debug, latent_dim=latent_dim,
                                                         n_clusters=n_clusters)
 
@@ -272,7 +272,7 @@ class BehaviorClustering:
         self.labels = self.log_dataset.groupby(['label'])['duration'].sum().sort_values().index
 
         # We take the 10 most present activities
-        self.labels = self.labels[-10:]
+        # self.labels = self.labels[-10:]
 
         self.label_color = {}
         colors = generate_random_color(len(self.labels))
@@ -541,13 +541,13 @@ class ImageBehaviorClustering(BehaviorClustering):
         heatmap = {}
         for label in self.labels:
             label_log = log[log.label == label]
-            actives_ts = []
+            actives_time_steps = []
             for _, row in label_log.iterrows():
-                actives_ts += list(range(row.start_step, row.end_step))
+                actives_time_steps += list(range(row.start_step, row.end_step + 1))
 
             steps_activity_ratio = []
             for step in range(self.nb_daily_steps):
-                ratio = actives_ts.count(step) / nb_days
+                ratio = min(actives_time_steps.count(step) / nb_days, 1)
                 steps_activity_ratio.append(ratio)
 
             heatmap[label] = steps_activity_ratio
@@ -649,7 +649,7 @@ class ImageBehaviorClustering(BehaviorClustering):
         n_clusters = len(clusters_indices)
         clusters_centers = self.compute_clusters_centers(clusters_indices)
 
-        fig, ax = plt.subplots(n_clusters, n_clusters, sharex=True, sharey=False)
+        fig, ax = plt.subplots(n_clusters, n_clusters, sharex=False, sharey=False)
         fig.suptitle("Clusters Differences", fontsize=14)
 
         for cluster_i in range(n_clusters):
@@ -661,7 +661,7 @@ class ImageBehaviorClustering(BehaviorClustering):
 
                 df_change_img = pd.DataFrame(change_img, columns=self.time_labels, index=self.labels)
 
-                sns.heatmap(df_change_img, center=0, cmap='RdYlGn', vmin=-1, vmax=1, cbar=False,
+                sns.heatmap(df_change_img, center=0, cmap='RdYlGn', vmin=-1, vmax=1, cbar=True,
                             ax=ax[cluster_i][cluster_j])
 
                 ax[cluster_i][cluster_j].set_title(f'Cluster {cluster_i} --> Cluster {cluster_j}')
