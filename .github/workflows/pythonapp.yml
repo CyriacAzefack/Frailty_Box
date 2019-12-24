@@ -23,6 +23,8 @@ jobs:
     name: Behavior Drift
     needs: init
 
+    runs-on: ubuntu-latest
+
     steps:
       - name : Try Behavior Drift
         run: |
@@ -31,6 +33,8 @@ jobs:
   simulation:
     name: Behavior Modeling
     needs: init
+
+    runs-on: ubuntu-latest
 
     steps:
       - name: install fbprophet
