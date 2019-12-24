@@ -3,7 +3,8 @@ name: Behavior Drift Application
 on: [push]
 
 jobs:
-  build:
+  init:
+    name: Initialization
 
     runs-on: ubuntu-latest
 
@@ -17,10 +18,25 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name : Try Behavior Drift
-      run: |
-        python Behavior_Drift.py
-    - name: Test with pytest
-      run: |
-        pip install pytest
-        pytest
+
+  drift :
+    name: Behavior Drift
+    needs: init
+
+    steps:
+      - name : Try Behavior Drift
+        run: |
+          python Behavior_Drift.py
+
+  simulation:
+    name: Behavior Modeling
+    needs: init
+
+    steps:
+      - name: install fbprophet
+        run: |
+          pip install fbprophet
+
+      - name: Static Modeling - ARUBA
+        run: |
+          python Behavior_Model -n aruba
