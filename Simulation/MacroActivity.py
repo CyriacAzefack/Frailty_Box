@@ -93,15 +93,15 @@ def main():
     print("#####################################")
     print("#    FORECASTING MODEL TRAINING     #")
     print("#####################################")
-    # error = activity.fit_history_count_forecasting_model(train_ratio=train_ratio, last_time_window_id=tw_id-1,
-    #                                                      nb_periods_to_forecast=30, display=True)
+    error = activity.fit_history_count_forecasting_model(train_ratio=train_ratio, last_time_window_id=tw_id - 1,
+                                                         nb_periods_to_forecast=30, display=True)
 
-    # mean_duration_error, std_duration_error = activity.fit_duration_distrub_forecasting_model(train_ratio=train_ratio,
-    #                                                                                           last_time_window_id=tw_id - 1,
-    #                                                                                           nb_periods_to_forecast=10,
-    #                                                                                           display=True)
+    mean_duration_error, std_duration_error = activity.fit_duration_distrub_forecasting_model(train_ratio=train_ratio,
+                                                                                              last_time_window_id=tw_id - 1,
+                                                                                              nb_periods_to_forecast=10,
+                                                                                              display=True)
 
-    # print("Prediction Error (NMSE) : {:.2f}".format(error))
+    print("Prediction Error (NMSE) : {:.2f}".format(error))
 
 
 class MacroActivity:
