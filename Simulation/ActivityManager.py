@@ -112,7 +112,7 @@ class ActivityManager:
 
         return matrix
 
-    def build_forecasting_models(self, train_ratio, nb_periods_to_forecast=5, display=False, debug=False):
+    def build_forecasting_models(self, train_ratio, nb_periods_to_forecast, display=False, debug=False):
         """
         Build forecasting models for Macro-Activity parameters
         :param train_ratio: ratio of data used for training
@@ -127,17 +127,20 @@ class ActivityManager:
         # Build forecasting models
         i = 0
         for set_episode, macro_activity_object in self.activity_objects.items():
+            print(f"{list(set_episode)} : {macro_activity_object}")
+
             i += 1
             # ACTIVITY DAILY PROFILE FORECASTING
-            ADP_error = macro_activity_object.fit_history_count_forecasting_model(train_ratio=train_ratio,
-                                                                                  last_time_window_id=self.last_time_window_id,
-                                                                                  nb_periods_to_forecast=nb_periods_to_forecast,
-                                                                                  display=debug)
+            ADP_forecast, ADP_error = macro_activity_object.forecast_history_count(train_ratio=train_ratio,
+                                                                                   last_time_window_id=self.last_time_window_id,
+                                                                                   nb_periods_to_forecast=nb_periods_to_forecast,
+                                                                                   display=debug)
+
             ADP_error_df.at[len(ADP_error_df)] = [tuple(set_episode), ADP_error]
 
             # ACTIVITIES DURATIONS FORECASTING
             # TODO : Monitor the error on forecasting models for duration
-            mean_duration_error, std_duration_error = macro_activity_object.fit_duration_distrub_forecasting_model(
+            mean_duration_error, std_duration_error = macro_activity_object.forecast_duration_distrib(
                 train_ratio=train_ratio, last_time_window_id=self.last_time_window_id,
                 nb_periods_to_forecast=nb_periods_to_forecast, display=debug)
 
@@ -146,15 +149,13 @@ class ActivityManager:
                                                                  std_duration_error[label], label]
 
             # STOP HERE IF SINGLE-ACTIVITY
-            if len(set_episode) < 2:
-                break
+            # if len(set_episode) < 2:
+            #     break
 
             # EXECUTION ORDER FORECASTING
-            # exec_order_error = macro_activity_object.fit_execution_order_forecasting_model(
+            # exec_order_error = macro_activity_object.forecast_execution_order(
             #     train_ratio=train_ratio, last_time_window_id=self.last_time_window_id,
             #     nb_periods_to_forecast=nb_periods_to_forecast, debug=debug)
-
-
 
             sys.stdout.write(
                 "\r{}/{} Macro-Activities Forecasting models done...".format(i, len(self.activity_objects)))

@@ -28,7 +28,7 @@ def main():
 
     confidence_error = 0.95
 
-    simu_time_step = 15
+    simu_time_step = 5
 
     label = 'sleeping'
 

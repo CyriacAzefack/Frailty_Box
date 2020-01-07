@@ -20,12 +20,14 @@ from Pattern_Mining.Pattern_Discovery import pick_dataset
 
 def main():
     dataset_name = 'aruba'
+    # dataset_name = 'hh101'
     dataset = pick_dataset(dataset_name)
     # SIM_MODEL PARAMETERS
     # episode = ('toilet', 'dress')
     episode = ('bed_to_toilet', 'sleeping')
+    # episode = ('enter_home', 'leave_home', 'watch_tv')
     period = dt.timedelta(days=1)
-    time_step = dt.timedelta(minutes=10)
+    time_step = dt.timedelta(minutes=60)
     tep = 30
 
     ############################
@@ -91,15 +93,15 @@ def main():
 
     # Build the model with a lot of time windows
     print("#####################################")
-    print("#    FORECASTING MODEL TRAINING     #")
+    print("#    TRAINING FORECASTING MODEL     #")
     print("#####################################")
-    error = activity.fit_history_count_forecasting_model(train_ratio=train_ratio, last_time_window_id=tw_id - 1,
-                                                         nb_periods_to_forecast=30, display=True)
+    error = activity.forecast_history_count(train_ratio=train_ratio, last_time_window_id=tw_id - 1,
+                                            nb_periods_to_forecast=10, display=True)
 
-    mean_duration_error, std_duration_error = activity.fit_duration_distrub_forecasting_model(train_ratio=train_ratio,
-                                                                                              last_time_window_id=tw_id - 1,
-                                                                                              nb_periods_to_forecast=10,
-                                                                                              display=True)
+    mean_duration_error, std_duration_error = activity.forecast_duration_distrib(train_ratio=train_ratio,
+                                                                                 last_time_window_id=tw_id - 1,
+                                                                                 nb_periods_to_forecast=10,
+                                                                                 display=True)
 
     print("Prediction Error (NMSE) : {:.2f}".format(error))
 
@@ -317,8 +319,8 @@ class MacroActivity:
         """
         return self.count_histogram.loc[[time_window_id]]
 
-    def fit_history_count_forecasting_model(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
-                                            display=False):
+    def forecast_history_count(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
+                               display=False):
         """
         Fit a time series forecasting model to the history count data
         :param train_ratio:
@@ -330,7 +332,7 @@ class MacroActivity:
 
         nb_tstep = len(self.count_histogram.columns) - 1
 
-        # Fill history count df unti last time window registered
+        # Fill history count df until last time window registered
 
         last_filled_tw_id = int(self.count_histogram.tw_id.max())
 
@@ -345,25 +347,29 @@ class MacroActivity:
 
         dataset = dataset.astype(int)
 
+        exog = np.asarray([i for i in range(nb_tstep)] * len(self.count_histogram)).reshape(len(dataset), 1)
         train_size = int(len(dataset) * train_ratio)
 
         train, test = dataset[:train_size], dataset[train_size:]
+        train_exog, test_exog = exog[:train_size], exog[train_size:]
 
         nb_steps_to_forecast = len(test) + nb_periods_to_forecast * nb_tstep
         monitoring_start_time = t.time()
 
         # find_ARIMA_params(train, seasonality=nb_tstep)
         # if method == MacroActivity.SARIMAX:
-        model = sarimax.SARIMAX(train, order=(2, 0, 0), seasonal_order=(2, 1, 0, nb_tstep), enforce_stationarity=False,
+        model = sarimax.SARIMAX(train, exog=train_exog, order=(1, 0, 1), seasonal_order=(0, 1, 0, nb_tstep),
+                                enforce_stationarity=False,
                                 enforce_invertibility=False)
+        # model = ARIMA(train, order=(4, 1, 4))
 
         if np.sum(model.start_params) == 0:  # We switch to a simple ARIMA model
             print('Simple ARIMA Model')
             model = ARIMA(train, order=(4, 1, 4))
             # print(mode)
-            model_fit = model.fit(disp=False)
-            validation_forecast = model_fit.forecast(len(test))[0]
-            raw_forecast = model_fit.forecast(nb_steps_to_forecast)[0][len(test):]
+            sarimax_model = model.fit(disp=False)
+            validation_forecast = sarimax_model.forecast(len(test))[0]
+            raw_forecast = sarimax_model.forecast(nb_steps_to_forecast)[0][len(test):]
         else:
 
             # burnin_model = SARIMAX(train, order=(4, 1, 4), seasonal_order=(1, 0, 0, 1), enforce_stationarity=False,
@@ -372,16 +378,22 @@ class MacroActivity:
             #
             # start_params = np.asarray(list(start_params) + [0]*(len(model.start_params) - len(start_params)))
 
-            model_fit = model.fit(disp=False)
-            validation_forecast = model_fit.forecast(len(test))
-            raw_forecast = model_fit.forecast(nb_steps_to_forecast)[len(test):]
+            sarimax_model = model.fit(disp=False)
+            validation_forecast = sarimax_model.predict(len(train), len(train) + len(test) - 1, exog=test_exog)
 
+            # forecast(len(test), exog=test_exog)
+            raw_exog = np.asarray([(test_exog[-1] + i) % nb_tstep for i in range(1, nb_steps_to_forecast + 1)]).reshape(
+                nb_steps_to_forecast, 1)
+
+            # raw_forecast = sarimax_model.forecast(nb_steps_to_forecast)[len(test):]
+            raw_forecast = sarimax_model.predict(len(train), len(train) + nb_steps_to_forecast - 1, exog=raw_exog)[
+                           len(test):]
 
         elapsed_time = dt.timedelta(seconds=round(t.time() - monitoring_start_time, 1))
 
         print("Training Time: {}".format(elapsed_time))
 
-        error = mean_squared_error(test, validation_forecast) / np.mean(test)
+        error = mean_squared_error(test, validation_forecast)
 
         # Replace all negative values by 0
         raw_forecast = np.where(raw_forecast > 0, raw_forecast, 0)
@@ -398,16 +410,16 @@ class MacroActivity:
             plt.plot(dataset, 'b', alpha=0.5)
             plt.plot(np.arange(len(dataset), len(dataset) + len(raw_forecast)), raw_forecast, 'red', alpha=0.7)
 
-            plt.title('{}\nTest NMSE: {:.3f}'.format(self.episode, error))
+            plt.title('{}\nTest MSE: {:.3f}'.format(self.episode, error))
             plt.xlabel('Time')
             plt.ylabel('count')
             plt.axvline(x=train_size, color='black')
             plt.show()
 
-        return error
+        return real_forecast, error
 
-    def fit_duration_distrub_forecasting_model(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
-                                               display=False):
+    def forecast_duration_distrib(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
+                                  display=False):
         """
         forecast the activities duration
         :param train_ratio:
@@ -500,8 +512,8 @@ class MacroActivity:
 
         return mean_duration_errors, std_duration_errors
 
-    def fit_execution_order_forecasting_model(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
-                                              display=False):
+    def forecast_execution_order(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
+                                 display=False):
         """
         Fit the execution order
         :param train_ratio:
@@ -820,7 +832,7 @@ def prophet_forecaster(start_date, data, train_ratio, nb_period_to_forecast, dis
 
     test = test_dataset['y'].values
 
-    error = mean_squared_error(test, validation_forecast) / np.mean(test)
+    error = mean_squared_error(test, validation_forecast)
 
     error = round(error, 3)
 
@@ -836,7 +848,7 @@ def prophet_forecaster(start_date, data, train_ratio, nb_period_to_forecast, dis
         sns.lineplot(x="ds", y='yhat', data=forecast, label='Forecast', ax=ax)
         sns.lineplot(x="ds", y='y', data=test_dataset, label='Test', ax=ax)
 
-        plt.title('R2 score : {}'.format(error))
+        plt.title('MSE : {}'.format(error))
 
         # model.plot(forecast)
         # model.plot_components(forecast)

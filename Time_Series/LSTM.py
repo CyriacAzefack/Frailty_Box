@@ -15,10 +15,10 @@ np.random.seed(7)
 
 
 def main():
-    dataset_name = "hh115"
+    dataset_name = "aruba"
 
     # episode = ('bed_to_toilet', 'sleeping')
-    episode = ('toilet', 'dress')
+    episode = ('bed_to_toilet', 'sleeping')
 
     output = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Activity_{}/".format(dataset_name, episode)
 

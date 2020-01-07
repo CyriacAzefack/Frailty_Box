@@ -137,12 +137,16 @@ def main():
                                                            Tep=Tep, nb_days_per_window=window_days, debug=debug)
 
         print("## Building forecasting models ... ##")
-        ADP_error_df, duration_error_df = activity_manager.build_forecasting_models(train_ratio=0.9,
+        ADP_error_df, duration_error_df = activity_manager.build_forecasting_models(train_ratio=0.8,
                                                                                     nb_periods_to_forecast=testing_days + 5,
-                                                                                    display=plot, debug=True)
+                                                                                    display=plot, debug=debug)
 
         ADP_error_df.to_csv(output + '/../ADP_Forecasting_Models_Errors.csv', sep=';', index=False)
         duration_error_df.to_csv(output + '/../Duration_Forecasting_Models_Errors.csv', sep=';', index=False)
+
+    # dump Activity Manager
+    pickle.dump(activity_manager, open(output + '{}_Activity_Manager.pkl'.format('STATIC' if static_learning
+                                                                                 else 'DYNAMIC'), 'wb'))
 
     ###############
     # SIMULATION  #
@@ -210,51 +214,6 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
                                                                                             verbose=debug)
     for episode, (episode_occurrences, events) in all_macro_activities.items():
         activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
-
-    # input = "../output/{}/ID_{}/patterns.pickle".format(dataset_name, 0)
-    #
-    # patterns = pd.read_pickle(input)
-    #
-    # patterns['Validity Duration'] = patterns['Validity Duration'].apply(lambda x: x.total_seconds())
-    #
-    # # patterns['sort_key'] = patterns['Validity Duration'] * patterns['Accuracy']
-    # patterns['sort_key'] = patterns['Episode'].apply(lambda x: len(x))  # * patterns['Accuracy']
-    # # Rank the macro-activities
-    # patterns['sort_key'] = patterns['Compression Power'] * patterns['Accuracy']
-    # # patterns['sort_key'] = patterns['Episode'].apply(lambda x: len(x))  # * patterns['Accuracy']
-    # patterns.sort_values(['sort_key'], ascending=False, inplace=True)
-    #
-    # for period_ts_index, pattern in patterns.iterrows():  # Create one Macro/Single Activity per row
-    #
-    #     episode = list(pattern['Episode'])
-    #
-    #     episode_occurrences, events = Pattern_Mining.Extract_Macro_Activities.compute_episode_occurrences(
-    #         log_dataset=log_dataset, episode=episode, tep=Tep)
-    #
-    #     activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
-    #
-    #     mini_factorised_events = pd.DataFrame(columns=["date", "label"])
-    #     for period_ts_index, occurrence in episode_occurrences.iterrows():
-    #         occ_start_date = occurrence["date"]
-    #         occ_end_date = occ_start_date + dt.timedelta(minutes=Tep)
-    #         mini_data = log_dataset.loc[(log_dataset.label.isin(episode))
-    #                                       & (log_dataset.date >= occ_start_date)
-    #                                       & (log_dataset.date < occ_end_date)].copy()
-    #         mini_data.sort_values(["date"], ascending=True, inplace=True)
-    #         mini_data.drop_duplicates(["label"], keep='first', inplace=True)
-    #         mini_factorised_events = mini_factorised_events.append(mini_data, ignore_index=True)
-    #
-    #     log_dataset = pd.concat([log_dataset, mini_factorised_events], sort=False).drop_duplicates(keep=False)
-
-    # labels = log_dataset.label.unique()
-    #
-    # for label in labels:
-    #     episode = (label,)
-    #     events = log_dataset[log_dataset.label == label].copy()
-    #     episode_occurrences = events.drop(['label'], axis=1)
-    #     activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events)
-
-
 
     log_filename = output + "/parameters.txt"
 

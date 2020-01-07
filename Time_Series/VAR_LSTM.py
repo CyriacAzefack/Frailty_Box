@@ -4,7 +4,7 @@ import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.layers import LSTM
 from keras.layers import TimeDistributed
 from keras.models import Sequential
@@ -175,17 +175,17 @@ def build_model(train, test, n_input, n_output, target_index, display=False):
     n_inputs, n_features, n_outputs = train_x.shape[1], train_x.shape[2], train_y.shape[1]
     # define model
     model = Sequential()
-    # model.add(LSTM(10, activation='relu', return_sequences=True, input_shape=(n_inputs, n_features)))
-    # model.add(Dropout(0.2))
-    # model.add(LSTM(10, activation='relu', return_sequences=True))
-    # model.add(LSTM(10, activation='relu', return_sequences=False))
-    # model.add(Dropout(0.2))
-    model.add(LSTM(200, activation='relu', input_shape=(n_inputs, n_features)))
-    model.add(TimeDistributed(Dense(100, activation='relu')))
-    model.add(Dense(n_outputs))
-    model.compile(loss='mse', optimizer='adam')
+    model.add(LSTM(10, activation='relu', return_sequences=True, input_shape=(n_inputs, n_features)))
+    model.add(Dropout(0.2))
+    model.add(LSTM(10, activation='relu', return_sequences=True))
+    model.add(LSTM(10, activation='relu', return_sequences=False))
+    model.add(Dropout(0.2))
+    # model.add(LSTM(200, activation='relu', input_shape=(n_inputs, n_features)))
+    # model.add(TimeDistributed(Dense(100, activation='relu')))
     # model.add(Dense(n_outputs))
     # model.compile(loss='mse', optimizer='adam')
+    model.add(Dense(n_outputs))
+    model.compile(loss='mse', optimizer='adam')
     # fit network
     history = model.fit(train_x, train_y, epochs=epochs, batch_size=batch_size, verbose=verbose,
                         validation_data=(test_x, test_y))
