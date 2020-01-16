@@ -23,7 +23,9 @@ class ActivityManager:
     Manage the macro-activities created in the time windows
     """
 
-    def __init__(self, name, period, time_step, tep, dynamic=False):
+    # OBSOLESCENCE_DURATION_DAYS = 60
+
+    def __init__(self, name, period, time_step, tep, window_size=None, max_no_news=None, dynamic=False, ):
         """
         Initialisation of the Manager
         :param name:
@@ -34,6 +36,8 @@ class ActivityManager:
         self.period = period
         self.tep = tep
         self.time_step = time_step
+        self.window_size = window_size
+        self.OBSOLESCENCE_DURATION_DAYS = max_no_news
         self.discovered_episodes = []  # All the episodes discovered until then
         self.activity_objects = {}  # The Activity/MacroActivity objects
         self.mixed_occurrences = pd.DataFrame(columns=['date', 'end_date', 'label', 'tw_id'])
@@ -72,6 +76,8 @@ class ActivityManager:
         self.mixed_occurrences.sort_values(['date'], inplace=True)
 
         self.last_time_window_id = time_window_id
+
+        self.obsolescence_check()
 
 
 
@@ -112,6 +118,29 @@ class ActivityManager:
 
         return matrix
 
+    def obsolescence_check(self):
+        """
+        Remove Macro-Activities which are obsoletes
+        :return:
+        """
+
+        obsoletes_episodes = []
+
+        for set_episode, macro_activity_object in self.activity_objects.items():
+            # Computer Macro-Activity Weight !!
+            last_update_id = int(macro_activity_object.count_histogram.tw_id.max())
+
+            nb_period_without_news = self.last_time_window_id - last_update_id
+
+            if nb_period_without_news > self.OBSOLESCENCE_DURATION_DAYS:
+                obsoletes_episodes.append(set_episode)
+                print(print(f"{list(set_episode)} : OBSOLETE EPISODE"))
+
+        # DESTROY OBSOLETE EPISODES
+        for set_episode in obsoletes_episodes:
+            self.activity_objects.pop(set_episode)
+            self.discovered_episodes.remove(set_episode)
+
     def build_forecasting_models(self, train_ratio, nb_periods_to_forecast, display=False, debug=False):
         """
         Build forecasting models for Macro-Activity parameters
@@ -126,23 +155,27 @@ class ActivityManager:
 
         # Build forecasting models
         i = 0
+
         for set_episode, macro_activity_object in self.activity_objects.items():
             print(f"{list(set_episode)} : {macro_activity_object}")
 
             i += 1
+
             # ACTIVITY DAILY PROFILE FORECASTING
-            ADP_forecast, ADP_error = macro_activity_object.forecast_history_count(train_ratio=train_ratio,
-                                                                                   last_time_window_id=self.last_time_window_id,
-                                                                                   nb_periods_to_forecast=nb_periods_to_forecast,
-                                                                                   display=debug)
+            ADP_error = macro_activity_object.forecast_history_count(train_ratio=train_ratio,
+                                                                     last_time_window_id=self.last_time_window_id,
+                                                                     nb_periods_to_forecast=nb_periods_to_forecast,
+                                                                     display=debug)
 
             ADP_error_df.at[len(ADP_error_df)] = [tuple(set_episode), ADP_error]
 
             # ACTIVITIES DURATIONS FORECASTING
             # TODO : Monitor the error on forecasting models for duration
-            mean_duration_error, std_duration_error = macro_activity_object.forecast_duration_distrib(
-                train_ratio=train_ratio, last_time_window_id=self.last_time_window_id,
-                nb_periods_to_forecast=nb_periods_to_forecast, display=debug)
+            mean_duration_error, std_duration_error = macro_activity_object.forecast_durations(train_ratio=train_ratio,
+                                                                                               last_time_window_id=self.last_time_window_id,
+                                                                                               nb_periods_to_forecast=nb_periods_to_forecast,
+                                                                                               window_size=self.window_size,
+                                                                                               display=debug)
 
             for label in macro_activity_object.episode:
                 duration_error_df.loc[len(duration_error_df)] = [tuple(set_episode), mean_duration_error[label],
@@ -227,6 +260,8 @@ class ActivityManager:
 
         # transition_matrix = self.build_transition_matrix(time_window_id=time_window_id)
 
+        current_time_window_id = time_window_id
+
         while current_date < end_date:
 
             evolution_percentage = round(100 * ((current_date - start_date).total_seconds() / simulation_duration), 2)
@@ -235,8 +270,11 @@ class ActivityManager:
 
             # Compute the time window id
             if self.dynamic:
-                current_time_window_id = time_window_id + int((current_date - start_date) / self.period)
-                macro_ADPs = self.get_activity_daily_profiles(time_window_id=current_time_window_id)
+                new_time_window_id = time_window_id + int((current_date - start_date) / self.period)
+                if current_time_window_id > new_time_window_id:  # if we change time window
+                    # Re compute the Activity Daily Profiles
+                    current_time_window_id = new_time_window_id
+                    macro_ADPs = self.get_activity_daily_profiles(time_window_id=current_time_window_id)
             else:
                 current_time_window_id = time_window_id
 
@@ -307,6 +345,15 @@ class ActivityManager:
         sys.stdout.write("\n")
 
         return simulated_dataset
+
+    def dump_data(self, output):
+        """
+        Dump all the data related to the macro-activities
+        :param output:
+        :return:
+        """
+        for set_episode, macro_activity in self.activity_objects.items():
+            macro_activity.dump_data(output=output)
 
 
 def plot_markov_chain(matrix, labels, threshold=0.1):

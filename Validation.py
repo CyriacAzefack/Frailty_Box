@@ -30,7 +30,7 @@ def main():
 
     simu_time_step = 5
 
-    label = 'sleeping'
+    label = 'meal_preparation'
 
     period = dt.timedelta(days=1)
 

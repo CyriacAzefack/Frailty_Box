@@ -19,19 +19,22 @@ sns.set_style('darkgrid')
 def main():
     dataset_name = 'aruba'
 
+    sim_type = 'static'
+    tstep = 5
+
     dataset = pick_dataset(dataset_name, nb_days=-1)
 
-    output_directory = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/{}/Simulation/DYNAMIC_step_15mn/dataset_simulation_rep_8.csv".format(
-        dataset_name)
-    simu_dataset = pick_custom_dataset(path=output_directory)
+    sim_file = f"output/{dataset_name}/Simulation/{sim_type}_step_{tstep}mn/dataset_simulation_rep_2.csv"
 
-    start_date = simu_dataset.date.min().to_pydatetime()
+    simu_dataset = pick_custom_dataset(path=sim_file)
 
-    # visualize(dataset)
+    start_date = dataset.date.min().to_pydatetime()
 
-    # simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
+    simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
 
-    real_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
+    # real_graph = ActivityOccurrencesGraph(dataset_name, dataset, nb_days=-1)
+
+    plt.show()
 
 
 def visualize(data, start_date=None, end_date=None):
@@ -218,7 +221,7 @@ def distribution_evolution(data, time_window_duration, label, output_folder="./o
 
 
 """
-Plot a grapj
+Plot a graph
 """
 
 
@@ -261,7 +264,7 @@ class ActivityOccurrencesGraph:
         self.plot_day_bars()
         self.duration_pie_chart()
 
-        plt.show()
+
 
     def extract_days(self):
         """
@@ -355,6 +358,8 @@ class ActivityOccurrencesGraph:
 
         colors = []
         for label in self.labels:
+            self.label_df = self.dataset[self.dataset.label == label]
+
             labels_count_df.loc[label] = len(self.dataset[self.dataset.label == label])
             colors.append(self.label_color[label])
 

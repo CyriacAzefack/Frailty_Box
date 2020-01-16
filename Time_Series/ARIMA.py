@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+
 # ARMA example
 
 from statsmodels.tsa.stattools import acf, pacf
@@ -69,16 +70,8 @@ def main():
 
     plt.tight_layout()
     plt.show()
-    #
 
-    # autocorrelation_plot(log_dataset)
-    # plt.show()
-
-    # train = np.log(train)
-    # train = np.nan_to_num(train)
-
-    # model = ARIMA(train, order=(nb_tstep, 1, nb_tstep))
-    model = SARIMAX(train, order=(3, 0, 0), seasonal_order=(2, 1, 0, nb_tstep), enforce_stationarity=False,
+    model = SARIMAX(train, order=(1, 0, 0), seasonal_order=(1, 0, 1, nb_tstep * 21), enforce_stationarity=True,
                     enforce_invertibility=False)
 
     # model = ARIMA(train, order=(2, 0, 2))

@@ -290,13 +290,21 @@ def plot_graph(matrix, labels, plot=True):
     return gr
 
 
-def convert_data_XES_log(name):
-    data = pick_dataset(name)
+def convert_data_XES_log(name, output_path, custom=False):
+    if custom:
+        data = pick_custom_dataset(name)
+    else:
+        data = pick_dataset(name)
     # ID for each day date : 'YYYYMMDD'
-    data['case_id'] = data['date'].apply(lambda x: "{}{}{}".format(x.year, x.month, x.day))
+    data['case_id'] = data['date'].apply(lambda x: "{:04d}{:02d}{:02d}".format(x.year, x.month, x.day))
 
     log = data[['case_id', 'date', 'end_date', 'label']]
 
-    log.to_csv('./input/XES/XES_log_{}.csv'.format(name), index=False, sep=';')
+    log.to_csv(output_path, index=False, sep=';')
 
-# convert_data_XES_log('aruba')
+
+if __name__ == '__main__':
+    name = 'aruba'
+    input = f'./output/{name}/Simulation/Static_step_5mn/dataset_simulation_rep_1.csv'
+    output = f'./input/XES/XES_log_Sim_{name}.csv'
+    convert_data_XES_log(input, output_path=output, custom=True)

@@ -20,6 +20,9 @@ def main():
     start_date = dt.datetime.now().date()
     start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
 
+    plt.plot(dataset)
+    plt.show()
+
     date_range = [start_date + i * t_step for i in range(len(dataset))]
 
     dataset = pd.DataFrame(list(zip(date_range, dataset)), columns=['ds', 'y'])

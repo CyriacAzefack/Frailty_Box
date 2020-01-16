@@ -4,6 +4,7 @@ import math
 import multiprocessing as mp
 import os
 import pickle
+import sys
 import time as t
 from optparse import OptionParser
 
@@ -19,7 +20,7 @@ from Simulation import ActivityManager
 # random.seed(1996)
 
 
-def main():
+def main(args):
     ####################
     # Macro Activities MODEL
     #
@@ -27,7 +28,7 @@ def main():
     #   - Single Activity Implementation
     #   - No time evolution
     #   - Training Dataset : 80% of the Original log_dataset
-    #   - Test Dataset : 20% left of the Original log_dataset
+    #   - Test Dataset : 20% left of the Original    log_dataset
 
 
     period = dt.timedelta(days=1)
@@ -54,7 +55,7 @@ def main():
     parser.add_option('--debug', help='Display all the intermediate steps', dest='debug', action='store_true',
                       default=False)
 
-    (options, args) = parser.parse_args()
+    (options, args) = parser.parse_args(args=args)
     # Mandatory Options
     if options.dataset_name is None:
         print("The name of the Input event log is missing\n")
@@ -98,8 +99,8 @@ def main():
 
     testing_days = nb_days - training_days + 5  # Extra days just in case
 
-    output = "../output/{}/Simulation/{}_step_{}mn/".format(dataset_name, 'STATIC' if static_learning else 'DYNAMIC',
-                                                            options.simu_step)
+    output = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, 'STATIC' if static_learning else 'DYNAMIC',
+                                                           options.simu_step)
 
     # Create the folder if it does not exist yet
     if not os.path.exists(os.path.dirname(output)):
@@ -136,6 +137,8 @@ def main():
                                                            period=period, time_step=forecast_time_step, output=output,
                                                            Tep=Tep, nb_days_per_window=window_days, debug=debug)
 
+        activity_manager.dump_data(output=output + "Activity_Manager/")
+
         print("## Building forecasting models ... ##")
         ADP_error_df, duration_error_df = activity_manager.build_forecasting_models(train_ratio=0.8,
                                                                                     nb_periods_to_forecast=testing_days + 5,
@@ -147,6 +150,7 @@ def main():
     # dump Activity Manager
     pickle.dump(activity_manager, open(output + '{}_Activity_Manager.pkl'.format('STATIC' if static_learning
                                                                                  else 'DYNAMIC'), 'wb'))
+
 
     ###############
     # SIMULATION  #
@@ -246,8 +250,14 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
     :return:
     """
 
+    nb_days = int((dataset.date.max().to_pydatetime() - dataset.date.min().to_pydatetime()) / period)
+
+    obs_ratio = 0.25
+    max_no_news = int(nb_days * obs_ratio)
+
     activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=time_step,
-                                                       tep=Tep, dynamic=True)
+                                                       tep=Tep, window_size=nb_days_per_window, max_no_news=max_no_news,
+                                                       dynamic=True)
 
     time_window_duration = dt.timedelta(days=nb_days_per_window)
     start_date = dataset.date.min().to_pydatetime()
@@ -295,4 +305,4 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

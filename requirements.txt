@@ -1,3 +1,4 @@
+pmdarima
 bottleneck==1.2.1
 contextlib2==0.6.0
 distributed==2.5.2
