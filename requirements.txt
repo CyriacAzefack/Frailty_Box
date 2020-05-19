@@ -1,3 +1,6 @@
+scipy
+pandas
+numpy
 pmdarima
 bottleneck==1.2.1
 contextlib2==0.6.0

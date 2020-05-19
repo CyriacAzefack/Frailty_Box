@@ -10,11 +10,9 @@ from optparse import OptionParser
 
 import Pattern_Mining
 import Utils
-from Simulation import ActivityManager
-
-
 # from Pattern_Mining.Candidate_Study import find_occurrences, modulo_datetime
-# from Pattern_Mining.Extract_Macro_Activities import extract_macro_activities
+from Pattern_Mining.Extract_Macro_Activities import extract_macro_activities
+from Simulation import ActivityManager
 
 
 # random.seed(1996)
@@ -64,7 +62,7 @@ def main(args):
 
     dataset_name = options.dataset_name
     simu_time_step = dt.timedelta(minutes=options.simu_step)
-    forecast_time_step = dt.timedelta(minutes=options.time_step)
+    adp_time_step = dt.timedelta(minutes=options.time_step)
     nb_replications = options.nb_sim
     static_learning = options.static_learning
     window_days = options.window_days
@@ -81,7 +79,7 @@ def main(args):
     if not static_learning:
         print("Time Window Duration : {} days".format(options.window_days))
     print("Simulation time step (mn) : {}".format(int(simu_time_step.total_seconds() / 60)))
-    print("ADP time step (mn) : {}".format(int(forecast_time_step.total_seconds() / 60)))
+    print("ADP time step (mn) : {}".format(int(adp_time_step.total_seconds() / 60)))
     print("Number of replications : {}".format(nb_replications))
     print("Display Mode : {}".format(plot))
     print("Debug Mode: {}".format(debug))
@@ -100,7 +98,7 @@ def main(args):
     testing_days = nb_days - training_days + 5  # Extra days just in case
 
     output = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, 'STATIC' if static_learning else 'DYNAMIC',
-                                                           options.simu_step)
+                                                           options.time_step)
 
     # Create the folder if it does not exist yet
     if not os.path.exists(os.path.dirname(output)):
@@ -127,14 +125,14 @@ def main(args):
         print("#      STATIC LEARNING       #")
         print('##############################')
         activity_manager = create_static_activity_manager(dataset_name=dataset_name, dataset=training_dataset,
-                                                          period=period, simu_time_step=simu_time_step, output=output,
-                                                          Tep=Tep, debug=debug)
+                                                          period=period, time_step=adp_time_step, output=output,
+                                                          Tep=Tep, singles_only=True, debug=debug)
     else:
         print('##############################')
         print("#     DYNAMIC LEARNING       #")
         print('##############################')
         activity_manager = create_dynamic_activity_manager(dataset_name=dataset_name, dataset=training_dataset,
-                                                           period=period, time_step=forecast_time_step, output=output,
+                                                           period=period, time_step=adp_time_step, output=output,
                                                            Tep=Tep, nb_days_per_window=window_days, debug=debug)
 
         activity_manager.dump_data(output=output + "Activity_Manager/")
@@ -187,16 +185,16 @@ def main(args):
         print("Time elapsed for the simulation : {}".format(elapsed_time))
 
 
-def create_static_activity_manager(dataset_name, dataset, period, simu_time_step, output, Tep, debug=False):
+def create_static_activity_manager(dataset_name, dataset, period, time_step, output, Tep, singles_only=False,
+                                   debug=False):
     """
     Generate Activities/Macro-Activities from the input event log
+    :param dataset_name: Name of the event log
     :param dataset: Input event log
     :param period: periodicity
     :param simu_time_step: simulation time step
     :param output: Output folder for the simulation
     :param Tep: Duration max of an episode occurrence
-    :param with_macro: If True, create macro-activities
-    :param display:
     :param debug:
     :return:
     """
@@ -206,16 +204,15 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
 
     nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
 
-    activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=simu_time_step,
-                                                       tep=Tep, dynamic=False)
+    activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=time_step,
+                                                       tep=Tep, window_size=nb_days, dynamic=False)
 
     print("Mining for macro-activities...")
 
     all_macro_activities = Pattern_Mining.Extract_Macro_Activities.extract_macro_activities(dataset=dataset,
-                                                                                            support_min=nb_days,
-                                                                                            tep=Tep,
-                                                                                            period=period,
-                                                                                            verbose=debug)
+                                                                                            support_min=nb_days / 2,
+                                                                                            tep=Tep, verbose=True,
+                                                                                            singles_only=singles_only)
     for episode, (episode_occurrences, events) in all_macro_activities.items():
         activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
 
@@ -226,7 +223,7 @@ def create_static_activity_manager(dataset_name, dataset, period, simu_time_step
         file.write("STATIC LEARNING (no time evolution)")
         file.write("Periodicity : {}\n".format(period))
         file.write("Macro-Activities Activated : {}\n".format(True))
-        file.write("Simulation time step : {} min\n".format(simu_time_step.total_seconds() / 60))
+        file.write("Simulation time step : {} min\n".format(time_step.total_seconds() / 60))
         file.write("Tep : {}\n".format(Tep))
 
     pickle.dump(activity_manager, open(output + "/Static_Activity_Manager.pkl", 'wb'))

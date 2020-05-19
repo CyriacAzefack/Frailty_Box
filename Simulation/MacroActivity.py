@@ -1,3 +1,13 @@
+import datetime as dt
+import errno
+import math
+import os
+import pickle
+import sys
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import pmdarima as pm
 import seaborn as sns
 from pmdarima.arima.utils import ndiffs, nsdiffs
@@ -7,24 +17,23 @@ from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.tsa.statespace import sarimax
 from statsmodels.tsa.stattools import acf, pacf
 
-from Graph_Model.Pattern2Graph import *
+# from Graph_Model.Pattern2Graph import *
 from Pattern_Mining.Candidate_Study import modulo_datetime
 from Pattern_Mining.Extract_Macro_Activities import compute_episode_occurrences
 from Pattern_Mining.Pattern_Discovery import pick_dataset
 
-
-# sns.set_style('darkgrid')
+sns.set_style('darkgrid')
 
 
 # np.random.seed(1996)
 
 def main():
-    dataset_name = 'hh101'
+    dataset_name = 'aruba'
     # dataset_name = 'hh101'
     dataset = pick_dataset(dataset_name)
     # SIM_MODEL PARAMETERS
     # episode = ('toilet', 'dress')
-    episode = ('wash_lunch_dishes',)
+    episode = ('relax',)
     # episode = ('enter_home', 'leave_home', 'watch_tv')
     period = dt.timedelta(days=1)
     time_step = dt.timedelta(minutes=60)
@@ -35,7 +44,7 @@ def main():
     train_ratio = 0.8
 
     # TIME WINDOW PARAMETERS
-    window_size = 7
+    window_size = 30
     time_window_duration = dt.timedelta(days=window_size)
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime() - time_window_duration
@@ -106,7 +115,6 @@ def main():
                                                                           nb_periods_to_forecast=10, display=True)
 
 
-
 class MacroActivity:
     ID = 0  # Identifier of the macro-activity
 
@@ -114,17 +122,10 @@ class MacroActivity:
     SARIMAX = 1
 
     def __init__(self, episode, period, time_step, tep=30):
-        '''
+        """
         Creation of a Macro-Activity
-        :param episode:
-        :param occurrences: log_dataset of occurrences of the episode
-        :param events: Sublog of events from the input event log
-        :param period: periodicity of the analysis
-        :param time_step: Time discretization parameter
-        :param start_time_window_id:
-        :param tep:
-        :param display:
-        '''
+
+        """
 
         print('\n')
         print("##################################################")
@@ -202,6 +203,10 @@ class MacroActivity:
         :return:
         '''
 
+        # Remove duplicates 'day_date - time_step_id'
+        occurrences['day_date'] = occurrences.date.apply(lambda x: x.date())
+        occurrences.drop_duplicates(['day_date', 'time_step_id'], inplace=True)
+
         hist = occurrences.groupby(['time_step_id']).count()['date']
 
         # Create an period_ts_index to have every time steps in the period
@@ -225,6 +230,9 @@ class MacroActivity:
     def add_time_window(self, occurrences, events, time_window_id, display=False):
         """
         Update the ocurrence time Histogram and the duration laws history with the new time window data
+        :param display:
+        :param time_window_id:
+        :param events:
         :param occurrences:
         :return:
         """
@@ -455,7 +463,7 @@ class MacroActivity:
 
             self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
 
-            if False:
+            if display:
                 len_available_data = len(mean_duration_data)
 
                 plt.figure(figsize=(15, 5))
@@ -465,7 +473,6 @@ class MacroActivity:
                          mean_duration_forecast_values / 60, color='red')
                 plt.xlabel('Timepoints')
                 plt.ylabel('Mean Duration (mn)')
-
 
                 plt.subplot(122)
                 plt.plot(np.asarray(std_duration_data) / 60, color='b', alpha=0.6)
@@ -768,6 +775,7 @@ def find_ARIMA_params(data, seasonality):
 
     plt.tight_layout()
     plt.show()
+
 
 class suppress_stdout_stderr(object):
     '''

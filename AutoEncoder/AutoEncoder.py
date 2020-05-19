@@ -1,10 +1,15 @@
 import glob
+import importlib
 import os
 import random
 
 import cv2
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
+
+spam_spec = importlib.util.find_spec("tkinter")
+matplotlib_installed = spam_spec is not None
+if matplotlib_installed:
+    import matplotlib.cm as cm
+    import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from sklearn.cluster import KMeans
@@ -42,7 +47,7 @@ def main():
     batch_size = 10
 
     ## BUILD THE MODEL
-    model = AutoEncoderModel(input_width=width, input_height=height, latent_dim=latent_dim)
+    model = AE_Model(input_width=width, input_height=height, latent_dim=latent_dim)
 
     # Model parameters
     optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
@@ -258,8 +263,8 @@ def silhouette_plots(data, display=True):
     return optimal_n_clusters
 
 
-class AutoEncoderModel(tf.keras.Model):
-    def __init__(self, input_width, input_height, latent_dim, name='AutoEncoderModel'):
+class AE_Model(tf.keras.Model):
+    def __init__(self, input_width, input_height, latent_dim, name='AE_Model'):
         super().__init__(name=name)
         self.input_width = input_width
         self.input_height = input_height
@@ -270,8 +275,9 @@ class AutoEncoderModel(tf.keras.Model):
             [
                 tf.keras.layers.InputLayer(input_shape=(self.input_height, self.input_width), name='encoder_input'),
                 tf.keras.layers.Flatten(),
-                tf.keras.layers.Dense(self.input_width * self.input_height * 0.1, activation='tanh'),
-                tf.keras.layers.Dense(self.latent_dim * 2, activation="tanh"),
+                # tf.keras.layers.Dense(self.input_width * self.input_height * 0.5),
+                tf.keras.layers.Dense(self.input_width * self.input_height * 0.1),
+                tf.keras.layers.Dense(self.latent_dim * 2),
                 tf.keras.layers.Dense(self.latent_dim, activation="relu", name='encoder_output')
             ]
         )
@@ -279,9 +285,10 @@ class AutoEncoderModel(tf.keras.Model):
         self.decoder = tf.keras.Sequential(
             [
                 tf.keras.layers.InputLayer(input_shape=(self.latent_dim,), name='decoder_input'),
-                tf.keras.layers.Dense(self.latent_dim * 2, activation="tanh"),
-                tf.keras.layers.Dense(self.input_width * self.input_height * 0.1, activation='tanh'),
-                tf.keras.layers.Dense(self.input_width * self.input_height, activation="relu"),
+                tf.keras.layers.Dense(self.latent_dim * 2),
+                tf.keras.layers.Dense(self.input_width * self.input_height * 0.1),
+                # tf.keras.layers.Dense(self.input_width * self.input_height * 0.5),
+                tf.keras.layers.Dense(self.input_width * self.input_height, activation="sigmoid"),
                 tf.keras.layers.Reshape((self.input_height, self.input_width), name='decoder_output')
             ]
         )
@@ -310,14 +317,17 @@ class AutoEncoderModel(tf.keras.Model):
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper right')
 
-        # plt.figure()
-        # plt.plot(history['mean_squared_error'])
-        # plt.plot(history['val_mean_squared_error'])
-        # plt.title('Model Accuracy')
-        # plt.ylabel('Accuracy')
-        # plt.xlabel('epoch')
-        # plt.legend(['train', 'test'], loc='upper left')
+        plt.figure()
+        plt.plot(history['mean_absolute_error'])
+        plt.plot(history['val_mean_absolute_error'])
+        plt.title('Model Accuracy')
+        plt.ylabel('Accuracy')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'test'], loc='upper left')
         plt.show()
+
+    def get_loss_error(self):
+        return self.history.history['loss'][-1], self.history.history['mean_absolute_error'][-1]
 
 
 if __name__ == "__main__":

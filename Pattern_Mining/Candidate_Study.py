@@ -8,6 +8,7 @@ import math
 import os
 import sys
 
+import seaborn as sns
 from sklearn.cluster import DBSCAN
 from sklearn.mixture import GaussianMixture
 
@@ -32,7 +33,7 @@ def main():
         file.truncate()
         file.write("Episode;period;description;accuracy;start date;end date\n")
         for episode in episodes:
-            descr = periodicity_search(data, episode, plot_graphs=False)
+            descr = periodicity_search(data, episode, display=False)
 
             nat = translate_description(descr)
             line = str(episode) + ";"
@@ -48,135 +49,149 @@ def main():
             print(nat)
 
 
-def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max=0.1,
-                       accuracy_min=0.5, tolerance_ratio=2, Tep=30, candidate_periods=[dt.timedelta(days=1), ],
-                       plot_graphs=False):
+def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max=0.1, tolerance_ratio=2,
+                       Tep=30, period_T=dt.timedelta(days=1), display=False, verbose=False):
     """
     Find the best time description of an episode if it exists
     
     return delta_T : 
     """
+    episode = ('cook_breakfast', 'eat_breakfast')
+    episode = ('sleep_out_of_bed',)
+    episode = ('personal_hygiene', 'sleep')
 
     # Pick the episode events from the input sequence
     data = data.loc[data.label.isin(episode)].copy()
 
+    if verbose:
+        print("######################################")
+        print("Periodicity episode :", episode)
+
     if len(data) == 0:
+        if verbose:
+            print(f'No data for the episode :{episode}')
         return None
 
     # find the episode occurences
     occurrences = find_occurrences(data, episode, Tep)
 
+    if len(occurrences) < support_min:
+        return None
+
     best_periodicity = None
 
     best_accuracy = 0
 
-    for period_T in candidate_periods:
-        delta_Tmax = delta_Tmax_ratio * period_T
+    # Compute intervals between occurrences
 
-        period_occ = occurrences.copy()
+    # First row 'time_since_last_occ' is NaT so we replace by a duration of '0'
+    occurrences.fillna(pd.Timestamp(0), inplace=True)
 
-        # Compute intervals between occurrences
-        period_occ.loc[:, "time_since_last_occ"] = period_occ.date - period_occ.date.shift(1)
+    # Compute relative dates
+    occurrences.loc[:, "relative_date"] = occurrences.date.apply(
+        lambda x: modulo_datetime(x.to_pydatetime(), period_T))
 
-        # First row 'time_since_last_occ' is NaT so we replace by a duration of '0'
-        period_occ.fillna(0, inplace=True)
+    # Display relative times count_histogram
 
-        # Compute relative dates
-        period_occ.loc[:, "relative_date"] = period_occ.date.apply(
-            lambda x: modulo_datetime(x.to_pydatetime(), period_T))
+    if display:
+        plt.figure()
+        plt.title(episode)
+        sns.distplot(occurrences.relative_date / 3600, bins=20, norm_hist=False, rug=False, kde=False)
+        plt.xlim((0, 24))
+        plt.show()
 
-        # Display relative times count_histogram
+    start_time = occurrences.date.min().to_pydatetime()
+    end_time = occurrences.date.max().to_pydatetime()
 
-        if plot_graphs:
-            plt.figure()
-            plt.title(episode)
-            sns.distplot(period_occ.relative_date, norm_hist=False, rug=False, kde=True)
+    data_points = occurrences["relative_date"].values.reshape(-1, 1)
 
-        # Spit the occurrences in groups
-        group_gap_bounds = [data.date.min(), data.date.max() + dt.timedelta(seconds=10)]
+    cut_threshold = dt.timedelta(hours=3).total_seconds()
+    m = np.ma.where(data_points < cut_threshold)
+    data_points[m] = data_points[m] + period_T.total_seconds()
+    # if no data then switch to the next group
+    if len(data_points) < 2:
+        if verbose:
+            print('Not enough data points')
+        return None
 
-        group_gap_bounds[1:1] = sorted(list(period_occ[period_occ.time_since_last_occ > delta_Tmax].date))
+    cut_treshold = dt.timedelta(hours=3).total_seconds()
 
-        for group_index in range(len(group_gap_bounds) - 1):
-            group_start_time = group_gap_bounds[group_index]
-            group_end_time = group_gap_bounds[group_index + 1]
+    if verbose:
+        print("EPSILON DBSCAN :", str(dt.timedelta(seconds=std_max * period_T.total_seconds())))
 
-            group_occurrences = period_occ.loc[(period_occ.date >= group_start_time) &
-                                               (period_occ.date < group_end_time)].copy()
+    epsilon = 3600
+    Nb_clusters, interesting_points = find_number_clusters(data_points, eps=epsilon, min_samples=int(support_min / 2),
+                                                           display=True)
 
-            group_start_time = group_occurrences.date.min().to_pydatetime()
-            group_end_time = group_occurrences.date.max().to_pydatetime()
+    # if no clusters found then switch to the next group
+    if Nb_clusters == 0:
+        if verbose:
+            print('No clusters found')
+        return None
+    # Display points
+    #            if display:
+    #                sns.distplot(interesting_points, norm_hist=False, rug=False, kde=True, bins=10)
 
-            data_points = group_occurrences["relative_date"].values.reshape(-1, 1)
-            # if no data then switch to the next group
-            if len(data_points) == 0:
-                continue
+    GMM = GaussianMixture(n_components=Nb_clusters, n_init=10)
+    GMM.fit(data_points)
 
-            # For midnight-morning issue
-            data_points_2 = [x + period_T.total_seconds() for x in data_points]
+    GMM_descr = {}  # mean_time (in seconds) as key and std_duration (in seconds) as value
 
-            big_data_points = np.asarray(list(data_points) + list(data_points_2)).reshape(-1, 1)
+    for i in range(len(GMM.means_)):
+        mu = int(GMM.means_[i][0])
+        sigma = int(math.ceil(np.sqrt(GMM.covariances_[i])))
 
-            # print("EPSILON DBSCAN :", dt.timedelta(seconds = std_max*T.total_seconds()))
-            Nb_clusters, interesting_points = find_number_clusters(big_data_points,
-                                                                   eps=std_max * period_T.total_seconds(),
-                                                                   min_samples=support_min)
+        if sigma > std_max * period_T.total_seconds():
+            continue
+        lower_limit = mu - tolerance_ratio * sigma
+        upper_limit = mu + tolerance_ratio * sigma
 
-            # if no clusters found then switch to the next group
-            if Nb_clusters == 0:
-                continue
-            # Display points
-            #            if plot_graphs:
-            #                sns.distplot(interesting_points, norm_hist=False, rug=False, kde=True, bins=10)
+        # if (lower_limit < 0) or (lower_limit > period_T.total_seconds()):
+        #     continue
 
-            GMM = GaussianMixture(n_components=Nb_clusters, n_init=10)
-            GMM.fit(interesting_points)
+        mu = mu % period_T.total_seconds()
+        GMM_descr[mu] = sigma
 
-            GMM_descr = {}  # mean_time (in seconds) as key and std_duration (in seconds) as value
+        if verbose:
+            print(f'Component {i} : mu={str(dt.timedelta(seconds=mu))}, sigma={str(dt.timedelta(seconds=sigma))}')
 
-            for i in range(len(GMM.means_)):
-                mu = int(GMM.means_[i][0])
-                sigma = int(math.ceil(np.sqrt(GMM.covariances_[i])))
+        # if display:
+        #     lower_limit = mu - tolerance_ratio * sigma
+        #     upper_limit = mu + tolerance_ratio * sigma
+        #     # Plot the interval
+        #     c = np.random.rand(3, )
+        #     plt.plot([0, lower_limit], [lower_limit, 0], linewidth=2, color=c)
+        #     plt.plot([0, upper_limit], [upper_limit, 0], linewidth=2, color=c)
 
-                if sigma > std_max * period_T.total_seconds():
-                    continue
-                lower_limit = mu - tolerance_ratio * sigma
-                upper_limit = mu + tolerance_ratio * sigma
+        # Compute the time description accuracy
 
-                if (lower_limit < 0) or (lower_limit > period_T.total_seconds()):
-                    continue
+    accuracy, expected_occurrences = compute_pattern_accuracy(occurrences=occurrences, period=period_T,
+                                                              time_description=GMM_descr)
 
-                mu = mu % period_T.total_seconds()
-                GMM_descr[mu] = sigma
+    if not accuracy:
+        if verbose:
+            print("No accuracy found")
+        return None
 
-                if plot_graphs:
-                    lower_limit = mu - tolerance_ratio * sigma
-                    upper_limit = mu + tolerance_ratio * sigma
-                    # Plot the interval
-                    c = np.random.rand(3, )
-                    plt.plot([0, lower_limit], [lower_limit, 0], linewidth=2, color=c)
-                    plt.plot([0, upper_limit], [upper_limit, 0], linewidth=2, color=c)
+    str_GMM = {}
+    for key, value in GMM_descr.items():
+        str_GMM[str(dt.timedelta(seconds=key))] = str(dt.timedelta(seconds=value))
 
-            # Compute the time description accuracy
+    best_periodicity = {
+        "description": str_GMM,
+        "period": period_T,
+        "accuracy": accuracy,
+        "nb_occ": len(occurrences),
+        "compression_power": len(expected_occurrences) * len(episode),
+        # "expected_occurrences": expected_occurrences,
+        "delta_t": [start_time, end_time]
+    }
 
-            accuracy, expected_occurrences = compute_pattern_accuracy(occurrences=group_occurrences, period=period_T,
-                                                                      time_description=GMM_descr)
-
-            if not accuracy:
-                continue
-
-            if (accuracy >= accuracy_min) & (accuracy > best_accuracy):
-                # sns.distplot(data_points, norm_hist=False, rug=False, kde=True)
-                best_accuracy = accuracy
-
-                best_periodicity = {
-                    "description": GMM_descr,
-                    "period": period_T,
-                    "accuracy": accuracy,
-                    "compression_power": len(expected_occurrences) * len(episode),
-                    "expected_occurrences": expected_occurrences,
-                    "delta_t": [group_start_time, group_end_time]
-                }
+    if verbose:
+        print("Periodicity episode :", episode)
+        print(f"\tAccuracy: {accuracy}")
+        print(f"\tCompression Power: {len(expected_occurrences) * len(episode)}")
+        print("######################################")
 
     return best_periodicity
 
@@ -193,13 +208,67 @@ def relative2absolute_date(relative_date, reference_date, period):
     return date
 
 
-def find_number_clusters(data_points, eps, min_samples):
+def find_number_clusters(X, eps, min_samples, display=False):
     """
     return the number of clusters
     """
-    db = DBSCAN(eps=eps, min_samples=min_samples).fit(data_points)
+    db = DBSCAN(eps=eps, min_samples=min_samples).fit(X)
 
-    Nb_clusters = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0)  # Noisy samples are given the label -1.
+    Nb_clusters = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0)
+
+    core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+    core_samples_mask[db.core_sample_indices_] = True
+    labels = db.labels_
+
+    # Number of clusters in labels, ignoring noise if present.
+    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    n_noise_ = list(labels).count(-1)
+
+    # print('Estimated number of clusters: %d' % n_clusters_)
+    # print('Estimated number of noise points: %d' % n_noise_)
+
+    # #############################################################################
+    # PLOT THE RESULTS
+    ##############
+    if display:
+        angles = []
+
+        for x in X:
+            angles.append(2 * np.pi * x / (24 * 3600))
+
+        X = [[math.sin(alpha), math.cos(alpha)] for alpha in angles]
+        X = np.asarray(X)
+        fig, ax = plt.subplots(1)
+        theta = np.linspace(0, 2 * np.pi, 100)
+        r = 1
+        x1 = r * np.cos(theta)
+        x2 = r * np.sin(theta)
+        ax.plot(x1, x2, linestyle='--')
+        ax.set_aspect(1)
+        plt.grid(linestyle='--')
+
+        # Black removed and is used for noise instead.
+        unique_labels = set(labels)
+        colors = [plt.cm.Spectral(each)
+                  for each in np.linspace(0, 1, len(unique_labels))]
+        for k, col in zip(unique_labels, colors):
+            if k == -1:
+                # Black used for noise.
+                col = [0, 0, 0, 1]
+
+            class_member_mask = (labels == k)
+
+            xy = X[class_member_mask & core_samples_mask]
+            ax.plot(xy[:, 0], xy[:, 1], 'o', markerfacecolor=tuple(col),
+                    markeredgecolor='k', markersize=6)
+
+            xy = X[class_member_mask & ~core_samples_mask]
+            ax.plot(xy[:, 0], xy[:, 1], 'o', markerfacecolor=tuple(col),
+                    markeredgecolor='k', markersize=3)
+
+        # plt.title('Estimated number of clusters: %d' % n_clusters_)
+        plt.show()
+    # Noisy samples are given the label -1.
 
     return Nb_clusters, db.components_
 
@@ -307,12 +376,12 @@ def compute_pattern_accuracy(occurrences, period, time_description, start_date=N
     relative_start_date = modulo_datetime(start_date, period)
     start_first_period = start_date
     if relative_start_date != 0:
-        start_first_period = start_date - dt.timedelta(seconds=relative_start_date)
+        start_first_period = start_date - dt.timedelta(seconds=relative_start_date) + period
 
     relative_end_date = modulo_datetime(end_date, period)
     end_last_period = end_date
     if relative_end_date != 0:
-        end_last_period = end_date + dt.timedelta(seconds=period.total_seconds() - relative_end_date)
+        end_last_period = end_date - dt.timedelta(seconds=relative_end_date)
 
     nb_periods = (end_last_period - start_first_period).total_seconds() / period.total_seconds()
 
@@ -322,25 +391,11 @@ def compute_pattern_accuracy(occurrences, period, time_description, start_date=N
     nb_occurrences_expected = nb_periods * nb_description_components
 
     # Now the bord effects
-    bord_effects_expected_occ = 0
-    if is_occurence_expected(relative_start_date, time_description, period, tolerance_ratio) is not None:
-        bord_effects_expected_occ += 1
-
-    if is_occurence_expected(relative_end_date, time_description, period, tolerance_ratio) is not None:
-        bord_effects_expected_occ += 1
-
     for mean_time, std_time in time_description.items():
-
-        lower_limit = mean_time - tolerance_ratio * std_time
-        upper_limit = mean_time + tolerance_ratio * std_time
-
-        if relative_start_date < lower_limit:
-            bord_effects_expected_occ += 1
-
-        if relative_end_date > upper_limit:
-            bord_effects_expected_occ += 1
-
-    nb_occurrences_expected += bord_effects_expected_occ
+        if (mean_time > relative_start_date):
+            nb_occurrences_expected += 1
+        if (mean_time < relative_end_date):
+            nb_occurrences_expected += 1
 
     if nb_occurrences_expected == 0 or len(occurrences) == 0:
         return None, None
@@ -372,11 +427,50 @@ def compute_pattern_accuracy(occurrences, period, time_description, start_date=N
 
     accuracy = Nb_occurrences_happening_as_expected / nb_occurrences_expected
 
-    if accuracy > 1:
-        raise ValueError('The accuracy should not exceed 1.00 !!',
-                         Nb_occurrences_happening_as_expected, nb_occurrences_expected)
+    accuracy = min(1, accuracy)
+    # if accuracy > 1:
+    #     raise ValueError('The accuracy should not exceed 1.00 !!',
+    #                      Nb_occurrences_happening_as_expected, nb_occurrences_expected)
 
     return accuracy, occurrences[occurrences.expected != 0][['date']]
+
+
+def plot_time_circle(data_points, period, plot=False):
+    """
+    plot time data points into a circle
+    :param data_points:
+    :return:
+    """
+
+    degrees = []
+    x = []
+    y = []
+
+    for point in data_points:
+        alpha = 2 * np.pi * point / period
+        x.append(math.sin(alpha))
+        y.append(math.cos(alpha))
+
+        degrees.append(360 * point / period)
+
+    if plot:
+        radians = np.deg2rad(degrees)
+
+        bin_size = 2
+        a, b = np.histogram(degrees, bins=np.arange(0, 360 + bin_size, bin_size))
+        centers = np.deg2rad(np.ediff1d(b) // 2 + b[:-1])
+
+        fig = plt.figure(figsize=(10, 8))
+        ax = fig.add_subplot(111, projection='polar')
+        ax.bar(centers, a, width=np.deg2rad(bin_size), bottom=0.0, color='.8', edgecolor='k')
+        ax.set_theta_zero_location("N")
+        ax.set_theta_direction(-1)
+        ax.set_xticklabels(['12am', '3am', '6am', '9am', '12pm', '3pm', '6pm', '9pm'])
+        ax.tick_params(direction='out', length=6, width=6, colors='r', grid_alpha=1, labelsize=14)
+
+        plt.show()
+
+    return x, y
 
 
 if __name__ == "__main__":

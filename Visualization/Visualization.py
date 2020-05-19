@@ -1,12 +1,13 @@
 import imageio
-import matplotlib
 import matplotlib.dates as dat
 import seaborn as sns
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.collections import LineCollection
 from numpy import random
+from tqdm import trange
 
 import Utils
-# from Data_Drift import Drift_Detector
+from Data_Drift import Drift_Detector
 from Pattern_Mining.Pattern_Discovery import *
 
 sns.set_style('darkgrid')
@@ -15,25 +16,58 @@ sns.set_style('darkgrid')
 # plt.xkcd()
 
 
-
 def main():
-    dataset_name = 'aruba'
-
-    sim_type = 'static'
+    dataset_name = 'hh101'
+    #
+    sim_type = 'STATIC'
     tstep = 5
 
+    period = dt.timedelta(days=1)
+    #
     dataset = pick_dataset(dataset_name, nb_days=-1)
+    # dataset['relative_time'] = dataset['date'].apply(lambda x: modulo_datetime(x.to_pydatetime(), period)/3600)
+    #
+    dataset['duration'] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds())
 
-    sim_file = f"output/{dataset_name}/Simulation/{sim_type}_step_{tstep}mn/dataset_simulation_rep_2.csv"
+    dataset = dataset.groupby(['label']).sum()
+    dataset['label'] = dataset.index
+    dataset.sort_values(['duration'], ascending=False, inplace=True)
 
-    simu_dataset = pick_custom_dataset(path=sim_file)
+    sns.barplot(x="duration", y="label", data=dataset,
+                label="label", color="b")
 
-    start_date = dataset.date.min().to_pydatetime()
+    plt.xscale('log')
+    plt.xlabel('Log durée totale (secondes)')
+    plt.show()
 
-    simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
+    # labels = ["sleeping_begin", "leave_home_begin", "sleeping_end"]
+    #
+    # dataset = dataset[dataset.label.isin(labels)]
+    #
+    # for label in labels :
+    #     sns.distplot(dataset[dataset.label == label].relative_time, bins=30, label=label, kde=False)
+    #
+    # plt.legend()
+    # plt.show()
+    #
+    #
+    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/3_drift_toy_data_7.csv"
+    # dataset = pick_custom_dataset(path, nb_days=-1)
 
-    # real_graph = ActivityOccurrencesGraph(dataset_name, dataset, nb_days=-1)
+    # tw = dt.timedelta(days=7)
 
+    # distribution_evolution(dataset, time_window_duration=tw, label='eating', output_folder="../output/videos")
+    #
+    # sim_file = f"../output/{dataset_name}/Simulation/{sim_type}_step_{tstep}mn/dataset_simulation_rep_1.csv"
+    #
+    # simu_dataset = pick_custom_dataset(path=sim_file)
+    #
+    # start_date = dataset.date.min().to_pydatetime()
+    #
+    # simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
+    #
+    real_graph = ActivityOccurrencesGraph(dataset_name, dataset, nb_days=-1)
+    #
     plt.show()
 
 
@@ -182,8 +216,7 @@ def distribution_evolution(data, time_window_duration, label, output_folder="./o
     images_durations = []
 
     duration_max = data[data.label == label].duration.max()
-
-    for tw_index in range(len(time_windows_data)):
+    for tw_index in trange(len(time_windows_data), desc='Extract features from Time Windows'):
         tw_data = time_windows_data[tw_index]
         tw_data = tw_data[tw_data.label == label]
         occ_times = tw_data.timestamp.values / 3600
@@ -227,10 +260,9 @@ Plot a graph
 
 class ActivityOccurrencesGraph:
 
-    def __init__(self, plot_label, dataset, start_date=None, nb_days=10):
+    def __init__(self, plot_label, dataset, start_date=None, nb_days=-1):
         if start_date is None:
             start_date = dataset.date.min().to_pydatetime()
-
             # Get the date of the beginning of the day
             start_date = start_date.date()
             start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
@@ -245,7 +277,10 @@ class ActivityOccurrencesGraph:
 
         self.start_date = start_date
         self.nb_days = int((end_date - start_date) / dt.timedelta(days=1))
+
         self.dataset = dataset[(dataset.date >= start_date) & (dataset.date < end_date)].copy()
+
+        # self.dataset['duration'] = (self.dataset.end_date - self.dataset.date).apply(lambda x: x.total_seconds())
         self.plot_label = plot_label
 
         # Choose a color for each activity
@@ -264,31 +299,41 @@ class ActivityOccurrencesGraph:
         self.plot_day_bars()
         self.duration_pie_chart()
 
-
-
     def extract_days(self):
         """
         Extract each days from the log_dataset,
         :return:
         """
 
+        data = self.dataset.copy()
+
+        def isnightly(row):
+            return row['end_date'].day != row['date'].day
+
+        data['nightly'] = data.apply(isnightly, axis=1)
+
+        nightly_dataset = data[data.nightly == 1]
+
+        reformat_nightly_dataset = pd.DataFrame(columns=['date', 'end_date', 'label'])
+
         def nightly(row):
-            self.dataset.loc[len(self.dataset)] = [end_date, row.end_date, row.label]
-            day_dataset.loc[len(day_dataset)] = [row.date, end_date, row.label]
+            day_end_date = row.end_date.date()
+            day_end_date = dt.datetime.combine(day_end_date, dt.datetime.min.time())
+            reformat_nightly_dataset.loc[len(reformat_nightly_dataset)] = [row.date, day_end_date, row.label]
+            reformat_nightly_dataset.loc[len(reformat_nightly_dataset)] = [day_end_date, row.end_date, row.label]
+
+        nightly_dataset.apply(nightly, axis=1)
+
+        self.dataset = data[data.nightly == 0].append(reformat_nightly_dataset)
+
+        self.dataset.sort_values(['date'], inplace=True)
 
         days_data = []
         # Split nightly activities in 2
-        for day_index in range(self.nb_days):
+        for day_index in trange(self.nb_days, desc='Days extraction'):
             start_date = self.start_date + dt.timedelta(days=day_index)
             end_date = start_date + dt.timedelta(days=1)
-            day_dataset = self.dataset[(self.dataset.date >= start_date) & (self.dataset.date <= end_date)].copy()
-
-            # Split nightly events in 2
-            dropping_indexes = []
-            nightly_dataset = day_dataset[day_dataset.end_date > end_date].copy()
-
-            nightly_dataset.apply(nightly, axis=1)
-            # day_dataset.drop(dropping_indexes, axis=0, inplace=True)
+            day_dataset = self.dataset[(self.dataset.date >= start_date) & (self.dataset.date < end_date)].copy()
 
             days_data.append(day_dataset)
 
@@ -315,83 +360,75 @@ class ActivityOccurrencesGraph:
         yticks = []
         yticks_labels = []
 
-        day_id = 0
-        for day_dataset in self.days_dataset:
+        for label in self.labels:
+            label_segments = []
 
-            # Retrieve the date of the day
-            day_start_date = day_dataset.date.min().to_pydatetime()
-            day_start_date = day_start_date.date()
+            dates_list = []
 
-            if day_id % 5 == 0:
-                yticks.append(day_id)
-                yticks_labels.append(day_start_date)
+            kwargs = {'color': self.label_color[label], 'linewidth': 300 / self.nb_days}
 
-            day_start_date = dt.datetime.combine(day_start_date, dt.datetime.min.time())
+            for day_id in range(len(self.days_dataset)):
+                day_dataset = self.days_dataset[day_id]
+                day_dataset = day_dataset[day_dataset.label == label]
 
-            day_dataset['start_second'] = day_dataset.date.apply(lambda x: (x - day_start_date).total_seconds())
-            day_dataset['end_second'] = day_dataset.end_date.apply(lambda x: (x - day_start_date).total_seconds())
+                # Retrieve the date of the day
+                day_start_date = day_dataset.date.min().to_pydatetime()
+                day_start_date = day_start_date.date()
+                day_start_date = dt.datetime.combine(day_start_date, dt.datetime.min.time())
 
-            for label in self.labels:
-                segments = list(day_dataset.loc[day_dataset.label == label, ['start_second', 'end_second']].values)
-                segments = [tuple(x) for x in segments]
+                if day_id % int(np.ceil(self.nb_days / 30)) == 0:
+                    yticks.append(day_id)
+                    yticks_labels.append(day_start_date)
 
-                label_dataset = day_dataset[day_dataset.label == label]
-                plt.hlines(day_id, label_dataset.start_second, label_dataset.end_second, linewidth=300 / self.nb_days,
-                           color=self.label_color[label])
-                # for seg in segments:
-                #     plt.plot(seg, [day_id, day_id], color=self.label_color[label])
+                dates_list.append(day_start_date)
 
-            day_id += 1
+                day_dataset['start_ts'] = day_dataset.date.apply(lambda x: (x - day_start_date).total_seconds())
+                day_dataset['end_ts'] = day_dataset.end_date.apply(lambda x: (x - day_start_date).total_seconds())
 
+                segments = list(day_dataset[['start_ts', 'end_ts']].values)
+
+                if len(segments) > 0:
+                    for x in segments:
+                        label_segments.append([x[0], day_id, x[1], day_id])
+
+            label_segments = np.asarray(label_segments)
+            if len(label_segments) > 0:
+                xs = label_segments[:, ::2]
+                ys = label_segments[:, 1::2]
+                lines = LineCollection([list(zip(x, y)) for x, y in zip(xs, ys)], label=label, **kwargs)
+                ax.add_collection(lines)
+
+        ax.legend()
         ax.set_yticks(yticks)
         ax.set_yticklabels(yticks_labels)
         plt.xlabel("Hour of the day")
+        # plt.title(title)
+        plt.legend(loc='upper left', fancybox=True, shadow=True, ncol=1, bbox_to_anchor=(1, 1))
 
     def duration_pie_chart(self):
 
         #####################################
         #   Activities Frequency Pie Chart  #
         #####################################
-        # Duration Validation
-        # confidence_error = 0.9
-        labels_count_df = pd.DataFrame(columns=['duration'])
+
+        self.dataset['duration'] = (self.dataset.end_date - self.dataset.date).apply(lambda x: x.total_seconds())
+
+        labels_duration_df = self.dataset.groupby(['label']).sum()
+
+        labels_duration_df.sort_values(['duration'], ascending=False, inplace=True)
 
         colors = []
-        for label in self.labels:
-            self.label_df = self.dataset[self.dataset.label == label]
-
-            labels_count_df.loc[label] = len(self.dataset[self.dataset.label == label])
+        for label in labels_duration_df.index:
             colors.append(self.label_color[label])
-
-        # labels_count_df.sort_values(by=['duration'], ascending=False, inplace=True)
-
-        # explode = (0, 0, 0, 0, 0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5)
 
         fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
 
-        # cmap = plt.get_cmap('tab20c')
-        # colors = cmap(np.linspace(0., 1., len(labels_count_df)))
-        labels_count_df.duration.plot(kind='pie', fontsize=18, colors=colors, startangle=90)
+        labels_duration_df.duration.plot(kind='pie', fontsize=18, colors=colors, startangle=90)
 
-        # wedges, texts = ax.pie(labels_count_df.duration, wedgeprops=dict(input_width=0.5), startangle=0, colors=colors)
-        # bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
-        # kw = dict(xycoords='data', textcoords='data', arrowprops=dict(arrowstyle="-"),
-        #           bbox=bbox_props, zorder=0, va="center")
-        # for i, p in enumerate(wedges):
-        #     ang = (p.theta2 - p.theta1) / 2. + p.theta1
-        #     y = np.sin(np.deg2rad(ang))
-        #     x = np.cos(np.deg2rad(ang))
-        #     horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
-        #     connectionstyle = "angle,angleA=0,angleB={}".format(ang)
-        #     kw["arrowprops"].update({"connectionstyle": connectionstyle})
-        #     ax.annotate(labels_count_df.period_ts_index[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
-        #                 horizontalalignment=horizontalalignment, **kw)
-
-        plt.legend(labels=labels_count_df.index, loc="best")
+        plt.legend(labels=labels_duration_df.index, loc="best")
         plt.axis('equal')
         plt.tight_layout()
         plt.ylabel('')
-
 
 
 if __name__ == '__main__':

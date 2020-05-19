@@ -3,7 +3,6 @@ import glob
 import warnings
 from random import randint
 
-import seaborn as sns
 from Bio import pairwise2
 
 from Data_Drift.Features_Extraction import *
@@ -17,20 +16,21 @@ sns.set_style("darkgrid")
 
 
 # sns.set(font_scale=1.8)
-
+GLOBAL_LABELS = []
 
 # plt.xkcd()
 
 def main():
-    dataset_name = 'aruba'
+    global GLOBAL_LABELS
+    dataset_name = 'hh101'
 
-    modes = ['DYNAMIC', 'STATIC']
+    modes = ['STATIC']
 
     confidence_error = 0.95
 
-    simu_time_step = 5
+    adp_time_step = 5
 
-    label = 'meal_preparation'
+    label = 'sleep'
 
     period = dt.timedelta(days=1)
 
@@ -38,10 +38,23 @@ def main():
     # Original data
     original_dataset = pick_dataset(dataset_name)
 
+    original_dataset['duration'] = (original_dataset.end_date - original_dataset.date).apply(
+        lambda x: x.total_seconds())
+
+    dataset = original_dataset.groupby(['label']).sum()
+    dataset['label'] = dataset.index
+    dataset.sort_values(['duration'], ascending=False, inplace=True)
+
+    GLOBAL_LABELS = list(dataset.label.unique())
+
+    original_dataset = original_dataset[original_dataset.label.isin(GLOBAL_LABELS)]
+
     labels = original_dataset.label.unique()
     labels.sort()
 
     print(labels)
+
+    labels = GLOBAL_LABELS
 
     start_date = original_dataset.date.min().to_pydatetime()
     end_date = original_dataset.date.max().to_pydatetime()
@@ -69,46 +82,51 @@ def main():
     print("# EVALUATION OF THE MODEL on the {} HOUSE Dataset #".format(dataset_name))
     print("##########################################################################")
 
-    # dirname = "./output/{}/Simulation/Simulation_X{}_Pattern_ID_{}/".format(dataset_name, simulation_id,
-    #                                                                         pattern_folder_id)
-
-
-
-
     labels = original_dataset.label.unique()
 
     labels.sort()
 
     modes_results = []
     for mode in modes:
-        dirname = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, mode, simu_time_step)
+        dirname = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, mode, adp_time_step)
 
-        activity_duration_validation(label, original_dataset=testing_dataset, replications_directory=dirname,
-                                     confidence=confidence_error, display=True)
+        # activity_duration_validation(label, original_dataset=testing_dataset, replications_directory=dirname,
+        #                              confidence=confidence_error, display=True)
 
-        results_df = pd.DataFrame(columns=['KDE'])
+        results_df = pd.DataFrame(columns=['label', 'KDE', 'HIST'])
 
         for label_str in labels:
             intersect_area, den_area, rmse = validation_periodic_time_distribution(label=label_str,
                                                                                    real_dataset=testing_dataset,
                                                                                    replications_directory=dirname,
                                                                                    period=period,
-                                                                                   bin_width=simu_time_step,
+                                                                                   bin_width=adp_time_step,
                                                                                    display=False)
-            results_df.loc[label_str] = [den_area]
+            results_df.loc[len(results_df)] = [label_str, den_area, intersect_area]
         modes_results.append(results_df)
 
-    all_result = modes_results[0].join(modes_results[1], lsuffix='_' + modes[0], rsuffix='_' + modes[1])
+    results_df = results_df.sort_values(['KDE'], ascending=False)
 
-    all_result['label'] = all_result.index
+    fig, ax1 = plt.subplots(figsize=(10, 10))
+    # tidy = results_df.melt(id_vars='label').rename(columns=str.title)
+    sns.barplot(x='label', y='KDE', data=results_df, ax=ax1, palette="Blues_d")
+    sns.despine(fig)
+    plt.xticks(rotation='vertical')
+    plt.ylabel('KDE_Similarity')
+    plt.show()
+
+    # all_result = modes_results[0].join(modes_results[1], lsuffix='_' + modes[0], rsuffix='_' + modes[1])
+
+    # all_result['label'] = all_result.index
     # results_df.drop(['rmse'], axis=1, inplace=True)
     # results_df.sort_values(['KDE'], ascending=False, inplace=True)
 
-    df = all_result.melt('label', var_name='cols', value_name='vals')
-    sns.barplot(x='label', y='vals', hue='cols', data=df)
+    # df = all_result.melt('label', var_name='cols', value_name='vals')
+    sns.barplot(x='label', y='KDE', data=results_df)
+    sns.barplot(x='label', y='HIST', data=results_df)
     plt.ylim((0, 1))
 
-    plt.title('Aruba\nActivities Daily Profile Matching')
+    plt.title('Comparaison ')
     plt.show()
     # all_result.to_csv(dirname + '../Aruba_label_validation_15mn_bin.csv', sep=";", period_ts_index=False)
 
@@ -147,7 +165,7 @@ def main():
     #         letter_similarity[(letter1, letter2)] = label_similarity_matrix[i][j]
 
     for mode in modes:
-        dirname = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, mode, simu_time_step)
+        dirname = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, mode, adp_time_step)
 
         print("MODE : {}".format(mode))
         sequence_alignement_validation(original_data=testing_dataset, directory=dirname, period=period,
@@ -733,6 +751,7 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, d
         i = list_files.index(filename)
 
         dataset = pick_custom_dataset(filename)
+        dataset = dataset[dataset.label.isin(GLOBAL_LABELS)]
         dataset = dataset[(dataset.date >= validation_start_date) & (dataset.date <= validation_end_date)].copy()
         alignement_df = sequence_alignment(original_data=original_data, sim_data=dataset, alphabet=alphabet,
                                            period=period, start_date=validation_start_date,
@@ -753,6 +772,7 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, d
         i = list_files.index(filename)
 
         dataset = pick_custom_dataset(filename)
+        dataset = dataset[dataset.label.isin(GLOBAL_LABELS)]
         alignement_df = sequence_alignment(original_data=original_data, sim_data=dataset, alphabet=alphabet,
                                            period=period, start_date=validation_start_date,
                                            end_date=validation_end_date, random=True)
@@ -800,12 +820,12 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, d
 
     if display:
         fig, ax = plt.subplots()
-        ax.plot(np.arange(len(repl_scores)), repl_scores.stoc_mean, label="RB-STPN Sequence", linestyle="-")
+        ax.plot(np.arange(len(repl_scores)), repl_scores.stoc_mean, label="Sequence G-RPST", linestyle="-")
 
-        ax.plot(np.arange(len(rand_repl_scores)), rand_repl_scores.stoc_mean, label="Random Sequence", linestyle='-')
+        ax.plot(np.arange(len(rand_repl_scores)), rand_repl_scores.stoc_mean, label="Sequence Aléatoire", linestyle='-')
 
         ax.fill_between(np.arange(len(repl_scores)), repl_scores.stoc_lower, repl_scores.stoc_upper,
-                        label='95% Confidence Interval', color='k', alpha=.2, hatch='//')
+                        label='Interval de confiance à 95%', color='k', alpha=.2, hatch='//')
 
         ax.fill_between(np.arange(len(rand_repl_scores)), rand_repl_scores.stoc_lower, rand_repl_scores.stoc_upper,
                         color='k', alpha=.2, hatch='//')
@@ -825,8 +845,8 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, d
         ax.set_yticklabels(labels)
         ax.set_yticks(locs)
 
-        plt.xlabel("Days")
-        plt.ylabel("Normalized alignment score")
+        plt.xlabel("Jours")
+        plt.ylabel("Score d'alignement de séquence")
         plt.ylim(0, 1)
         plt.legend(loc=1)
         plt.xticks(np.arange(0, len(repl_scores), step=5))

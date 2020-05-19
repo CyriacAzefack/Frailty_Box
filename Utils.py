@@ -1,6 +1,7 @@
 import datetime as dt
 import os
 
+import matplotlib
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
@@ -15,7 +16,6 @@ def pick_dataset(name, nb_days=-1, ):
     dataset = None
     if 'toy' in name:
         path = os.path.join(my_path, "./input/Toy/Simulation/{}.csv".format(name))
-
         dataset = pd.read_csv(path, delimiter=';')
         date_format = '%Y-%m-%d %H:%M:%S.%f'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
@@ -27,6 +27,13 @@ def pick_dataset(name, nb_days=-1, ):
         date_format = '%Y-%m-%d %H:%M:%S.%f'
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
         dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
+
+    elif name == 'aruba_events':
+        path = os.path.join(my_path, "./input/aruba/dataset.csv")
+        dataset = pd.read_csv(path, delimiter=';')
+        date_format = '%Y-%m-%d %H:%M:%S.%f'
+        dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+        dataset['end_date'] = dataset['date']
 
     elif name == 'toulouse':
         path = os.path.join(my_path, "./input/Toulouse/toulouse_dataset.csv")
@@ -42,6 +49,12 @@ def pick_dataset(name, nb_days=-1, ):
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
         dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
 
+    elif name == 'habits_test':
+        path = os.path.join(my_path, "./input/habits_toy_dataset.csv")
+        dataset = pd.read_csv(path, delimiter=';')
+        date_format = '%Y-%d-%m %H:%M'
+        dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+        dataset['end_date'] = dataset['date']
 
     elif name.startswith('hh'):
         path = os.path.join(my_path, "./input/HH/{}/dataset.csv".format(name))
@@ -50,11 +63,19 @@ def pick_dataset(name, nb_days=-1, ):
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
         dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
 
-    elif name == 'KA_events':
+    elif name == 'ka_events':
         filename = "./input/{} House/{}_dataset.csv".format('KA', 'KA_label')
         path = os.path.join(my_path, filename)
         dataset = pd.read_csv(path, delimiter=';')
         dataset['date'] = pd.to_datetime(dataset['date'])
+        dataset['end_date'] = dataset['date']
+
+    elif name == 'kb_events':
+        filename = "./input/{} House/{}_dataset.csv".format('KB', 'KB_label')
+        path = os.path.join(my_path, filename)
+        dataset = pd.read_csv(path, delimiter=';')
+        dataset['date'] = pd.to_datetime(dataset['date'])
+        dataset['end_date'] = dataset['date']
 
     else:
         filename = "./input/{} House/{}_dataset.csv".format(name, name)
@@ -119,8 +140,8 @@ def generate_random_color(n):
     """
 
     colors = []
-    # cmap = matplotlib.cm.get_cmap('nipy_spectral')
-    cmap = plt.get_cmap('tab20')
+    cmap = matplotlib.cm.get_cmap('Set1')
+    # cmap = plt.get_cmap('tab20')
     for i in range(n):
         # color = matplotlib.cm.nipy_spectral(float(i) / n)
         color = cmap(float(i) / n)
@@ -304,7 +325,13 @@ def convert_data_XES_log(name, output_path, custom=False):
 
 
 if __name__ == '__main__':
-    name = 'aruba'
-    input = f'./output/{name}/Simulation/Static_step_5mn/dataset_simulation_rep_1.csv'
-    output = f'./input/XES/XES_log_Sim_{name}.csv'
-    convert_data_XES_log(input, output_path=output, custom=True)
+    name = 'hh113'
+    activity = 'sleep'
+    # input = f'./output/{name}/Simulation/Static_step_5mn/dataset_simulation_rep_1.csv'
+    # output = f'./input/XES/XES_log_Sim_{name}.csv'
+    # convert_data_XES_log(input, output_path=output, custom=True)
+    dataset = pick_dataset(name)
+
+    generate_random_color(3)
+
+    dataset['duration'] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds() / 60)

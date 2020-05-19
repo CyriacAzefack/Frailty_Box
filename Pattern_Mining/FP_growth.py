@@ -314,20 +314,4 @@ def extract_transactions_itemsets(data, Tep):
 
     data.apply(fetch_trans, axis=1)
 
-    # while True:
-    #     current_end_time = current_start_time + Tep
-    #
-    #
-    #
-    #     transactions.append(list(set(data.loc[date_condition, "label"].values)))  # list of set to avoid doublons
-    #     data.loc[date_condition, 'trans_id'] = current_trans_id
-    #
-    #     if len(data.loc[data.date > current_end_time]) > 0:
-    #         current_start_time = min(data.loc[data.date > current_end_time, "date"])
-    #     else:
-    #         break
-    #     current_trans_id += 1
-    #
-    # data.drop(['trans_id'], axis=1, inplace=True)
-
     return transactions

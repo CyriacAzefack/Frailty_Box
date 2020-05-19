@@ -1,7 +1,6 @@
 import errno
 import math
 import multiprocessing as mp
-import pickle
 import time as t
 
 import seaborn as sns
@@ -23,7 +22,7 @@ def main():
 
     dataset_name = 'hh101'
     output_folder = '../output/{}/'.format(dataset_name)
-    dataset = pick_dataset(dataset_name)
+    dataset = pick_dataset(dataset_name, nb_days=-1)
 
     # TIME WINDOW PARAMETERS
     nb_days_per_window = 30
@@ -34,10 +33,8 @@ def main():
     # SIM_MODEL PARAMETERS
     period = dt.timedelta(days=1)
     tep = 30
-    support_min = nb_days_per_window
-
-
-
+    support_min = 15
+    # support_min = 3
 
     nb_processes = 2 * mp.cpu_count()  # For parallel computing
 
@@ -48,47 +45,42 @@ def main():
             if exc.errno != errno.EEXIST:
                 raise
 
-    # tw_macro_activities = extract_macro_activities(log_dataset=log_dataset, support_min=support_min, tep=tep, period=period,
-    #                                             verbose=True, display=False)
-    # elapsed_time = dt.timedelta(seconds=round(t.process_time() - start_time, 1))
-    #
-    # print("###############################")
-    # print("Elapsed time : {}".format(elapsed_time))
-
+    start_time = t.time()
     print('##########################################')
     print('## MACRO ACTIVITIES EXTRACTION : {} ##'.format(dataset_name.upper()))
     print('##########################################')
 
-    monitoring_start_time = t.time()
+    macro_activities, results_df = extract_macro_activities(dataset=dataset, support_min=support_min, tep=tep,
+                                                            display=False, verbose=True)
 
+    results_df.to_csv(f'../output/{dataset_name}/habits_results.csv', index=False)
+    # monitoring_start_time = t.time()
 
-    nb_tw = math.floor((end_date - start_date) / period)  # Number of time windows available
-
-    results = {}
-
-    args = [(dataset, support_min, tep, period, time_window_duration, tw_id) for tw_id in range(nb_tw)]
-
-
-    with mp.Pool(processes=nb_processes) as pool:
-        mp_results = pool.starmap(extract_tw_macro_activities, args)
-
-        for result in mp_results:
-            results[result[0]] = result[1]
-
-
-    print("All Time Windows Treated")
-
-    elapsed_time = dt.timedelta(seconds=round(t.time() - monitoring_start_time, 1))
-
-    print("###############################")
-    print("Elapsed time : {}".format(elapsed_time))
-
-    pickle_out = open(output_folder + 'all_macro_activities', 'wb')
-    pickle.dump(results, pickle_out)
-    pickle_out.close()
-
+    # nb_tw = math.floor((end_date - start_date) / period)  # Number of time windows available
+    #
+    # results = {}
+    #
+    # args = [(dataset, support_min, tep, period, time_window_duration, tw_id) for tw_id in range(nb_tw)]
+    #
+    # with mp.Pool(processes=nb_processes) as pool:
+    #     mp_results = pool.starmap(extract_tw_macro_activities, args)
+    #
+    #     for result in mp_results:
+    #         results[result[0]] = result[1]
+    #
+    # print("All Time Windows Treated")
+    #
+    # elapsed_time = dt.timedelta(seconds=round(t.time() - start_time, 1))
+    #
+    # print("###############################")
+    # print("Elapsed time : {}".format(elapsed_time))
+    #
+    # pickle_out = open(output_folder + 'all_macro_activities', 'wb')
+    # pickle.dump(results, pickle_out)
+    # pickle_out.close()
+    #
     # results = pickle.load(open(output_folder+'all_macro_activities', 'rb'))
-
+    #
     # print(results)
 
     # plt.plot(np.arange(len(new_episodes_evol)), new_episodes_evol)
@@ -120,7 +112,7 @@ def extract_tw_macro_activities(dataset, support_min, tep, period, window_durati
     tw_dataset = dataset.loc[(dataset.date >= window_start_date) & (dataset.date < window_end_date)].copy()
 
     tw_macro_activities_episodes = extract_macro_activities(dataset=tw_dataset, support_min=support_min, tep=tep,
-                                                            period=period)
+                                                            display=True, verbose=False)
 
     print('Time window {} screening finished.'.format(tw_id))
 
@@ -131,60 +123,60 @@ def extract_tw_macro_activities(dataset, support_min, tep, period, window_durati
     #
 
 
-def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
+def extract_macro_activities(dataset, support_min, tep, verbose=False, display=False, singles_only=False):
     """
-    Extract the tupe (episode, occurrences) from the input log_dataset
-    :param dataset: input log_dataset
-    :param support_min: Minimum number of episode occurrences
-    :param tep: Duration max of an episode occurrence
-    :param period: periodicity
-    :return: A dict-like object with 'episode' as key and the tuple of dataframes (episode_occurrences, events) as value
+    :param display:
+    :param dataset:
+    :param support_min:
+    :param tep:
+    :param period:
+    :param verbose:
+    :param singles_only:
+    :return:
     """
 
     macro_activities = {}
 
+    results_df = pd.DataFrame(columns=['episode', 'description', 'nb_occ', 'accuracy', 'start_validity',
+                                       'end_validity', 'nb_days_val'])
+
     i = 0
-    while (len(dataset) > 0):
+    while len(dataset) > 0 and not singles_only:
         i += 1
         # episode, nb_occ, ratio, score = find_best_episode(log_dataset=log_dataset, tep=tep, support_min=support_min,
         #                                                   period=period, display=display)
         # Most frequents episode
 
-        frequent_episodes = FP_growth.find_frequent_episodes(dataset, support_min, tep)
+        best_episode, nb_occ, _, accuracy, description, start_val, end_val = find_best_episode(dataset=dataset, tep=tep,
+                                                                                               support_min=support_min,
+                                                                                               display=display,
+                                                                                               verbose=verbose)
 
-
-        # TODO : Set a GOOD episode selection policy
-        ordered_frequent_episodes = sorted(frequent_episodes.items(), key=lambda t: (len(t[0]) - 1) * 100000 + t[1],
-                                           reverse=True)
-
-        best_episode, nb_occ = ordered_frequent_episodes[0]
-
-        if len(best_episode) == 1:
+        if best_episode is None:
+            print("**********No more best episode found*************")
             break
 
         episode_occurrences, events = compute_episode_occurrences(dataset=dataset, episode=best_episode, tep=tep)
 
         macro_activities[tuple(best_episode)] = (episode_occurrences, events)
 
+        nb_days_val = int((end_val - start_val) / dt.timedelta(days=1))
+        results_df.loc[len(results_df)] = [list(best_episode), description, nb_occ, accuracy, start_val, end_val,
+                                           nb_days_val]
         if verbose:
             print("########################################")
             print("Run N°{}".format(i))
             print("Best episode found {}.".format(best_episode))
-            print("Nb Occurrences : \t{}".format(nb_occ))
+            print(f"Nb Occurrences : \t{nb_occ}")
+            print(f"Accuracy : \t{accuracy:.2f}")
+            print(f"Description: \t{description}")
+            print(f"Validity Period : {str(start_val)} -- {str(end_val)}")
+            print(f"Number Days of validity : {nb_days_val}")
 
-            # print("Ratio Dataset : \t{}".format(ratio))
-            # # print("Accuracy score : \t{:.2f}".format(score))
-            # if len(episode_occurrences) > 2:
-            #     GMM_desc = compute_episode_description(log_dataset=log_dataset, episode=best_episode, period=period, tep=tep)
-            #
-            #     for mu, sigma in GMM_desc.items():
-            #         print('Mean : {} - Sigma : {}'.format(dt.timedelta(seconds=int(mu)),
-            #                                               dt.timedelta(seconds=int(sigma))))
 
         dataset = pd.concat([dataset, events]).drop_duplicates(keep=False)
 
-    # Macro-Activities finished, now mining single episode
-
+    # Mining of the rest of the dataset by creating single-activities
     labels = dataset.label.unique()
 
     for label in labels:
@@ -203,9 +195,10 @@ def extract_macro_activities(dataset, support_min, tep, period, verbose=False):
     return macro_activities
 
 
-def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), display=False):
+def find_best_episode(dataset, tep, support_min, display=False, verbose=False):
     """
     Find the best episode in a event log
+    :param verbose:
     :param dataset: Event log
     :param tep: duration max of an episode
     :param support_min: number of occurrences min in the event log
@@ -215,51 +208,45 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
     """
 
     # Dataset to store the objective values of the solutions
-    comparaison_df = pd.DataFrame(columns=['episode', 'nb_occ', 'ratio_dataset', 'score'])
+    comparaison_df = pd.DataFrame(
+        columns=['episode', 'nb_occ', 'nb_events', 'ratio_dataset', 'accuracy', 'power', 'start_val', 'end_val'])
 
     # Most frequents episode
     frequent_episodes = FP_growth.find_frequent_episodes(dataset, support_min, tep)
 
     if len(frequent_episodes) == 0:
-        return None, None, None, None
+        print("No frequent episodes found")
+        return None, None, None, None, None, None, None
 
+    GMM_descriptions = {}
     # Compute the sparsity of the episode occurrence time
-    for episode, nb_occ in frequent_episodes.items():
-        ratio_dataset = len(episode) * nb_occ / len(dataset)  # ratio in the log_dataset
+    for episode, _ in frequent_episodes.items():
+        episode = sorted(episode, reverse=True)
 
-        # find the episode occurrences
-        occurrences = Candidate_Study.find_occurrences(dataset, episode, tep)
+        periodicity = Candidate_Study.periodicity_search(data=dataset, episode=episode, delta_Tmax_ratio=3,
+                                                         support_min=support_min, std_max=0.1, tolerance_ratio=2,
+                                                         Tep=tep, display=True, verbose=False)
 
-        # Relative timestamp in the period
-        occurrences["relative_date"] = occurrences.date.apply(
-            lambda x: Candidate_Study.modulo_datetime(x.to_pydatetime(), period))
+        if periodicity is not None:
+            nb_occ = periodicity['nb_occ']
+            ratio_dataset = len(episode) * nb_occ / len(dataset)  # ratio in the log_dataset
+            comparaison_df.loc[len(comparaison_df)] = [list(episode), nb_occ, len(episode) * nb_occ, ratio_dataset,
+                                                       periodicity['accuracy'], periodicity['compression_power'],
+                                                       periodicity['delta_t'][0], periodicity['delta_t'][1]]
+            GMM_descriptions[tuple(episode)] = periodicity['description']
 
-        data_points = occurrences.relative_date.values
+    if len(comparaison_df) == 0:
+        print("*****No periodicities Found******")
+        return None, None, None, None, None, None, None
 
-        # For midnight-morning issue
-        data_points_2 = [x + period.total_seconds() for x in data_points]
-
-        big_data_points = np.asarray(list(data_points) + list(data_points_2)).reshape(-1, 1)
-
-        # Find the number of clusters
-        kde_a = KDEUnivariate(big_data_points)
-        kde_a.fit(bw="normal_reference")
-
-        day_bins = np.linspace(0, 2 * period.total_seconds(), 2000)
-        density_values = kde_a.evaluate(day_bins)
-
-        score = np.max(density_values) * period.total_seconds()
-
-        comparaison_df.loc[len(comparaison_df)] = [list(episode), nb_occ, ratio_dataset, score]
-
-    scores = comparaison_df[["ratio_dataset", "score"]].values
+    scores = comparaison_df[["nb_events", "accuracy"]].values
     scores = np.asarray(scores)
 
     # Compute the pareto front
     pareto = identify_pareto(scores)
     pareto_front_df = comparaison_df.loc[pareto]
 
-    pareto_front_df.sort_values(['ratio_dataset'], ascending=True, inplace=True)
+    pareto_front_df.sort_values(['ratio_dataset', 'accuracy'], ascending=False, inplace=True)
 
     ##############################################
     #       MOST INTERESTING EPISODE ??          #
@@ -271,7 +258,7 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
     for i, row in pareto_front_df.iterrows():
         # ratio_dataset = row['ratio_dataset']
         # score = row['score']
-        dist = 2000 * len(row['episode']) + row['nb_occ']
+        dist = row['power']
         # dist = math.pow(point[0], point[1])
 
         if dist > max_distance:
@@ -279,22 +266,24 @@ def find_best_episode(dataset, tep, support_min, period=dt.timedelta(days=1), di
             best_point = row
 
     if display:
-        sns.scatterplot(x='ratio_dataset', y='score', data=comparaison_df)
-        plt.plot(pareto_front_df.nb_occ, pareto_front_df.score, color='r')
-        plt.plot([best_point['ratio_dataset']], [best_point['score']], marker='o', markersize=8, color="red")
+        sns.scatterplot(x='nb_events', y='accuracy', size='nb_occ', data=comparaison_df)
+        plt.plot(pareto_front_df.nb_events, pareto_front_df.accuracy, color='r', label='Pareto Front')
+        plt.plot([best_point['nb_events']], [best_point['accuracy']], marker='x', color="red")
 
         #
         for _, row in pareto_front_df.iterrows():
-            plt.text(row['ratio_dataset'] + 0.01, row['score'], row['episode'], horizontalalignment='left',
-                     size='medium',
-                     color='black', weight='semibold')
+            plt.text(row['nb_events'], row['accuracy'], row['episode'], verticalalignment='top',
+                     size='large', color='black', weight='semibold')
 
-        plt.legend()
-        plt.xlabel('Nb occurrences')
-        plt.ylabel('Accuracy Score')
+        plt.legend(loc=2)
+        # plt.ylim((0,1))
+        plt.xlabel('Nombre d\'évènements', fontsize=18)
+        plt.ylabel('Précision de la périodicité', fontsize=18)
+        plt.title('Selection du meilleur épisode', fontsize=20)
         plt.show()
 
-    return best_point['episode'], best_point['nb_occ'], best_point['ratio_dataset'], best_point['score']
+    return best_point['episode'], best_point['nb_occ'], best_point['ratio_dataset'], best_point['accuracy'], \
+           GMM_descriptions[tuple(best_point['episode'])], best_point['start_val'], best_point['end_val']
 
 
 def compute_episode_description(dataset, episode, period, tep):

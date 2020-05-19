@@ -14,7 +14,6 @@ import seaborn as sns
 
 sys.path.append(dirname(__file__))
 
-
 from Simulation.MacroActivity import MacroActivity
 
 
@@ -77,9 +76,8 @@ class ActivityManager:
 
         self.last_time_window_id = time_window_id
 
-        self.obsolescence_check()
-
-
+        if self.dynamic:
+            self.obsolescence_check()
 
     def get_macro_activity_from_name(self, set_episode):
         """
@@ -162,12 +160,16 @@ class ActivityManager:
             i += 1
 
             # ACTIVITY DAILY PROFILE FORECASTING
-            ADP_error = macro_activity_object.forecast_history_count(train_ratio=train_ratio,
-                                                                     last_time_window_id=self.last_time_window_id,
-                                                                     nb_periods_to_forecast=nb_periods_to_forecast,
-                                                                     display=debug)
+            # TODO : Enable ADP Forecasting
 
-            ADP_error_df.at[len(ADP_error_df)] = [tuple(set_episode), ADP_error]
+            # Fill
+
+            # ADP_error = macro_activity_object.forecast_history_count(train_ratio=train_ratio,
+            #                                                          last_time_window_id=self.last_time_window_id,
+            #                                                          nb_periods_to_forecast=nb_periods_to_forecast,
+            #                                                          display=debug)
+            #
+            # ADP_error_df.at[len(ADP_error_df)] = [tuple(set_episode), ADP_error]
 
             # ACTIVITIES DURATIONS FORECASTING
             # TODO : Monitor the error on forecasting models for duration
@@ -197,7 +199,7 @@ class ActivityManager:
 
         if display:
             # Drop NAN
-            ADPs_rmse = ADP_error_df.replace([np.inf, -np.inf], np.nan).dropna().rmse.values
+            # ADPs_rmse = ADP_error_df.replace([np.inf, -np.inf], np.nan).dropna().rmse.values
             mean_durations_rmse = duration_error_df.replace([np.inf, -np.inf], np.nan).dropna().mean_rmse.values
             std_durations_rmse = duration_error_df.replace([np.inf, -np.inf], np.nan).dropna().std_rmse.values
 
@@ -206,7 +208,6 @@ class ActivityManager:
             sns.kdeplot(mean_durations_rmse, shade_lowest=False, shade=True, label='Mean Duration Errors')
             sns.kdeplot(std_durations_rmse, shade_lowest=False, shade=True, label='STD Duration Errors')
             plt.show()
-
 
         # plt.hist(list(error_df.error.values))
         # plt.title('NMSE Distribution for all macro_activities forecasting models')
@@ -230,10 +231,20 @@ class ActivityManager:
             count_histogram.index = [set_episode]
             activities_count_histogram = activities_count_histogram.append(count_histogram)
 
-        activities_count_histogram = activities_count_histogram.div(activities_count_histogram.sum(axis=0), axis=1)
-        activities_count_histogram.fillna(0, inplace=True)
+        # No 'idle' times
+        # activities_count_histogram = activities_count_histogram.div(activities_count_histogram.sum(axis=0), axis=1)
 
-        for index, row in activities_count_histogram.iterrows():
+        # With 'idle' times
+
+        div_array = activities_count_histogram.sum(axis=0)
+
+        div_array = np.where(div_array > self.window_size, div_array, self.window_size)
+
+        activities_occ_probability = activities_count_histogram.div(div_array, axis=1)
+
+        activities_occ_probability.fillna(0, inplace=True)
+
+        for index, row in activities_occ_probability.iterrows():
             macro_ADPs[index] = row.values
 
         return macro_ADPs
@@ -274,7 +285,7 @@ class ActivityManager:
                 if current_time_window_id > new_time_window_id:  # if we change time window
                     # Re compute the Activity Daily Profiles
                     current_time_window_id = new_time_window_id
-                    macro_ADPs = self.get_activity_daily_profiles(time_window_id=current_time_window_id)
+                    macro_ADPs = self.get_activity_daily_profiles(time_window_id=self.last_time_window_id)
             else:
                 current_time_window_id = time_window_id
 
@@ -354,6 +365,19 @@ class ActivityManager:
         """
         for set_episode, macro_activity in self.activity_objects.items():
             macro_activity.dump_data(output=output)
+
+    def ADP_screenshot(self, time_window_id=0):
+        """
+        Screenshot of all the macro-activities daily profiles
+        :param time_window_id:
+        :return:
+        """
+
+        macro_ADPs = self.get_activity_daily_profiles(time_window_id=time_window_id)
+
+        df_ADPs = pd.DataFrame.from_dict(macro_ADPs, orient='index')
+
+        print()
 
 
 def plot_markov_chain(matrix, labels, threshold=0.1):

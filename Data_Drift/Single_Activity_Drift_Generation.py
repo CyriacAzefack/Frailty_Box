@@ -14,8 +14,6 @@ def main():
 
     output_folder = '../input/Toy/Simulation/'
 
-
-
     breakfast = {
         'mean_time': dt.timedelta(hours=8, minutes=30).total_seconds(),
         'std_time': dt.timedelta(hours=0, minutes=15).total_seconds(),
@@ -31,7 +29,6 @@ def main():
         'std_duration': dt.timedelta(hours=0, minutes=7).total_seconds(),
         'accuracy': .95
     }
-
 
     lunch = {
         'mean_time': dt.timedelta(hours=13, minutes=25).total_seconds(),
@@ -56,8 +53,6 @@ def main():
         'std_duration': dt.timedelta(hours=0, minutes=5).total_seconds(),
         'accuracy': .95
     }
-
-
 
     behavior_A = [breakfast, lunch, dinner]
     behavior_B = [brunch, lunner]
@@ -144,11 +139,11 @@ def driftless_generation(label, behavior_A, behavior_B, prob_A, start_date, nb_d
             rand = random.random()
             if rand <= occurrence['accuracy']:  # prob of the occurrence to happen
                 timestamp = np.random.normal(occurrence['mean_time'], occurrence['std_time'])
-                nb_days = 0
-                while nb_days <= 0:
-                    nb_days = np.random.normal(occurrence['mean_duration'], occurrence['std_duration'])
+                duration = 0
+                while duration <= 0:
+                    duration = np.random.normal(occurrence['mean_duration'], occurrence['std_duration'])
                 evt_start_date = current_date + dt.timedelta(seconds=timestamp)
-                evt_end_date = evt_start_date + dt.timedelta(seconds=nb_days)
+                evt_end_date = evt_start_date + dt.timedelta(seconds=duration)
 
                 event_log.loc[len(event_log)] = [evt_start_date, evt_end_date, label]
 
@@ -183,7 +178,6 @@ def progressive_drift_generation(label, behavior_A, behavior_B, initial_prob_A, 
         :return:
         """
         return initial_prob_A / (1 + math.exp(alpha * (d - x)))
-
 
     event_log = pd.DataFrame(columns=['date', 'end_date', 'label'])
 
