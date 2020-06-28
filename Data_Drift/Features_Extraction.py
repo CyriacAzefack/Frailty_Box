@@ -3,7 +3,7 @@
 #######################
 
 # Implementation of all the features extraction method for time windows
-
+import spm1d
 from scipy import stats
 from sklearn import metrics
 from sklearn.metrics import mean_squared_error
@@ -65,7 +65,6 @@ def main():
                 similarity = (duration_similarity + occ_time_similarity) / 2
                 similarities.append(similarity)
             similarity_matrix[i][j] = np.mean(similarities)
-
 
 
 def ks_similarity(arrayA, arrayB):
@@ -157,7 +156,7 @@ def mse(array_A, array_B, bin_width=5 * 60, max_bin=24 * 3600):
     return mse
 
 
-def density_intersection_area(arrayA, arrayB, bins=1000):
+def density_intersection_area(arrayA, arrayB, bins=200):
     """
     Compute the intersection area of the kernel density on the two arrays
     :param arrayA:
@@ -186,7 +185,6 @@ def density_intersection_area(arrayA, arrayB, bins=1000):
     fitted_B = kdeB.evaluate(X_plot)
 
     intersection = [min(fitted_A[i], fitted_B[i]) for i in range(bins)]
-
 
     area = metrics.auc(X_plot, intersection)
 
@@ -235,6 +233,36 @@ def histogram_intersection(array_A, array_B, bin_width=5 * 60, max_bin=24 * 3600
     # area = bin_minutes * np.sum(intersection)
 
     return area
+
+
+def hotelling_test(arrayA, arrayB):
+    """
+    Compute the similarity between 2 time windows event sequence using a Kolmogorov–Smirnov test.
+    Null hypothesis : The two data array come from the same distribution
+    :param array_A:
+    :param arrayB:
+    :return:
+    """
+
+    if (len(arrayA) == 0) and (len(arrayB) == 0):
+        return 1
+    elif (len(arrayA) == 0) or (len(arrayB) == 0):
+        return 0
+    elif (len(arrayA) == 1) and (len(arrayB) == 1):
+        if arrayA[0][0] == arrayB[0][0]:
+            return 1
+        else:
+            return 0
+
+    # print(len(arrayA), len(arrayB))
+    T2 = spm1d.stats.hotellings2(arrayA, arrayB)
+    T2i = T2.inference(0.05)
+    p_val = T2i.p
+
+    if np.isnan(p_val):
+        return 0
+
+    return p_val
 
 
 if __name__ == '__main__':

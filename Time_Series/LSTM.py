@@ -150,7 +150,7 @@ def main():
     plt.show()
 
 
-# convert an array of values into a log_dataset matrix
+# convert an array of values into a log_dataset distance_matrix
 def create_lookback_dataset(dataset, look_back=1):
     dataX, dataY = [], []
     for i in range(len(dataset) - look_back - 1):

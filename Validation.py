@@ -134,7 +134,7 @@ def main():
     print("#  SEQUENCE ALIGNMENT VALIDATION  #")
     print("###################################")
 
-    # Compute the label similarity matrix with daily density
+    # Compute the label similarity distance_matrix with daily density
     training_dataset['relative_date'] = training_dataset.date.apply(
         lambda x: modulo_datetime(x.to_pydatetime(), dt.timedelta(days=1)))
 

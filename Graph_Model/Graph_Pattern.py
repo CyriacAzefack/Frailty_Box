@@ -99,7 +99,7 @@ class Graph:
         '''
         Draw the directed graph corresponding and save the image
         :param graph_nodes: Nodes of the graph
-        :param prob_matrix: Transition matrix
+        :param prob_matrix: Transition distance_matrix
         :param filename: File path where the graph image is saved
         :param debug: If True, plot the image
         :return:
@@ -394,7 +394,7 @@ class Graph:
 
     def extrapolate_time_evolution(self, start_date):
         '''
-        Compute the probability transition matrix and the waiting time transition matrix by extrapolating time evolution
+        Compute the probability transition distance_matrix and the waiting time transition distance_matrix by extrapolating time evolution
         :param start_date:
         :param end_date:
         :return: (prob_matrix, time_matrix)

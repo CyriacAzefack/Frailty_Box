@@ -20,7 +20,7 @@ def main():
     :return:
     """
 
-    dataset_name = 'hh101'
+    dataset_name = 'bped_ramon'
     output_folder = '../output/{}/'.format(dataset_name)
     dataset = pick_dataset(dataset_name, nb_days=-1)
 
@@ -33,7 +33,7 @@ def main():
     # SIM_MODEL PARAMETERS
     period = dt.timedelta(days=1)
     tep = 30
-    support_min = 15
+    support_min = 10
     # support_min = 3
 
     nb_processes = 2 * mp.cpu_count()  # For parallel computing
@@ -50,10 +50,10 @@ def main():
     print('## MACRO ACTIVITIES EXTRACTION : {} ##'.format(dataset_name.upper()))
     print('##########################################')
 
-    macro_activities, results_df = extract_macro_activities(dataset=dataset, support_min=support_min, tep=tep,
-                                                            display=False, verbose=True)
+    macro_activities = extract_macro_activities(dataset=dataset, support_min=support_min, tep=tep,
+                                                display=True, verbose=True)
 
-    results_df.to_csv(f'../output/{dataset_name}/habits_results.csv', index=False)
+    # results_df.to_csv(f'../output/{dataset_name}/habits_results.csv', index=False)
     # monitoring_start_time = t.time()
 
     # nb_tw = math.floor((end_date - start_date) / period)  # Number of time windows available
@@ -112,7 +112,7 @@ def extract_tw_macro_activities(dataset, support_min, tep, period, window_durati
     tw_dataset = dataset.loc[(dataset.date >= window_start_date) & (dataset.date < window_end_date)].copy()
 
     tw_macro_activities_episodes = extract_macro_activities(dataset=tw_dataset, support_min=support_min, tep=tep,
-                                                            display=True, verbose=False)
+                                                            display=False, verbose=False)
 
     print('Time window {} screening finished.'.format(tw_id))
 
@@ -187,7 +187,7 @@ def extract_macro_activities(dataset, support_min, tep, verbose=False, display=F
 
         if verbose:
             print("########################################")
-            print("Run N°{}".format(i))
+            # print("Run N°{}".format(i))
             print("Best episode found {}.".format((label,)))
             print("Nb Occurrences : \t{}".format(len(events)))
 
@@ -225,7 +225,7 @@ def find_best_episode(dataset, tep, support_min, display=False, verbose=False):
 
         periodicity = Candidate_Study.periodicity_search(data=dataset, episode=episode, delta_Tmax_ratio=3,
                                                          support_min=support_min, std_max=0.1, tolerance_ratio=2,
-                                                         Tep=tep, display=True, verbose=False)
+                                                         Tep=tep, display=False, verbose=False)
 
         if periodicity is not None:
             nb_occ = periodicity['nb_occ']

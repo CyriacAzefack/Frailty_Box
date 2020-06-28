@@ -24,16 +24,16 @@ def main():
         event_log = pd.DataFrame(columns=['date', 'end_date', 'label'])
 
         # Choose the number of drifts
-        nb_drifts = random_nb_drift()
-        # nb_drifts = 1
+        nb_behaviors = random_nb_drift()
+        # nb_behaviors = 1
 
         # Split the date range
-        nb_days_per_behavior = int(NB_DAYS / (nb_drifts + 1))
+        nb_days_per_behavior = int(NB_DAYS / (nb_behaviors + 1))
 
         current_behavior_start_date = start_date
         current_behavior = copy.deepcopy(init_behavior)
 
-        for behavior_id in range(nb_drifts + 1):
+        for behavior_id in range(nb_behaviors + 1):
             current_behavior_end_date = current_behavior_start_date + dt.timedelta(days=nb_days_per_behavior)
 
             current_date = current_behavior_start_date
@@ -60,15 +60,15 @@ def main():
                 current_date += dt.timedelta(days=1)
 
             # When finish, Apply some changes in the current_behavior
-            current_behavior = apply_behavior_changes(current_behavior)
+            current_behavior = apply_behavior_changes(current_behavior, random_select=False)
             current_behavior_start_date = current_date
 
-        event_log.to_csv(output_folder + f'{nb_drifts}_drift_toy_data_{toy_id}.csv', index=False, sep=';')
+        event_log.to_csv(output_folder + f'{nb_behaviors}_drift_toy_data_{toy_id}.csv', index=False, sep=';')
 
-        # print(f'{nb_drifts}_drift_toy_data_{toy_id} Generated')
+        # print(f'{nb_behaviors}_drift_toy_data_{toy_id} Generated')
 
 
-def apply_behavior_changes(behavior):
+def apply_behavior_changes(behavior, random_select=True):
     """
     Apply behavioral changes to a behavior
     :param behavior:
@@ -79,9 +79,11 @@ def apply_behavior_changes(behavior):
     labels = list(behavior.keys())
     fields = ['mean_time', 'std_time', 'mean_duration', 'std_duration']
 
-    nb_changing_labels = random.randint(1, len(labels))
+    changing_labels = labels
+    if random_select:
+        nb_changing_labels = random.randint(1, len(labels))
 
-    changing_labels = random.sample(labels, k=nb_changing_labels)
+        changing_labels = random.sample(labels, k=nb_changing_labels)
 
     # print(changing_labels)
 

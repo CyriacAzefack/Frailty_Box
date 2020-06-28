@@ -338,7 +338,7 @@ class LogImageClustering(LogClustering):
 
     def binaryMatrix2Image(self, binary_matrix):
         """
-        Convert the binary matrix to an image matrix
+        Convert the binary distance_matrix to an image distance_matrix
         :param binary_matrix:
         :return:
         """

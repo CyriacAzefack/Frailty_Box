@@ -64,7 +64,7 @@ class Acyclic_Graph:
         '''
         Draw the directed graph corresponding and save the image
         :param graph_nodes: Nodes of the graph
-        :param prob_matrix: Transition matrix
+        :param prob_matrix: Transition distance_matrix
         :param filename: File path where the graph image is saved
         :param debug: If True, plot the image
         :return:

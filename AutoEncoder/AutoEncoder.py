@@ -318,8 +318,8 @@ class AE_Model(tf.keras.Model):
         plt.legend(['train', 'test'], loc='upper right')
 
         plt.figure()
-        plt.plot(history['mean_absolute_error'])
-        plt.plot(history['val_mean_absolute_error'])
+        plt.plot(history['mean_squared_error'])
+        plt.plot(history['val_mean_squared_error'])
         plt.title('Model Accuracy')
         plt.ylabel('Accuracy')
         plt.xlabel('epoch')
@@ -327,7 +327,7 @@ class AE_Model(tf.keras.Model):
         plt.show()
 
     def get_loss_error(self):
-        return self.history.history['loss'][-1], self.history.history['mean_absolute_error'][-1]
+        return self.history.history['loss'][-1], self.history.history['mean_squared_error'][-1]
 
 
 if __name__ == "__main__":

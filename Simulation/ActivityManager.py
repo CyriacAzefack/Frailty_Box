@@ -92,7 +92,7 @@ class ActivityManager:
 
     def build_transition_matrix(self, time_window_id=0, display=False):
         """
-        Build a transition matrix for all the available activities
+        Build a transition distance_matrix for all the available activities
         :return:
         """
 
@@ -382,7 +382,7 @@ class ActivityManager:
 
 def plot_markov_chain(matrix, labels, threshold=0.1):
     """
-    Plot the markov chain corresponding to the matrix
+    Plot the markov chain corresponding to the distance_matrix
     :param matrix:
     :param labels:
     :return:

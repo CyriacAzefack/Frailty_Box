@@ -56,9 +56,6 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
     
     return delta_T : 
     """
-    episode = ('cook_breakfast', 'eat_breakfast')
-    episode = ('sleep_out_of_bed',)
-    episode = ('personal_hygiene', 'sleep')
 
     # Pick the episode events from the input sequence
     data = data.loc[data.label.isin(episode)].copy()
@@ -121,7 +118,7 @@ def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max
 
     epsilon = 3600
     Nb_clusters, interesting_points = find_number_clusters(data_points, eps=epsilon, min_samples=int(support_min / 2),
-                                                           display=True)
+                                                           display=display)
 
     # if no clusters found then switch to the next group
     if Nb_clusters == 0:

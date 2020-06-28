@@ -96,7 +96,7 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
     :param end_date :
     :param Tep : [in Minutes] Maximal time interval between events in an episode occurrence. Should correspond to the maximal duration of the ADLs.
     :param output_directory Output Directory to save graphs images
-    :return: A transition probability matrix and a transition waiting time matrix for each component of the description
+    :return: A transition probability distance_matrix and a transition waiting time distance_matrix for each component of the description
     '''
 
     data = data.loc[(data.date >= start_date) & (data.date <= end_date)].copy()
@@ -152,7 +152,7 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
                                                                                  graph_nodes_labels=graph_nodes_labels,
                                                                                  occurrence_list=events_occurrences_lists)
 
-        # Build the time matrix
+        # Build the time distance_matrix
         events['is_last_event'] = events['period_id'] != events['period_id'].shift(-1)
         events['is_first_event'] = events['period_id'] != events['period_id'].shift(1)
         events['next_label'] = events['label'].shift(-1).fillna('_nan').apply(Acyclic_Graph.Acyclic_Graph.node2label)
@@ -161,8 +161,8 @@ def pattern2graph(data, labels, time_description, period, start_date, end_date, 
         events['inter_event_duration'] = events['inter_event_duration'].apply(lambda x: x.total_seconds())
         # events = events[events.is_last_event == False]
 
-        n = len(graph_nodes)  # Nb rows of the prob matrix
-        l = len(graph_labels)  # Nb columns of the prob matrix
+        n = len(graph_nodes)  # Nb rows of the prob distance_matrix
+        l = len(graph_labels)  # Nb columns of the prob distance_matrix
 
         # n x l edges for waiting time transition laws
         time_matrix = [[[] for j in range(l)] for i in
@@ -281,7 +281,7 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list)
     :param graph_labels: Labels of the pattern
     :param graph_nodes_labels: Pattern labels
     :param occurrence_list: List of list of ordered events per occurrence
-    :return: Probability transition matrix size = nb(graph_nodes) x nb(labels)
+    :return: Probability transition distance_matrix size = nb(graph_nodes) x nb(labels)
     '''
 
     # list_length = [len(l) for l in occurrence_list]
@@ -292,7 +292,7 @@ def build_probability_acyclic_graph(labels, graph_nodes_labels, occurrence_list)
 
     graph_labels = labels + [Graph_Pattern.Graph.NONE_NODE]
 
-    n = len(nodes)  # Size of the transition matrix
+    n = len(nodes)  # Size of the transition distance_matrix
     l = len(graph_labels)
 
     prob_matrix = np.zeros((n, l))

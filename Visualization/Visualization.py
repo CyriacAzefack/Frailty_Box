@@ -17,28 +17,31 @@ sns.set_style('darkgrid')
 
 
 def main():
-    dataset_name = 'hh101'
+    dataset_name = 'bped_ramon'
     #
     sim_type = 'STATIC'
     tstep = 5
 
     period = dt.timedelta(days=1)
+    # dataset = pick_dataset(dataset_name, nb_days=-1)
+
+    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/2_drift_toy_data_22.csv"
+    dataset = pick_custom_dataset(path)
+
+    # # dataset['relative_time'] = dataset['date'].apply(lambda x: modulo_datetime(x.to_pydatetime(), period)/3600)
+    # #
+    # dataset['duration'] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds())
     #
-    dataset = pick_dataset(dataset_name, nb_days=-1)
-    # dataset['relative_time'] = dataset['date'].apply(lambda x: modulo_datetime(x.to_pydatetime(), period)/3600)
+    # plot_dataset = dataset.groupby(['label']).sum()
+    # plot_dataset['label'] = plot_dataset.index
+    # plot_dataset.sort_values(['duration'], ascending=False, inplace=True)
     #
-    dataset['duration'] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds())
-
-    dataset = dataset.groupby(['label']).sum()
-    dataset['label'] = dataset.index
-    dataset.sort_values(['duration'], ascending=False, inplace=True)
-
-    sns.barplot(x="duration", y="label", data=dataset,
-                label="label", color="b")
-
-    plt.xscale('log')
-    plt.xlabel('Log durée totale (secondes)')
-    plt.show()
+    # sns.barplot(x="duration", y="label", data=plot_dataset,
+    #             label="label", color="b")
+    #
+    # plt.xscale('log')
+    # plt.xlabel('Log durée totale (secondes)')
+    # plt.show()
 
     # labels = ["sleeping_begin", "leave_home_begin", "sleeping_end"]
     #
@@ -400,7 +403,7 @@ class ActivityOccurrencesGraph:
 
         ax.legend()
         ax.set_yticks(yticks)
-        ax.set_yticklabels(yticks_labels)
+        # ax.set_yticklabels(yticks_labels)
         plt.xlabel("Hour of the day")
         # plt.title(title)
         plt.legend(loc='upper left', fancybox=True, shadow=True, ncol=1, bbox_to_anchor=(1, 1))

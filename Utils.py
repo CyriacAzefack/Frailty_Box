@@ -63,6 +63,13 @@ def pick_dataset(name, nb_days=-1, ):
         dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
         dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
 
+    elif name.startswith('bped'):
+        path = os.path.join(my_path, "./input/BPED/{}/activity_dataset.csv".format(name))
+        dataset = pd.read_csv(path, delimiter=',')
+        date_format = '%Y-%m-%d %H:%M:%S.%f'
+        dataset['date'] = pd.to_datetime(dataset['date'], format=date_format)
+        dataset['end_date'] = pd.to_datetime(dataset['end_date'], format=date_format)
+
     elif name == 'ka_events':
         filename = "./input/{} House/{}_dataset.csv".format('KA', 'KA_label')
         path = os.path.join(my_path, filename)
@@ -287,7 +294,7 @@ def find_occurrences(data, episode, tep=30):
     return occurrences
 
 
-def plot_graph(matrix, labels, plot=True):
+def plot_graph(matrix, labels, plot=False):
     rows, cols = np.where(matrix > 0)
 
     gr = nx.Graph()

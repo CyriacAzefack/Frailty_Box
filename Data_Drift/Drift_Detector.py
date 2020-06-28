@@ -1,33 +1,97 @@
-from scipy.cluster.hierarchy import dendrogram, linkage
+import scipy.cluster.hierarchy as hcl
+import seaborn as sns
 from scipy.cluster.hierarchy import fcluster
+from scipy.spatial.distance import squareform
+from sklearn.cluster import AgglomerativeClustering
 from sklearn.manifold import TSNE
+from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
+from tqdm import trange
 
 from Data_Drift.Features_Extraction import *
-from Data_Drift.MCL import mcl_clusterinig
 
 
 def main():
-    data_name = 'KA'
+    data_name = 'ARUBA'
 
-    data = pick_dataset(data_name)
+    data = pick_dataset(data_name, nb_days=-1)
 
-    window_size = dt.timedelta(days=14)
+    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/3_drift_toy_data_38.csv"
+    # data = pick_custom_dataset(path)
+    window_size = dt.timedelta(days=7)
 
-    label = "leave_home"
+    label = "sleeping"
 
-    windows_dataset = activity_drift_detector(data, window_size, label, plot=True, gif=False)
+    clusters = activity_drift_detector(data, window_size, label, validation=True)
 
     # windows_dataset.to_csv("{}_windows_data.csv".format(data_name), period_ts_index=False)
 
     plt.show()
 
 
-def activity_drift_detector(data, time_window_duration, label, plot=True, gif=False):
+def clustering_algorithm(distance_matrix, nb_clusters):
+    model = AgglomerativeClustering(n_clusters=nb_clusters, affinity='precomputed', linkage='complete')
+    labels = model.fit_predict(distance_matrix)
+
+    return labels
+
+
+def find_optimal_nb_clusters(distance_matrix, display=False):
+    """
+    Plot the differents silhoutte values
+    :return:
+    """
+
+    range_n_clusters = list(range(2, 10))
+
+    # filename = './output/encoded_data.csv'
+    # outfile = open(filename, 'wb')
+    # pickle.dump(data, outfile)
+    # outfile.close()
+
+    optimal_n_clusters = 1
+    avg_silhouette = 0
+
+    for n_clusters in range_n_clusters:
+
+        cluster_labels = clustering_algorithm(distance_matrix, nb_clusters=n_clusters)
+
+        silhouette_avg = silhouette_score(distance_matrix, cluster_labels, metric='precomputed')
+        # sample_silhouette_values = silhouette_samples(distance_matrix, cluster_labels, metric='precomputed')
+        print(f"For n_clusters ={n_clusters} \tSilhouette = {silhouette_avg}")
+        # print("\tThe average silhouette_score is :", silhouette_avg)
+        # print("\tThe average silhouette_score is :", silhouette_avg)
+        if silhouette_avg > avg_silhouette:
+            avg_silhouette = silhouette_avg
+            optimal_n_clusters = n_clusters
+
+    print(f"Choose Number of Clusters : {optimal_n_clusters}")
+
+    if display:
+        linked = hcl.linkage(squareform(distance_matrix))
+
+        plt.figure(figsize=(10, 7))
+
+        hcl.dendrogram(
+            linked,
+            orientation='top',
+            # labels=labels,
+            distance_sort='descending',
+            show_leaf_counts=True)
+
+        plt.title("Dendogram")
+        plt.show()
+
+    return optimal_n_clusters
+
+
+def activity_drift_detector(data, time_window_duration, label, validation=False):
     """
     Detect the drift point in the data, focusing on one activity
+    :param label:
+    :param time_window_duration:
+    :param validation:
     :param data:
-    :param window_size: [Timedelta Object] Duration of a time window
     :return:
     """
 
@@ -40,8 +104,9 @@ def activity_drift_detector(data, time_window_duration, label, plot=True, gif=Fa
     data['day_date'] = data['date'].dt.date.apply(lambda x: dt.datetime.combine(x, dt.datetime.min.time()))
     data['timestamp'] = (data['date'] - data['day_date']).apply(lambda x: x.total_seconds())
 
-    data['duration'] = (data['end_date'] - data['date']).apply(lambda x: x.total_seconds() / 3600)
+    data['duration'] = (data['end_date'] - data['date']).apply(lambda x: x.total_seconds() / 60)  # In minutes
 
+    max_duration = data['duration'].max()
     #############################
     ## Creation of time windows #
     #############################
@@ -52,140 +117,142 @@ def activity_drift_detector(data, time_window_duration, label, plot=True, gif=Fa
     ## Clustering Algorithm #
     #########################
 
-    # clusters, clusters_color = features_clustering(time_windows_logs, activity_labels = [label])
+    # clusters, clusters_color = features_clustering(time_windows_data, activity_labels=[label])
 
-    clusters, clusters_color = similarity_clustering(time_windows_data, label=label, plot=True, gif=False)
+    clusters, clusters_color = similarity_clustering(time_windows_data, max_duration=max_duration, display=True)
 
     ##################################
     ### VALIDATION OF THE CLUSTERS ###
     ##################################
 
     # Check if there is a real difference between the clusters
+    if validation:
+        cluster_val_occ_matrix = np.zeros((len(clusters), len(clusters)))
+        cluster_val_dur_matrix = np.zeros((len(clusters), len(clusters)))
 
-    cluster_val_occ_matrix = np.empty((len(clusters), len(clusters)))
-    cluster_val_dur_matrix = np.empty((len(clusters), len(clusters)))
+        clusters_occ_times = []
+        clusters_duration_times = []
+        for cluster_id, window_ids in clusters.items():
+            occ_times = []
+            durations = []
 
-    clusters_occ_times = []
-    clusters_duration_times = []
-    for cluster_id, window_ids in clusters.items():
-        occ_times = []
-        durations = []
+            for window_id in window_ids:
+                occ_times += list(time_windows_data[window_id].timestamp.values)
+                durations += list(time_windows_data[window_id].duration.values)
 
-        for window_id in window_ids:
-            occ_times += list(time_windows_data[window_id].timestamp.values)
-            durations += list(time_windows_data[window_id].duration.values)
+            occ_times = np.asarray(occ_times)
+            clusters_occ_times.append(occ_times)
 
-        occ_times = np.asarray(occ_times)
-        clusters_occ_times.append(occ_times)
+            durations = np.asarray(durations)
+            clusters_duration_times.append(durations)
 
-        durations = np.asarray(durations)
-        clusters_duration_times.append(durations)
+        for i in range(len(clusters)):
+            for j in range(len(clusters)):
+                cluster_val_occ_matrix[i][j] = ks_similarity(clusters_occ_times[i], clusters_occ_times[j])
+                cluster_val_dur_matrix[i][j] = ks_similarity(clusters_duration_times[i], clusters_duration_times[j])
+        #
+        # valid_clusters_occ = len(cluster_val_occ_matrix < 0.05) / 2
+        #
+        # print("{} meaningful clustering for activity occurrence time".format(valid_clusters_occ))
 
-    for i in range(len(clusters)):
-        for j in range(len(clusters)):
-            cluster_val_occ_matrix[i][j] = ks_similarity(clusters_occ_times[i], clusters_occ_times[j])
-            cluster_val_dur_matrix[i][j] = ks_similarity(clusters_duration_times[i], clusters_duration_times[j])
+        # valid_clusters_dur = len(cluster_val_dur_matrix < 0.05) / 2
+        #
+        # print("{} meaningful clustering for activity duration time".format(valid_clusters_dur))
 
-    valid_clusters_occ = len(cluster_val_occ_matrix < 0.05) / 2
+        mask = np.zeros_like(cluster_val_occ_matrix)
+        mask[np.triu_indices_from(mask)] = True
 
-    print("{} meaningful clustering for activity occurrence time".format(valid_clusters_occ))
+        plt.figure()
+        sns.heatmap(cluster_val_occ_matrix, mask=mask, vmin=0, vmax=0.05, annot=True, fmt=".2e")
+        plt.title("Inter Cluster Similarity on Activity Occurrence Time")
 
-    valid_clusters_dur = len(cluster_val_dur_matrix < 0.05) / 2
+        plt.figure()
+        sns.heatmap(cluster_val_dur_matrix, mask=mask, vmin=0, vmax=0.05, annot=True, fmt=".2e")
+        plt.title("Inter Cluster Similarity on Activity Duration Time")
 
-    print("{} meaningful clustering for activity duration time".format(valid_clusters_dur))
+        # ## Inter-Cluster ks_similarity.
+        # for cluster_id_1, window_ids_1 in clusters.items():
+        #     for cluster_id_2, window_ids_2 in clusters.items():
+        #         if cluster_id_1 != cluster_id_2:
+        #             window_ids_1 = np.asarray(window_ids_1)
+        #             window_ids_2 = np.asarray(window_ids_2)
+        #
+        #             # Extract the cluster from the similarity_matrix
+        #             sub_matrix = similarity_matrix[window_ids_1[:, None], window_ids_2]
+        #
+        #             # The ks_similarity mean between
+        #             cluster_validation_matrix[cluster_id_1][cluster_id_2] = sub_matrix.mean()
+        #
+        #
+        # plt.figure()
+        # sns.heatmap(cluster_validation_matrix, vmin=0, vmax=1, annot=True, fmt=".2f")
+        # plt.title("Cluster Distances")
 
-    plt.figure()
-    sns.heatmap(cluster_val_occ_matrix, vmin=0, vmax=1, annot=True, fmt=".2f")
-    plt.title("Validation of clusters Activity Occurrence Time")
+        ############################"
+        ## CLUSTER INTERPRETATION ##
+        ############################
 
-    plt.figure()
-    sns.heatmap(cluster_val_dur_matrix, vmin=0, vmax=1, annot=True, fmt=".2f")
-    plt.title("Validation of Clusters Activity Duration Time")
+        # Cluster Occurrence Time
+        fig, (ax1, ax2) = plt.subplots(2)
+        fig2, (ax11, ax22) = plt.subplots(2)
 
-    # ## Inter-Cluster ks_similarity.
-    # for cluster_id_1, window_ids_1 in clusters.items():
-    #     for cluster_id_2, window_ids_2 in clusters.items():
-    #         if cluster_id_1 != cluster_id_2:
-    #             window_ids_1 = np.asarray(window_ids_1)
-    #             window_ids_2 = np.asarray(window_ids_2)
-    #
-    #             # Extract the cluster from the similarity_matrix
-    #             sub_matrix = similarity_matrix[window_ids_1[:, None], window_ids_2]
-    #
-    #             # The ks_similarity mean between
-    #             cluster_validation_matrix[cluster_id_1][cluster_id_2] = sub_matrix.mean()
-    #
-    #
-    # plt.figure()
-    # sns.heatmap(cluster_validation_matrix, vmin=0, vmax=1, annot=True, fmt=".2f")
-    # plt.title("Cluster Distances")
+        for cluster_id, window_ids in clusters.items():
+            occ_times = []
+            durations = []
 
-    ############################"
-    ## CLUSTER INTERPRETATION ##
-    ############################
+            if len(window_ids) < 4:
+                continue
 
-    # Cluster Occurrence Time
-    fig, (ax1, ax2) = plt.subplots(2)
-    fig2, (ax11, ax22) = plt.subplots(2)
+            for window_id in window_ids:
+                occ_times += list(time_windows_data[window_id].timestamp.values)
+                durations += list(time_windows_data[window_id].duration.values)
 
-    for cluster_id, window_ids in clusters.items():
-        occ_times = []
-        durations = []
+            occ_times = [x / 3600 for x in occ_times]
+            occ_times = np.asarray(occ_times)
 
-        if len(window_ids) < 4:
-            continue
+            durations = np.asarray(durations)
 
-        for window_id in window_ids:
-            occ_times += list(time_windows_data[window_id].timestamp.values)
-            durations += list(time_windows_data[window_id].duration.values)
+            ax1.hist(occ_times, bins=100, alpha=0.3, label='Cluster {}'.format(cluster_id),
+                     color=clusters_color[cluster_id])
 
-        occ_times = [x / 3600 for x in occ_times]
-        occ_times = np.asarray(occ_times)
+            ax11.hist(durations, bins=100, alpha=0.3, label='Cluster {}'.format(cluster_id),
+                      color=clusters_color[cluster_id])
 
-        durations = np.asarray(durations)
+            sns.kdeplot(occ_times, label='Cluster {}'.format(cluster_id), shade_lowest=False, shade=True,
+                        color=clusters_color[cluster_id], ax=ax2)
 
-        ax1.hist(occ_times, bins=100, alpha=0.3, label='Cluster {}'.format(cluster_id),
-                 color=clusters_color[cluster_id])
+            sns.kdeplot(durations, label='Cluster {}'.format(cluster_id), shade_lowest=False, shade=True,
+                        color=clusters_color[cluster_id], ax=ax22)
 
-        ax11.hist(durations, bins=100, alpha=0.3, label='Cluster {}'.format(cluster_id),
-                  color=clusters_color[cluster_id])
+        ax1.set_title("{}\nCluster : Occurrence Time distribution".format(label))
+        ax1.set_xlabel('Hour of the day')
+        ax1.set_ylabel('Number of occurrences')
+        ax1.set_xlim(0, 24)
 
+        ax2.set_title("Density Distribution")
+        ax2.set_xlabel('Hour of the day')
+        ax2.set_ylabel('Density')
+        ax2.set_xlim(0, 24)
 
-        sns.kdeplot(occ_times, label='Cluster {}'.format(cluster_id), shade_lowest=False, shade=True,
-                    color=clusters_color[cluster_id], ax=ax2)
+        ax11.set_title("{}\nCluster : Activity Duration Distribution".format(label))
+        ax11.set_xlabel('Duration (minutes)')
+        ax11.set_ylabel('Number of occurrences')
+        xmin, xmax = ax11.get_xlim()
 
-        sns.kdeplot(durations, label='Cluster {}'.format(cluster_id), shade_lowest=False, shade=True,
-                    color=clusters_color[cluster_id], ax=ax22)
+        ax22.set_title("Density Distribution")
+        ax22.set_xlabel('Duration (minutes)')
+        ax22.set_ylabel('Density')
+        ax22.set_xlim(xmin, xmax)
 
-    ax1.set_title("{}\nCluster : Occurrence Time distribution".format(label))
-    ax1.set_xlabel('Hour of the day')
-    ax1.set_ylabel('Number of occurrences')
-    ax1.set_xlim(0, 24)
+        plt.legend(loc='upper right')
 
-    ax2.set_title("Density Distribution")
-    ax2.set_xlabel('Hour of the day')
-    ax2.set_ylabel('Density')
-    ax2.set_xlim(0, 24)
-
-    ax11.set_title("{}\nCluster : Activity Duration Distribution".format(label))
-    ax11.set_xlabel('Duration (hours)')
-    ax11.set_ylabel('Number of occurrences')
-    xmin, xmax = ax11.get_xlim()
-
-    ax22.set_title("Density Distribution")
-    ax22.set_xlabel('Duration (hours)')
-    ax22.set_ylabel('Density')
-    ax22.set_xlim(xmin, xmax)
-
-
-    plt.legend(loc='upper right')
-
-    return None
+    return clusters
 
 
 def features_clustering(time_windows_data, activity_labels, plot=True):
     """
     Clustering of the time windows with features
+    :param activity_labels:
     :param time_windows_data:
     :param plot:
     :return: clusters (dict with cluster_id as key and corresponding time_windows id list as item),
@@ -210,11 +277,11 @@ def features_clustering(time_windows_data, activity_labels, plot=True):
     norm_data = StandardScaler().fit_transform(data_features)
 
     # Clustering
-    linked = linkage(norm_data, method='ward')
+    linked = hcl.linkage(norm_data, method='ward')
 
     plt.figure(figsize=(10, 7))
 
-    dendrogram(
+    hcl.dendrogram(
         linked,
         orientation='top',
         labels=time_windows_labels,
@@ -261,72 +328,113 @@ def features_clustering(time_windows_data, activity_labels, plot=True):
     return clusters_dict, colors
 
 
-def similarity_clustering(time_windows_data, label, plot=True, gif=False):
+def similarity_clustering(time_windows_data, max_duration, display=True):
     """
     Clustering of the time windows using a similarity metric
+    :param display:
+    :param label:
+    :param gif:
+    :param plot:
     :param time_windows_data:
     :return:
     """
     nb_windows = len(time_windows_data)
 
-    time_windows_data = [data[data.label == label].copy() for data in time_windows_data]
-
     ######################
     ## Similarity Matrix #
     ######################
 
-    print('Starting building similarity matrix...')
+    print('Starting building similarity distance_matrix...')
 
     similarity_matrix = np.zeros((nb_windows, nb_windows))
 
-    for i in range(nb_windows):
+    for i in trange(nb_windows, desc='Similarity Matrix Construction'):
         tw_data_A = time_windows_data[i]
-        for j in range(i, nb_windows):
+        for j in range(i + 1, nb_windows):
             tw_data_B = time_windows_data[j]
 
             # TODO : Add weights for the different type of similarity
 
             # 1- Occurrence time similarity
-            arrayA = tw_data_A.timestamp.values
-            arrayB = tw_data_B.timestamp.values
+            timesA = tw_data_A.timestamp.values
+            durationsA = tw_data_A.duration.values
+            timesB = tw_data_B.timestamp.values
+            durationsB = tw_data_B.duration.values
 
-            occ_time_similarity = ks_similarity(arrayA, arrayB)
-
-            # arrayA = tw_data_A.duration.values
-            # arrayB = tw_data_B.duration.values
+            # A_hist_2D, _, _ = np.histogram2d(timesA, durationsA, bins=24, range=[[0, 24], [0, max_duration]],
+            #                                  density=True)
+            # B_hist_2D, _, _ = np.histogram2d(timesB, durationsB, bins=24, range=[[0, 24], [0, max_duration]],
+            #                                  density=True)
             #
-            # duration_similarity = hi(arrayA, arrayB)
-            # similarity = (duration_similarity + occ_time_similarity) / 2
+            # plt.hist2d(timesA/3600, durationsA, bins=30, cmap=plt.cm.jet)
+            # plt.show()
+            #
+            #
+            # sns.jointplot("timestamp", "duration", data=tw_data_A,
+            #               kind="kde", space=0, color="g", xlim=(0,24), ylim=(0, max_duration))
+            #
+            #
+            # sns.jointplot("timestamp", "duration", data=tw_data_B,
+            #               kind="kde", space=0, color="r", xlim=(0,24), ylim=(0, max_duration))
+            #
+            # plt.show()
+            #
+            # plt.hexbin(timesA,durationsA)
+            # plt.show()
 
-            similarity = occ_time_similarity
+            # arrayA = tw_data_A[['timestamp', 'duration']].values
+            # arrayB = tw_data_B[['timestamp', 'duration']].values
+            # similarity = hotelling_test(arrayA, arrayB)
+
+            similarity = ks_similarity(timesA, timesB)
+
+            # similarity = occ_time_similarity
 
             similarity_matrix[i][j] = similarity
 
     # Little trick for speed purposes ;)
     missing_part = np.transpose(similarity_matrix.copy())
-    np.fill_diagonal(missing_part, 0)
     similarity_matrix = similarity_matrix + missing_part
+    np.fill_diagonal(similarity_matrix, 1)
+    similarity_matrix[similarity_matrix > 1] = 1
 
-    print('Finish building similarity matrix...')
+    print('Finish building similarity distance_matrix...')
 
-    # Plotting similarity matrix
-    # plt.figure()
-    # sns.heatmap(similarity_matrix, vmin=0, vmax=1)
-    # plt.title("Similarity Matrix between Time Windows")
-    # plt.show()
+    distance_matrix = 1 - np.asarray(similarity_matrix)
+
+    # labels = [f'tw_{i}' for i in range(nb_windows)]
+    # mcl_clusterinig(similarity_matrix, labels, plot=True)
+
+    nb_clusters = find_optimal_nb_clusters(distance_matrix=distance_matrix, display=display)
+
+    cluster_labels = clustering_algorithm(distance_matrix=distance_matrix, nb_clusters=nb_clusters)
+
+    clusters_dict = {}
+    # Associate to each cluster his time_windows
+    for cluster_id in range(nb_clusters):
+        ids = [i for i, x in enumerate(cluster_labels) if x == cluster_id]
+        # cause the clustering algo cluster starts at 1
+        clusters_dict[cluster_id] = ids
+
+    colors = generate_random_color(nb_clusters)
+
+    if display:
+        # Plotting similarity distance_matrix
+        plt.figure()
+        sns.heatmap(similarity_matrix, vmin=0, vmax=1)
+        plt.title("Similarity Matrix between Time Windows")
+        plt.show()
 
     ###################
     ## MCL Clustering #
     ###################
 
-    graph_labels = ['W_{}'.format(i) for i in range(nb_windows)]
+    # graph_labels = ['W_{}'.format(i) for i in range(nb_windows)]
+    #
+    # clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels, inflation_power=2,
+    #                                            plot=display, gif=False)
 
-    clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels, inflation_power=2,
-                                               plot=plot, gif=gif)
-
-    return clusters, clusters_color
-
-
+    return clusters_dict, colors
 
 
 def plot_cluster_heatmap(matrix, labels):
@@ -411,7 +519,6 @@ def create_time_windows(data, time_window_duration):
         window_start_time += dt.timedelta(days=1)  # We slide the time window by 1 day
 
     return time_windows_data
-
 
 
 if __name__ == '__main__':

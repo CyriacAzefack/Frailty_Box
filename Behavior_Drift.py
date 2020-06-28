@@ -79,8 +79,8 @@ def main():
     print("#############################################################")
     ## MANUAL ENTRY
     dataset_name = "aruba"
-    window_size = 60
-    time_step = dt.timedelta(minutes=5)
+    window_size = 7
+    time_step = dt.timedelta(minutes=10)
     window_step = dt.timedelta(days=1)
     latent_dim = 10
     plot = True
@@ -129,9 +129,9 @@ def drift(dataset_name, window_size, window_step, time_step, latent_dim, plot, d
     #
     behavior_PCAR = ActivityCurveClustering(name=dataset_name, dataset=data, time_window_step=window_step,
                                             time_window_duration=time_window_size, time_step=time_step)
-    # behavior.similarity_matrix()
+    # behavior_PCAR.similarity_matrix()
     #
-    # behavior.pairwise_heatmap(heatmap_index=0)
+    # behavior_PCAR.pairwise_heatmap(heatmap_index=0)
 
     n_clusters = len(clusters_indices)
 
@@ -177,8 +177,11 @@ def clustering_algorithm(data, n_clusters):
     :return:
     """
 
-    labels = KMeans(n_clusters=n_clusters, n_init=100, random_state=0).fit_predict(data)
+    labels = KMeans(n_clusters=n_clusters, n_init=100).fit_predict(data)
     # labels = clustering.predict(transformed_data)
+
+    # labels = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward').fit_predict(data)
+    # labels = model.fit_predict(distance_matrix)
 
     if len(set(labels)) < n_clusters:
         cluster_labels = [i for i in range(n_clusters)]
@@ -355,7 +358,7 @@ class BehaviorClustering:
         self.labels = self.log_dataset.groupby(['label'])['duration'].sum().sort_values().index
 
         # We take the 10 most active activities
-        # self.labels = self.labels[-10:]
+        # self.labels = ['sleeping']
 
         self.label_color = {}
         colors = generate_random_color(len(self.labels))
@@ -494,7 +497,7 @@ class BehaviorClustering:
     def extract_features(self, store=False, display=False):
         """
         Build the Heatmap for all the data points (time windows logs)
-        :return: list of the heatmap matrix
+        :return: list of the heatmap distance_matrix
         """
 
         tw_heatmaps = []
@@ -822,12 +825,12 @@ class AutoEncoderClustering(BehaviorClustering):
                 sns.heatmap(df_change_img, center=0, cmap='RdYlGn', vmin=-1, vmax=1, cbar=True,
                             ax=ax[cluster_i][cluster_j])
 
-                if cluster_i == 0 and cluster_j == 1:
-                    plt.figure()
-                    sns.heatmap(df_change_img, center=0, cmap='RdYlGn', vmin=-1, vmax=1)
-                    plt.xlabel('Time in the day')
-                    # plt.ylabel('Activities')
-                    plt.show()
+                # if cluster_i == 0 and cluster_j == 1:
+                plt.figure()
+                sns.heatmap(df_change_img, center=0, cmap='RdYlGn', vmin=-1, vmax=1)
+                plt.title(f'Cluster {cluster_i} --> Cluster {cluster_j}')
+                plt.xlabel('Time in the day')
+                plt.ylabel('Activities')
 
                 # ax[cluster_i][cluster_j].imshow(img, interpolation="lanczos", cmap='viridis', vmin=-1, vmax=1)
 
@@ -835,6 +838,7 @@ class AutoEncoderClustering(BehaviorClustering):
                 ax[cluster_i][cluster_j].set_yticklabels(self.labels)
                 ax[cluster_i][cluster_j].set_yticks(np.arange(len(self.labels)))
 
+        plt.show()
         # plt.yticks(rotation=45)
         # plt.xticks(rotation=30)
 
@@ -892,14 +896,14 @@ class AutoEncoderClustering(BehaviorClustering):
         optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
 
         if loss_function == 'mse':
-            loss = tf.keras.losses.MeanSquaredError()
+            loss = tf.keras.losses.MeanAbsoluteError()
         elif loss_function == 'bce':
             loss = tf.keras.losses.BinaryCrossentropy()
         else:
             print(f"{loss_function} not supported. Default loss 'MSE'")
             loss = tf.keras.losses.MeanSquaredError()
 
-        metric = tf.keras.metrics.MeanAbsoluteError()
+        metric = tf.keras.metrics.MeanSquaredError()
         es_callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10, restore_best_weights=True)
 
         checkpoint_path = f"./output/{self.name}/AutoEncoder_logs_dim_{latent_dim}/checkpoint.ckpt"
@@ -1104,7 +1108,7 @@ class ActivityCurveClustering(BehaviorClustering):
         sns.heatmap(pairwise_heatamp, vmin=0)
         #
         # plt.figure()
-        # plt.plot(np.mean(matrix, axis=1))
+        # plt.plot(np.mean(distance_matrix, axis=1))
         plt.show()
 
     def extract_daily_heatmaps(self):
@@ -1133,7 +1137,7 @@ class ActivityCurveClustering(BehaviorClustering):
 
     def similarity_matrix(self):
         """
-        Compute the similarity matrix
+        Compute the similarity distance_matrix
         """
         ######################
         ## Similarity Matrix #

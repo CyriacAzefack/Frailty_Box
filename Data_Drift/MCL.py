@@ -36,7 +36,7 @@ def main():
     xmax, xmin = matrix.max(), matrix.min()
     matrix = (matrix - xmin) / (xmax - xmin)
 
-    # Turn into a ks_similarity matrix
+    # Turn into a ks_similarity distance_matrix
     matrix = 1 - matrix
 
     results = mcl_clusterinig(matrix, labels, plot=True)
@@ -57,7 +57,7 @@ def normalize(matrix):
 
 def expand(matrix, power):
     """
-    Expansion of the matrix for the MCL
+    Expansion of the distance_matrix for the MCL
     :param matrix:
     :param power:
     :return:
@@ -67,7 +67,7 @@ def expand(matrix, power):
 
 def inflate(matrix, power):
     """
-    Inflation of the matrix for the MCL
+    Inflation of the distance_matrix for the MCL
     :param matrix:
     :param power:
     :return:
@@ -79,7 +79,7 @@ def inflate(matrix, power):
 
 def compute_sparsity(matrix):
     """
-    Compute the compute_sparsity of the matrix
+    Compute the compute_sparsity of the distance_matrix
     :param matrix:
     :return:
     """
@@ -94,7 +94,7 @@ def translate_clustering(matrix, labels):
     :return: The clusters, one with the id and the other one with labels
     """
 
-    # clusters = np.column_stack(np.where(matrix > 0))
+    # clusters = np.column_stack(np.where(distance_matrix > 0))
 
     clusters = matrix.argmax(0)
     cluster_ids = list(np.unique(clusters))
@@ -122,16 +122,13 @@ def translate_clustering(matrix, labels):
 def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, plot=True, gif=False):
     """
     Run the MCL clustering algorithm
-    :param matrix: A similarity matrix
+    :param matrix: A similarity distance_matrix
     :param labels : labels of the nodes
     :param treshold_filter: Threshold to filter weak edges
     :param inflation_power: How tightly clustered you'd like your final picture to be (bigger number -> more clusters)
 
     :return: the clusters
     """
-
-
-
     # Cut weak edges
     if inflation_power is None:
         inflations = [i / 10 for i in range(14, 17)]
@@ -217,6 +214,7 @@ def mcl_clusterinig(matrix, labels, threshold_filter=0.8, inflation_power=1.5, p
         plt.figure()
         pos = nx.drawing.spring_layout(graph)
         nx.draw(graph, node_size=150, font_size=8, pos=pos, node_color=color_map, with_labels=True)
+        plt.show()
 
         if gif:
             empty_folder(OUTPUT_FOLER)

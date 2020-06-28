@@ -219,7 +219,7 @@ class ActivityBehavior(Behavior):
 
         nb_windows = len(self.time_windows_data)
 
-        # Build the similarity matrix
+        # Build the similarity distance_matrix
         similarity_matrix = self.build_similarity_matrix(behavior_type=behavior_type, method=method)
 
         print("Similarity Matrix Built")
@@ -391,7 +391,7 @@ class ActivityBehavior(Behavior):
 
         nb_clusters = len(clusters)
 
-        # Inter-Cluster distance matrix
+        # Inter-Cluster distance distance_matrix
         inter_cluster_distance = np.zeros((nb_clusters, nb_clusters))
         clusters_data = {}
 
@@ -424,7 +424,7 @@ class ActivityBehavior(Behavior):
                 inter_cluster_distance[cluster_i][cluster_j] = 1 - similarity
 
         # Little trick for speed purposes ;)
-        # Cause the similarity matrix is triangular
+        # Cause the similarity distance_matrix is triangular
 
         missing_part = np.transpose(inter_cluster_distance.copy())
         np.fill_diagonal(missing_part, 0)
