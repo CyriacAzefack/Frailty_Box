@@ -88,8 +88,10 @@ def apply_behavior_changes(behavior, random_select=True):
     # print(changing_labels)
 
     for label in changing_labels:
-        nb_changing_fields = random.randint(3, len(fields))
-        changing_fields = random.sample(fields, k=nb_changing_fields)
+        changing_fields = ['mean_time', 'std_time']
+        if random_select:
+            nb_changing_fields = random.randint(3, len(fields))
+            changing_fields = random.sample(fields, k=nb_changing_fields)
 
         # print(f'{label} Changing fields : {changing_fields}')
 

@@ -1,0 +1,6 @@
+dataset,nb_days,nb_events,nb_activities
+ARUBA  ,220    ,6440     ,11
+HH112  ,107    ,4345     ,30
+HH113  ,509    ,22105    ,32
+HH115  ,319    ,33393    ,52
+HH117  ,345    ,9039     ,31

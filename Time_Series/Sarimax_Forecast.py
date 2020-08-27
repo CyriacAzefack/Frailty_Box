@@ -86,31 +86,31 @@ def arima_forecast(data, train_ratio, seasonality, nb_steps_to_forecast, display
     print('Running GridSearch')
 
     # use gridsearch to look for optimial arima parameters
-    for param in pdq:
-        for param_seasonal in seasonal_pdq:
-            # try:
+    # for param in pdq:
+    #     for param_seasonal in seasonal_pdq:
+    #         # try:
+    #
+    #         print(f'Current test\torder:{bestParam}\tSeasonal order:{bestSParam}')
+    #         mod = sarimax.SARIMAX(train,
+    #                               order=param,
+    #                               seasonal_order=param_seasonal,
+    #                               enforce_stationarity=False,
+    #                               enforce_invertibility=False)
+    #
+    #         results = mod.fit(disp=False)
+    #
+    #         predicted_values = results.predict(start=train_size + 1, end=train_size + test_size)
+    #
+    #         mse_error = mean_squared_error(test, predicted_values)
+    #
+    #         # if current run of AIC is better than the best one so far, overwrite it
+    #         if mse_error < bestMSE:
+    #             bestMSE = mse_error
+    #             bestParam = param
+    #             bestSParam = param_seasonal
 
-            print(f'Current test\torder:{bestParam}\tSeasonal order:{bestSParam}')
-            mod = sarimax.SARIMAX(train,
-                                  order=param,
-                                  seasonal_order=param_seasonal,
-                                  enforce_stationarity=False,
-                                  enforce_invertibility=False)
-
-            results = mod.fit(disp=False)
-
-            predicted_values = results.predict(start=train_size + 1, end=train_size + test_size)
-
-            mse_error = mean_squared_error(test, predicted_values)
-
-            # if current run of AIC is better than the best one so far, overwrite it
-            if mse_error < bestMSE:
-                bestMSE = mse_error
-                bestParam = param
-                bestSParam = param_seasonal
-
-            # except:
-            #     continue
+    # except:
+    #     continue
 
     print('the best ones are:', bestMSE, bestParam, bestSParam)
 
@@ -118,8 +118,8 @@ def arima_forecast(data, train_ratio, seasonality, nb_steps_to_forecast, display
 
     # raw_forecast = sarima_model.predict(test_size + nb_steps_to_forecast)
 
-    p, d, q = bestParam
-    P, D, Q, m = bestSParam
+    p, d, q = 1, 0, 1
+    P, D, Q, m = 1, 1, 2, 7
 
     sarima_model = sarimax.SARIMAX(train, trends='ct', order=(p, d, q), seasonal_order=(P, D, Q, seasonality))
     sarima_model = sarima_model.fit(disp=False)

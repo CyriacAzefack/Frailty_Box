@@ -42,6 +42,7 @@ class ActivityManager:
         self.mixed_occurrences = pd.DataFrame(columns=['date', 'end_date', 'label', 'tw_id'])
         self.last_time_window_id = 0
         self.dynamic = dynamic
+        self.nb_new_episodes = []
 
     def update(self, episode, occurrences, events, time_window_id=0, display=False):
         """
@@ -78,6 +79,8 @@ class ActivityManager:
 
         if self.dynamic:
             self.obsolescence_check()
+
+        self.nb_new_episodes.append(len(self.discovered_episodes))
 
     def get_macro_activity_from_name(self, set_episode):
         """
@@ -164,10 +167,10 @@ class ActivityManager:
 
             # Fill
 
-            # ADP_error = macro_activity_object.forecast_history_count(train_ratio=train_ratio,
-            #                                                          last_time_window_id=self.last_time_window_id,
-            #                                                          nb_periods_to_forecast=nb_periods_to_forecast,
-            #                                                          display=debug)
+            ADP_error = macro_activity_object.forecast_history_count(train_ratio=train_ratio,
+                                                                     last_time_window_id=self.last_time_window_id,
+                                                                     nb_periods_to_forecast=nb_periods_to_forecast,
+                                                                     display=debug)
             #
             # ADP_error_df.at[len(ADP_error_df)] = [tuple(set_episode), ADP_error]
 
@@ -199,7 +202,7 @@ class ActivityManager:
 
         if display:
             # Drop NAN
-            # ADPs_rmse = ADP_error_df.replace([np.inf, -np.inf], np.nan).dropna().rmse.values
+            ADPs_rmse = ADP_error_df.replace([np.inf, -np.inf], np.nan).dropna().rmse.values
             mean_durations_rmse = duration_error_df.replace([np.inf, -np.inf], np.nan).dropna().mean_rmse.values
             std_durations_rmse = duration_error_df.replace([np.inf, -np.inf], np.nan).dropna().std_rmse.values
 

@@ -8,6 +8,8 @@ import sys
 import time as t
 from optparse import OptionParser
 
+import matplotlib.pyplot as plt
+
 import Pattern_Mining
 import Utils
 # from Pattern_Mining.Candidate_Study import find_occurrences, modulo_datetime
@@ -84,7 +86,7 @@ def main(args):
     print("Display Mode : {}".format(plot))
     print("Debug Mode: {}".format(debug))
 
-    dataset = Utils.pick_dataset(dataset_name)
+    dataset = Utils.pick_dataset(dataset_name, nb_days=-1)
 
     start_date = dataset.date.min().to_pydatetime()
     end_date = dataset.date.max().to_pydatetime()
@@ -126,7 +128,7 @@ def main(args):
         print('##############################')
         activity_manager = create_static_activity_manager(dataset_name=dataset_name, dataset=training_dataset,
                                                           period=period, time_step=adp_time_step, output=output,
-                                                          Tep=Tep, singles_only=True, debug=debug)
+                                                          Tep=Tep, singles_only=False, debug=debug)
     else:
         print('##############################')
         print("#     DYNAMIC LEARNING       #")
@@ -211,7 +213,7 @@ def create_static_activity_manager(dataset_name, dataset, period, time_step, out
 
     all_macro_activities = Pattern_Mining.Extract_Macro_Activities.extract_macro_activities(dataset=dataset,
                                                                                             support_min=nb_days / 2,
-                                                                                            tep=Tep, verbose=True,
+                                                                                            tep=Tep, verbose=False,
                                                                                             singles_only=singles_only)
     for episode, (episode_occurrences, events) in all_macro_activities.items():
         activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
@@ -250,8 +252,7 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
     nb_days = int((dataset.date.max().to_pydatetime() - dataset.date.min().to_pydatetime()) / period)
 
     obs_ratio = 0.25
-    max_no_news = int(nb_days * obs_ratio)
-
+    max_no_news = 5
     activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=time_step,
                                                        tep=Tep, window_size=nb_days_per_window, max_no_news=max_no_news,
                                                        dynamic=True)
@@ -273,6 +274,7 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
     # Arguments for the "extract_tw_macro_activities" method
     args = [(dataset, support_min, Tep, period, time_window_duration, tw_id) for tw_id in range(nb_tw)]
 
+    nb_new_episodes = []
     with mp.Pool(processes=nb_processes) as pool:
         # return tw_id, tw_macro_activities
         all_time_windows_macro_activities = pool.starmap(
@@ -287,6 +289,14 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
                 activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events,
                                         time_window_id=tw_id, display=debug)
             print('Activities updates on Time Window {}/{} Done !'.format(tw_id + 1, nb_tw))
+
+            nb_new_episodes.append(len(activity_manager.discovered_episodes))
+
+    plt.plot(nb_new_episodes)
+    plt.title('Nombre de macro-activités découvert')
+    plt.xlabel('ID Fenêtre temporelle')
+    plt.ylabel('Nombre de macro-activités')
+    plt.show()
 
     print("Final Macro-Activities List ready")
 

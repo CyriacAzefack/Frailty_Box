@@ -313,17 +313,17 @@ class AE_Model(tf.keras.Model):
         plt.plot(history['loss'])
         plt.plot(history['val_loss'])
         plt.title('Model Loss')
-        plt.ylabel('loss')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper right')
+        plt.ylabel('Erreur Quadratique Moyenne')
+        plt.xlabel('Epoch')
+        plt.legend(['Train', 'Test'], loc='upper right')
 
         plt.figure()
         plt.plot(history['mean_squared_error'])
         plt.plot(history['val_mean_squared_error'])
         plt.title('Model Accuracy')
-        plt.ylabel('Accuracy')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper left')
+        plt.ylabel('Erreur Quadratique Moyenne')
+        plt.xlabel('Epoch')
+        plt.legend(['Train', 'Test'], loc='upper left')
         plt.show()
 
     def get_loss_error(self):

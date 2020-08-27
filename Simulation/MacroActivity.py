@@ -8,7 +8,6 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pmdarima as pm
 import seaborn as sns
 from pmdarima.arima.utils import ndiffs, nsdiffs
 from scipy.stats import expon
@@ -22,7 +21,7 @@ from Pattern_Mining.Candidate_Study import modulo_datetime
 from Pattern_Mining.Extract_Macro_Activities import compute_episode_occurrences
 from Pattern_Mining.Pattern_Discovery import pick_dataset
 
-sns.set_style('darkgrid')
+sns.set_style("darkgrid")
 
 
 # np.random.seed(1996)
@@ -32,8 +31,8 @@ def main():
     # dataset_name = 'hh101'
     dataset = pick_dataset(dataset_name)
     # SIM_MODEL PARAMETERS
-    # episode = ('toilet', 'dress')
-    episode = ('relax',)
+    episode = ('toilet', 'dress')
+    # episode = ('relax',)
     # episode = ('enter_home', 'leave_home', 'watch_tv')
     period = dt.timedelta(days=1)
     time_step = dt.timedelta(minutes=60)
@@ -427,9 +426,19 @@ class MacroActivity:
             for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
                 self.duration_distrib[label].at[tw_id] = [tw_id, 0, 0]
 
+            forecast_df = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
+
+            forecast_df.tw_id = np.arange(last_time_window_id, last_time_window_id + nb_periods_to_forecast + 1)
+
             # Fit & Predict Duration Mean values
             print('Mean Duration Forecasting...')
             mean_duration_data = list(self.duration_distrib[label]['mean'].values)
+
+            if len(mean_duration_data) * train_ratio < 2:
+                forecast_df['mean'] = [0] * nb_periods_to_forecast
+                forecast_df['std'] = [0] * nb_periods_to_forecast
+                self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+                return [np.nan], [np.nan]
 
             mean_duration_error, mean_duration_forecast_values = arima_forecast(data=mean_duration_data,
                                                                                 train_ratio=train_ratio,
@@ -454,9 +463,7 @@ class MacroActivity:
             print("STD Duration Error (NMSE) : {:.2f}".format(std_duration_error))
             std_duration_errors[label] = std_duration_error
 
-            forecast_df = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
 
-            forecast_df.tw_id = np.arange(last_time_window_id, last_time_window_id + nb_periods_to_forecast + 1)
 
             forecast_df['mean'] = mean_duration_forecast_values
             forecast_df['std'] = std_duration_forecast_values
@@ -672,24 +679,26 @@ def arima_forecast(data, train_ratio, seasonality, nb_steps_to_forecast, label, 
                 test='ch')  # -> 0
     if display: print(f"Estimated 'D' = {D}")
 
-    sarima_model = pm.auto_arima(train,
-                                 start_p=0, max_p=3,
-                                 start_q=0, max_q=3,
-                                 start_P=0, max_P=3,
-                                 start_Q=0, max_Q=3, max_order=5,
-                                 m=seasonality, seasonal=True,
-                                 d=d,
-                                 max_iter=50,
-                                 method='lbfgs',
-                                 trace=False,
-                                 error_action='ignore',  # don't want to know if an order does not work
-                                 suppress_warnings=True,  # don't want convergence warnings
-                                 stepwise=True)  # set to stepwise
+    # sarima_model = pm.auto_arima(train,
+    #                              start_p=0, max_p=1,
+    #                              start_q=0, max_q=1,
+    #                              start_P=0, max_P=1,
+    #                              start_Q=0, max_Q=1, max_order=2,
+    #                              m=seasonality, seasonal=True,
+    #                              d=d,
+    #                              max_iter=50,
+    #                              method='lbfgs',
+    #                              trace=False,
+    #                              error_action='ignore',  # don't want to know if an order does not work
+    #                              suppress_warnings=True,  # don't want convergence warnings
+    #                              stepwise=True)  # set to stepwise
 
     # raw_forecast = sarima_model.predict(test_size + nb_steps_to_forecast)
 
-    p, d, q = sarima_model.order
-    P, D, Q, m = sarima_model.seasonal_order
+    # p, d, q = sarima_model.order
+    # P, D, Q, m = sarima_model.seasonal_order
+    p, d, q = 0, d, 1
+    P, D, Q, m = 0, 0, 0, 0
 
     sarima_model = sarimax.SARIMAX(train, trends='ct', order=(p, d, q), seasonal_order=(P, D, Q, seasonality))
     sarima_model = sarima_model.fit(disp=False)

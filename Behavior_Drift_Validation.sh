@@ -1,21 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=Behavior_Model_Aruba
 #SBATCH --mail-user=cyriac.azefack@emse.fr
 #SBATCH --mail-type=ALL
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --time=04:00:00
+#SBATCH --time=24:00:00
 #SBATCH --exclude=compute-0-15,compute-0-7
 
 unset SLURM_GTIDS
-
-DATASET_NAME=ARUBA
-WINDOW_SIZE=7 # In days
-TIME_STEP=30 # In minutes
-SIMU_TIME_STEP=5
-NB_REPL=20
-TRAINING_RATIO=0.8
-TEP=30 # In minutes
 
 
 echo ------------------------------------------------------

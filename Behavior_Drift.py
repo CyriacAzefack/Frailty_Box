@@ -12,10 +12,14 @@ import scipy
 import seaborn as sns
 import tensorflow as tf
 from matplotlib.collections import LineCollection
-from sklearn.cluster import KMeans
+from numpy.random import seed
+from sklearn.cluster import AgglomerativeClustering
 from sklearn.manifold import TSNE
-from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.metrics import silhouette_samples, silhouette_score, davies_bouldin_score
 from tqdm import trange
+
+seed(1996)
+tf.random.set_seed(1996)
 
 from Visualization.CalendarDisplay import display_calendar
 
@@ -28,8 +32,8 @@ matplotlib.rc('font', **font)
 from AutoEncoder.AutoEncoder import AE_Model
 from Utils import *
 
-sns.set_style('darkgrid')
-sns.set(font_scale=1.4)
+# sns.set_style('darkgrid')
+# sns.set(font_scale=1.4)
 
 TSNE_CLUS = True
 
@@ -121,7 +125,7 @@ def drift(dataset_name, window_size, window_step, time_step, latent_dim, plot, d
     behavior = AutoEncoderClustering(name=dataset_name, dataset=data, time_window_step=window_step,
                                      time_window_duration=time_window_size, time_step=time_step)
 
-    n_clusters = None
+    n_clusters = 3
     clusters_indices, model_errors, silhouette = behavior.time_windows_clustering(display=plot, debug=debug,
                                                                                   latent_dim=latent_dim,
                                                                                   n_clusters=n_clusters)
@@ -139,14 +143,17 @@ def drift(dataset_name, window_size, window_step, time_step, latent_dim, plot, d
 
     for i in range(n_clusters):
         i_indices = clusters_indices[i]
-        for j in reversed(range(i, n_clusters)):
+        for j in range(i + 1, n_clusters):
             j_indices = clusters_indices[j]
             val = behavior_PCAR.window_distance(i_indices, j_indices) / len(behavior.time_labels)
             similarity_matrix[i][j] = val
             similarity_matrix[j][i] = val
 
-    sns.heatmap(similarity_matrix, vmin=0, vmax=1, annot=True, cmap="YlGnBu")
-    plt.title('Cluster Distance')
+    labels = [i + 1 for i in range(n_clusters)]
+
+    sns.heatmap(similarity_matrix, xticklabels=labels, yticklabels=labels,
+                vmin=0, center=0.5, vmax=1, annot=True, cmap="YlGnBu")
+    plt.title('Distance BC-PCAR ')
     plt.xlabel('Cluster ID')
     plt.ylabel('Cluster ID')
     plt.show()
@@ -177,11 +184,10 @@ def clustering_algorithm(data, n_clusters):
     :return:
     """
 
-    labels = KMeans(n_clusters=n_clusters, n_init=100).fit_predict(data)
+    # labels = KMeans(n_clusters=n_clusters, n_init=100, random_state=1996).fit_predict(data)
     # labels = clustering.predict(transformed_data)
 
-    # labels = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward').fit_predict(data)
-    # labels = model.fit_predict(distance_matrix)
+    labels = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward').fit_predict(data)
 
     if len(set(labels)) < n_clusters:
         cluster_labels = [i for i in range(n_clusters)]
@@ -220,14 +226,16 @@ def silhouette_plots(data, display=True):
     :return:
     """
 
-    range_n_clusters = list(range(2, 10))
+    range_n_clusters = list(range(2, 21))
+
+    silhouettes = []
 
     # filename = './output/encoded_data.csv'
     # outfile = open(filename, 'wb')
     # pickle.dump(data, outfile)
     # outfile.close()
 
-    tsne_data = TSNE(n_components=2, perplexity=50).fit_transform(data)
+    tsne_data = TSNE(n_components=2, random_state=1996).fit_transform(data)
 
     if TSNE_CLUS:
         data = tsne_data
@@ -240,9 +248,12 @@ def silhouette_plots(data, display=True):
         cluster_labels = clustering_algorithm(data, n_clusters=n_clusters)
 
         silhouette_avg = silhouette_score(data, cluster_labels)
+        db_score = davies_bouldin_score(data, cluster_labels)
+        silhouettes.append(silhouette_avg)
         sample_silhouette_values = silhouette_samples(data, cluster_labels)
         print("For n_clusters =", n_clusters,
-              "The average silhouette_score is :", silhouette_avg)
+              "Silhouette =", silhouette_avg,
+              "\tDavies Bouldin Score =", db_score)
 
         if silhouette_avg > avg_silhouette:
             avg_silhouette = silhouette_avg
@@ -326,10 +337,30 @@ def silhouette_plots(data, display=True):
                           "with n_clusters = %d" % n_clusters),
                          fontsize=8, fontweight='bold')
 
-    print()
     print(f"Choose Number of Clusters : {optimal_n_clusters}")
     if display:
         plt.show()
+
+    # linked = hcl.linkage(data, method="ward")
+    # plt.figure(figsize=(10, 7))
+    # hcl.dendrogram(
+    #     linked,
+    #     orientation='top',
+    #     # labels=labels,
+    #     distance_sort='ascending',
+    #     show_leaf_counts=True)
+    #
+    # plt.title("Dendogram")
+    # plt.ylabel('height')
+    # plt.xlabel('Time Windows ID')
+    #
+    # plt.figure()
+    # plt.plot([1] + range_n_clusters, [0.0] + silhouettes, marker='o')
+    # plt.axvline(x=optimal_n_clusters, ymin=0, ymax=optimal_n_clusters + 0.1, linestyle='--', color='r')
+    # plt.ylabel("Silhouette")
+    # plt.xlabel("Nombre de clusters")
+    # plt.xticks(range_n_clusters)
+    # plt.show()
 
     return optimal_n_clusters
 
@@ -692,10 +723,10 @@ class AutoEncoderClustering(BehaviorClustering):
         encoded_points = np.asarray(encoded_points)
 
         if not n_clusters:
-            n_clusters = silhouette_plots(encoded_points, display=display)
+            n_clusters = silhouette_plots(encoded_points, display=False)
 
         if TSNE_CLUS:
-            encoded_points = TSNE(n_components=2, perplexity=50).fit_transform(encoded_points)
+            encoded_points = TSNE(n_components=2, random_state=1996).fit_transform(encoded_points)
 
         clusters = clustering_algorithm(encoded_points, n_clusters=n_clusters)
         # clusters = clustering_algorithm(encoded_points, n_clusters)
@@ -755,14 +786,14 @@ class AutoEncoderClustering(BehaviorClustering):
                                   facecolor=color, edgecolor=color, alpha=0.7)
 
                 # Label the silhouette plots with their cluster numbers at the middle
-                ax1.text(-0.05, y_lower + 0.5 * size_cluster_i, str(i))
+                ax1.text(-0.05, y_lower + 0.5 * size_cluster_i, str(i + 1))
 
                 # Compute the new y_lower for next plot
                 y_lower = y_upper + 10  # 10 for the 0 samples
 
-            ax1.set_title("The silhouette plot for the various clusters.")
-            ax1.set_xlabel("The silhouette coefficient values")
-            ax1.set_ylabel("Cluster label")
+            ax1.set_title("Graphe de Silhouette des Clusters")
+            ax1.set_xlabel("Silhouette")
+            ax1.set_ylabel("Cluster ID")
 
             # The vertical line for average silhouette score of all the values
             ax1.axvline(x=silhouette_avg, color="red", linestyle="--")
@@ -786,9 +817,9 @@ class AutoEncoderClustering(BehaviorClustering):
             #     ax2.scatter(c[0], c[1], marker='$%d$' % i, alpha=1,
             #                 s=50, edgecolor='k')
 
-            ax2.set_title("The visualization of the clustered data.")
-            ax2.set_xlabel("Feature space for the 1st feature")
-            ax2.set_ylabel("Feature space for the 2nd feature")
+            ax2.set_title("Representation TSNE")
+            ax2.set_xlabel("Espace de la premiere dimension")
+            ax2.set_ylabel("Espace de la seconde dimension")
 
             plt.suptitle(("Silhouette analysis for KMeans clustering on sample data "
                           "with n_clusters = %d" % n_clusters),
@@ -801,6 +832,7 @@ class AutoEncoderClustering(BehaviorClustering):
         """
         Details the differences between the clustes.
         Hightlight the changes in the resident behavior
+        :param display:
         :param clusters_indices:
         :return:
         """
@@ -826,11 +858,11 @@ class AutoEncoderClustering(BehaviorClustering):
                             ax=ax[cluster_i][cluster_j])
 
                 # if cluster_i == 0 and cluster_j == 1:
-                plt.figure()
-                sns.heatmap(df_change_img, center=0, cmap='RdYlGn', vmin=-1, vmax=1)
-                plt.title(f'Cluster {cluster_i} --> Cluster {cluster_j}')
-                plt.xlabel('Time in the day')
-                plt.ylabel('Activities')
+                # plt.figure()
+                # sns.heatmap(df_change_img, center=0, cmap='RdYlGn', vmin=-1, vmax=1)
+                # plt.title(u'Cluster {} \u2192 Cluster {}'.format(cluster_i+1, cluster_j+1))
+                # plt.xlabel('Heure de la journee')
+                # plt.ylabel('Label')
 
                 # ax[cluster_i][cluster_j].imshow(img, interpolation="lanczos", cmap='viridis', vmin=-1, vmax=1)
 
@@ -866,6 +898,8 @@ class AutoEncoderClustering(BehaviorClustering):
             for axi, img in zip(ax.flat, img_centers):
                 axi.set(yticks=yticks)
                 axi.set_yticklabels(yticks_labels)
+                sns.heatmap(img, center=0, cmap='RdYlGn', vmin=-1, vmax=1, cbar=False,
+                            ax=axi)
                 axi.imshow(img, vmin=0, vmax=1)
                 axi.set_title(f'Cluster {i}')
                 i += 1
@@ -890,13 +924,16 @@ class AutoEncoderClustering(BehaviorClustering):
         epochs = 1000
         batch_size = 1
 
+        # sess = tf.Session()
+        # K.set_session(sess)
         model = AE_Model(input_width=width, input_height=height, latent_dim=latent_dim)
 
         # Model parameters
+        # optimizer = tf.keras.optimizers.SGD(learning_rate=1e-3)
         optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
 
         if loss_function == 'mse':
-            loss = tf.keras.losses.MeanAbsoluteError()
+            loss = tf.keras.losses.MeanSquaredError()
         elif loss_function == 'bce':
             loss = tf.keras.losses.BinaryCrossentropy()
         else:
@@ -920,37 +957,12 @@ class AutoEncoderClustering(BehaviorClustering):
             model.load_weights(latest_checkpoint)
 
         model.fit(data_train, data_train, epochs=epochs, batch_size=batch_size, validation_data=(data_test, data_test),
-                  shuffle=True, callbacks=[es_callback, save_model_callback], verbose=display)
+                  shuffle=True, callbacks=[es_callback, ], verbose=display)
+
+        # K.clear_session()
 
         if display:
             model.plot_history()
-
-            # TEST THE ENCODE-DECODE OPERATION
-            nb_test = 5
-
-            x = np.asarray(random.choices(data_train, k=nb_test)).reshape((nb_test, height, width))
-
-            z = model.predict(x).reshape((nb_test, height, width))
-            # print(z.shape)
-
-            fig, ax = plt.subplots(nb_test, 2)
-
-            ximg = []
-            zimg = []
-            for i in range(nb_test):
-                img = z[i]
-                # img[img < 0.5] = 0
-                # img[img > 0.5] = 1
-                ximg.append(cv2.resize(x[i], (1280, 1280), interpolation=cv2.INTER_AREA))
-                zimg.append(cv2.resize(img, (1280, 1280), interpolation=cv2.INTER_AREA))
-
-            # images = images.reshape((2, 1280, 1280))
-            for axi, xi, zi in zip(ax, ximg, zimg):
-                axi[0].set(xticks=[], yticks=[])
-                axi[1].set(xticks=[], yticks=[])
-                axi[0].imshow(xi, vmin=0, vmax=1)
-                axi[1].imshow(zi, vmin=0, vmax=1)
-
             plt.show()
 
         # accuracy = []
@@ -1012,15 +1024,16 @@ class AutoEncoderClustering(BehaviorClustering):
                 print("\t{} - {}".format(start_date, end_date))
 
                 if time_periods.index(period) == 0:
-                    plt.text(dat.date2num(start_date), lvl, 'Behavior {}'.format(cluster_id), fontsize=16)
-                ax.hlines(lvl, dat.date2num(start_date), dat.date2num(end_date), label='Behavior {}'.format(cluster_id),
+                    plt.text(dat.date2num(start_date), lvl, 'Cluster {}'.format(cluster_id + 1), fontsize=16)
+                ax.hlines(lvl, dat.date2num(start_date), dat.date2num(end_date),
+                          label='Cluster {}'.format(cluster_id + 1),
                           linewidth=75, color=colors[cluster_id])
 
         ax.tick_params(axis='both', which='major', labelsize=12)
         fig.autofmt_xdate()
         # plt.title("Activity : '{}'".format(self.label))
-        plt.xlabel('Time')
-        plt.ylabel('Behaviors')
+        plt.xlabel('Date')
+        plt.ylabel('Clusters')
 
     def display_behavior_evolution_calendar(self, clusters):
         """
@@ -1037,7 +1050,7 @@ class AutoEncoderClustering(BehaviorClustering):
             # print("Cluster {} :".format(cluster_id))
             for period in time_periods:
                 start_date = self.start_date + period[0] * self.time_window_step
-                end_date = self.start_date + period[1] * self.time_window_step
+                end_date = self.start_date + (1 + period[1]) * self.time_window_step
 
                 x = pd.date_range(start_date, end_date, freq='1D')
 

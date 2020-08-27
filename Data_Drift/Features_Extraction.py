@@ -3,13 +3,9 @@
 #######################
 
 # Implementation of all the features extraction method for time windows
-import spm1d
-from scipy import stats
-from sklearn import metrics
-from sklearn.metrics import mean_squared_error
-from statsmodels.nonparametric.kde import KDEUnivariate
+# import spm1d
 
-import Data_Drift.Drift_Detector as Drift_Detector
+from Data_Drift.Drift_Detector import *
 from Utils import *
 
 
@@ -35,7 +31,7 @@ def main():
     ## Creation of time windows #
     #############################
 
-    time_windows_data = Drift_Detector.create_time_windows(data, time_window_duration)
+    time_windows_data = create_time_windows(data, time_window_duration)
 
     nb_windows = len(time_windows_data)
 

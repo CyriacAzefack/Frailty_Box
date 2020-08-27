@@ -22,7 +22,7 @@ GLOBAL_LABELS = []
 
 def main():
     global GLOBAL_LABELS
-    dataset_name = 'hh101'
+    dataset_name = 'aruba'
 
     modes = ['STATIC']
 
@@ -36,7 +36,7 @@ def main():
 
     training_ratio = 0.8
     # Original data
-    original_dataset = pick_dataset(dataset_name)
+    original_dataset = pick_dataset(dataset_name, nb_days=-1)
 
     original_dataset['duration'] = (original_dataset.end_date - original_dataset.date).apply(
         lambda x: x.total_seconds())
@@ -113,6 +113,7 @@ def main():
     sns.despine(fig)
     plt.xticks(rotation='vertical')
     plt.ylabel('KDE_Similarity')
+    plt.title(np.mean(results_df['KDE']))
     plt.show()
 
     # all_result = modes_results[0].join(modes_results[1], lsuffix='_' + modes[0], rsuffix='_' + modes[1])

@@ -17,31 +17,31 @@ sns.set_style('darkgrid')
 
 
 def main():
-    dataset_name = 'bped_ramon'
+    dataset_name = 'hh101'
     #
     sim_type = 'STATIC'
     tstep = 5
 
     period = dt.timedelta(days=1)
-    # dataset = pick_dataset(dataset_name, nb_days=-1)
+    dataset = pick_dataset(dataset_name, nb_days=48)
 
-    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/2_drift_toy_data_22.csv"
-    dataset = pick_custom_dataset(path)
+    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/2_drift_toy_data_12.csv"
+    # dataset = pick_custom_dataset(path)
 
     # # dataset['relative_time'] = dataset['date'].apply(lambda x: modulo_datetime(x.to_pydatetime(), period)/3600)
     # #
     # dataset['duration'] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds())
     #
-    # plot_dataset = dataset.groupby(['label']).sum()
-    # plot_dataset['label'] = plot_dataset.index
-    # plot_dataset.sort_values(['duration'], ascending=False, inplace=True)
-    #
-    # sns.barplot(x="duration", y="label", data=plot_dataset,
-    #             label="label", color="b")
-    #
+    plot_dataset = dataset.groupby(['label']).count()
+    plot_dataset['label'] = plot_dataset.index
+    plot_dataset.sort_values(['end_date'], ascending=False, inplace=True)
+
+    sns.barplot(x="end_date", y="label", data=plot_dataset,
+                label="label", color="b")
+
     # plt.xscale('log')
-    # plt.xlabel('Log durée totale (secondes)')
-    # plt.show()
+    plt.xlabel('Nombre d\'occurrences')
+    plt.show()
 
     # labels = ["sleeping_begin", "leave_home_begin", "sleeping_end"]
     #

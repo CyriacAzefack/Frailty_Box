@@ -1,36 +1,50 @@
+import math
+
+import matplotlib.dates as dat
+import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as hcl
 import seaborn as sns
 from scipy.cluster.hierarchy import fcluster
 from scipy.spatial.distance import squareform
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.manifold import TSNE
+from sklearn.manifold import TSNE, MDS
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 from tqdm import trange
 
 from Data_Drift.Features_Extraction import *
 
+sns.set_style('darkgrid')
+sns.set(font_scale=1.4)
+
 
 def main():
-    data_name = 'ARUBA'
+    data_name = 'hh113'
 
-    data = pick_dataset(data_name, nb_days=-1)
+    # data = pick_dataset(data_name, nb_days=-1)
 
-    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/3_drift_toy_data_38.csv"
-    # data = pick_custom_dataset(path)
+    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/3_drift_toy_data_21.csv"
+    data = pick_custom_dataset(path)
     window_size = dt.timedelta(days=7)
 
-    label = "sleeping"
+    label = "eating"
+    profile = "time"
 
-    clusters = activity_drift_detector(data, window_size, label, validation=True)
+    clusters, silhouette = activity_drift_detector(data, window_size, label, validation=True, profile=profile,
+                                                   display=True)
+    plt.show()
+
+    start_date = data.date.min().to_pydatetime()
+
+    cluster_colors = generate_random_color(len(clusters))
+    display_behavior_evolution(clusters=clusters, colors=cluster_colors, start_date=start_date,
+                               time_window_duration=window_size)
 
     # windows_dataset.to_csv("{}_windows_data.csv".format(data_name), period_ts_index=False)
 
-    plt.show()
-
 
 def clustering_algorithm(distance_matrix, nb_clusters):
-    model = AgglomerativeClustering(n_clusters=nb_clusters, affinity='precomputed', linkage='complete')
+    model = AgglomerativeClustering(n_clusters=nb_clusters, affinity='precomputed', linkage='average')
     labels = model.fit_predict(distance_matrix)
 
     return labels
@@ -42,7 +56,9 @@ def find_optimal_nb_clusters(distance_matrix, display=False):
     :return:
     """
 
-    range_n_clusters = list(range(2, 10))
+    range_n_clusters = list(range(2, 11))
+
+    silhouettes = []
 
     # filename = './output/encoded_data.csv'
     # outfile = open(filename, 'wb')
@@ -57,37 +73,48 @@ def find_optimal_nb_clusters(distance_matrix, display=False):
         cluster_labels = clustering_algorithm(distance_matrix, nb_clusters=n_clusters)
 
         silhouette_avg = silhouette_score(distance_matrix, cluster_labels, metric='precomputed')
+        silhouettes.append(silhouette_avg)
         # sample_silhouette_values = silhouette_samples(distance_matrix, cluster_labels, metric='precomputed')
-        print(f"For n_clusters ={n_clusters} \tSilhouette = {silhouette_avg}")
+        if display:
+            print(f"For n_clusters ={n_clusters} \tSilhouette = {silhouette_avg}")
         # print("\tThe average silhouette_score is :", silhouette_avg)
         # print("\tThe average silhouette_score is :", silhouette_avg)
         if silhouette_avg > avg_silhouette:
             avg_silhouette = silhouette_avg
             optimal_n_clusters = n_clusters
 
-    print(f"Choose Number of Clusters : {optimal_n_clusters}")
+    print(f"Chosen Number of Clusters : {optimal_n_clusters}")
 
     if display:
-        linked = hcl.linkage(squareform(distance_matrix))
-
+        linked = hcl.linkage(squareform(distance_matrix), method="average")
         plt.figure(figsize=(10, 7))
-
         hcl.dendrogram(
             linked,
             orientation='top',
             # labels=labels,
-            distance_sort='descending',
+            distance_sort='ascending',
             show_leaf_counts=True)
 
         plt.title("Dendogram")
+        plt.ylabel('height')
+        plt.xlabel('Time Windows ID')
+
+        plt.figure()
+        plt.plot([1] + range_n_clusters, [0] + silhouettes, marker='o')
+        plt.axvline(x=optimal_n_clusters, ymin=0, ymax=optimal_n_clusters + 0.1, linestyle='--', color='r')
+        plt.ylabel("Silhouette")
+        plt.xlabel("Nombre de clusters")
+        plt.xticks(range_n_clusters)
         plt.show()
 
     return optimal_n_clusters
 
 
-def activity_drift_detector(data, time_window_duration, label, validation=False):
+def activity_drift_detector(data, time_window_duration, label, profile='time', validation=False, display=False):
     """
     Detect the drift point in the data, focusing on one activity
+    :param display:
+    :param profile:
     :param label:
     :param time_window_duration:
     :param validation:
@@ -96,6 +123,9 @@ def activity_drift_detector(data, time_window_duration, label, validation=False)
     """
 
     data = data[data.label == label].copy()
+
+    if len(data) == 0:
+        raise ValueError(f"Zero occurrences of '{label}' in the dataset")
 
     ##########################
     ## Pre-Treatment of data #
@@ -119,7 +149,10 @@ def activity_drift_detector(data, time_window_duration, label, validation=False)
 
     # clusters, clusters_color = features_clustering(time_windows_data, activity_labels=[label])
 
-    clusters, clusters_color = similarity_clustering(time_windows_data, max_duration=max_duration, display=True)
+    nb_clusters = None
+    clusters, clusters_color, silhouette = similarity_clustering(time_windows_data, nb_clusters=nb_clusters,
+                                                                 profile=profile,
+                                                                 display=display)
 
     ##################################
     ### VALIDATION OF THE CLUSTERS ###
@@ -127,75 +160,16 @@ def activity_drift_detector(data, time_window_duration, label, validation=False)
 
     # Check if there is a real difference between the clusters
     if validation:
-        cluster_val_occ_matrix = np.zeros((len(clusters), len(clusters)))
-        cluster_val_dur_matrix = np.zeros((len(clusters), len(clusters)))
-
-        clusters_occ_times = []
-        clusters_duration_times = []
-        for cluster_id, window_ids in clusters.items():
-            occ_times = []
-            durations = []
-
-            for window_id in window_ids:
-                occ_times += list(time_windows_data[window_id].timestamp.values)
-                durations += list(time_windows_data[window_id].duration.values)
-
-            occ_times = np.asarray(occ_times)
-            clusters_occ_times.append(occ_times)
-
-            durations = np.asarray(durations)
-            clusters_duration_times.append(durations)
-
-        for i in range(len(clusters)):
-            for j in range(len(clusters)):
-                cluster_val_occ_matrix[i][j] = ks_similarity(clusters_occ_times[i], clusters_occ_times[j])
-                cluster_val_dur_matrix[i][j] = ks_similarity(clusters_duration_times[i], clusters_duration_times[j])
-        #
-        # valid_clusters_occ = len(cluster_val_occ_matrix < 0.05) / 2
-        #
-        # print("{} meaningful clustering for activity occurrence time".format(valid_clusters_occ))
-
-        # valid_clusters_dur = len(cluster_val_dur_matrix < 0.05) / 2
-        #
-        # print("{} meaningful clustering for activity duration time".format(valid_clusters_dur))
-
-        mask = np.zeros_like(cluster_val_occ_matrix)
-        mask[np.triu_indices_from(mask)] = True
-
-        plt.figure()
-        sns.heatmap(cluster_val_occ_matrix, mask=mask, vmin=0, vmax=0.05, annot=True, fmt=".2e")
-        plt.title("Inter Cluster Similarity on Activity Occurrence Time")
-
-        plt.figure()
-        sns.heatmap(cluster_val_dur_matrix, mask=mask, vmin=0, vmax=0.05, annot=True, fmt=".2e")
-        plt.title("Inter Cluster Similarity on Activity Duration Time")
-
-        # ## Inter-Cluster ks_similarity.
-        # for cluster_id_1, window_ids_1 in clusters.items():
-        #     for cluster_id_2, window_ids_2 in clusters.items():
-        #         if cluster_id_1 != cluster_id_2:
-        #             window_ids_1 = np.asarray(window_ids_1)
-        #             window_ids_2 = np.asarray(window_ids_2)
-        #
-        #             # Extract the cluster from the similarity_matrix
-        #             sub_matrix = similarity_matrix[window_ids_1[:, None], window_ids_2]
-        #
-        #             # The ks_similarity mean between
-        #             cluster_validation_matrix[cluster_id_1][cluster_id_2] = sub_matrix.mean()
-        #
-        #
-        # plt.figure()
-        # sns.heatmap(cluster_validation_matrix, vmin=0, vmax=1, annot=True, fmt=".2f")
-        # plt.title("Cluster Distances")
 
         ############################"
         ## CLUSTER INTERPRETATION ##
         ############################
 
         # Cluster Occurrence Time
-        fig, (ax1, ax2) = plt.subplots(2)
-        fig2, (ax11, ax22) = plt.subplots(2)
+        # fig, (ax1, ax2) = plt.subplots(2)
+        # fig2, (ax11, ax22) = plt.subplots(2)
 
+        durations_list = []
         for cluster_id, window_ids in clusters.items():
             occ_times = []
             durations = []
@@ -207,46 +181,43 @@ def activity_drift_detector(data, time_window_duration, label, validation=False)
                 occ_times += list(time_windows_data[window_id].timestamp.values)
                 durations += list(time_windows_data[window_id].duration.values)
 
-            occ_times = [x / 3600 for x in occ_times]
-            occ_times = np.asarray(occ_times)
+            if profile == 'time':
+                occ_times = [x / 3600 for x in occ_times]
+                occ_times = np.asarray(occ_times)
 
-            durations = np.asarray(durations)
+                plot_time_circle(data_points=occ_times, title=f'Cluster {1 + cluster_id}', plot=True)
+                # ax1.hist(occ_times, range=(0, 24), bins=48, alpha=0.3, label='Cluster {}'.format(cluster_id),
+                #          color=clusters_color[cluster_id])
+                # sns.kdeplot(occ_times, label='Cluster {}'.format(cluster_id), shade_lowest=False, shade=True, bw=.5,
+                #             color=clusters_color[cluster_id], ax=ax2)
+                # ax2.xaxis.set_ticks(np.arange(0, 24, 1))
 
-            ax1.hist(occ_times, bins=100, alpha=0.3, label='Cluster {}'.format(cluster_id),
-                     color=clusters_color[cluster_id])
+            elif profile == 'duration':
+                durations = np.asarray(durations) / 60
 
-            ax11.hist(durations, bins=100, alpha=0.3, label='Cluster {}'.format(cluster_id),
-                      color=clusters_color[cluster_id])
+                durations_list.append(durations)
 
-            sns.kdeplot(occ_times, label='Cluster {}'.format(cluster_id), shade_lowest=False, shade=True,
-                        color=clusters_color[cluster_id], ax=ax2)
+        if profile == 'time':
+            plt.show()
 
-            sns.kdeplot(durations, label='Cluster {}'.format(cluster_id), shade_lowest=False, shade=True,
-                        color=clusters_color[cluster_id], ax=ax22)
+        elif profile == 'duration':
+            fig, ax = plt.subplots()
 
-        ax1.set_title("{}\nCluster : Occurrence Time distribution".format(label))
-        ax1.set_xlabel('Hour of the day')
-        ax1.set_ylabel('Number of occurrences')
-        ax1.set_xlim(0, 24)
+            # build a box plot
+            ax.boxplot(durations_list, vert=False)
 
-        ax2.set_title("Density Distribution")
-        ax2.set_xlabel('Hour of the day')
-        ax2.set_ylabel('Density')
-        ax2.set_xlim(0, 24)
+            # title and axis labels
+            ax.set_xlabel('Durée (heures)')
+            yticklabels = [f'Cluster {i + 1}' for i in range(len(durations_list))]
+            ax.set_yticklabels(yticklabels)
 
-        ax11.set_title("{}\nCluster : Activity Duration Distribution".format(label))
-        ax11.set_xlabel('Duration (minutes)')
-        ax11.set_ylabel('Number of occurrences')
-        xmin, xmax = ax11.get_xlim()
+            # add horizontal grid lines
+            ax.yaxis.grid(True)
 
-        ax22.set_title("Density Distribution")
-        ax22.set_xlabel('Duration (minutes)')
-        ax22.set_ylabel('Density')
-        ax22.set_xlim(xmin, xmax)
+            # show the plot
+            plt.show()
 
-        plt.legend(loc='upper right')
-
-    return clusters
+    return clusters, silhouette
 
 
 def features_clustering(time_windows_data, activity_labels, plot=True):
@@ -328,13 +299,12 @@ def features_clustering(time_windows_data, activity_labels, plot=True):
     return clusters_dict, colors
 
 
-def similarity_clustering(time_windows_data, max_duration, display=True):
+def similarity_clustering(time_windows_data, nb_clusters=None, profile='time', display=True):
     """
     Clustering of the time windows using a similarity metric
+    :param profile:
+    :param nb_clusters:
     :param display:
-    :param label:
-    :param gif:
-    :param plot:
     :param time_windows_data:
     :return:
     """
@@ -348,6 +318,7 @@ def similarity_clustering(time_windows_data, max_duration, display=True):
 
     similarity_matrix = np.zeros((nb_windows, nb_windows))
 
+    # print('Daily Profile : ', profile)
     for i in trange(nb_windows, desc='Similarity Matrix Construction'):
         tw_data_A = time_windows_data[i]
         for j in range(i + 1, nb_windows):
@@ -386,8 +357,12 @@ def similarity_clustering(time_windows_data, max_duration, display=True):
             # arrayB = tw_data_B[['timestamp', 'duration']].values
             # similarity = hotelling_test(arrayA, arrayB)
 
-            similarity = ks_similarity(timesA, timesB)
-
+            if profile == 'time':
+                similarity = ks_similarity(timesA, timesB)
+            elif profile == 'duration':
+                similarity = ks_similarity(durationsA, durationsB)
+            else:
+                raise ValueError(f'"{profile}" is not a valid profile')
             # similarity = occ_time_similarity
 
             similarity_matrix[i][j] = similarity
@@ -402,12 +377,34 @@ def similarity_clustering(time_windows_data, max_duration, display=True):
 
     distance_matrix = 1 - np.asarray(similarity_matrix)
 
+    if display:
+        # Plotting similarity distance_matrix
+        plt.figure()
+        sns.heatmap(distance_matrix, vmin=0, vmax=1, center=0.5)
+        plt.title("Distance Matrix between Time Windows")
+        plt.xlabel('Time Window ID')
+        plt.ylabel('Time Window ID')
+        # plt.show()
+
+        plt.figure()
+        mds = MDS(n_components=2, dissimilarity="precomputed", random_state=6)
+        results = mds.fit(distance_matrix)
+
+        coords = results.embedding_
+
+        plt.scatter(coords[:, 0], coords[:, 1], marker='o')
+        plt.title('MDS Distance matrix')
+        plt.show()
+
     # labels = [f'tw_{i}' for i in range(nb_windows)]
     # mcl_clusterinig(similarity_matrix, labels, plot=True)
 
-    nb_clusters = find_optimal_nb_clusters(distance_matrix=distance_matrix, display=display)
+    if not nb_clusters:
+        nb_clusters = find_optimal_nb_clusters(distance_matrix=distance_matrix, display=display)
 
     cluster_labels = clustering_algorithm(distance_matrix=distance_matrix, nb_clusters=nb_clusters)
+
+    silhouette_avg = silhouette_score(distance_matrix, cluster_labels, metric='precomputed')
 
     clusters_dict = {}
     # Associate to each cluster his time_windows
@@ -418,23 +415,18 @@ def similarity_clustering(time_windows_data, max_duration, display=True):
 
     colors = generate_random_color(nb_clusters)
 
-    if display:
-        # Plotting similarity distance_matrix
-        plt.figure()
-        sns.heatmap(similarity_matrix, vmin=0, vmax=1)
-        plt.title("Similarity Matrix between Time Windows")
-        plt.show()
+
 
     ###################
     ## MCL Clustering #
     ###################
-
+    #
     # graph_labels = ['W_{}'.format(i) for i in range(nb_windows)]
     #
     # clusters, clusters_color = mcl_clusterinig(matrix=similarity_matrix, labels=graph_labels, inflation_power=2,
     #                                            plot=display, gif=False)
 
-    return clusters_dict, colors
+    return clusters_dict, colors, silhouette_avg
 
 
 def plot_cluster_heatmap(matrix, labels):
@@ -473,7 +465,7 @@ def window_separation(array):
     c = None
     interval = []
     for x in array:
-        if c == None:
+        if c is None:
             interval.append(x)
             c = x
             continue
@@ -483,9 +475,7 @@ def window_separation(array):
                 c += 1
             interval.append(c)
             result.append(interval)
-            interval = []
-            interval.append(x)
-
+            interval = [x]
         c = x
 
     interval.append(c)
@@ -519,6 +509,118 @@ def create_time_windows(data, time_window_duration):
         window_start_time += dt.timedelta(days=1)  # We slide the time window by 1 day
 
     return time_windows_data
+
+
+def time_periods_from_windows(window_ids):
+    """
+        Compute the time period where a cluster is valid
+        :param window_ids: list of time_window id
+        :return:
+        """
+
+    time_periods = []
+    current_time_period = (window_ids[0],)
+
+    # Create time period interval
+    for i in range(len(window_ids) - 1):
+        if window_ids[i + 1] != window_ids[i] + 1:
+            current_time_period += (window_ids[i],)
+            time_periods.append(current_time_period)
+            current_time_period = (window_ids[i + 1],)
+    current_time_period += (window_ids[-1],)
+    time_periods.append(current_time_period)
+
+    return time_periods
+
+
+def display_behavior_evolution(clusters, colors, start_date, time_window_duration):
+    """
+    Plot the evolution of the different behavior throughout the log_dataset
+    :param clusters:
+    :param colors:
+    :return:
+    """
+    fig, ax = plt.subplots()
+    # xfmt = dat.DateFormatter('%d-%m-%y')
+    # months = dat.MonthLocator()  # every month
+    # monthsFmt = dat.DateFormatter('%b %Y')  # Eg. Jan 2012
+
+    months = dat.AutoDateLocator()
+    monthsFmt = dat.AutoDateFormatter(locator=months)
+
+    # format the ticks
+    ax.xaxis.set_major_locator(months)
+    ax.xaxis.set_major_formatter(monthsFmt)
+    ax.xaxis.set_minor_locator(months)
+
+    for cluster_id, window_ids in clusters.items():
+        lvl = cluster_id * 2
+
+        time_periods = time_periods_from_windows(window_ids)
+
+        print("Cluster {} :".format(cluster_id))
+        for period in time_periods:
+            start_date_period = start_date + period[0] * dt.timedelta(days=1)
+            end_date_period = start_date + (1 + period[1]) * dt.timedelta(days=1)
+
+            print("\t{} - {}".format(start_date_period, end_date_period))
+
+            if time_periods.index(period) == 0:
+                plt.text(dat.date2num(start_date_period), lvl, 'Cluster {}'.format(1 + cluster_id), fontsize=16)
+            ax.hlines(lvl, dat.date2num(start_date_period), dat.date2num(end_date_period),
+                      label='Cluster {}'.format(1 + cluster_id),
+                      linewidth=75, color=colors[cluster_id])
+
+    ax.tick_params(axis='both', which='major', labelsize=12)
+    fig.autofmt_xdate()
+    # plt.title("Activity : '{}'".format(self.label))
+    plt.xlabel('Date')
+    plt.yticks([])
+    plt.show()
+
+
+def plot_time_circle(data_points, title, plot=False):
+    """
+    plot time data points into a circle
+    :param data_points:
+    :return:
+    """
+
+    degrees = []
+    x = []
+    y = []
+
+    for point in data_points:
+        alpha = 2 * np.pi * point / 24
+        x.append(math.sin(alpha))
+        y.append(math.cos(alpha))
+
+        degrees.append(360 * point / 24)
+
+    if plot:
+        radians = np.deg2rad(degrees)
+
+        bin_size = 4
+        a, b = np.histogram(degrees, bins=np.arange(0, 360 + bin_size, bin_size))
+        centers = np.deg2rad(np.ediff1d(b) // 2 + b[:-1])
+
+        fig = plt.figure(figsize=(10, 8))
+        ax = fig.add_subplot(111, projection='polar')
+        ax.bar(centers, a, width=np.deg2rad(bin_size), bottom=0.0, color='.8', edgecolor='k')
+        ax.set_theta_zero_location("N")
+        ax.set_theta_direction(-1)
+        ax.set_yticklabels([])
+        ax.set_title(title)
+
+        # hours = np.arange(24)
+        #
+        # hours = [f"{i:02}h" for i in hours]
+
+        ax.set_xticklabels(['00h', '3h', '6h', '9h', '12h', '15h', '18h', '21h'])
+        # ax.set_xticklabels(hours)
+        ax.tick_params(direction='out', length=6, width=6, colors='r', grid_alpha=1, labelsize=20)
+
+    return x, y
 
 
 if __name__ == '__main__':
