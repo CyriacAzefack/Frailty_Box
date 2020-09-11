@@ -8,13 +8,15 @@ import sys
 import time as t
 from optparse import OptionParser
 
-import matplotlib.pyplot as plt
+import seaborn as sns
 
 import Pattern_Mining
 import Utils
 # from Pattern_Mining.Candidate_Study import find_occurrences, modulo_datetime
 from Pattern_Mining.Extract_Macro_Activities import extract_macro_activities
 from Simulation import ActivityManager
+
+sns.set(font_scale=1.8)
 
 
 # random.seed(1996)
@@ -29,7 +31,6 @@ def main(args):
     #   - No time evolution
     #   - Training Dataset : 80% of the Original log_dataset
     #   - Test Dataset : 20% left of the Original    log_dataset
-
 
     period = dt.timedelta(days=1)
 
@@ -99,8 +100,8 @@ def main(args):
 
     testing_days = nb_days - training_days + 5  # Extra days just in case
 
-    output = "./output/{}/Simulation/{}_step_{}mn/".format(dataset_name, 'STATIC' if static_learning else 'DYNAMIC',
-                                                           options.time_step)
+    output = "./output/{}/Simulation/{}_tw_{}/".format(dataset_name, 'STATIC' if static_learning else 'DYNAMIC',
+                                                       options.window_days)
 
     # Create the folder if it does not exist yet
     if not os.path.exists(os.path.dirname(output)):
@@ -140,7 +141,8 @@ def main(args):
         activity_manager.dump_data(output=output + "Activity_Manager/")
 
         print("## Building forecasting models ... ##")
-        ADP_error_df, duration_error_df = activity_manager.build_forecasting_models(train_ratio=0.8,
+        activity_manager.build_forecasting_duration(dataset, train_ratio=0.95, nb_periods_to_forecast=testing_days + 5)
+        ADP_error_df, duration_error_df = activity_manager.build_forecasting_models(train_ratio=0.95,
                                                                                     nb_periods_to_forecast=testing_days + 5,
                                                                                     display=plot, debug=debug)
 
@@ -150,7 +152,6 @@ def main(args):
     # dump Activity Manager
     pickle.dump(activity_manager, open(output + '{}_Activity_Manager.pkl'.format('STATIC' if static_learning
                                                                                  else 'DYNAMIC'), 'wb'))
-
 
     ###############
     # SIMULATION  #
@@ -292,11 +293,11 @@ def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, ou
 
             nb_new_episodes.append(len(activity_manager.discovered_episodes))
 
-    plt.plot(nb_new_episodes)
-    plt.title('Nombre de macro-activités découvert')
-    plt.xlabel('ID Fenêtre temporelle')
-    plt.ylabel('Nombre de macro-activités')
-    plt.show()
+    # plt.plot(nb_new_episodes)
+    # plt.title('Nombre de macro-activités découvert')
+    # plt.xlabel('ID Fenêtre temporelle')
+    # plt.ylabel('Nombre de macro-activités')
+    # plt.show()
 
     print("Final Macro-Activities List ready")
 

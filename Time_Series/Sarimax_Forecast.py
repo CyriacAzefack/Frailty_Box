@@ -3,19 +3,28 @@ import itertools
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from pmdarima.arima.utils import ndiffs, nsdiffs
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.statespace import sarimax
 
+sns.set_style('darkgrid')
+sns.set(font_scale=1.8)
+
 
 def main():
     activity = 'sleeping'
-    # raw_dataset = pd.read_csv('./data/{}_dataset.csv'.format(activity), sep=";").drop(['tw_id'], axis=1)
+    raw_dataset = pd.read_csv('./data/{}_dataset.csv'.format(activity), sep=",")
 
-    raw_dataset = pd.read_csv(f'data/{activity}_duration_distribution.csv', sep=";")['mean']
+    # raw_dataset = raw_dataset.values.flatten()
 
-    season = 7
-    ratio = 0.8
+    # raw_dataset = pd.read_csv(f'data/{activity}_duration_distribution.csv', sep=";")['mean']
+    #
+    # plt.plot(raw_dataset)
+    # plt.show()
+
+    season = 24
+    ratio = 0.95
 
     dataset = pd.Series(raw_dataset.values.flatten())
 
@@ -36,8 +45,8 @@ def arima_forecast(data, train_ratio, seasonality, nb_steps_to_forecast, display
 
     train, test = data[:train_size], data[train_size:]
 
-    plt.plot(data)
-    plt.show()
+    # plt.plot(data)
+    # plt.show()
     test_size = test.shape[0]
 
     # Find the parameters
@@ -88,29 +97,29 @@ def arima_forecast(data, train_ratio, seasonality, nb_steps_to_forecast, display
     # use gridsearch to look for optimial arima parameters
     # for param in pdq:
     #     for param_seasonal in seasonal_pdq:
-    #         # try:
+    #         try:
     #
-    #         print(f'Current test\torder:{bestParam}\tSeasonal order:{bestSParam}')
-    #         mod = sarimax.SARIMAX(train,
-    #                               order=param,
-    #                               seasonal_order=param_seasonal,
-    #                               enforce_stationarity=False,
-    #                               enforce_invertibility=False)
+    #             print(f'Current test\torder:{bestParam}\tSeasonal order:{bestSParam}')
+    #             mod = sarimax.SARIMAX(train,
+    #                                   order=param,
+    #                                   seasonal_order=param_seasonal,
+    #                                   enforce_stationarity=False,
+    #                                   enforce_invertibility=False)
     #
-    #         results = mod.fit(disp=False)
+    #             results = mod.fit(disp=False)
     #
-    #         predicted_values = results.predict(start=train_size + 1, end=train_size + test_size)
+    #             predicted_values = results.predict(start=train_size + 1, end=train_size + test_size)
     #
-    #         mse_error = mean_squared_error(test, predicted_values)
+    #             mse_error = mean_squared_error(test, predicted_values)
     #
-    #         # if current run of AIC is better than the best one so far, overwrite it
-    #         if mse_error < bestMSE:
-    #             bestMSE = mse_error
-    #             bestParam = param
-    #             bestSParam = param_seasonal
-
-    # except:
-    #     continue
+    #             # if current run of AIC is better than the best one so far, overwrite it
+    #             if mse_error < bestMSE:
+    #                 bestMSE = mse_error
+    #                 bestParam = param
+    #                 bestSParam = param_seasonal
+    #
+    #         except:
+    #             continue
 
     print('the best ones are:', bestMSE, bestParam, bestSParam)
 
@@ -118,8 +127,8 @@ def arima_forecast(data, train_ratio, seasonality, nb_steps_to_forecast, display
 
     # raw_forecast = sarima_model.predict(test_size + nb_steps_to_forecast)
 
-    p, d, q = 1, 0, 1
-    P, D, Q, m = 1, 1, 2, 7
+    p, d, q = 2, 0, 2
+    P, D, Q = 1, 0, 0
 
     sarima_model = sarimax.SARIMAX(train, trends='ct', order=(p, d, q), seasonal_order=(P, D, Q, seasonality))
     sarima_model = sarima_model.fit(disp=False)
@@ -144,12 +153,14 @@ def arima_forecast(data, train_ratio, seasonality, nb_steps_to_forecast, display
         plt.plot(train, label='Training data')
         plt.plot(test, label='Test data')
         # plt.plot(np.arange(train_size, train_size + len(raw_forecast)), raw_forecast, label='Predicted data')
-        plt.plot(all_forecast, label='Predicted data')
+        plt.plot(all_forecast, label='Forecasts')
         plt.title(f'NMSE ERROR : {nmse_error:.3f}')
         plt.legend()
+        plt.xlabel('index')
+        plt.ylabel('Occurrences count')
         plt.show()
 
-    return mse_error, forecasts
+    return nmse_error, forecasts
 
 
 if __name__ == '__main__':

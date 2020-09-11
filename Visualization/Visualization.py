@@ -1,4 +1,5 @@
 import imageio
+import matplotlib
 import matplotlib.dates as dat
 import seaborn as sns
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -8,6 +9,7 @@ from tqdm import trange
 
 import Utils
 from Data_Drift import Drift_Detector
+from Pattern_Mining.Candidate_Study import modulo_datetime
 from Pattern_Mining.Pattern_Discovery import *
 
 sns.set_style('darkgrid')
@@ -17,21 +19,27 @@ sns.set_style('darkgrid')
 
 
 def main():
-    dataset_name = 'hh101'
+    dataset_name = 'aruba'
     #
     sim_type = 'STATIC'
     tstep = 5
-
-    period = dt.timedelta(days=1)
-    dataset = pick_dataset(dataset_name, nb_days=48)
-
-    # path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/2_drift_toy_data_12.csv"
-    # dataset = pick_custom_dataset(path)
-
-    # # dataset['relative_time'] = dataset['date'].apply(lambda x: modulo_datetime(x.to_pydatetime(), period)/3600)
-    # #
-    # dataset['duration'] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds())
     #
+    period = dt.timedelta(days=1)
+    dataset = pick_dataset(dataset_name, nb_days=-1)
+
+    path = "C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/aruba/Simulation/DYNAMIC_tw_30" \
+           "/dataset_simulation_rep_6.csv "
+    dataset = pick_custom_dataset(path, nb_days=-1)
+
+    dataset['relative_time'] = dataset['date'].apply(lambda x: modulo_datetime(x.to_pydatetime(), period) / 3600)
+    #
+    dataset['duration'] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds())
+    #
+
+    plt.hist(dataset[dataset.label == 'housekeeping'].relative_time)
+
+    plt.show()
+
     plot_dataset = dataset.groupby(['label']).count()
     plot_dataset['label'] = plot_dataset.index
     plot_dataset.sort_values(['end_date'], ascending=False, inplace=True)
@@ -169,7 +177,7 @@ def plot_activity_occurrence_time(data, label, start_date=None, end_date=None, d
         plt.plot(data.timestamp, data.duration, 'bo')
         plt.title("Occurrences and Duration of '{}'".format(label))
         plt.ylabel("Duration (hour)")
-        plt.xlabel("Hour of the day")
+        plt.xlabel("Heure de la journée")
 
     plt.show()
 
@@ -230,7 +238,7 @@ def distribution_evolution(data, time_window_duration, label, output_folder="./o
         plt.title('"{}" Distribution\nWindow {}'.format(label, tw_index))
         plt.xlim(0, 24)
         plt.ylim(0, 1)
-        plt.xlabel('Hour of the day')
+        plt.xlabel('Heure de la journée')
 
         canvas.draw()
         width, height = fig.get_size_inches() * fig.get_dpi()
@@ -288,7 +296,7 @@ class ActivityOccurrencesGraph:
 
         # Choose a color for each activity
         self.labels = dataset.label.unique()
-        self.labels.sort()
+        self.labels = sorted(self.labels, reverse=True)
         colors = Utils.generate_random_color(len(self.labels))
         self.label_color = {}
         for i in range(len(self.labels)):
@@ -404,7 +412,7 @@ class ActivityOccurrencesGraph:
         ax.legend()
         ax.set_yticks(yticks)
         # ax.set_yticklabels(yticks_labels)
-        plt.xlabel("Hour of the day")
+        plt.xlabel("Heure de la journée")
         # plt.title(title)
         plt.legend(loc='upper left', fancybox=True, shadow=True, ncol=1, bbox_to_anchor=(1, 1))
 

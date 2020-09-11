@@ -11,10 +11,64 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from statsmodels.tsa.statespace.varmax import VARMAX
 
 sys.path.append(dirname(__file__))
 
 from Simulation.MacroActivity import MacroActivity
+
+
+def forecast_durations(duration_data, train_ratio, nb_periods_to_forecast):
+    """
+    forecast the activities duration
+    :param train_ratio:
+    :param last_time_window_id:
+    :param nb_periods_to_forecast:
+    :param display:
+    :return: Two dict like object {label: r2_score}
+    """
+
+    duration_dist_errors = pd.DataFrame(columns=['label', 'mean_error', 'std_error'])
+
+    # Fill history count df until last time window registered
+
+    last_time_window_id = int(duration_data.tw_id.max())
+
+    forecast_df = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
+
+    forecast_df.tw_id = np.arange(last_time_window_id, last_time_window_id + nb_periods_to_forecast)
+
+    data = duration_data[['mean', 'std']]
+
+    train_size = int(len(data) * train_ratio)
+
+    train, test = data[:train_size], data[train_size:]
+
+    test_size = test.shape[0]
+
+    model = VARMAX(train.values, order=(2, 2), enforce_stationarity=True, enforce_invertibility=False)
+
+    try:
+        model = model.fit(disp=False)
+    except np.linalg.LinAlgError as e:
+        return None
+
+    raw_forecast = model.forecast(test_size + nb_periods_to_forecast)
+
+    index = np.arange(train_size + 1, train_size + 1 + test_size + nb_periods_to_forecast)
+    raw_forecast = pd.DataFrame(raw_forecast, index, ['mean', 'std'])
+
+    validation_forecast = raw_forecast[:test_size]
+    # nmse_error_mean = mean_squared_error(test['mean'], validation_forecast['mean']) / np.mean(test['mean'])
+    # nmse_error_std = mean_squared_error(test['std'], validation_forecast['std']) / np.mean(test['std'])
+
+    # Forecast to use
+    forecasts = raw_forecast[test_size:]
+
+    # Replace all negative values by 0
+    forecasts[forecasts < 0] = 0
+
+    return forecasts
 
 
 class ActivityManager:
@@ -43,6 +97,7 @@ class ActivityManager:
         self.last_time_window_id = 0
         self.dynamic = dynamic
         self.nb_new_episodes = []
+        self.labels_duration_dist = {}
 
     def update(self, episode, occurrences, events, time_window_id=0, display=False):
         """
@@ -145,6 +200,8 @@ class ActivityManager:
     def build_forecasting_models(self, train_ratio, nb_periods_to_forecast, display=False, debug=False):
         """
         Build forecasting models for Macro-Activity parameters
+        :param debug:
+        :param nb_periods_to_forecast:
         :param train_ratio: ratio of data used for training
         :param method: method used for the forecasting
         :param display:
@@ -176,15 +233,17 @@ class ActivityManager:
 
             # ACTIVITIES DURATIONS FORECASTING
             # TODO : Monitor the error on forecasting models for duration
-            mean_duration_error, std_duration_error = macro_activity_object.forecast_durations(train_ratio=train_ratio,
-                                                                                               last_time_window_id=self.last_time_window_id,
-                                                                                               nb_periods_to_forecast=nb_periods_to_forecast,
-                                                                                               window_size=self.window_size,
-                                                                                               display=debug)
-
             for label in macro_activity_object.episode:
-                duration_error_df.loc[len(duration_error_df)] = [tuple(set_episode), mean_duration_error[label],
-                                                                 std_duration_error[label], label]
+                macro_activity_object.duration_distrib[label] = self.labels_duration_dist[label]
+            #
+            # error_df = macro_activity_object.forecast_durations(train_ratio=train_ratio,
+            #                                                     last_time_window_id=self.last_time_window_id,
+            #                                                     nb_periods_to_forecast=nb_periods_to_forecast,
+            #                                                     display=debug)
+            #
+            # for _, row in error_df.iterrows():
+            #     duration_error_df.loc[len(duration_error_df)] = [tuple(set_episode), row['mean_error'],
+            #                                                      row['std_error'], row['label']]
 
             # STOP HERE IF SINGLE-ACTIVITY
             # if len(set_episode) < 2:
@@ -217,6 +276,62 @@ class ActivityManager:
         # plt.show()
 
         return ADP_error_df, duration_error_df
+
+    def build_forecasting_duration(self, dataset, train_ratio, nb_periods_to_forecast):
+        """
+        :param train_ratio:
+        :param nb_periods_to_forecast:
+        :param display:
+        :param debug:
+        :return:
+        """
+        time_window_duration = dt.timedelta(days=self.window_size)
+        start_date = dataset.date.min().to_pydatetime()
+        end_date = dataset.date.max().to_pydatetime() - time_window_duration
+
+        dataset['duration'] = dataset.end_date - dataset.date
+        dataset['duration'] = dataset['duration'].apply(lambda x: x.total_seconds())
+
+        labels = dataset.label.unique()
+
+        labels_duration_dist = {}
+        for label in labels:
+            df = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
+            labels_duration_dist[label] = df
+
+        nb_tw = math.floor((end_date - start_date) / self.period)
+
+        for tw_id in range(nb_tw):
+            tw_start_date = start_date + dt.timedelta(days=tw_id)
+            tw_end_date = tw_start_date + dt.timedelta(days=self.window_size)
+
+            tw_dataset = dataset[(dataset.date >= tw_start_date) & (dataset.date < tw_end_date)]
+
+            for label in labels:
+                mean_duration = np.mean(tw_dataset[tw_dataset.label == label]['duration'])
+                std_duration = np.std(tw_dataset[tw_dataset.label == label]['duration'])
+
+                df = labels_duration_dist[label]
+                df.loc[tw_id] = [tw_id, mean_duration, std_duration]
+
+        for label in labels:
+            label_data = labels_duration_dist[label]
+
+            forecast_data = forecast_durations(label_data, train_ratio, nb_periods_to_forecast)
+
+            if forecast_data is None:
+                forecast_data = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
+                forecast_data['tw_id'] = np.arange(len(label_data), len(label_data) + nb_periods_to_forecast)
+                forecast_data['mean'] = [label_data['mean'].values[-1]] * nb_periods_to_forecast
+                forecast_data['std'] = [label_data['std'].values[-1]] * nb_periods_to_forecast
+                label_data = label_data.append(forecast_data, ignore_index=True)
+            else:
+                forecast_data['tw_id'] = np.arange(len(label_data), len(label_data) + nb_periods_to_forecast)
+                label_data = label_data.append(forecast_data, ignore_index=True)
+
+            label_data.fillna(0, inplace=True)
+
+        self.labels_duration_dist = labels_duration_dist
 
     def get_activity_daily_profiles(self, time_window_id=0):
         """

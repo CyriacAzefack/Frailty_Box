@@ -9,11 +9,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from pmdarima.arima.utils import ndiffs, nsdiffs
 from scipy.stats import expon
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.tsa.statespace import sarimax
+from statsmodels.tsa.statespace.varmax import VARMAX
 from statsmodels.tsa.stattools import acf, pacf
 
 # from Graph_Model.Pattern2Graph import *
@@ -108,10 +108,9 @@ def main():
     error = activity.forecast_history_count(train_ratio=train_ratio, last_time_window_id=tw_id - 1,
                                             nb_periods_to_forecast=10, display=True)
 
-    mean_duration_error, std_duration_error = activity.forecast_durations(train_ratio=train_ratio,
-                                                                          window_size=window_size,
-                                                                          last_time_window_id=tw_id - 1,
-                                                                          nb_periods_to_forecast=10, display=True)
+    duration_errors = activity.forecast_durations(train_ratio=train_ratio,
+                                                  last_time_window_id=tw_id - 1,
+                                                  nb_periods_to_forecast=10, display=True)
 
 
 class MacroActivity:
@@ -160,7 +159,7 @@ class MacroActivity:
         # self.add_time_window(occurrences, events, start_time_window_id, display=display)
 
         # self.build_histogram(occurrences, display=display)
-
+        self.nb_updates = 0
         MacroActivity.ID += 1
 
     def __repr__(self):
@@ -235,6 +234,7 @@ class MacroActivity:
         :param occurrences:
         :return:
         """
+        self.nb_updates += 1  # Useful to know the number of available data for forecasting
 
         occurrences, events = self.preprocessing(occurrences, events)
 
@@ -272,7 +272,7 @@ class MacroActivity:
 
             mean_duration = np.mean(label_df.activity_duration)
             std_duration = np.std(label_df.activity_duration)
-            duration_df.at[time_window_id] = [time_window_id, mean_duration, std_duration]
+            duration_df.at[time_window_id] = [time_window_id, float(mean_duration), float(std_duration)]
 
         # print('Duration Gaussian Distribution [UPDATED]')
 
@@ -354,7 +354,13 @@ class MacroActivity:
         raw_dataset = self.count_histogram.drop(['tw_id'], axis=1)
         dataset = raw_dataset.values.flatten()
 
-        if len(dataset) < 10:  # Can't train on such less data
+        if self.nb_updates < 10:  # Can't train on such less data
+            # Just copy the last known information
+            current_tw_id = last_time_window_id
+            hist_count = list(self.count_histogram.values[-1])[1:]  # remove the 'tw_id' column
+            for i in range(nb_periods_to_forecast):
+                current_tw_id += 1
+                self.count_histogram.at[current_tw_id] = [current_tw_id] + hist_count
             return None
 
         dataset = dataset.astype(int)
@@ -365,7 +371,7 @@ class MacroActivity:
 
         test_size = test.shape[0]
 
-        sarima_model = sarimax.SARIMAX(train, order=(1, 0, 0), seasonal_order=(1, 0, 1, nb_tstep),
+        sarima_model = sarimax.SARIMAX(train, order=(2, 0, 2), seasonal_order=(1, 0, 0, nb_tstep),
                                        enforce_stationarity=False,
                                        enforce_invertibility=False)
 
@@ -404,7 +410,7 @@ class MacroActivity:
 
         return mse_error
 
-    def forecast_durations(self, train_ratio, last_time_window_id, nb_periods_to_forecast, window_size, display=False):
+    def forecast_durations(self, train_ratio, last_time_window_id, nb_periods_to_forecast, display=False):
         """
         forecast the activities duration
         :param train_ratio:
@@ -413,8 +419,8 @@ class MacroActivity:
         :param display:
         :return: Two dict like object {label: r2_score}
         """
-        mean_duration_errors = {}
-        std_duration_errors = {}
+
+        duration_dist_errors = pd.DataFrame(columns=['label', 'mean_error', 'std_error'])
 
         for label in self.episode:
             print('[{}] Duration forecasting...'.format(label))
@@ -428,72 +434,46 @@ class MacroActivity:
 
             forecast_df = pd.DataFrame(columns=['tw_id', 'mean', 'std'])
 
-            forecast_df.tw_id = np.arange(last_time_window_id, last_time_window_id + nb_periods_to_forecast + 1)
+            forecast_df.tw_id = np.arange(last_time_window_id, last_time_window_id + nb_periods_to_forecast)
 
             # Fit & Predict Duration Mean values
-            print('Mean Duration Forecasting...')
-            mean_duration_data = list(self.duration_distrib[label]['mean'].values)
+            # print('Mean Duration Forecasting...')
+            duration_dist_data = self.duration_distrib[label][['mean', 'std']]
+            # mean_duration_data = list(self.duration_distrib[label]['mean'].values)
+            # std_duration_data = list(self.duration_distrib[label]['std'].values)
 
-            if len(mean_duration_data) * train_ratio < 2:
-                forecast_df['mean'] = [0] * nb_periods_to_forecast
-                forecast_df['std'] = [0] * nb_periods_to_forecast
+            if len(duration_dist_data) < 10:
+                forecast_df['mean'] = [duration_dist_data['mean'].values[-1]] * nb_periods_to_forecast
+                forecast_df['std'] = [duration_dist_data['std'].values[-1]] * nb_periods_to_forecast
                 self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
-                return [np.nan], [np.nan]
+                # TODO : Do a real MSE ERROR calculation even here
+                duration_dist_errors.loc[len(duration_dist_data)] = [label, np.nan, np.nan]
+                continue
 
-            mean_duration_error, mean_duration_forecast_values = arima_forecast(data=mean_duration_data,
-                                                                                train_ratio=train_ratio,
-                                                                                seasonality=window_size,
-                                                                                nb_steps_to_forecast=nb_periods_to_forecast,
-                                                                                label=f'{label} - Mean Duration',
-                                                                                display=display)
-            print("Mean Duration Error (NMSE) : {:.2f}".format(mean_duration_error))
-            mean_duration_errors[label] = mean_duration_error
+            nmse_error_mean, nmse_error_std, duration_dist_forecast_values = arima_forecast_duration_dist(
+                data=duration_dist_data,
+                train_ratio=train_ratio,
+                nb_steps_to_forecast=nb_periods_to_forecast,
+                label=f'{label} - Duration Distribution',
+                display=display)
 
-            # Fit & Predict Duration STD values
-            print('STD Duration Forecasting...')
-            std_duration_data = list(self.duration_distrib[label]['std'].values)
+            if duration_dist_forecast_values is None:
+                forecast_df['mean'] = [duration_dist_data['mean'].values[-1]] * nb_periods_to_forecast
+                forecast_df['std'] = [duration_dist_data['std'].values[-1]] * nb_periods_to_forecast
+                self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+                # TODO : Do a real MSE ERROR calculation even here
+                duration_dist_errors.loc[len(duration_dist_data)] = [label, np.nan, np.nan]
+                continue
 
-            std_duration_error, std_duration_forecast_values = arima_forecast(data=std_duration_data,
-                                                                              train_ratio=train_ratio,
-                                                                              seasonality=window_size,
-                                                                              nb_steps_to_forecast=nb_periods_to_forecast,
-                                                                              label=f'{label} - STD Duration',
-                                                                              display=display)
+            # print("Mean Duration Error (NMSE) : {:.2f}".format(mean_duration_error))
+            duration_dist_errors.loc[len(duration_dist_data)] = [label, nmse_error_mean, nmse_error_std]
 
-            print("STD Duration Error (NMSE) : {:.2f}".format(std_duration_error))
-            std_duration_errors[label] = std_duration_error
-
-
-
-            forecast_df['mean'] = mean_duration_forecast_values
-            forecast_df['std'] = std_duration_forecast_values
+            forecast_df['mean'] = duration_dist_forecast_values['mean'].values
+            forecast_df['std'] = duration_dist_forecast_values['std'].values
 
             self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
 
-            if display:
-                len_available_data = len(mean_duration_data)
-
-                plt.figure(figsize=(15, 5))
-                plt.subplot(121)
-                plt.plot(np.asarray(mean_duration_data) / 60, color='b', alpha=0.6)
-                plt.plot(np.arange(len_available_data, len_available_data + nb_periods_to_forecast),
-                         mean_duration_forecast_values / 60, color='red')
-                plt.xlabel('Timepoints')
-                plt.ylabel('Mean Duration (mn)')
-
-                plt.subplot(122)
-                plt.plot(np.asarray(std_duration_data) / 60, color='b', alpha=0.6)
-                plt.plot(np.arange(len_available_data, len_available_data + nb_periods_to_forecast),
-                         std_duration_forecast_values / 60, color='red')
-                plt.xlabel('Timepoints')
-                plt.ylabel('Std Duration (mn)')
-
-                plt.title('Duration of Activity \'{}\''.format(label))
-
-                plt.tight_layout()
-                plt.show()
-
-        return mean_duration_errors, std_duration_errors
+        return duration_dist_errors
 
     def forecast_execution_order(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
                                  display=False):
@@ -528,6 +508,8 @@ class MacroActivity:
 
             # To avoid negative durations
             if (mean == 0) and (std == 0):
+                continue
+            if (np.isnan(mean)) or (np.isnan(std)):
                 continue
             duration = -1
             while duration < 0:
@@ -650,7 +632,7 @@ def fit_and_forecast(data, train_ratio, nb_periods_predict):
     return error, real_forecast
 
 
-def arima_forecast(data, train_ratio, seasonality, nb_steps_to_forecast, label, display=False):
+def arima_forecast_duration_dist(data, train_ratio, nb_steps_to_forecast, label, display=False):
     """
     Train an ARIMA model to forecast the data
     :param data:
@@ -660,79 +642,53 @@ def arima_forecast(data, train_ratio, seasonality, nb_steps_to_forecast, label, 
     """
     train_size = int(len(data) * train_ratio)
 
-    data = pd.Series(data)
-
     train, test = data[:train_size], data[train_size:]
 
     test_size = test.shape[0]
 
-    # Find the parameters
-    # Estimate the number of differences using an ADF test:
-    d = ndiffs(train, test='adf')  # -> 0
+    model = VARMAX(train.values, order=(3, 2), enforce_stationarity=True, enforce_invertibility=False)
+    try:
+        model = model.fit(disp=False)
+    except np.linalg.LinAlgError as e:
+        return None, None, None
 
-    if display: print(f'Estimated d = {d}')
+    raw_forecast = model.forecast(test_size + nb_steps_to_forecast)
 
-    # estimate number of seasonal differences using a Canova-Hansen test
-    D = nsdiffs(train,
-                m=seasonality,  # commonly requires knowledge of dataset
-                max_D=10,
-                test='ch')  # -> 0
-    if display: print(f"Estimated 'D' = {D}")
+    index = np.arange(train_size + 1, train_size + 1 + test_size + nb_steps_to_forecast)
+    raw_forecast = pd.DataFrame(raw_forecast, index, ['mean', 'std'])
 
-    # sarima_model = pm.auto_arima(train,
-    #                              start_p=0, max_p=1,
-    #                              start_q=0, max_q=1,
-    #                              start_P=0, max_P=1,
-    #                              start_Q=0, max_Q=1, max_order=2,
-    #                              m=seasonality, seasonal=True,
-    #                              d=d,
-    #                              max_iter=50,
-    #                              method='lbfgs',
-    #                              trace=False,
-    #                              error_action='ignore',  # don't want to know if an order does not work
-    #                              suppress_warnings=True,  # don't want convergence warnings
-    #                              stepwise=True)  # set to stepwise
-
-    # raw_forecast = sarima_model.predict(test_size + nb_steps_to_forecast)
-
-    # p, d, q = sarima_model.order
-    # P, D, Q, m = sarima_model.seasonal_order
-    p, d, q = 0, d, 1
-    P, D, Q, m = 0, 0, 0, 0
-
-    sarima_model = sarimax.SARIMAX(train, trends='ct', order=(p, d, q), seasonal_order=(P, D, Q, seasonality))
-    sarima_model = sarima_model.fit(disp=False)
-
-    all_forecast = sarima_model.predict(start=0, end=train_size + test_size + nb_steps_to_forecast)
-
-    all_forecast = pd.Series(all_forecast)
+    # all_forecast = pd.Series(all_forecast)
     # raw_forecast = sarima_model.get_forecast(
     #     steps=test_size + nb_steps_to_forecast).predicted_mean  # predict N steps into the future
 
-    raw_forecast = all_forecast[train_size:]
+    # raw_forecast = all_forecast_df[train_size:]
 
     validation_forecast = raw_forecast[:test_size]
-    nmse_error = mean_squared_error(test, validation_forecast) / np.mean(test)
+    nmse_error_mean = mean_squared_error(test['mean'], validation_forecast['mean']) / np.mean(test['mean'])
+    nmse_error_std = mean_squared_error(test['std'], validation_forecast['std']) / np.mean(test['std'])
 
     # Forecast to use
-    forecasts = raw_forecast[test_size:].values
+    forecasts = raw_forecast[test_size:]
 
     # Replace all negative values by 0
-    forecasts = np.where(forecasts > 0, forecasts, 0)
+    forecasts[forecasts < 0] = 0
+    # forecasts = np.where(forecasts > 0, forecasts, 0)
     # forecasts = forecasts.reshape((nb_periods_to_forecast, nb_tstep))
 
     if display:
         # Visualize the forecasts (blue=train, green=forecasts)
         # print(sarima_model.summary())
-        plt.plot(train, label='Training data')
-        plt.plot(test, label='Test data')
+        data = data.astype('float')
+        raw_forecast = raw_forecast.astype('float')
+        sns.lineplot(data=data, palette="tab10", linewidth=2.5, style='event', markers=True, dashes=False)
+        sns.lineplot(data=raw_forecast, palette="prism", linewidth=2.5, style='event', markers=True, dashes=False)
         # plt.plot(np.arange(train_size, train_size + len(raw_forecast)), raw_forecast, label='Predicted data')
-        plt.plot(all_forecast, label='Predicted data')
-        plt.title(f'{label}\nMSE ERROR : {nmse_error:.3f}')
+        # plt.plot(all_forecast, label='Predicted data')
+        plt.title(f'{label}\nNMSE ERROR Mean: {nmse_error_mean:.3f}\nNMSE ERROR Std: {nmse_error_std:.3f}')
         plt.legend()
         plt.show()
 
-    return nmse_error, forecasts
+    return nmse_error_mean, nmse_error_std, forecasts.astype('float')
 
 
 def find_ARIMA_params(data, seasonality):

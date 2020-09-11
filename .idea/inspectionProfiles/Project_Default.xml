@@ -11,6 +11,21 @@
         </value>
       </option>
     </inspection_tool>
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="7">
+            <item index="0" class="java.lang.String" itemvalue="flake8" />
+            <item index="1" class="java.lang.String" itemvalue="opencv-python" />
+            <item index="2" class="java.lang.String" itemvalue="pmdarima" />
+            <item index="3" class="java.lang.String" itemvalue="matplotlib" />
+            <item index="4" class="java.lang.String" itemvalue="tensorflow" />
+            <item index="5" class="java.lang.String" itemvalue="seaborn" />
+            <item index="6" class="java.lang.String" itemvalue="scipy" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
     <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="ignoredErrors">
         <list>
@@ -23,6 +38,8 @@
         <list>
           <option value="N802" />
           <option value="N803" />
+          <option value="N801" />
+          <option value="N806" />
         </list>
       </option>
     </inspection_tool>
@@ -36,6 +53,8 @@
           <option value="tensorflow_core.python.keras.api._v2.keras.optimizers.Adam" />
           <option value="tensorflow_core._api.v2.train.latest_checkpoint" />
           <option value="matplotlib.cm.*" />
+          <option value="tuple.scatter" />
+          <option value="label" />
         </list>
       </option>
     </inspection_tool>
