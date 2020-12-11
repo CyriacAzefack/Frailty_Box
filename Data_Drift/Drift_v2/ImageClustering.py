@@ -7,14 +7,13 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
 import Utils
-from Data_Drift.Drift_v2 import LogClustering
 
 name = 'aruba'
 labels = list(Utils.pick_dataset(name).label.unique())
 labels.sort()
 
-image_width = LogClustering.LogClustering.WIDTH
-image_height = LogClustering.LogClustering.HEIGHT
+# image_width = LogClustering.LogClustering.WIDTH
+# image_height = LogClustering.LogClustering.HEIGHT
 
 input_folder = f"../../output/{name}/Daily_Images/"
 list_files = glob.glob(input_folder + '*.png')
@@ -74,7 +73,7 @@ range_n_clusters = [2, 3, 4, 5, 6]
 #                   "with n_clusters = %d" % n_clusters),
 #                  fontsize=14, fontweight='bold')
 
-n_clusters = 2
+n_clusters = None
 kmeans = KMeans(n_clusters=n_clusters, random_state=0)
 clusters = kmeans.fit_predict(dataset)
 silhouette_avg = silhouette_score(dataset, clusters)

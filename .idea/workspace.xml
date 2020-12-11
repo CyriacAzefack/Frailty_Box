@@ -54,7 +54,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ea1ef3a-fe18-41dd-890e-136b2f605eab" name="Default" comment="Pattern mining update best episode selection">
-      <change afterPath="$PROJECT_DIR$/Time_Series/data/eating_duration_distribution.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Notebooks/debug.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Vizu/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/AutoEncoder/AutoEncoder.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/AutoEncoder/VariationalAutoEncoder.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/AutoEncoder/autoencoder_new.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/AutoEncoder/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Behavior_Drift.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Behavior_Model.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Graph_Model/Acyclic_Graph.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Graph_Model/Build_Graph.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Graph_Model/Graph_Pattern.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Graph_Model/Pattern2Graph.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Graph_Model/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Pattern_Mining/Candidate_Study.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Pattern_Mining/Extract_Macro_Activities.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Pattern_Mining/FP_growth.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Pattern_Mining/Pattern_Discovery.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Pattern_Mining/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Pattern_Mining/test.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Simulation/ActivityManager.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Simulation/MacroActivity.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Simulation/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Time_Series/ARIMA.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Time_Series/LSTM.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Time_Series/Sarimax_Forecast.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Time_Series/VAR_LSTM.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Time_Series/Window_LSTM.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Time_Series/create_Time_Series.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Time_Series/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Time_Series/plot3D.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Utils.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Vizu/CalendarDisplay.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Vizu/Visualization.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/html/Vizu/index.html" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/Drift_Toy/1_drift_toy_data_17.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/Drift_Toy/1_drift_toy_data_18.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/input/Drift_Toy/1_drift_toy_data_20.csv" afterDir="false" />
@@ -517,19 +550,19 @@
       <change afterPath="$PROJECT_DIR$/output/hh113/hh113_time_windows.csv.npy" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/hh117/hh117_time_windows.csv.npy" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/output/real_life_results.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Frailty_Box.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Frailty_Box.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dictionaries/cyriac_azefack.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/cyriac_azefack.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Behavior_Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Behavior_Model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Behavior_Drift.py" beforeDir="false" afterPath="$PROJECT_DIR$/Behavior_Drift.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_Drift/Drift_v2/ImageClustering.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Drift/Drift_v2/ImageClustering.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Data_Drift/Features_Extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Drift/Features_Extraction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/ActivityManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/ActivityManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/MacroActivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/MacroActivity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Time_Series/ARIMA.py" beforeDir="false" afterPath="$PROJECT_DIR$/Time_Series/ARIMA.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Time_Series/Sarimax_Forecast.py" beforeDir="false" afterPath="$PROJECT_DIR$/Time_Series/Sarimax_Forecast.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_Drift/aa.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Notebooks/Drift Results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Notebooks/Drift Results.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Time_Series/Prophet_forecaster.py" beforeDir="false" afterPath="$PROJECT_DIR$/Time_Series/plot3D.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Validation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Visualization/Visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/Visualization/Visualization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Visualization/CalendarDisplay.py" beforeDir="false" afterPath="$PROJECT_DIR$/Vizu/CalendarDisplay.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Visualization/Visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/Vizu/Visualization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Visualization/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/AutoEncoder/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/HH/hh101/dataset.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/HH/hh115/dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/HH/hh115/dataset.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/Daily_Images/___all.gif" beforeDir="false" />
@@ -4102,28 +4135,7 @@
       <recent name="C:\Users\cyriac.azefack\Workspace\Frailty_Box\Pattern_Mining" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Visualization">
-    <configuration name="ARIMA" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Frailty_Box" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Time_Series" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Time_Series/ARIMA.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.plot3D">
     <configuration name="Behavior_Model_ARUBA_DYNAMIC" type="PythonConfigurationType" factoryName="Python">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -4340,6 +4352,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="plot3D" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Frailty_Box" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Time_Series" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Time_Series/plot3D.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="scratch" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Frailty_Box" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -4405,7 +4438,6 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.ARIMA" />
       <item itemvalue="Python.Behavior_Model_ARUBA_DYNAMIC" />
       <item itemvalue="Python.Behavior_Model_ARUBA_STATIC" />
       <item itemvalue="Python.Behavior_Model_HH101_DYNAMIC" />
@@ -4415,14 +4447,15 @@
       <item itemvalue="Python.Sarimax_Forecast" />
       <item itemvalue="Python.Validation" />
       <item itemvalue="Python.Visualization" />
+      <item itemvalue="Python.plot3D" />
       <item itemvalue="Python.scratch" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Visualization" />
-        <item itemvalue="Python.Validation" />
-        <item itemvalue="Python.ARIMA" />
+        <item itemvalue="Python.plot3D" />
         <item itemvalue="Python.scratch" />
+        <item itemvalue="Python.Validation" />
+        <item itemvalue="Python.Visualization" />
         <item itemvalue="Python.Sarimax_Forecast" />
       </list>
     </recent_temporary>
@@ -4439,13 +4472,6 @@
       <option name="presentableId" value="Default" />
       <updated>1521208662820</updated>
       <workItem from="1579096880565" duration="346000" />
-    </task>
-    <task id="LOCAL-00037" summary="Behavior Automatic drift detector">
-      <created>1546851606457</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1546851606457</updated>
     </task>
     <task id="LOCAL-00038" summary="All drift methods implemented&#10;Toy_generation no changes implemented">
       <created>1547040661996</created>
@@ -4783,7 +4809,14 @@
       <option name="project" value="LOCAL" />
       <updated>1598518096613</updated>
     </task>
-    <option name="localTasksCounter" value="86" />
+    <task id="LOCAL-00086" summary="End of thesis commit">
+      <created>1599827764997</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1599827764998</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -4841,7 +4874,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Last time window id for forecasting" />
     <MESSAGE value="Dynamic Behavior model ready" />
     <MESSAGE value="Change time_window_id through simulation" />
     <MESSAGE value="Fix Static Model" />
@@ -4866,7 +4898,8 @@
     <MESSAGE value="Pattern mining update best episode selection" />
     <MESSAGE value="Behavior Drift clustering algo changes" />
     <MESSAGE value="Prediction Model for Simulation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Prediction Model for Simulation" />
+    <MESSAGE value="End of thesis commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="End of thesis commit" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -4889,59 +4922,54 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="668" y="131" key="#scratch/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1592841613403" />
-    <state x="1160" y="315" key="#xdebugger.evaluate" timestamp="1599659732946">
+    <state x="1160" y="315" key="#xdebugger.evaluate" timestamp="1601042195525">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="1160" y="315" key="#xdebugger.evaluate/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599659732946" />
-    <state x="210" y="79" key="CommitChangelistDialog2" timestamp="1598518073794">
+    <state x="1160" y="315" key="#xdebugger.evaluate/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601042195525" />
+    <state x="210" y="79" key="CommitChangelistDialog2" timestamp="1599827719406">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="210" y="79" key="CommitChangelistDialog2/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1598518073794" />
+    <state x="210" y="79" key="CommitChangelistDialog2/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599827719406" />
     <state x="210" y="79" key="CommitChangelistDialog2/0.0.1920.1080@0.0.1920.1080" timestamp="1593360946721" />
-    <state x="739" y="293" key="FileChooserDialogImpl" timestamp="1591949197760">
+    <state width="1897" height="246" key="GridCell.Tab.0.bottom" timestamp="1601043449100">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="739" y="293" key="FileChooserDialogImpl/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1591949197760" />
-    <state x="739" y="293" key="FileChooserDialogImpl/0.0.1920.1080@0.0.1920.1080" timestamp="1591607390622" />
-    <state width="1897" height="376" key="GridCell.Tab.0.bottom" timestamp="1599660361132">
-      <screen x="0" y="0" width="1920" height="1080" />
-    </state>
-    <state width="1897" height="376" key="GridCell.Tab.0.bottom/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599660361132" />
+    <state width="1897" height="246" key="GridCell.Tab.0.bottom/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601043449100" />
     <state width="1897" height="264" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1599474271374" />
-    <state width="1897" height="376" key="GridCell.Tab.0.center" timestamp="1599660361132">
+    <state width="1897" height="246" key="GridCell.Tab.0.center" timestamp="1601043449100">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1897" height="376" key="GridCell.Tab.0.center/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599660361132" />
+    <state width="1897" height="246" key="GridCell.Tab.0.center/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601043449100" />
     <state width="1897" height="264" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1599474271374" />
-    <state width="1897" height="376" key="GridCell.Tab.0.left" timestamp="1599660361132">
+    <state width="1897" height="246" key="GridCell.Tab.0.left" timestamp="1601043449100">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1897" height="376" key="GridCell.Tab.0.left/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599660361132" />
+    <state width="1897" height="246" key="GridCell.Tab.0.left/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601043449100" />
     <state width="1897" height="264" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1599474271374" />
-    <state width="1897" height="376" key="GridCell.Tab.0.right" timestamp="1599660361132">
+    <state width="1897" height="246" key="GridCell.Tab.0.right" timestamp="1601043449100">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1897" height="376" key="GridCell.Tab.0.right/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599660361132" />
+    <state width="1897" height="246" key="GridCell.Tab.0.right/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601043449100" />
     <state width="1897" height="264" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1599474271374" />
-    <state width="1897" height="368" key="GridCell.Tab.1.bottom" timestamp="1599659762688">
+    <state width="1897" height="368" key="GridCell.Tab.1.bottom" timestamp="1601043150580">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1897" height="368" key="GridCell.Tab.1.bottom/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599659762688" />
+    <state width="1897" height="368" key="GridCell.Tab.1.bottom/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601043150580" />
     <state width="1897" height="362" key="GridCell.Tab.1.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1593360062304" />
-    <state width="1897" height="368" key="GridCell.Tab.1.center" timestamp="1599659762688">
+    <state width="1897" height="368" key="GridCell.Tab.1.center" timestamp="1601043150579">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1897" height="368" key="GridCell.Tab.1.center/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599659762688" />
+    <state width="1897" height="368" key="GridCell.Tab.1.center/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601043150579" />
     <state width="1897" height="362" key="GridCell.Tab.1.center/0.0.1920.1080@0.0.1920.1080" timestamp="1593360062304" />
-    <state width="1897" height="368" key="GridCell.Tab.1.left" timestamp="1599659762688">
+    <state width="1897" height="368" key="GridCell.Tab.1.left" timestamp="1601043150579">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1897" height="368" key="GridCell.Tab.1.left/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599659762688" />
+    <state width="1897" height="368" key="GridCell.Tab.1.left/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601043150579" />
     <state width="1897" height="362" key="GridCell.Tab.1.left/0.0.1920.1080@0.0.1920.1080" timestamp="1593360062304" />
-    <state width="1897" height="368" key="GridCell.Tab.1.right" timestamp="1599659762688">
+    <state width="1897" height="368" key="GridCell.Tab.1.right" timestamp="1601043150579">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1897" height="368" key="GridCell.Tab.1.right/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599659762688" />
+    <state width="1897" height="368" key="GridCell.Tab.1.right/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601043150579" />
     <state width="1897" height="362" key="GridCell.Tab.1.right/0.0.1920.1080@0.0.1920.1080" timestamp="1593360062304" />
     <state x="800" y="314" width="1036" height="708" key="SettingsEditor" timestamp="1599048096414">
       <screen x="0" y="0" width="1920" height="1080" />
@@ -4951,15 +4979,15 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="93" y="100" width="1734" height="887" key="VCS.FileHistoryDialog/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1592836930577" />
-    <state x="552" y="259" key="Vcs.Push.Dialog.v2" timestamp="1593416005151">
+    <state x="552" y="259" key="Vcs.Push.Dialog.v2" timestamp="1599828097878">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="552" y="259" key="Vcs.Push.Dialog.v2/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1593416005151" />
+    <state x="552" y="259" key="Vcs.Push.Dialog.v2/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599828097878" />
     <state x="552" y="259" key="Vcs.Push.Dialog.v2/0.0.1920.1080@0.0.1920.1080" timestamp="1593361010035" />
-    <state width="968" height="548" key="XDebugger.FullValuePopup" timestamp="1599654486164">
+    <state width="968" height="548" key="XDebugger.FullValuePopup" timestamp="1601042726177">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="968" height="548" key="XDebugger.FullValuePopup/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1599654486164" />
+    <state width="968" height="548" key="XDebugger.FullValuePopup/-1920.647.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1601042726177" />
     <state x="92" y="92" width="1736" height="896" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1599046129805">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
@@ -4978,7 +5006,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Simulation/MacroActivity.py</url>
-          <line>332</line>
+          <line>331</line>
           <option name="timeStamp" value="1515" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -4988,40 +5016,39 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Time_Series/ARIMA.py</url>
-          <line>126</line>
+          <line>124</line>
           <option name="timeStamp" value="1525" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <condition expression="label == 'others'" language="Python" />
           <url>file://$PROJECT_DIR$/Simulation/MacroActivity.py</url>
-          <line>446</line>
+          <line>445</line>
           <option name="timeStamp" value="1532" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>794</line>
-          <option name="timeStamp" value="1542" />
+          <line>441</line>
+          <option name="timeStamp" value="1567" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>130</line>
-          <option name="timeStamp" value="1544" />
+          <line>786</line>
+          <option name="timeStamp" value="1576" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <condition expression="label == &quot;housekeeping&quot;" language="Python" />
-          <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>374</line>
-          <option name="timeStamp" value="1546" />
+          <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py</url>
+          <line>20</line>
+          <option name="timeStamp" value="1583" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>780</line>
-          <option name="timeStamp" value="1555" />
+          <url>file://$PROJECT_DIR$/Time_Series/plot3D.py</url>
+          <line>42</line>
+          <option name="timeStamp" value="1585" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Validation.py</url>
-          <line>103</line>
-          <option name="timeStamp" value="1565" />
+          <url>file://$PROJECT_DIR$/Time_Series/plot3D.py</url>
+          <line>20</line>
+          <option name="timeStamp" value="1586" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

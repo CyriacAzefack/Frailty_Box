@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, minimum-scale=1" name="viewport"/>
+    <meta content="pdoc 0.9.2" name="generator"/>
+    <title>Vizu.CalendarDisplay API documentation</title>
+    <meta content="" name="description"/>
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css"
+          integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" rel="preload stylesheet">
+    <link as="style" crossorigin
+          href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css"
+          integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" rel="preload stylesheet">
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css"
+          rel="stylesheet preload">
+    <style>
+        :root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}
+    </style>
+    <style media="screen and (min-width: 700px)">
+        @media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}
+    </style>
+    <style media="print">
+        @media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}
+    </style>
+    <script crossorigin defer integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8="
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+    <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+    <article id="content">
+        <header>
+            <h1 class="title">Module <code>Vizu.CalendarDisplay</code></h1>
+        </header>
+        <section id="section-intro">
+            <details class="source">
+                <summary>
+                    <span>Expand source code</span>
+                </summary>
+                <pre><code class="python"># ----------------------------------------------------------------------------
+# Author:  Nicolas P. Rougier
+# License: BSD
+# ----------------------------------------------------------------------------
+from datetime import datetime
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from dateutil.relativedelta import relativedelta
+from matplotlib.patches import Polygon
+
+
+def calmap(ax, title, data, start_date, end_date, nb_clusters):
+    ax.tick_params(&#39;x&#39;, length=0, labelsize=&#34;medium&#34;, which=&#39;major&#39;)
+    ax.tick_params(&#39;y&#39;, length=0, labelsize=&#34;x-small&#34;, which=&#39;major&#39;)
+
+    # Month borders
+    xticks, labels = [], []
+    # start = datetime(year, 1, 1).weekday()
+
+    start_year = start_date.year
+    year = start_year
+    start_month = start_date.month
+
+    # nb_months = math.floor((end_date - start_date)/timedelta(days=30))
+    nb_months = relativedelta(end_date, start_date).months + 1
+
+    print(f&#39;Start date : {start_date}&#39;)
+    print(f&#34;Number of months : {nb_months}&#34;)
+    print(f&#39;End date : {end_date}&#39;)
+
+    start_date_month = datetime(start_year, start_month, 1)
+
+    start_index = datetime(start_year, 1, 1).weekday()
+
+    for month in range(1, nb_months + 1):
+
+        first = start_date_month + relativedelta(months=month - 1)
+        # first = datetime(year, month, 1)
+        last = first + relativedelta(months=1, days=-1)
+
+        if month == 1:
+            first = start_date
+            last = start_date_month + relativedelta(months=1, days=-1)
+
+        if month == nb_months:
+            last = end_date
+
+        y0 = first.weekday()
+        y1 = last.weekday()
+        # x0_pass = ((first - start_date_month).days + start_index -1) // 7
+        # x1_pass = ((last - start_date_month).days + start_index - 1) // 7
+
+        year_diff = first.year - start_year
+        x0 = (int(first.strftime(&#34;%j&#34;)) + year_diff * 366 + start_index - 1) // 7
+        x1 = (int(last.strftime(&#34;%j&#34;)) + year_diff * 366 + start_index - 1) // 7
+        #
+        # if first.year != start_year:
+        #
+        #     x0 = int(first.strftime(&#34;%j&#34;))+
+
+        P = [(x0, y0), (x0, 7), (x1, 7),
+             (x1, y1 + 1), (x1 + 1, y1 + 1), (x1 + 1, 0),
+             (x0 + 1, 0), (x0 + 1, y0)]
+        xticks.append(x0 + (x1 - x0 + 1) / 2)
+        labels.append(first.strftime(&#34;%b&#34;))
+        poly = Polygon(P, edgecolor=&#34;black&#34;, facecolor=&#34;None&#34;,
+                       linewidth=1, zorder=20, clip_on=False)
+        ax.add_artist(poly)
+
+    ax.set_xticks(xticks)
+    ax.set_xticklabels(labels)
+    ax.set_yticks(0.5 + np.arange(7))
+    ax.set_yticklabels([&#34;Mon&#34;, &#34;Tue&#34;, &#34;Wed&#34;, &#34;Thu&#34;, &#34;Fri&#34;, &#34;Sat&#34;, &#34;Sun&#34;])
+    ax.set_title(title, weight=&#34;semibold&#34;)
+    #
+    # # Clearing first and last day from the data
+    # valid = datetime(year, 1, 1).weekday()
+    # data[:valid, 0] = np.nan
+    # valid = datetime(year, 12, 31).weekday()
+    # # data[:,x1+1:] = np.nan
+    # data[valid + 1:, x1] = np.nan
+    #
+    # # Showing data
+
+    ax.imshow(data, extent=[0, 53, 0, 7], zorder=10, vmin=0, vmax=nb_clusters,
+              cmap=&#34;tab20&#34;, origin=&#34;lower&#34;, alpha=.75, )
+    #
+    # for (j, i), label in np.ndenumerate(data):
+    #     date = datetime(year, 1, 1) + timedelta(days=i*52+j - start)
+    #     label = int(date.strftime(&#34;%d&#34;))
+    #     ax.text(i, j, label, ha=&#39;center&#39;, va=&#39;center&#39;)
+    #     # ax2.text(i, j, label, ha=&#39;center&#39;, va=&#39;center&#39;)
+
+
+def display_calendar(dataset):
+    &#34;&#34;&#34;
+    Display the behavior evolution
+    :param dataset:
+    :return:
+    &#34;&#34;&#34;
+
+    n_clusters = len(dataset.cluster.unique())
+
+    dataset[&#39;year&#39;] = dataset.date.apply(lambda x: x.year)
+
+    # To split years
+    years = list(dataset.year.unique())
+
+    fig = plt.figure(figsize=(8, 4.5), dpi=100)
+
+    for year in years:
+        year_df = dataset[dataset.year == year]
+
+        current_start_date = year_df.date.min()
+        current_end_date = year_df.date.max()
+
+        ax = fig.add_subplot(int(f&#34;{len(years)}1{1 + years.index(year)}&#34;), xlim=[0, 53], ylim=[0, 7], frameon=False,
+                             aspect=1)
+
+        # Build the data
+        # Clearing first and last day from the data
+
+        data = np.empty((7, 53))
+        data[:] = np.nan
+        data = data.T.flatten()
+
+        valid = current_start_date.dayofyear + datetime(year, 1, 1).weekday() - 1
+
+        data[valid:valid + len(year_df)] = year_df.cluster.values
+
+        # data[:valid] = np.nan
+        # valid = current_end_date.dayofyear + datetime(year, 12, 31).weekday() - (1 if year != max(years) else 0)
+        # # data[:,x1+1:] = np.nan
+        # data[valid:] = np.nan
+
+        data = data.reshape(53, 7).T
+
+        calmap(ax, title=year, data=data, start_date=current_start_date.to_pydatetime(),
+               end_date=current_end_date.to_pydatetime(), nb_clusters=n_clusters)
+
+    plt.tight_layout()
+    # plt.savefig(&#34;calendar-heatmap.png&#34;, dpi=300)
+    # plt.savefig(&#34;calendar-heatmap.pdf&#34;, dpi=600)
+    # plt.legend()
+    plt.show()
+
+
+if __name__ == &#39;__main__&#39;:
+    start_date = datetime(2020, 7, 8)
+    end_date = datetime(2022, 11, 19)
+
+    x = pd.date_range(start_date, end_date, freq=&#39;1D&#39;)
+
+    nb_clusters = 4
+    clusters = np.random.randint(nb_clusters, size=len(x))
+
+    df = pd.DataFrame({&#39;date&#39;: x, &#39;cluster&#39;: 2})
+
+    display_calendar(df)</code></pre>
+            </details>
+        </section>
+        <section>
+        </section>
+        <section>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-functions">Functions</h2>
+            <dl>
+                <dt id="Vizu.CalendarDisplay.calmap"><code class="name flex">
+                    <span>def <span class="ident">calmap</span></span>(<span>ax, title, data, start_date, end_date, nb_clusters)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def calmap(ax, title, data, start_date, end_date, nb_clusters):
+    ax.tick_params(&#39;x&#39;, length=0, labelsize=&#34;medium&#34;, which=&#39;major&#39;)
+    ax.tick_params(&#39;y&#39;, length=0, labelsize=&#34;x-small&#34;, which=&#39;major&#39;)
+
+    # Month borders
+    xticks, labels = [], []
+    # start = datetime(year, 1, 1).weekday()
+
+    start_year = start_date.year
+    year = start_year
+    start_month = start_date.month
+
+    # nb_months = math.floor((end_date - start_date)/timedelta(days=30))
+    nb_months = relativedelta(end_date, start_date).months + 1
+
+    print(f&#39;Start date : {start_date}&#39;)
+    print(f&#34;Number of months : {nb_months}&#34;)
+    print(f&#39;End date : {end_date}&#39;)
+
+    start_date_month = datetime(start_year, start_month, 1)
+
+    start_index = datetime(start_year, 1, 1).weekday()
+
+    for month in range(1, nb_months + 1):
+
+        first = start_date_month + relativedelta(months=month - 1)
+        # first = datetime(year, month, 1)
+        last = first + relativedelta(months=1, days=-1)
+
+        if month == 1:
+            first = start_date
+            last = start_date_month + relativedelta(months=1, days=-1)
+
+        if month == nb_months:
+            last = end_date
+
+        y0 = first.weekday()
+        y1 = last.weekday()
+        # x0_pass = ((first - start_date_month).days + start_index -1) // 7
+        # x1_pass = ((last - start_date_month).days + start_index - 1) // 7
+
+        year_diff = first.year - start_year
+        x0 = (int(first.strftime(&#34;%j&#34;)) + year_diff * 366 + start_index - 1) // 7
+        x1 = (int(last.strftime(&#34;%j&#34;)) + year_diff * 366 + start_index - 1) // 7
+        #
+        # if first.year != start_year:
+        #
+        #     x0 = int(first.strftime(&#34;%j&#34;))+
+
+        P = [(x0, y0), (x0, 7), (x1, 7),
+             (x1, y1 + 1), (x1 + 1, y1 + 1), (x1 + 1, 0),
+             (x0 + 1, 0), (x0 + 1, y0)]
+        xticks.append(x0 + (x1 - x0 + 1) / 2)
+        labels.append(first.strftime(&#34;%b&#34;))
+        poly = Polygon(P, edgecolor=&#34;black&#34;, facecolor=&#34;None&#34;,
+                       linewidth=1, zorder=20, clip_on=False)
+        ax.add_artist(poly)
+
+    ax.set_xticks(xticks)
+    ax.set_xticklabels(labels)
+    ax.set_yticks(0.5 + np.arange(7))
+    ax.set_yticklabels([&#34;Mon&#34;, &#34;Tue&#34;, &#34;Wed&#34;, &#34;Thu&#34;, &#34;Fri&#34;, &#34;Sat&#34;, &#34;Sun&#34;])
+    ax.set_title(title, weight=&#34;semibold&#34;)
+    #
+    # # Clearing first and last day from the data
+    # valid = datetime(year, 1, 1).weekday()
+    # data[:valid, 0] = np.nan
+    # valid = datetime(year, 12, 31).weekday()
+    # # data[:,x1+1:] = np.nan
+    # data[valid + 1:, x1] = np.nan
+    #
+    # # Showing data
+
+    ax.imshow(data, extent=[0, 53, 0, 7], zorder=10, vmin=0, vmax=nb_clusters,
+              cmap=&#34;tab20&#34;, origin=&#34;lower&#34;, alpha=.75, )</code></pre>
+                    </details>
+                </dd>
+                <dt id="Vizu.CalendarDisplay.display_calendar"><code class="name flex">
+                    <span>def <span class="ident">display_calendar</span></span>(<span>dataset)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Display the behavior evolution
+                        :param dataset:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def display_calendar(dataset):
+    &#34;&#34;&#34;
+    Display the behavior evolution
+    :param dataset:
+    :return:
+    &#34;&#34;&#34;
+
+    n_clusters = len(dataset.cluster.unique())
+
+    dataset[&#39;year&#39;] = dataset.date.apply(lambda x: x.year)
+
+    # To split years
+    years = list(dataset.year.unique())
+
+    fig = plt.figure(figsize=(8, 4.5), dpi=100)
+
+    for year in years:
+        year_df = dataset[dataset.year == year]
+
+        current_start_date = year_df.date.min()
+        current_end_date = year_df.date.max()
+
+        ax = fig.add_subplot(int(f&#34;{len(years)}1{1 + years.index(year)}&#34;), xlim=[0, 53], ylim=[0, 7], frameon=False,
+                             aspect=1)
+
+        # Build the data
+        # Clearing first and last day from the data
+
+        data = np.empty((7, 53))
+        data[:] = np.nan
+        data = data.T.flatten()
+
+        valid = current_start_date.dayofyear + datetime(year, 1, 1).weekday() - 1
+
+        data[valid:valid + len(year_df)] = year_df.cluster.values
+
+        # data[:valid] = np.nan
+        # valid = current_end_date.dayofyear + datetime(year, 12, 31).weekday() - (1 if year != max(years) else 0)
+        # # data[:,x1+1:] = np.nan
+        # data[valid:] = np.nan
+
+        data = data.reshape(53, 7).T
+
+        calmap(ax, title=year, data=data, start_date=current_start_date.to_pydatetime(),
+               end_date=current_end_date.to_pydatetime(), nb_clusters=n_clusters)
+
+    plt.tight_layout()
+    # plt.savefig(&#34;calendar-heatmap.png&#34;, dpi=300)
+    # plt.savefig(&#34;calendar-heatmap.pdf&#34;, dpi=600)
+    # plt.legend()
+    plt.show()</code></pre>
+                    </details>
+                </dd>
+            </dl>
+        </section>
+        <section>
+        </section>
+    </article>
+    <nav id="sidebar">
+        <h1>Index</h1>
+        <div class="toc">
+            <ul></ul>
+        </div>
+        <ul id="index">
+            <li><h3>Super-module</h3>
+                <ul>
+                    <li><code><a href="index.html" title="Vizu">Vizu</a></code></li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-functions">Functions</a></h3>
+                <ul class="">
+                    <li><code><a href="#Vizu.CalendarDisplay.calmap"
+                                 title="Vizu.CalendarDisplay.calmap">calmap</a></code></li>
+                    <li><code><a href="#Vizu.CalendarDisplay.display_calendar"
+                                 title="Vizu.CalendarDisplay.display_calendar">display_calendar</a></code></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</main>
+<footer id="footer">
+    <p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

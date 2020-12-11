@@ -4,11 +4,12 @@ import warnings
 from random import randint
 
 from Bio import pairwise2
+from scipy import stats
 
 from Data_Drift.Features_Extraction import *
 from Pattern_Mining.Candidate_Study import *
+
 # Import format_alignment method
-from Visualization.Visualization import ActivityOccurrencesGraph
 
 sns.set(font_scale=1.5)
 
@@ -24,15 +25,13 @@ GLOBAL_LABELS = []
 
 def main():
     global GLOBAL_LABELS, results_df
-    dataset_name = 'aruba'
+    dataset_name = 'hh101'
 
-    modes = ['DYNAMIC_tw_7', 'DYNAMIC_tw_14', 'DYNAMIC_tw_30']
-
+    # modes = ['STATIC_step_5mn', 'DYNAMIC_step_5mn', 'DYNAMIC_step_60mn']
+    modes = ['STATIC_step_5mn']
     # confidence_error = 0.95
 
     adp_time_step = 5
-
-    label = 'work'
 
     period = dt.timedelta(days=1)
 
@@ -48,8 +47,6 @@ def main():
     dataset.sort_values(['duration'], ascending=False, inplace=True)
 
     # original_dataset = original_dataset[original_dataset.label.isin(GLOBAL_LABELS)]
-
-
 
     start_date = original_dataset.date.min().to_pydatetime()
     end_date = original_dataset.date.max().to_pydatetime()
@@ -71,19 +68,16 @@ def main():
         (original_dataset.date > testing_start_date) & (original_dataset.date < testing_end_date)].copy()
 
     GLOBAL_LABELS = list(testing_dataset.label.unique())
+    GLOBAL_LABELS.sort()
 
-    real_graph = ActivityOccurrencesGraph(dataset_name, testing_dataset, nb_days=-1)
-    #
-    plt.show()
+    # real_graph = ActivityOccurrencesGraph(dataset_name, testing_dataset, nb_days=-1)
+    # #
+    # plt.show()
 
     print("\n")
     print("########################################################################")
     print("# EVALUATION OF THE MODEL on the {} HOUSE Dataset #".format(dataset_name))
     print("##########################################################################")
-
-    labels = original_dataset.label.unique()
-
-    labels.sort()
 
     duration_validation_df = pd.DataFrame(columns=['label', 'error', 'mode'])
     for mode in modes:
@@ -99,7 +93,7 @@ def main():
     duration_validation_df.sort_values(['error'], ascending=True, inplace=True)
     sns.barplot(x='label', y='error', data=duration_validation_df, hue='mode', hue_order=modes)
     plt.ylabel('Mean Absolute Percentage Error')
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=90)
     plt.show()
 
     modes_results = pd.DataFrame(columns=['label', 'KDE', 'ERROR', 'mode'])
@@ -112,7 +106,7 @@ def main():
 
         results_df = pd.DataFrame(columns=['label', 'KDE', 'ERROR', 'mode'])
 
-        for label_str in labels:
+        for label_str in GLOBAL_LABELS:
             kde_score, kde_error = validation_periodic_time_distribution(label=label_str,
                                                                          real_dataset=testing_dataset,
                                                                          replications_directory=dirname,
@@ -126,11 +120,24 @@ def main():
     modes_results.dropna(inplace=True)
     modes_results = modes_results.sort_values(['KDE'], ascending=False)
 
+    # ratio_df = pd.DataFrame(columns=['label', 'ratio'])
+    #
+    # for label in GLOBAL_LABELS:
+    #     r = len(original_dataset[original_dataset.label==label])/len(original_dataset)
+    #     ratio_df.loc[len(ratio_df)] = [label, r]
+    #
+    # modes_results = pd.merge(modes_results, ratio_df, on='label')
+    #
+    # sns.relplot(x="ratio", y="KDE", hue="mode",
+    #             data=modes_results)
+    # plt.title('Correlation KDE/Ratio')
+    # plt.show()
+
     fig, ax1 = plt.subplots(figsize=(10, 10))
     # tidy = results_df.melt(id_vars='label').rename(columns=str.title)
     sns.barplot(x='label', y='KDE', data=modes_results, hue='mode', ax=ax1, hue_order=modes)
     sns.despine(fig)
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=90)
     plt.ylabel('KDE_Similarity')
     title = ""
     for mode in modes:
@@ -170,7 +177,10 @@ def main():
             letter1 = alphabet[GLOBAL_LABELS[i]]
             letter2 = alphabet[GLOBAL_LABELS[j]]
 
-            letter_similarity[(letter1, letter2)] = label_similarity_matrix[i][j]
+            if i == j:
+                letter_similarity[(letter1, letter2)] = 1
+            else:
+                letter_similarity[(letter1, letter2)] = label_similarity_matrix[i][j] - 1
 
     for mode in modes:
         dirname = "./output/{}/Simulation/{}/".format(dataset_name, mode, adp_time_step)
@@ -422,7 +432,7 @@ def activity_duration_validation(label, original_dataset, replications_directory
         evaluation_sim_results[filename] = evaluation_result
         end_drawing_date = evaluation_result.index[-1]
 
-    original_data_evaluation = compute_activity_time(data=original_dataset, label=label, end_date=end_drawing_date)
+    original_data_evaluation = compute_activity_time(data=original_dataset, label=label)
 
     if len(evaluation_sim_results) == 0:
         return np.nan
@@ -459,8 +469,8 @@ def activity_duration_validation(label, original_dataset, replications_directory
     # repl_durations['in_error_daily'] = (repl_durations['stoc_lower'] <= repl_durations['duration']) & (
     #         repl_durations['stoc_upper'] >= repl_durations['duration'])
     #
-    # repl_durations['in_error_cum'] = (repl_durations['stoc_lower'].cumsum() <= repl_durations['duration'].cumsum()) & (
-    #         repl_durations['stoc_upper'].cumsum() >= repl_durations['duration'].cumsum())
+    # repl_durations['in_error_cum'] = (repl_durations['stoc_lower'].cumsum() <= repl_durations['duration'].cumsum())
+    # & ( repl_durations['stoc_upper'].cumsum() >= repl_durations['duration'].cumsum())
 
     # daily_in = repl_durations['in_error_daily'].sum() / len(repl_durations)
     # cum_in = repl_durations['in_error_cum'].sum() / len(repl_durations)
@@ -723,6 +733,7 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
                                                letter_similarity=letter_similarity,
                                                end_date=validation_end_date)
 
+    perfect_alignement_df[perfect_alignement_df == 0] = 2
     # repl_scores = pd.concat([repl_scores, perfect_alignement_df], axis=1)
 
     list_files = glob.glob(directory + '*.csv')
@@ -742,8 +753,9 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
                                                 letter_similarity=letter_similarity,
                                                 end_date=validation_end_date, random=True)
 
-        replication_score = (alignement_df['score'] - rand_alignement_df['score']) / (
-                    perfect_alignement_df['score'] - rand_alignement_df['score'])
+        nume = np.asarray(alignement_df['score'] - rand_alignement_df['score'])
+        deno = np.asarray(perfect_alignement_df['score'] - rand_alignement_df['score'])
+        replication_score = np.divide(nume, deno, out=np.zeros_like(nume), where=deno != 0)
 
         alignement_df['score'] = replication_score
         alignement_df.columns = [f'score_repl_{i}']
@@ -755,9 +767,6 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
         sys.stdout.write("\r{} %% of replications evaluated!!".format(evolution_percentage))
         sys.stdout.flush()
     sys.stdout.write("\n")
-
-
-
 
     # plt.plot(alignement_df.day_date, alignement_df.score,
     #               label="Replication N°{}".format(list_files.period_ts_index(filename)), linestyle="-")
@@ -771,8 +780,11 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
     # repl_scores['max_score'] = repl_scores.apply(lambda x: max(x), axis=1)
     # repl_scores['mean_score'] = repl_scores.apply(lambda x: np.mean(x), axis=1)
 
+    repl_scores.drop(repl_scores.head(1).index, inplace=True)  # drop first row
     repl_scores.drop(repl_scores.tail(1).index, inplace=True)  # drop last row
     # rand_repl_scores.drop(rand_repl_scores.tail(1).index, inplace=True)  # drop last row
+
+    repl_scores.fillna(0, inplace=True)
 
     repl_scores['stoc_results'] = repl_scores.apply(compute_stochastic, args=(0.95,), axis=1)
     repl_scores['stoc_mean'] = repl_scores.stoc_results.apply(lambda x: x[0])
@@ -792,7 +804,7 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
         fig, ax = plt.subplots()
         ax.plot(np.arange(len(repl_scores)), repl_scores.stoc_mean, label="Sequence G-RPST", linestyle="-")
 
-        # ax.plot(np.arange(len(rand_repl_scores)), rand_repl_scores.stoc_mean, label="Sequence Aléatoire", linestyle='-')
+
 
         ax.fill_between(np.arange(len(repl_scores)), repl_scores.stoc_lower, repl_scores.stoc_upper,
                         label='Interval de confiance à 95%', color='k', alpha=.2, hatch='//')
@@ -816,11 +828,11 @@ def sequence_alignement_validation(original_data, directory, period, alphabet, l
         ax.set_yticks(locs)
 
         plt.xlabel("Jours")
-        plt.ylabel("Score d'alignement de séquence")
+        plt.ylabel("Ratio d'alignement journalier")
         # plt.ylim(0, 1)
         plt.legend(loc=1)
         plt.xticks(np.arange(0, len(repl_scores), step=5))
-        plt.title(title)
+        # plt.title(title)
         plt.show()
 
     return None
@@ -871,11 +883,11 @@ def sequence_alignment(original_data, sim_data, alphabet, period, start_date, en
             current_date = current_end_date
             continue
 
-        alignments = pairwise2.align.globalds(X, Y, letter_similarity, -0.1, -0.1, one_alignment_only=True)
+        score = pairwise2.align.localds(X, Y, letter_similarity, -0, -0, score_only=True)
         # alignments = pairwise2.align.localms(X, Y, 8, -2, -2, -2, one_alignment_only=True)
         # alignments = pairwise2.align.globalxx(X, Y, one_alignment_only=True)
 
-        score = alignments[0][2]
+        # score = alignments[0][2]
         # perfect_score = pairwise2.align.globalds(X, X, letter_similarity, -0.5, -0.5, score_only=True)
         # perfect_score = pairwise2.align.localms(X, X, 8, -2, -2, -2, score_only=True)
         # perfect_score = pairwise2.align.globalxx(X, X, score_only=True)
@@ -899,6 +911,7 @@ def sequence_alignment(original_data, sim_data, alphabet, period, start_date, en
 def mape_vectorized_v2(a, b):
     mask = a != 0
     return (np.fabs(a - b) / a)[mask].mean()
+
 
 if __name__ == "__main__":
     main()

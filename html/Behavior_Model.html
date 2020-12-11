@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, minimum-scale=1" name="viewport"/>
+    <meta content="pdoc 0.9.2" name="generator"/>
+    <title>Behavior_Model API documentation</title>
+    <meta content="" name="description"/>
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css"
+          integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" rel="preload stylesheet">
+    <link as="style" crossorigin
+          href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css"
+          integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" rel="preload stylesheet">
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css"
+          rel="stylesheet preload">
+    <style>
+        :root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}
+    </style>
+    <style media="screen and (min-width: 700px)">
+        @media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}
+    </style>
+    <style media="print">
+        @media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}
+    </style>
+    <script crossorigin defer integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8="
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+    <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+    <article id="content">
+        <header>
+            <h1 class="title">Module <code>Behavior_Model</code></h1>
+        </header>
+        <section id="section-intro">
+            <details class="source">
+                <summary>
+                    <span>Expand source code</span>
+                </summary>
+                <pre><code class="python">import datetime as dt
+import errno
+import math
+import multiprocessing as mp
+import os
+import pickle
+import sys
+import time as t
+from optparse import OptionParser
+
+import seaborn as sns
+
+import Pattern_Mining
+import Utils
+# from Pattern_Mining.Candidate_Study import find_occurrences, modulo_datetime
+from Pattern_Mining.Extract_Macro_Activities import extract_macro_activities
+from Simulation import ActivityManager
+
+sns.set(font_scale=1.8)
+
+
+# random.seed(1996)
+
+
+def main(args):
+    ####################
+    # Macro Activities MODEL
+    #
+    # Characteristics :
+    #   - Single Activity Implementation
+    #   - No time evolution
+    #   - Training Dataset : 80% of the Original log_dataset
+    #   - Test Dataset : 20% left of the Original    log_dataset
+
+    period = dt.timedelta(days=1)
+
+    parser = OptionParser(usage=&#39;Usage of the Digital Twin Simulation model algorihtm: %prog &lt;options&gt;&#39;)
+    parser.add_option(&#39;-n&#39;, &#39;--dataset_name&#39;, help=&#39;Name of the Input event log&#39;, dest=&#39;dataset_name&#39;, action=&#39;store&#39;,
+                      type=&#39;string&#39;)
+    parser.add_option(&#39;--static_learning&#39;, help=&#39;Time evolution not taken into account&#39;, dest=&#39;static_learning&#39;,
+                      action=&#39;store_true&#39;,
+                      default=False)
+    parser.add_option(&#39;--window_days&#39;, help=&#39;Number of days per time windows&#39;, dest=&#39;window_days&#39;, type=int, default=30)
+    parser.add_option(&#39;--time_step&#39;, help=&#39;Number of minutes per simulation_step&#39;, dest=&#39;time_step&#39;, action=&#39;store&#39;,
+                      type=int, default=60)
+    parser.add_option(&#39;--simu_step&#39;, help=&#39;Number of minutes per simulation step&#39;, dest=&#39;simu_step&#39;, action=&#39;store&#39;,
+                      type=int, default=15)
+    parser.add_option(&#39;--sim&#39;, help=&#39;Number of replications&#39;, dest=&#39;nb_sim&#39;, action=&#39;store&#39;,
+                      type=int, default=5)
+    parser.add_option(&#39;-r&#39;, &#39;--training_ratio&#39;, help=&#39;Ratio of the data to use for the training&#39;, dest=&#39;training_ratio&#39;,
+                      action=&#39;store&#39;, type=float, default=0.8)
+    parser.add_option(&#39;--tep&#39;, help=&#39;Duration max of an episode occurrence (in minutes)&#39;, dest=&#39;tep&#39;,
+                      action=&#39;store&#39;, type=int, default=30)
+    parser.add_option(&#39;--plot&#39;, help=&#39;Display all the important steps&#39;, dest=&#39;plot&#39;, action=&#39;store_true&#39;,
+                      default=False)
+    parser.add_option(&#39;--debug&#39;, help=&#39;Display all the intermediate steps&#39;, dest=&#39;debug&#39;, action=&#39;store_true&#39;,
+                      default=False)
+
+    (options, args) = parser.parse_args(args=args)
+    # Mandatory Options
+    if options.dataset_name is None:
+        print(&#34;The name of the Input event log is missing\n&#34;)
+        parser.print_help()
+        exit(-1)
+
+    dataset_name = options.dataset_name
+    simu_time_step = dt.timedelta(minutes=options.simu_step)
+    adp_time_step = dt.timedelta(minutes=options.time_step)
+    nb_replications = options.nb_sim
+    static_learning = options.static_learning
+    window_days = options.window_days
+    Tep = options.tep
+    debug = options.debug
+    plot = options.plot
+    training_ratio = options.training_ratio
+
+    print(&#39;#&#39; + &#39;PARAMETERS&#39;.center(28, &#39; &#39;) + &#39;#&#39;)
+    print(&#34;Dataset Name : {}&#34;.format(dataset_name.upper()))
+    print(&#34;Tep (mn): {}&#34;.format(Tep))
+    print(&#34;Training ratio : {}&#34;.format(training_ratio))
+    print(&#34;Static Learning (no time evolution) : {}&#34;.format(static_learning))
+    if not static_learning:
+        print(&#34;Time Window Duration : {} days&#34;.format(options.window_days))
+    print(&#34;Simulation time step (mn) : {}&#34;.format(int(simu_time_step.total_seconds() / 60)))
+    print(&#34;ADP time step (mn) : {}&#34;.format(int(adp_time_step.total_seconds() / 60)))
+    print(&#34;Number of replications : {}&#34;.format(nb_replications))
+    print(&#34;Display Mode : {}&#34;.format(plot))
+    print(&#34;Debug Mode: {}&#34;.format(debug))
+
+    dataset = Utils.pick_dataset(dataset_name, nb_days=-1)
+
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime()
+
+    # Compute the number of periods
+
+    nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
+    # training_days = int(math.floor(nb_days*0.9)) # 90% for training, 10% for test
+    training_days = int(nb_days * training_ratio)
+
+    testing_days = nb_days - training_days + 5  # Extra days just in case
+
+    output = &#34;./output/{}/Simulation/{}_tw_{}/&#34;.format(dataset_name, &#39;STATIC&#39; if static_learning else &#39;DYNAMIC&#39;,
+                                                       options.window_days)
+
+    # Create the folder if it does not exist yet
+    if not os.path.exists(os.path.dirname(output)):
+        try:
+            os.makedirs(os.path.dirname(output))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+    training_start_date = start_date
+    training_end_date = start_date + dt.timedelta(days=training_days)
+
+    simulation_start_date = training_end_date
+    simulation_duration = dt.timedelta(days=testing_days)
+
+    training_dataset = dataset[(dataset.date &gt;= training_start_date) &amp; (dataset.date &lt; training_end_date)].copy()
+
+    #############
+    # LEARNING  #
+    #############
+
+    if static_learning:
+        print(&#39;##############################&#39;)
+        print(&#34;#      STATIC LEARNING       #&#34;)
+        print(&#39;##############################&#39;)
+        activity_manager = create_static_activity_manager(dataset_name=dataset_name, dataset=training_dataset,
+                                                          period=period, time_step=adp_time_step, output=output,
+                                                          Tep=Tep, singles_only=False, debug=debug)
+    else:
+        print(&#39;##############################&#39;)
+        print(&#34;#     DYNAMIC LEARNING       #&#34;)
+        print(&#39;##############################&#39;)
+        activity_manager = create_dynamic_activity_manager(dataset_name=dataset_name, dataset=training_dataset,
+                                                           period=period, time_step=adp_time_step, output=output,
+                                                           Tep=Tep, nb_days_per_window=window_days, debug=debug)
+
+        activity_manager.dump_data(output=output + &#34;Activity_Manager/&#34;)
+
+        print(&#34;## Building forecasting models ... ##&#34;)
+        activity_manager.build_forecasting_duration(dataset, train_ratio=0.95, nb_periods_to_forecast=testing_days + 5)
+        ADP_error_df, duration_error_df = activity_manager.build_forecasting_models(train_ratio=0.95,
+                                                                                    nb_periods_to_forecast=testing_days + 5,
+                                                                                    display=plot, debug=debug)
+
+        ADP_error_df.to_csv(output + &#39;/../ADP_Forecasting_Models_Errors.csv&#39;, sep=&#39;;&#39;, index=False)
+        duration_error_df.to_csv(output + &#39;/../Duration_Forecasting_Models_Errors.csv&#39;, sep=&#39;;&#39;, index=False)
+
+    # dump Activity Manager
+    pickle.dump(activity_manager, open(output + &#39;{}_Activity_Manager.pkl&#39;.format(&#39;STATIC&#39; if static_learning
+                                                                                 else &#39;DYNAMIC&#39;), &#39;wb&#39;))
+
+    ###############
+    # SIMULATION  #
+    ###############
+
+    #
+    for replication in range(nb_replications):
+
+        time_start = t.process_time()
+
+        print(&#39;###################################&#39;)
+        print(&#39;# Simulation replication N°{}     #&#39;.format(replication + 1))
+        print(&#39;###################################&#39;)
+
+        next_time_window_id = activity_manager.last_time_window_id
+
+        if not static_learning:
+            next_time_window_id += 1
+
+        simulated_dataset = activity_manager.simulate(start_date=simulation_start_date,
+                                                      end_date=simulation_start_date + simulation_duration,
+                                                      idle_duration=simu_time_step, time_window_id=next_time_window_id)
+
+        filename = output + &#34;dataset_simulation_rep_{}.csv&#34;.format(replication + 1)
+
+        if not os.path.exists(os.path.dirname(filename)):
+            try:
+                os.makedirs(os.path.dirname(filename))
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+        simulated_dataset.to_csv(filename, index=False, sep=&#39;;&#39;)
+        elapsed_time = dt.timedelta(seconds=round(t.process_time() - time_start, 1))
+        print(&#34;Time elapsed for the simulation : {}&#34;.format(elapsed_time))
+
+
+def create_static_activity_manager(dataset_name, dataset, period, time_step, output, Tep, singles_only=False,
+                                   debug=False):
+    &#34;&#34;&#34;
+    Generate Activities/Macro-Activities from the input event log
+    :param dataset_name: Name of the event log
+    :param dataset: Input event log
+    :param period: periodicity
+    :param simu_time_step: simulation time step
+    :param output: Output folder for the simulation
+    :param Tep: Duration max of an episode occurrence
+    :param debug:
+    :return:
+    &#34;&#34;&#34;
+
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime()
+
+    nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
+
+    activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=time_step,
+                                                       tep=Tep, window_size=nb_days, dynamic=False)
+
+    print(&#34;Mining for macro-activities...&#34;)
+
+    all_macro_activities = Pattern_Mining.Extract_Macro_Activities.extract_macro_activities(dataset=dataset,
+                                                                                            support_min=nb_days / 2,
+                                                                                            tep=Tep, verbose=False,
+                                                                                            singles_only=singles_only)
+    for episode, (episode_occurrences, events) in all_macro_activities.items():
+        activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
+
+    log_filename = output + &#34;/parameters.txt&#34;
+
+    with open(log_filename, &#39;w+&#39;) as file:
+        file.write(&#34;Parameters :\n&#34;)
+        file.write(&#34;STATIC LEARNING (no time evolution)&#34;)
+        file.write(&#34;Periodicity : {}\n&#34;.format(period))
+        file.write(&#34;Macro-Activities Activated : {}\n&#34;.format(True))
+        file.write(&#34;Simulation time step : {} min\n&#34;.format(time_step.total_seconds() / 60))
+        file.write(&#34;Tep : {}\n&#34;.format(Tep))
+
+    pickle.dump(activity_manager, open(output + &#34;/Static_Activity_Manager.pkl&#34;, &#39;wb&#39;))
+    print(&#39;Activity Manager Built &amp; Ready!!&#39;)
+
+    return activity_manager
+
+
+def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, output, Tep, nb_days_per_window,
+                                    debug=False):
+    &#34;&#34;&#34;
+    Generate Dynamic Macro-Activities from the input event log
+    :param dataset_name: Name of the log_dataset
+    :param dataset:
+    :param period:
+    :param time_step:
+    :param output:
+    :param Tep:
+    :param nb_days_per_window: Number of days in a time window
+    :param display:
+    :return:
+    &#34;&#34;&#34;
+
+    nb_days = int((dataset.date.max().to_pydatetime() - dataset.date.min().to_pydatetime()) / period)
+
+    obs_ratio = 0.25
+    max_no_news = 5
+    activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=time_step,
+                                                       tep=Tep, window_size=nb_days_per_window, max_no_news=max_no_news,
+                                                       dynamic=True)
+
+    time_window_duration = dt.timedelta(days=nb_days_per_window)
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime() - time_window_duration
+
+    support_min = nb_days_per_window
+
+    nb_processes = 2 * mp.cpu_count()  # For parallel computing
+    monitoring_start_time = t.time()
+
+    nb_tw = math.floor((end_date - start_date) / period)  # Number of time windows available
+
+    # For each Time Windows Log, we extract the macro-activities and update them
+    #############################################################################
+
+    # Arguments for the &#34;extract_tw_macro_activities&#34; method
+    args = [(dataset, support_min, Tep, period, time_window_duration, tw_id) for tw_id in range(nb_tw)]
+
+    nb_new_episodes = []
+    with mp.Pool(processes=nb_processes) as pool:
+        # return tw_id, tw_macro_activities
+        all_time_windows_macro_activities = pool.starmap(
+            Pattern_Mining.Extract_Macro_Activities.extract_tw_macro_activities, args)
+
+        for result in all_time_windows_macro_activities:
+            tw_id = result[0]
+            macro_activities = result[1]
+
+            for episode, (episode_occurrences, events) in macro_activities.items():
+                # Update of the macro-activity if it exist OR creation if not
+                activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events,
+                                        time_window_id=tw_id, display=debug)
+            print(&#39;Activities updates on Time Window {}/{} Done !&#39;.format(tw_id + 1, nb_tw))
+
+            nb_new_episodes.append(len(activity_manager.discovered_episodes))
+
+    # plt.plot(nb_new_episodes)
+    # plt.title(&#39;Nombre de macro-activités découvert&#39;)
+    # plt.xlabel(&#39;ID Fenêtre temporelle&#39;)
+    # plt.ylabel(&#39;Nombre de macro-activités&#39;)
+    # plt.show()
+
+    print(&#34;Final Macro-Activities List ready&#34;)
+
+    elapsed_time = dt.timedelta(seconds=round(t.time() - monitoring_start_time, 1))
+
+    print(&#34;###############################&#34;)
+    print(&#34;Time Windows Screening Time : {}&#34;.format(elapsed_time))
+
+    pickle.dump(activity_manager, open(output + &#34;/Dynamic_Activity_Manager.pkl&#34;, &#39;wb&#39;))
+    print(&#39;Activity Manager Built &amp; Ready!!&#39;)
+
+    return activity_manager
+
+
+if __name__ == &#39;__main__&#39;:
+    main(sys.argv[1:])</code></pre>
+            </details>
+        </section>
+        <section>
+        </section>
+        <section>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-functions">Functions</h2>
+            <dl>
+                <dt id="Behavior_Model.create_dynamic_activity_manager"><code class="name flex">
+                    <span>def <span class="ident">create_dynamic_activity_manager</span></span>(<span>dataset_name, dataset, period, time_step, output, Tep, nb_days_per_window, debug=False)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Generate Dynamic Macro-Activities from the input event log
+                        :param dataset_name: Name of the log_dataset
+                        :param dataset:
+                        :param period:
+                        :param time_step:
+                        :param output:
+                        :param Tep:
+                        :param nb_days_per_window: Number of days in a time window
+                        :param display:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def create_dynamic_activity_manager(dataset_name, dataset, period, time_step, output, Tep, nb_days_per_window,
+                                    debug=False):
+    &#34;&#34;&#34;
+    Generate Dynamic Macro-Activities from the input event log
+    :param dataset_name: Name of the log_dataset
+    :param dataset:
+    :param period:
+    :param time_step:
+    :param output:
+    :param Tep:
+    :param nb_days_per_window: Number of days in a time window
+    :param display:
+    :return:
+    &#34;&#34;&#34;
+
+    nb_days = int((dataset.date.max().to_pydatetime() - dataset.date.min().to_pydatetime()) / period)
+
+    obs_ratio = 0.25
+    max_no_news = 5
+    activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=time_step,
+                                                       tep=Tep, window_size=nb_days_per_window, max_no_news=max_no_news,
+                                                       dynamic=True)
+
+    time_window_duration = dt.timedelta(days=nb_days_per_window)
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime() - time_window_duration
+
+    support_min = nb_days_per_window
+
+    nb_processes = 2 * mp.cpu_count()  # For parallel computing
+    monitoring_start_time = t.time()
+
+    nb_tw = math.floor((end_date - start_date) / period)  # Number of time windows available
+
+    # For each Time Windows Log, we extract the macro-activities and update them
+    #############################################################################
+
+    # Arguments for the &#34;extract_tw_macro_activities&#34; method
+    args = [(dataset, support_min, Tep, period, time_window_duration, tw_id) for tw_id in range(nb_tw)]
+
+    nb_new_episodes = []
+    with mp.Pool(processes=nb_processes) as pool:
+        # return tw_id, tw_macro_activities
+        all_time_windows_macro_activities = pool.starmap(
+            Pattern_Mining.Extract_Macro_Activities.extract_tw_macro_activities, args)
+
+        for result in all_time_windows_macro_activities:
+            tw_id = result[0]
+            macro_activities = result[1]
+
+            for episode, (episode_occurrences, events) in macro_activities.items():
+                # Update of the macro-activity if it exist OR creation if not
+                activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events,
+                                        time_window_id=tw_id, display=debug)
+            print(&#39;Activities updates on Time Window {}/{} Done !&#39;.format(tw_id + 1, nb_tw))
+
+            nb_new_episodes.append(len(activity_manager.discovered_episodes))
+
+    # plt.plot(nb_new_episodes)
+    # plt.title(&#39;Nombre de macro-activités découvert&#39;)
+    # plt.xlabel(&#39;ID Fenêtre temporelle&#39;)
+    # plt.ylabel(&#39;Nombre de macro-activités&#39;)
+    # plt.show()
+
+    print(&#34;Final Macro-Activities List ready&#34;)
+
+    elapsed_time = dt.timedelta(seconds=round(t.time() - monitoring_start_time, 1))
+
+    print(&#34;###############################&#34;)
+    print(&#34;Time Windows Screening Time : {}&#34;.format(elapsed_time))
+
+    pickle.dump(activity_manager, open(output + &#34;/Dynamic_Activity_Manager.pkl&#34;, &#39;wb&#39;))
+    print(&#39;Activity Manager Built &amp; Ready!!&#39;)
+
+    return activity_manager</code></pre>
+                    </details>
+                </dd>
+                <dt id="Behavior_Model.create_static_activity_manager"><code class="name flex">
+                    <span>def <span class="ident">create_static_activity_manager</span></span>(<span>dataset_name, dataset, period, time_step, output, Tep, singles_only=False, debug=False)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Generate Activities/Macro-Activities from the input event log
+                        :param dataset_name: Name of the event log
+                        :param dataset: Input event log
+                        :param period: periodicity
+                        :param simu_time_step: simulation time step
+                        :param output: Output folder for the simulation
+                        :param Tep: Duration max of an episode occurrence
+                        :param debug:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def create_static_activity_manager(dataset_name, dataset, period, time_step, output, Tep, singles_only=False,
+                                   debug=False):
+    &#34;&#34;&#34;
+    Generate Activities/Macro-Activities from the input event log
+    :param dataset_name: Name of the event log
+    :param dataset: Input event log
+    :param period: periodicity
+    :param simu_time_step: simulation time step
+    :param output: Output folder for the simulation
+    :param Tep: Duration max of an episode occurrence
+    :param debug:
+    :return:
+    &#34;&#34;&#34;
+
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime()
+
+    nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
+
+    activity_manager = ActivityManager.ActivityManager(name=dataset_name, period=period, time_step=time_step,
+                                                       tep=Tep, window_size=nb_days, dynamic=False)
+
+    print(&#34;Mining for macro-activities...&#34;)
+
+    all_macro_activities = Pattern_Mining.Extract_Macro_Activities.extract_macro_activities(dataset=dataset,
+                                                                                            support_min=nb_days / 2,
+                                                                                            tep=Tep, verbose=False,
+                                                                                            singles_only=singles_only)
+    for episode, (episode_occurrences, events) in all_macro_activities.items():
+        activity_manager.update(episode=episode, occurrences=episode_occurrences, events=events, display=debug)
+
+    log_filename = output + &#34;/parameters.txt&#34;
+
+    with open(log_filename, &#39;w+&#39;) as file:
+        file.write(&#34;Parameters :\n&#34;)
+        file.write(&#34;STATIC LEARNING (no time evolution)&#34;)
+        file.write(&#34;Periodicity : {}\n&#34;.format(period))
+        file.write(&#34;Macro-Activities Activated : {}\n&#34;.format(True))
+        file.write(&#34;Simulation time step : {} min\n&#34;.format(time_step.total_seconds() / 60))
+        file.write(&#34;Tep : {}\n&#34;.format(Tep))
+
+    pickle.dump(activity_manager, open(output + &#34;/Static_Activity_Manager.pkl&#34;, &#39;wb&#39;))
+    print(&#39;Activity Manager Built &amp; Ready!!&#39;)
+
+    return activity_manager</code></pre>
+                    </details>
+                </dd>
+                <dt id="Behavior_Model.main"><code class="name flex">
+                    <span>def <span class="ident">main</span></span>(<span>args)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def main(args):
+    ####################
+    # Macro Activities MODEL
+    #
+    # Characteristics :
+    #   - Single Activity Implementation
+    #   - No time evolution
+    #   - Training Dataset : 80% of the Original log_dataset
+    #   - Test Dataset : 20% left of the Original    log_dataset
+
+    period = dt.timedelta(days=1)
+
+    parser = OptionParser(usage=&#39;Usage of the Digital Twin Simulation model algorihtm: %prog &lt;options&gt;&#39;)
+    parser.add_option(&#39;-n&#39;, &#39;--dataset_name&#39;, help=&#39;Name of the Input event log&#39;, dest=&#39;dataset_name&#39;, action=&#39;store&#39;,
+                      type=&#39;string&#39;)
+    parser.add_option(&#39;--static_learning&#39;, help=&#39;Time evolution not taken into account&#39;, dest=&#39;static_learning&#39;,
+                      action=&#39;store_true&#39;,
+                      default=False)
+    parser.add_option(&#39;--window_days&#39;, help=&#39;Number of days per time windows&#39;, dest=&#39;window_days&#39;, type=int, default=30)
+    parser.add_option(&#39;--time_step&#39;, help=&#39;Number of minutes per simulation_step&#39;, dest=&#39;time_step&#39;, action=&#39;store&#39;,
+                      type=int, default=60)
+    parser.add_option(&#39;--simu_step&#39;, help=&#39;Number of minutes per simulation step&#39;, dest=&#39;simu_step&#39;, action=&#39;store&#39;,
+                      type=int, default=15)
+    parser.add_option(&#39;--sim&#39;, help=&#39;Number of replications&#39;, dest=&#39;nb_sim&#39;, action=&#39;store&#39;,
+                      type=int, default=5)
+    parser.add_option(&#39;-r&#39;, &#39;--training_ratio&#39;, help=&#39;Ratio of the data to use for the training&#39;, dest=&#39;training_ratio&#39;,
+                      action=&#39;store&#39;, type=float, default=0.8)
+    parser.add_option(&#39;--tep&#39;, help=&#39;Duration max of an episode occurrence (in minutes)&#39;, dest=&#39;tep&#39;,
+                      action=&#39;store&#39;, type=int, default=30)
+    parser.add_option(&#39;--plot&#39;, help=&#39;Display all the important steps&#39;, dest=&#39;plot&#39;, action=&#39;store_true&#39;,
+                      default=False)
+    parser.add_option(&#39;--debug&#39;, help=&#39;Display all the intermediate steps&#39;, dest=&#39;debug&#39;, action=&#39;store_true&#39;,
+                      default=False)
+
+    (options, args) = parser.parse_args(args=args)
+    # Mandatory Options
+    if options.dataset_name is None:
+        print(&#34;The name of the Input event log is missing\n&#34;)
+        parser.print_help()
+        exit(-1)
+
+    dataset_name = options.dataset_name
+    simu_time_step = dt.timedelta(minutes=options.simu_step)
+    adp_time_step = dt.timedelta(minutes=options.time_step)
+    nb_replications = options.nb_sim
+    static_learning = options.static_learning
+    window_days = options.window_days
+    Tep = options.tep
+    debug = options.debug
+    plot = options.plot
+    training_ratio = options.training_ratio
+
+    print(&#39;#&#39; + &#39;PARAMETERS&#39;.center(28, &#39; &#39;) + &#39;#&#39;)
+    print(&#34;Dataset Name : {}&#34;.format(dataset_name.upper()))
+    print(&#34;Tep (mn): {}&#34;.format(Tep))
+    print(&#34;Training ratio : {}&#34;.format(training_ratio))
+    print(&#34;Static Learning (no time evolution) : {}&#34;.format(static_learning))
+    if not static_learning:
+        print(&#34;Time Window Duration : {} days&#34;.format(options.window_days))
+    print(&#34;Simulation time step (mn) : {}&#34;.format(int(simu_time_step.total_seconds() / 60)))
+    print(&#34;ADP time step (mn) : {}&#34;.format(int(adp_time_step.total_seconds() / 60)))
+    print(&#34;Number of replications : {}&#34;.format(nb_replications))
+    print(&#34;Display Mode : {}&#34;.format(plot))
+    print(&#34;Debug Mode: {}&#34;.format(debug))
+
+    dataset = Utils.pick_dataset(dataset_name, nb_days=-1)
+
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime()
+
+    # Compute the number of periods
+
+    nb_days = math.floor((end_date - start_date).total_seconds() / period.total_seconds())
+    # training_days = int(math.floor(nb_days*0.9)) # 90% for training, 10% for test
+    training_days = int(nb_days * training_ratio)
+
+    testing_days = nb_days - training_days + 5  # Extra days just in case
+
+    output = &#34;./output/{}/Simulation/{}_tw_{}/&#34;.format(dataset_name, &#39;STATIC&#39; if static_learning else &#39;DYNAMIC&#39;,
+                                                       options.window_days)
+
+    # Create the folder if it does not exist yet
+    if not os.path.exists(os.path.dirname(output)):
+        try:
+            os.makedirs(os.path.dirname(output))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+    training_start_date = start_date
+    training_end_date = start_date + dt.timedelta(days=training_days)
+
+    simulation_start_date = training_end_date
+    simulation_duration = dt.timedelta(days=testing_days)
+
+    training_dataset = dataset[(dataset.date &gt;= training_start_date) &amp; (dataset.date &lt; training_end_date)].copy()
+
+    #############
+    # LEARNING  #
+    #############
+
+    if static_learning:
+        print(&#39;##############################&#39;)
+        print(&#34;#      STATIC LEARNING       #&#34;)
+        print(&#39;##############################&#39;)
+        activity_manager = create_static_activity_manager(dataset_name=dataset_name, dataset=training_dataset,
+                                                          period=period, time_step=adp_time_step, output=output,
+                                                          Tep=Tep, singles_only=False, debug=debug)
+    else:
+        print(&#39;##############################&#39;)
+        print(&#34;#     DYNAMIC LEARNING       #&#34;)
+        print(&#39;##############################&#39;)
+        activity_manager = create_dynamic_activity_manager(dataset_name=dataset_name, dataset=training_dataset,
+                                                           period=period, time_step=adp_time_step, output=output,
+                                                           Tep=Tep, nb_days_per_window=window_days, debug=debug)
+
+        activity_manager.dump_data(output=output + &#34;Activity_Manager/&#34;)
+
+        print(&#34;## Building forecasting models ... ##&#34;)
+        activity_manager.build_forecasting_duration(dataset, train_ratio=0.95, nb_periods_to_forecast=testing_days + 5)
+        ADP_error_df, duration_error_df = activity_manager.build_forecasting_models(train_ratio=0.95,
+                                                                                    nb_periods_to_forecast=testing_days + 5,
+                                                                                    display=plot, debug=debug)
+
+        ADP_error_df.to_csv(output + &#39;/../ADP_Forecasting_Models_Errors.csv&#39;, sep=&#39;;&#39;, index=False)
+        duration_error_df.to_csv(output + &#39;/../Duration_Forecasting_Models_Errors.csv&#39;, sep=&#39;;&#39;, index=False)
+
+    # dump Activity Manager
+    pickle.dump(activity_manager, open(output + &#39;{}_Activity_Manager.pkl&#39;.format(&#39;STATIC&#39; if static_learning
+                                                                                 else &#39;DYNAMIC&#39;), &#39;wb&#39;))
+
+    ###############
+    # SIMULATION  #
+    ###############
+
+    #
+    for replication in range(nb_replications):
+
+        time_start = t.process_time()
+
+        print(&#39;###################################&#39;)
+        print(&#39;# Simulation replication N°{}     #&#39;.format(replication + 1))
+        print(&#39;###################################&#39;)
+
+        next_time_window_id = activity_manager.last_time_window_id
+
+        if not static_learning:
+            next_time_window_id += 1
+
+        simulated_dataset = activity_manager.simulate(start_date=simulation_start_date,
+                                                      end_date=simulation_start_date + simulation_duration,
+                                                      idle_duration=simu_time_step, time_window_id=next_time_window_id)
+
+        filename = output + &#34;dataset_simulation_rep_{}.csv&#34;.format(replication + 1)
+
+        if not os.path.exists(os.path.dirname(filename)):
+            try:
+                os.makedirs(os.path.dirname(filename))
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+        simulated_dataset.to_csv(filename, index=False, sep=&#39;;&#39;)
+        elapsed_time = dt.timedelta(seconds=round(t.process_time() - time_start, 1))
+        print(&#34;Time elapsed for the simulation : {}&#34;.format(elapsed_time))</code></pre>
+                    </details>
+                </dd>
+            </dl>
+        </section>
+        <section>
+        </section>
+    </article>
+    <nav id="sidebar">
+        <h1>Index</h1>
+        <div class="toc">
+            <ul></ul>
+        </div>
+        <ul id="index">
+            <li><h3><a href="#header-functions">Functions</a></h3>
+                <ul class="">
+                    <li><code><a href="#Behavior_Model.create_dynamic_activity_manager"
+                                 title="Behavior_Model.create_dynamic_activity_manager">create_dynamic_activity_manager</a></code>
+                    </li>
+                    <li><code><a href="#Behavior_Model.create_static_activity_manager"
+                                 title="Behavior_Model.create_static_activity_manager">create_static_activity_manager</a></code>
+                    </li>
+                    <li><code><a href="#Behavior_Model.main" title="Behavior_Model.main">main</a></code></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</main>
+<footer id="footer">
+    <p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

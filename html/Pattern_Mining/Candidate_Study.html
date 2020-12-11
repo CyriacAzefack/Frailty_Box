@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, minimum-scale=1" name="viewport"/>
+    <meta content="pdoc 0.9.2" name="generator"/>
+    <title>Pattern_Mining.Candidate_Study API documentation</title>
+    <meta content="Created on Thu Mar 15 09:41:33 2018 …" name="description"/>
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css"
+          integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" rel="preload stylesheet">
+    <link as="style" crossorigin
+          href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css"
+          integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" rel="preload stylesheet">
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css"
+          rel="stylesheet preload">
+    <style>
+        :root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}
+    </style>
+    <style media="screen and (min-width: 700px)">
+        @media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}
+    </style>
+    <style media="print">
+        @media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}
+    </style>
+    <script crossorigin defer integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8="
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+    <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+    <article id="content">
+        <header>
+            <h1 class="title">Module <code>Pattern_Mining.Candidate_Study</code></h1>
+        </header>
+        <section id="section-intro">
+            <p>Created on Thu Mar 15 09:41:33 2018</p>
+            <p>@author: cyriac.azefack</p>
+            <details class="source">
+                <summary>
+                    <span>Expand source code</span>
+                </summary>
+                <pre><code class="python"># -*- coding: utf-8 -*-
+&#34;&#34;&#34;
+Created on Thu Mar 15 09:41:33 2018
+
+@author: cyriac.azefack
+&#34;&#34;&#34;
+import math
+import os
+import sys
+
+import seaborn as sns
+from sklearn.cluster import DBSCAN
+from sklearn.mixture import GaussianMixture
+
+sys.path.append(os.path.join(os.path.dirname(__file__)))
+
+from Utils import *
+
+def main():
+    data = pick_dataset(&#39;KA&#39;)
+    episodes = []
+    # episodes.append((&#34;go to bed END&#34;, &#34;use toilet START&#34;, &#34;use toilet START&#34;))
+    # episodes.append([&#34;take shower start&#34;, &#34;take shower end&#34;, &#34;leave house start&#34;])
+    # episodes.append([&#34;use toilet start&#34;, &#34;use toilet end&#34;, &#34;go to bed start&#34;])
+    # episodes.append([&#34;prepare Breakfast start&#34;, &#34;prepare Breakfast end&#34;])
+    # episodes.append([&#34;leave house end&#34;])
+    episodes.append([&#39;brush teeth start&#39;, &#39;go to bed start&#39;])
+
+    # episodes.append([&#34;breakfast&#34;])
+    # episodes.append((&#34;prepare breakfast&#34;,))
+
+    with open(&#39;output/output_candidate_study_step.csv&#39;, &#39;w&#39;) as file:
+        file.truncate()
+        file.write(&#34;Episode;period;description;accuracy;start date;end date\n&#34;)
+        for episode in episodes:
+            descr = periodicity_search(data, episode, display=False)
+
+            nat = translate_description(descr)
+            line = str(episode) + &#34;;&#34;
+            line += str(nat[&#34;period&#34;]) + &#34;;&#34;
+            line += str(nat[&#34;description&#34;]) + &#34;;&#34;
+            line += str(nat[&#34;accuracy&#34;]).replace(&#39;.&#39;, &#39;,&#39;) + &#34;;&#34;
+            line += str(nat[&#34;delta_t&#34;][0]) + &#34;;&#34;
+            line += str(nat[&#34;delta_t&#34;][1]) + &#34;;&#34;
+            line += &#34;\n&#34;
+
+            file.write(line)
+            print(&#34;Episode &#34;, episode)
+            print(nat)
+
+
+def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max=0.1, tolerance_ratio=2,
+                       Tep=30, period_T=dt.timedelta(days=1), display=False, verbose=False):
+    &#34;&#34;&#34;
+    Find the best time description of an episode if it exists
+    
+    return delta_T : 
+    &#34;&#34;&#34;
+
+    # Pick the episode events from the input sequence
+    data = data.loc[data.label.isin(episode)].copy()
+
+    if verbose:
+        print(&#34;######################################&#34;)
+        print(&#34;Periodicity episode :&#34;, episode)
+
+    if len(data) == 0:
+        if verbose:
+            print(f&#39;No data for the episode :{episode}&#39;)
+        return None
+
+    # find the episode occurences
+    occurrences = find_occurrences(data, episode, Tep)
+
+    if len(occurrences) &lt; support_min:
+        return None
+
+    best_periodicity = None
+
+    best_accuracy = 0
+
+    # Compute intervals between occurrences
+
+    # First row &#39;time_since_last_occ&#39; is NaT so we replace by a duration of &#39;0&#39;
+    occurrences.fillna(pd.Timestamp(0), inplace=True)
+
+    # Compute relative dates
+    occurrences.loc[:, &#34;relative_date&#34;] = occurrences.date.apply(
+        lambda x: modulo_datetime(x.to_pydatetime(), period_T))
+
+    # Display relative times count_histogram
+
+    if display:
+        plt.figure()
+        plt.title(episode)
+        sns.distplot(occurrences.relative_date / 3600, bins=20, norm_hist=False, rug=False, kde=False)
+        plt.xlim((0, 24))
+        plt.show()
+
+    start_time = occurrences.date.min().to_pydatetime()
+    end_time = occurrences.date.max().to_pydatetime()
+
+    data_points = occurrences[&#34;relative_date&#34;].values.reshape(-1, 1)
+
+    cut_threshold = dt.timedelta(hours=3).total_seconds()
+    m = np.ma.where(data_points &lt; cut_threshold)
+    data_points[m] = data_points[m] + period_T.total_seconds()
+    # if no data then switch to the next group
+    if len(data_points) &lt; 2:
+        if verbose:
+            print(&#39;Not enough data points&#39;)
+        return None
+
+    cut_treshold = dt.timedelta(hours=3).total_seconds()
+
+    if verbose:
+        print(&#34;EPSILON DBSCAN :&#34;, str(dt.timedelta(seconds=std_max * period_T.total_seconds())))
+
+    epsilon = 3600
+    Nb_clusters, interesting_points = find_number_clusters(data_points, eps=epsilon, min_samples=int(support_min / 2),
+                                                           display=display)
+
+    # if no clusters found then switch to the next group
+    if Nb_clusters == 0:
+        if verbose:
+            print(&#39;No clusters found&#39;)
+        return None
+    # Display points
+    #            if display:
+    #                sns.distplot(interesting_points, norm_hist=False, rug=False, kde=True, bins=10)
+
+    GMM = GaussianMixture(n_components=Nb_clusters, n_init=10)
+    GMM.fit(data_points)
+
+    GMM_descr = {}  # mean_time (in seconds) as key and std_duration (in seconds) as value
+
+    for i in range(len(GMM.means_)):
+        mu = int(GMM.means_[i][0])
+        sigma = int(math.ceil(np.sqrt(GMM.covariances_[i])))
+
+        if sigma &gt; std_max * period_T.total_seconds():
+            continue
+        lower_limit = mu - tolerance_ratio * sigma
+        upper_limit = mu + tolerance_ratio * sigma
+
+        # if (lower_limit &lt; 0) or (lower_limit &gt; period_T.total_seconds()):
+        #     continue
+
+        mu = mu % period_T.total_seconds()
+        GMM_descr[mu] = sigma
+
+        if verbose:
+            print(f&#39;Component {i} : mu={str(dt.timedelta(seconds=mu))}, sigma={str(dt.timedelta(seconds=sigma))}&#39;)
+
+        # if display:
+        #     lower_limit = mu - tolerance_ratio * sigma
+        #     upper_limit = mu + tolerance_ratio * sigma
+        #     # Plot the interval
+        #     c = np.random.rand(3, )
+        #     plt.plot([0, lower_limit], [lower_limit, 0], linewidth=2, color=c)
+        #     plt.plot([0, upper_limit], [upper_limit, 0], linewidth=2, color=c)
+
+        # Compute the time description accuracy
+
+    accuracy, expected_occurrences = compute_pattern_accuracy(occurrences=occurrences, period=period_T,
+                                                              time_description=GMM_descr)
+
+    if not accuracy:
+        if verbose:
+            print(&#34;No accuracy found&#34;)
+        return None
+
+    str_GMM = {}
+    for key, value in GMM_descr.items():
+        str_GMM[str(dt.timedelta(seconds=key))] = str(dt.timedelta(seconds=value))
+
+    best_periodicity = {
+        &#34;description&#34;: str_GMM,
+        &#34;period&#34;: period_T,
+        &#34;accuracy&#34;: accuracy,
+        &#34;nb_occ&#34;: len(occurrences),
+        &#34;compression_power&#34;: len(expected_occurrences) * len(episode),
+        # &#34;expected_occurrences&#34;: expected_occurrences,
+        &#34;delta_t&#34;: [start_time, end_time]
+    }
+
+    if verbose:
+        print(&#34;Periodicity episode :&#34;, episode)
+        print(f&#34;\tAccuracy: {accuracy}&#34;)
+        print(f&#34;\tCompression Power: {len(expected_occurrences) * len(episode)}&#34;)
+        print(&#34;######################################&#34;)
+
+    return best_periodicity
+
+
+def relative2absolute_date(relative_date, reference_date, period):
+    &#34;&#34;&#34;
+    Turn a relative date to an absolute date
+    &#34;&#34;&#34;
+
+    date = reference_date - dt.timedelta(seconds=modulo_datetime(reference_date, period))
+
+    date += dt.timedelta(seconds=relative_date)
+
+    return date
+
+
+def find_number_clusters(X, eps, min_samples, display=False):
+    &#34;&#34;&#34;
+    return the number of clusters
+    &#34;&#34;&#34;
+    db = DBSCAN(eps=eps, min_samples=min_samples).fit(X)
+
+    Nb_clusters = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0)
+
+    core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+    core_samples_mask[db.core_sample_indices_] = True
+    labels = db.labels_
+
+    # Number of clusters in labels, ignoring noise if present.
+    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    n_noise_ = list(labels).count(-1)
+
+    # print(&#39;Estimated number of clusters: %d&#39; % n_clusters_)
+    # print(&#39;Estimated number of noise points: %d&#39; % n_noise_)
+
+    # #############################################################################
+    # PLOT THE RESULTS
+    ##############
+    if display:
+        angles = []
+
+        for x in X:
+            angles.append(2 * np.pi * x / (24 * 3600))
+
+        X = [[math.sin(alpha), math.cos(alpha)] for alpha in angles]
+        X = np.asarray(X)
+        fig, ax = plt.subplots(1)
+        theta = np.linspace(0, 2 * np.pi, 100)
+        r = 1
+        x1 = r * np.cos(theta)
+        x2 = r * np.sin(theta)
+        ax.plot(x1, x2, linestyle=&#39;--&#39;)
+        ax.set_aspect(1)
+        plt.grid(linestyle=&#39;--&#39;)
+
+        # Black removed and is used for noise instead.
+        unique_labels = set(labels)
+        colors = [plt.cm.Spectral(each)
+                  for each in np.linspace(0, 1, len(unique_labels))]
+        for k, col in zip(unique_labels, colors):
+            if k == -1:
+                # Black used for noise.
+                col = [0, 0, 0, 1]
+
+            class_member_mask = (labels == k)
+
+            xy = X[class_member_mask &amp; core_samples_mask]
+            ax.plot(xy[:, 0], xy[:, 1], &#39;o&#39;, markerfacecolor=tuple(col),
+                    markeredgecolor=&#39;k&#39;, markersize=6)
+
+            xy = X[class_member_mask &amp; ~core_samples_mask]
+            ax.plot(xy[:, 0], xy[:, 1], &#39;o&#39;, markerfacecolor=tuple(col),
+                    markeredgecolor=&#39;k&#39;, markersize=3)
+
+        # plt.title(&#39;Estimated number of clusters: %d&#39; % n_clusters_)
+        plt.show()
+    # Noisy samples are given the label -1.
+
+    return Nb_clusters, db.components_
+
+
+def modulo_datetime(date, period):
+    &#34;&#34;&#34;
+    Compute the relative date in the period (time in seconds since the beginning of the corresponding period)
+    :param date: datetime.datetime object
+    :param period : datetime.timedelta
+    &#34;&#34;&#34;
+    seconds = int((date - dt.datetime.min).total_seconds())
+    remainder = dt.timedelta(
+        seconds=seconds % period.total_seconds(),
+        microseconds=date.microsecond,
+    )
+    return remainder.total_seconds()
+
+def find_occurrences_fast(data, episode, Tep=30):
+    &#34;&#34;&#34;
+    Fetch the occurrences of the episode in the log_dataset
+    :param data:
+    :param episode:
+    :param Tep:
+    :return:
+    &#34;&#34;&#34;
+    Tep = dt.timedelta(minutes=Tep)
+
+    data = data.loc[data.label.isin(episode)].copy()
+    data.sort_values(by=[&#39;date&#39;], inplace=True)
+
+    if len(episode) == 1:
+        return data[[&#39;date&#39;, &#39;end_date&#39;]]
+
+    occurrences = {}
+
+    def occurrence_exist(row):
+        start_time = row.date
+        end_time = row.date + Tep
+
+        date_condition = (data.date &gt;= start_time) &amp; (data.date &lt; end_time)
+
+        next_labels = set(data.loc[date_condition, &#34;label&#34;].values)
+
+
+def translate_description(description):
+    &#34;&#34;&#34;
+    Translate the description in natural language
+    &#34;&#34;&#34;
+    if not description:
+        return None
+    natural_desc = {}
+    natural_desc[&#39;period&#39;] = str(description[&#39;period&#39;])
+    natural_desc[&#39;accuracy&#39;] = round(description[&#39;accuracy&#39;], 3)
+    natural_desc[&#39;delta_t&#39;] = [str(description[&#39;delta_t&#39;][0]), str(description[&#39;delta_t&#39;][1])]
+    natural_desc[&#39;validity duration&#39;] = str(description[&#39;delta_t&#39;][1] - description[&#39;delta_t&#39;][0])
+    natural_desc[&#34;compression_power&#34;] = description[&#34;compression_power&#34;]
+    natural_desc[&#39;description&#39;] = {}
+    for mean_time, std_time in description[&#39;description&#39;].items():
+        natural_desc[&#39;description&#39;][str(dt.timedelta(seconds=mean_time))] = str(dt.timedelta(seconds=std_time))
+
+    return natural_desc
+
+
+def is_occurence_expected(relative_date, GMM_descr, period, tolerance_ratio):
+    for mu, sigma in GMM_descr.items():
+        if abs(relative_date - mu) &lt;= tolerance_ratio * sigma:  # Normal cases
+            return mu
+
+        # Handle the bord effects cases
+        lower_limit = mu - tolerance_ratio * sigma
+        upper_limit = mu + tolerance_ratio * sigma
+
+        mu2 = mu
+        if lower_limit &lt; 0:  # Midnight-morning issue (early in the period)
+            mu2 = mu + period.total_seconds()
+        elif upper_limit &gt; period.total_seconds():
+            mu2 = mu - period.total_seconds()
+
+        if abs(relative_date - mu2) &lt;= tolerance_ratio * sigma:  # Normal cases
+            return mu2
+
+    return None
+
+
+def compute_pattern_accuracy(occurrences, period, time_description, start_date=None, end_date=None, tolerance_ratio=2):
+    &#39;&#39;&#39;
+    Compute the accuracy of a pattern
+    :param occurrences: Occurrences of the pattern
+    :param period: Periodicity
+    :param time_description: Time Description of the pattern
+    :param start_date: Start date of the time period where we want to compute the accuracy
+    :param end_date: End date of the period where we want to compute the accuracy
+    :param tolerance_ratio:
+    :return:
+    &#39;&#39;&#39;
+
+    if not start_date:
+        start_date = occurrences.date.min().to_pydatetime()
+
+    if not end_date:
+        end_date = occurrences.date.max().to_pydatetime()
+
+    occurrences = occurrences[(occurrences.date &gt;= start_date) &amp; (occurrences.date &lt;= end_date)].copy()
+    # First, compute the number of full periods between &#34;start_date&#34; and &#34;end_date&#34;
+    relative_start_date = modulo_datetime(start_date, period)
+    start_first_period = start_date
+    if relative_start_date != 0:
+        start_first_period = start_date - dt.timedelta(seconds=relative_start_date) + period
+
+    relative_end_date = modulo_datetime(end_date, period)
+    end_last_period = end_date
+    if relative_end_date != 0:
+        end_last_period = end_date - dt.timedelta(seconds=relative_end_date)
+
+    nb_periods = (end_last_period - start_first_period).total_seconds() / period.total_seconds()
+
+    nb_description_components = len(time_description)
+
+    # Number of occurrences expected
+    nb_occurrences_expected = nb_periods * nb_description_components
+
+    # Now the bord effects
+    for mean_time, std_time in time_description.items():
+        if (mean_time &gt; relative_start_date):
+            nb_occurrences_expected += 1
+        if (mean_time &lt; relative_end_date):
+            nb_occurrences_expected += 1
+
+    if nb_occurrences_expected == 0 or len(occurrences) == 0:
+        return None, None
+
+    # Compute the relative date of the occurrences
+    occurrences.loc[:, &#34;relative_date&#34;] = occurrences.date.apply(
+        lambda x: modulo_datetime(x.to_pydatetime(), period))
+
+    # &#34;Expected&#34; is the relative mean time of the component where an occurrence happen
+    occurrences[&#34;expected&#34;] = occurrences[&#34;relative_date&#34;].apply(
+        lambda x: is_occurence_expected(x, time_description, period, tolerance_ratio))
+
+    # We need to drop the occurrences happening around the same time called extra occurrences
+
+    # &#34;diff_mean_time&#34; is the time distanceDTW from the occurrence to the relative mean time of the component where an
+    # occurrence happen
+    occurrences[&#34;diff_mean_time&#34;] = abs(occurrences[&#34;relative_date&#34;] - occurrences[&#34;expected&#34;])
+    occurrences.fillna(0, inplace=True)
+
+    # &#34;component_absolute_mean_time&#34; is the absolute date of the component where an occurrence happen
+    occurrences[&#34;component_absolute_mean_time&#34;] = occurrences.apply(
+        lambda row: relative2absolute_date(row[&#34;expected&#34;], row[&#34;date&#34;].to_pydatetime(), period), axis=1)
+
+    occurrences.sort_values([&#39;diff_mean_time&#39;], ascending=True, inplace=True)
+    # Drop extra occurrences
+    occurrences.drop_duplicates([&#39;component_absolute_mean_time&#39;], keep=&#39;first&#39;, inplace=True)
+
+    Nb_occurrences_happening_as_expected = len(occurrences.loc[occurrences.expected != 0])
+
+    accuracy = Nb_occurrences_happening_as_expected / nb_occurrences_expected
+
+    accuracy = min(1, accuracy)
+    # if accuracy &gt; 1:
+    #     raise ValueError(&#39;The accuracy should not exceed 1.00 !!&#39;,
+    #                      Nb_occurrences_happening_as_expected, nb_occurrences_expected)
+
+    return accuracy, occurrences[occurrences.expected != 0][[&#39;date&#39;]]
+
+
+def plot_time_circle(data_points, period, plot=False):
+    &#34;&#34;&#34;
+    plot time data points into a circle
+    :param data_points:
+    :return:
+    &#34;&#34;&#34;
+
+    degrees = []
+    x = []
+    y = []
+
+    for point in data_points:
+        alpha = 2 * np.pi * point / period
+        x.append(math.sin(alpha))
+        y.append(math.cos(alpha))
+
+        degrees.append(360 * point / period)
+
+    if plot:
+        radians = np.deg2rad(degrees)
+
+        bin_size = 2
+        a, b = np.histogram(degrees, bins=np.arange(0, 360 + bin_size, bin_size))
+        centers = np.deg2rad(np.ediff1d(b) // 2 + b[:-1])
+
+        fig = plt.figure(figsize=(10, 8))
+        ax = fig.add_subplot(111, projection=&#39;polar&#39;)
+        ax.bar(centers, a, width=np.deg2rad(bin_size), bottom=0.0, color=&#39;.8&#39;, edgecolor=&#39;k&#39;)
+        ax.set_theta_zero_location(&#34;N&#34;)
+        ax.set_theta_direction(-1)
+        ax.set_xticklabels([&#39;12am&#39;, &#39;3am&#39;, &#39;6am&#39;, &#39;9am&#39;, &#39;12pm&#39;, &#39;3pm&#39;, &#39;6pm&#39;, &#39;9pm&#39;])
+        ax.tick_params(direction=&#39;out&#39;, length=6, width=6, colors=&#39;r&#39;, grid_alpha=1, labelsize=14)
+
+        plt.show()
+
+    return x, y
+
+
+if __name__ == &#34;__main__&#34;:
+    main()</code></pre>
+            </details>
+        </section>
+        <section>
+        </section>
+        <section>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-functions">Functions</h2>
+            <dl>
+                <dt id="Pattern_Mining.Candidate_Study.compute_pattern_accuracy"><code class="name flex">
+                    <span>def <span class="ident">compute_pattern_accuracy</span></span>(<span>occurrences, period, time_description, start_date=None, end_date=None, tolerance_ratio=2)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Compute the accuracy of a pattern
+                        :param occurrences: Occurrences of the pattern
+                        :param period: Periodicity
+                        :param time_description: Time Description of the pattern
+                        :param start_date: Start date of the time period where we want to compute the accuracy
+                        :param end_date: End date of the period where we want to compute the accuracy
+                        :param tolerance_ratio:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def compute_pattern_accuracy(occurrences, period, time_description, start_date=None, end_date=None, tolerance_ratio=2):
+    &#39;&#39;&#39;
+    Compute the accuracy of a pattern
+    :param occurrences: Occurrences of the pattern
+    :param period: Periodicity
+    :param time_description: Time Description of the pattern
+    :param start_date: Start date of the time period where we want to compute the accuracy
+    :param end_date: End date of the period where we want to compute the accuracy
+    :param tolerance_ratio:
+    :return:
+    &#39;&#39;&#39;
+
+    if not start_date:
+        start_date = occurrences.date.min().to_pydatetime()
+
+    if not end_date:
+        end_date = occurrences.date.max().to_pydatetime()
+
+    occurrences = occurrences[(occurrences.date &gt;= start_date) &amp; (occurrences.date &lt;= end_date)].copy()
+    # First, compute the number of full periods between &#34;start_date&#34; and &#34;end_date&#34;
+    relative_start_date = modulo_datetime(start_date, period)
+    start_first_period = start_date
+    if relative_start_date != 0:
+        start_first_period = start_date - dt.timedelta(seconds=relative_start_date) + period
+
+    relative_end_date = modulo_datetime(end_date, period)
+    end_last_period = end_date
+    if relative_end_date != 0:
+        end_last_period = end_date - dt.timedelta(seconds=relative_end_date)
+
+    nb_periods = (end_last_period - start_first_period).total_seconds() / period.total_seconds()
+
+    nb_description_components = len(time_description)
+
+    # Number of occurrences expected
+    nb_occurrences_expected = nb_periods * nb_description_components
+
+    # Now the bord effects
+    for mean_time, std_time in time_description.items():
+        if (mean_time &gt; relative_start_date):
+            nb_occurrences_expected += 1
+        if (mean_time &lt; relative_end_date):
+            nb_occurrences_expected += 1
+
+    if nb_occurrences_expected == 0 or len(occurrences) == 0:
+        return None, None
+
+    # Compute the relative date of the occurrences
+    occurrences.loc[:, &#34;relative_date&#34;] = occurrences.date.apply(
+        lambda x: modulo_datetime(x.to_pydatetime(), period))
+
+    # &#34;Expected&#34; is the relative mean time of the component where an occurrence happen
+    occurrences[&#34;expected&#34;] = occurrences[&#34;relative_date&#34;].apply(
+        lambda x: is_occurence_expected(x, time_description, period, tolerance_ratio))
+
+    # We need to drop the occurrences happening around the same time called extra occurrences
+
+    # &#34;diff_mean_time&#34; is the time distanceDTW from the occurrence to the relative mean time of the component where an
+    # occurrence happen
+    occurrences[&#34;diff_mean_time&#34;] = abs(occurrences[&#34;relative_date&#34;] - occurrences[&#34;expected&#34;])
+    occurrences.fillna(0, inplace=True)
+
+    # &#34;component_absolute_mean_time&#34; is the absolute date of the component where an occurrence happen
+    occurrences[&#34;component_absolute_mean_time&#34;] = occurrences.apply(
+        lambda row: relative2absolute_date(row[&#34;expected&#34;], row[&#34;date&#34;].to_pydatetime(), period), axis=1)
+
+    occurrences.sort_values([&#39;diff_mean_time&#39;], ascending=True, inplace=True)
+    # Drop extra occurrences
+    occurrences.drop_duplicates([&#39;component_absolute_mean_time&#39;], keep=&#39;first&#39;, inplace=True)
+
+    Nb_occurrences_happening_as_expected = len(occurrences.loc[occurrences.expected != 0])
+
+    accuracy = Nb_occurrences_happening_as_expected / nb_occurrences_expected
+
+    accuracy = min(1, accuracy)
+    # if accuracy &gt; 1:
+    #     raise ValueError(&#39;The accuracy should not exceed 1.00 !!&#39;,
+    #                      Nb_occurrences_happening_as_expected, nb_occurrences_expected)
+
+    return accuracy, occurrences[occurrences.expected != 0][[&#39;date&#39;]]</code></pre>
+                    </details>
+                </dd>
+                <dt id="Pattern_Mining.Candidate_Study.find_number_clusters"><code class="name flex">
+                    <span>def <span class="ident">find_number_clusters</span></span>(<span>X, eps, min_samples, display=False)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>return the number of clusters</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def find_number_clusters(X, eps, min_samples, display=False):
+    &#34;&#34;&#34;
+    return the number of clusters
+    &#34;&#34;&#34;
+    db = DBSCAN(eps=eps, min_samples=min_samples).fit(X)
+
+    Nb_clusters = len(set(db.labels_)) - (1 if -1 in db.labels_ else 0)
+
+    core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+    core_samples_mask[db.core_sample_indices_] = True
+    labels = db.labels_
+
+    # Number of clusters in labels, ignoring noise if present.
+    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    n_noise_ = list(labels).count(-1)
+
+    # print(&#39;Estimated number of clusters: %d&#39; % n_clusters_)
+    # print(&#39;Estimated number of noise points: %d&#39; % n_noise_)
+
+    # #############################################################################
+    # PLOT THE RESULTS
+    ##############
+    if display:
+        angles = []
+
+        for x in X:
+            angles.append(2 * np.pi * x / (24 * 3600))
+
+        X = [[math.sin(alpha), math.cos(alpha)] for alpha in angles]
+        X = np.asarray(X)
+        fig, ax = plt.subplots(1)
+        theta = np.linspace(0, 2 * np.pi, 100)
+        r = 1
+        x1 = r * np.cos(theta)
+        x2 = r * np.sin(theta)
+        ax.plot(x1, x2, linestyle=&#39;--&#39;)
+        ax.set_aspect(1)
+        plt.grid(linestyle=&#39;--&#39;)
+
+        # Black removed and is used for noise instead.
+        unique_labels = set(labels)
+        colors = [plt.cm.Spectral(each)
+                  for each in np.linspace(0, 1, len(unique_labels))]
+        for k, col in zip(unique_labels, colors):
+            if k == -1:
+                # Black used for noise.
+                col = [0, 0, 0, 1]
+
+            class_member_mask = (labels == k)
+
+            xy = X[class_member_mask &amp; core_samples_mask]
+            ax.plot(xy[:, 0], xy[:, 1], &#39;o&#39;, markerfacecolor=tuple(col),
+                    markeredgecolor=&#39;k&#39;, markersize=6)
+
+            xy = X[class_member_mask &amp; ~core_samples_mask]
+            ax.plot(xy[:, 0], xy[:, 1], &#39;o&#39;, markerfacecolor=tuple(col),
+                    markeredgecolor=&#39;k&#39;, markersize=3)
+
+        # plt.title(&#39;Estimated number of clusters: %d&#39; % n_clusters_)
+        plt.show()
+    # Noisy samples are given the label -1.
+
+    return Nb_clusters, db.components_</code></pre>
+                    </details>
+                </dd>
+                <dt id="Pattern_Mining.Candidate_Study.find_occurrences_fast"><code class="name flex">
+                    <span>def <span
+                            class="ident">find_occurrences_fast</span></span>(<span>data, episode, Tep=30)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Fetch the occurrences of the episode in the log_dataset
+                        :param data:
+                        :param episode:
+                        :param Tep:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def find_occurrences_fast(data, episode, Tep=30):
+    &#34;&#34;&#34;
+    Fetch the occurrences of the episode in the log_dataset
+    :param data:
+    :param episode:
+    :param Tep:
+    :return:
+    &#34;&#34;&#34;
+    Tep = dt.timedelta(minutes=Tep)
+
+    data = data.loc[data.label.isin(episode)].copy()
+    data.sort_values(by=[&#39;date&#39;], inplace=True)
+
+    if len(episode) == 1:
+        return data[[&#39;date&#39;, &#39;end_date&#39;]]
+
+    occurrences = {}
+
+    def occurrence_exist(row):
+        start_time = row.date
+        end_time = row.date + Tep
+
+        date_condition = (data.date &gt;= start_time) &amp; (data.date &lt; end_time)
+
+        next_labels = set(data.loc[date_condition, &#34;label&#34;].values)</code></pre>
+                    </details>
+                </dd>
+                <dt id="Pattern_Mining.Candidate_Study.is_occurence_expected"><code class="name flex">
+                    <span>def <span class="ident">is_occurence_expected</span></span>(<span>relative_date, GMM_descr, period, tolerance_ratio)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def is_occurence_expected(relative_date, GMM_descr, period, tolerance_ratio):
+    for mu, sigma in GMM_descr.items():
+        if abs(relative_date - mu) &lt;= tolerance_ratio * sigma:  # Normal cases
+            return mu
+
+        # Handle the bord effects cases
+        lower_limit = mu - tolerance_ratio * sigma
+        upper_limit = mu + tolerance_ratio * sigma
+
+        mu2 = mu
+        if lower_limit &lt; 0:  # Midnight-morning issue (early in the period)
+            mu2 = mu + period.total_seconds()
+        elif upper_limit &gt; period.total_seconds():
+            mu2 = mu - period.total_seconds()
+
+        if abs(relative_date - mu2) &lt;= tolerance_ratio * sigma:  # Normal cases
+            return mu2
+
+    return None</code></pre>
+                    </details>
+                </dd>
+                <dt id="Pattern_Mining.Candidate_Study.main"><code class="name flex">
+                    <span>def <span class="ident">main</span></span>(<span>)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def main():
+    data = pick_dataset(&#39;KA&#39;)
+    episodes = []
+    # episodes.append((&#34;go to bed END&#34;, &#34;use toilet START&#34;, &#34;use toilet START&#34;))
+    # episodes.append([&#34;take shower start&#34;, &#34;take shower end&#34;, &#34;leave house start&#34;])
+    # episodes.append([&#34;use toilet start&#34;, &#34;use toilet end&#34;, &#34;go to bed start&#34;])
+    # episodes.append([&#34;prepare Breakfast start&#34;, &#34;prepare Breakfast end&#34;])
+    # episodes.append([&#34;leave house end&#34;])
+    episodes.append([&#39;brush teeth start&#39;, &#39;go to bed start&#39;])
+
+    # episodes.append([&#34;breakfast&#34;])
+    # episodes.append((&#34;prepare breakfast&#34;,))
+
+    with open(&#39;output/output_candidate_study_step.csv&#39;, &#39;w&#39;) as file:
+        file.truncate()
+        file.write(&#34;Episode;period;description;accuracy;start date;end date\n&#34;)
+        for episode in episodes:
+            descr = periodicity_search(data, episode, display=False)
+
+            nat = translate_description(descr)
+            line = str(episode) + &#34;;&#34;
+            line += str(nat[&#34;period&#34;]) + &#34;;&#34;
+            line += str(nat[&#34;description&#34;]) + &#34;;&#34;
+            line += str(nat[&#34;accuracy&#34;]).replace(&#39;.&#39;, &#39;,&#39;) + &#34;;&#34;
+            line += str(nat[&#34;delta_t&#34;][0]) + &#34;;&#34;
+            line += str(nat[&#34;delta_t&#34;][1]) + &#34;;&#34;
+            line += &#34;\n&#34;
+
+            file.write(line)
+            print(&#34;Episode &#34;, episode)
+            print(nat)</code></pre>
+                    </details>
+                </dd>
+                <dt id="Pattern_Mining.Candidate_Study.modulo_datetime"><code class="name flex">
+                    <span>def <span class="ident">modulo_datetime</span></span>(<span>date, period)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Compute the relative date in the period (time in seconds since the beginning of
+                        the corresponding period)
+                        :param date: datetime.datetime object
+                        :param period : datetime.timedelta</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def modulo_datetime(date, period):
+    &#34;&#34;&#34;
+    Compute the relative date in the period (time in seconds since the beginning of the corresponding period)
+    :param date: datetime.datetime object
+    :param period : datetime.timedelta
+    &#34;&#34;&#34;
+    seconds = int((date - dt.datetime.min).total_seconds())
+    remainder = dt.timedelta(
+        seconds=seconds % period.total_seconds(),
+        microseconds=date.microsecond,
+    )
+    return remainder.total_seconds()</code></pre>
+                    </details>
+                </dd>
+                <dt id="Pattern_Mining.Candidate_Study.periodicity_search"><code class="name flex">
+                    <span>def <span class="ident">periodicity_search</span></span>(<span>data, episode, delta_Tmax_ratio=3, support_min=3, std_max=0.1, tolerance_ratio=2, Tep=30, period_T=datetime.timedelta(days=1), display=False, verbose=False)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Find the best time description of an episode if it exists</p>
+                        <p>return delta_T :</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def periodicity_search(data, episode, delta_Tmax_ratio=3, support_min=3, std_max=0.1, tolerance_ratio=2,
+                       Tep=30, period_T=dt.timedelta(days=1), display=False, verbose=False):
+    &#34;&#34;&#34;
+    Find the best time description of an episode if it exists
+    
+    return delta_T : 
+    &#34;&#34;&#34;
+
+    # Pick the episode events from the input sequence
+    data = data.loc[data.label.isin(episode)].copy()
+
+    if verbose:
+        print(&#34;######################################&#34;)
+        print(&#34;Periodicity episode :&#34;, episode)
+
+    if len(data) == 0:
+        if verbose:
+            print(f&#39;No data for the episode :{episode}&#39;)
+        return None
+
+    # find the episode occurences
+    occurrences = find_occurrences(data, episode, Tep)
+
+    if len(occurrences) &lt; support_min:
+        return None
+
+    best_periodicity = None
+
+    best_accuracy = 0
+
+    # Compute intervals between occurrences
+
+    # First row &#39;time_since_last_occ&#39; is NaT so we replace by a duration of &#39;0&#39;
+    occurrences.fillna(pd.Timestamp(0), inplace=True)
+
+    # Compute relative dates
+    occurrences.loc[:, &#34;relative_date&#34;] = occurrences.date.apply(
+        lambda x: modulo_datetime(x.to_pydatetime(), period_T))
+
+    # Display relative times count_histogram
+
+    if display:
+        plt.figure()
+        plt.title(episode)
+        sns.distplot(occurrences.relative_date / 3600, bins=20, norm_hist=False, rug=False, kde=False)
+        plt.xlim((0, 24))
+        plt.show()
+
+    start_time = occurrences.date.min().to_pydatetime()
+    end_time = occurrences.date.max().to_pydatetime()
+
+    data_points = occurrences[&#34;relative_date&#34;].values.reshape(-1, 1)
+
+    cut_threshold = dt.timedelta(hours=3).total_seconds()
+    m = np.ma.where(data_points &lt; cut_threshold)
+    data_points[m] = data_points[m] + period_T.total_seconds()
+    # if no data then switch to the next group
+    if len(data_points) &lt; 2:
+        if verbose:
+            print(&#39;Not enough data points&#39;)
+        return None
+
+    cut_treshold = dt.timedelta(hours=3).total_seconds()
+
+    if verbose:
+        print(&#34;EPSILON DBSCAN :&#34;, str(dt.timedelta(seconds=std_max * period_T.total_seconds())))
+
+    epsilon = 3600
+    Nb_clusters, interesting_points = find_number_clusters(data_points, eps=epsilon, min_samples=int(support_min / 2),
+                                                           display=display)
+
+    # if no clusters found then switch to the next group
+    if Nb_clusters == 0:
+        if verbose:
+            print(&#39;No clusters found&#39;)
+        return None
+    # Display points
+    #            if display:
+    #                sns.distplot(interesting_points, norm_hist=False, rug=False, kde=True, bins=10)
+
+    GMM = GaussianMixture(n_components=Nb_clusters, n_init=10)
+    GMM.fit(data_points)
+
+    GMM_descr = {}  # mean_time (in seconds) as key and std_duration (in seconds) as value
+
+    for i in range(len(GMM.means_)):
+        mu = int(GMM.means_[i][0])
+        sigma = int(math.ceil(np.sqrt(GMM.covariances_[i])))
+
+        if sigma &gt; std_max * period_T.total_seconds():
+            continue
+        lower_limit = mu - tolerance_ratio * sigma
+        upper_limit = mu + tolerance_ratio * sigma
+
+        # if (lower_limit &lt; 0) or (lower_limit &gt; period_T.total_seconds()):
+        #     continue
+
+        mu = mu % period_T.total_seconds()
+        GMM_descr[mu] = sigma
+
+        if verbose:
+            print(f&#39;Component {i} : mu={str(dt.timedelta(seconds=mu))}, sigma={str(dt.timedelta(seconds=sigma))}&#39;)
+
+        # if display:
+        #     lower_limit = mu - tolerance_ratio * sigma
+        #     upper_limit = mu + tolerance_ratio * sigma
+        #     # Plot the interval
+        #     c = np.random.rand(3, )
+        #     plt.plot([0, lower_limit], [lower_limit, 0], linewidth=2, color=c)
+        #     plt.plot([0, upper_limit], [upper_limit, 0], linewidth=2, color=c)
+
+        # Compute the time description accuracy
+
+    accuracy, expected_occurrences = compute_pattern_accuracy(occurrences=occurrences, period=period_T,
+                                                              time_description=GMM_descr)
+
+    if not accuracy:
+        if verbose:
+            print(&#34;No accuracy found&#34;)
+        return None
+
+    str_GMM = {}
+    for key, value in GMM_descr.items():
+        str_GMM[str(dt.timedelta(seconds=key))] = str(dt.timedelta(seconds=value))
+
+    best_periodicity = {
+        &#34;description&#34;: str_GMM,
+        &#34;period&#34;: period_T,
+        &#34;accuracy&#34;: accuracy,
+        &#34;nb_occ&#34;: len(occurrences),
+        &#34;compression_power&#34;: len(expected_occurrences) * len(episode),
+        # &#34;expected_occurrences&#34;: expected_occurrences,
+        &#34;delta_t&#34;: [start_time, end_time]
+    }
+
+    if verbose:
+        print(&#34;Periodicity episode :&#34;, episode)
+        print(f&#34;\tAccuracy: {accuracy}&#34;)
+        print(f&#34;\tCompression Power: {len(expected_occurrences) * len(episode)}&#34;)
+        print(&#34;######################################&#34;)
+
+    return best_periodicity</code></pre>
+                    </details>
+                </dd>
+                <dt id="Pattern_Mining.Candidate_Study.plot_time_circle"><code class="name flex">
+                    <span>def <span
+                            class="ident">plot_time_circle</span></span>(<span>data_points, period, plot=False)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>plot time data points into a circle
+                        :param data_points:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def plot_time_circle(data_points, period, plot=False):
+    &#34;&#34;&#34;
+    plot time data points into a circle
+    :param data_points:
+    :return:
+    &#34;&#34;&#34;
+
+    degrees = []
+    x = []
+    y = []
+
+    for point in data_points:
+        alpha = 2 * np.pi * point / period
+        x.append(math.sin(alpha))
+        y.append(math.cos(alpha))
+
+        degrees.append(360 * point / period)
+
+    if plot:
+        radians = np.deg2rad(degrees)
+
+        bin_size = 2
+        a, b = np.histogram(degrees, bins=np.arange(0, 360 + bin_size, bin_size))
+        centers = np.deg2rad(np.ediff1d(b) // 2 + b[:-1])
+
+        fig = plt.figure(figsize=(10, 8))
+        ax = fig.add_subplot(111, projection=&#39;polar&#39;)
+        ax.bar(centers, a, width=np.deg2rad(bin_size), bottom=0.0, color=&#39;.8&#39;, edgecolor=&#39;k&#39;)
+        ax.set_theta_zero_location(&#34;N&#34;)
+        ax.set_theta_direction(-1)
+        ax.set_xticklabels([&#39;12am&#39;, &#39;3am&#39;, &#39;6am&#39;, &#39;9am&#39;, &#39;12pm&#39;, &#39;3pm&#39;, &#39;6pm&#39;, &#39;9pm&#39;])
+        ax.tick_params(direction=&#39;out&#39;, length=6, width=6, colors=&#39;r&#39;, grid_alpha=1, labelsize=14)
+
+        plt.show()
+
+    return x, y</code></pre>
+                    </details>
+                </dd>
+                <dt id="Pattern_Mining.Candidate_Study.relative2absolute_date"><code class="name flex">
+                    <span>def <span class="ident">relative2absolute_date</span></span>(<span>relative_date, reference_date, period)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Turn a relative date to an absolute date</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def relative2absolute_date(relative_date, reference_date, period):
+    &#34;&#34;&#34;
+    Turn a relative date to an absolute date
+    &#34;&#34;&#34;
+
+    date = reference_date - dt.timedelta(seconds=modulo_datetime(reference_date, period))
+
+    date += dt.timedelta(seconds=relative_date)
+
+    return date</code></pre>
+                    </details>
+                </dd>
+                <dt id="Pattern_Mining.Candidate_Study.translate_description"><code class="name flex">
+                    <span>def <span class="ident">translate_description</span></span>(<span>description)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Translate the description in natural language</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def translate_description(description):
+    &#34;&#34;&#34;
+    Translate the description in natural language
+    &#34;&#34;&#34;
+    if not description:
+        return None
+    natural_desc = {}
+    natural_desc[&#39;period&#39;] = str(description[&#39;period&#39;])
+    natural_desc[&#39;accuracy&#39;] = round(description[&#39;accuracy&#39;], 3)
+    natural_desc[&#39;delta_t&#39;] = [str(description[&#39;delta_t&#39;][0]), str(description[&#39;delta_t&#39;][1])]
+    natural_desc[&#39;validity duration&#39;] = str(description[&#39;delta_t&#39;][1] - description[&#39;delta_t&#39;][0])
+    natural_desc[&#34;compression_power&#34;] = description[&#34;compression_power&#34;]
+    natural_desc[&#39;description&#39;] = {}
+    for mean_time, std_time in description[&#39;description&#39;].items():
+        natural_desc[&#39;description&#39;][str(dt.timedelta(seconds=mean_time))] = str(dt.timedelta(seconds=std_time))
+
+    return natural_desc</code></pre>
+                    </details>
+                </dd>
+            </dl>
+        </section>
+        <section>
+        </section>
+    </article>
+    <nav id="sidebar">
+        <h1>Index</h1>
+        <div class="toc">
+            <ul></ul>
+        </div>
+        <ul id="index">
+            <li><h3>Super-module</h3>
+                <ul>
+                    <li><code><a href="index.html" title="Pattern_Mining">Pattern_Mining</a></code></li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-functions">Functions</a></h3>
+                <ul class="">
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.compute_pattern_accuracy"
+                                 title="Pattern_Mining.Candidate_Study.compute_pattern_accuracy">compute_pattern_accuracy</a></code>
+                    </li>
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.find_number_clusters"
+                                 title="Pattern_Mining.Candidate_Study.find_number_clusters">find_number_clusters</a></code>
+                    </li>
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.find_occurrences_fast"
+                                 title="Pattern_Mining.Candidate_Study.find_occurrences_fast">find_occurrences_fast</a></code>
+                    </li>
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.is_occurence_expected"
+                                 title="Pattern_Mining.Candidate_Study.is_occurence_expected">is_occurence_expected</a></code>
+                    </li>
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.main"
+                                 title="Pattern_Mining.Candidate_Study.main">main</a></code></li>
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.modulo_datetime"
+                                 title="Pattern_Mining.Candidate_Study.modulo_datetime">modulo_datetime</a></code></li>
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.periodicity_search"
+                                 title="Pattern_Mining.Candidate_Study.periodicity_search">periodicity_search</a></code>
+                    </li>
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.plot_time_circle"
+                                 title="Pattern_Mining.Candidate_Study.plot_time_circle">plot_time_circle</a></code>
+                    </li>
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.relative2absolute_date"
+                                 title="Pattern_Mining.Candidate_Study.relative2absolute_date">relative2absolute_date</a></code>
+                    </li>
+                    <li><code><a href="#Pattern_Mining.Candidate_Study.translate_description"
+                                 title="Pattern_Mining.Candidate_Study.translate_description">translate_description</a></code>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</main>
+<footer id="footer">
+    <p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

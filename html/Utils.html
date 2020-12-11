@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, minimum-scale=1" name="viewport"/>
+    <meta content="pdoc 0.9.2" name="generator"/>
+    <title>Utils API documentation</title>
+    <meta content="" name="description"/>
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css"
+          integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" rel="preload stylesheet">
+    <link as="style" crossorigin
+          href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css"
+          integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" rel="preload stylesheet">
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css"
+          rel="stylesheet preload">
+    <style>
+        :root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}
+    </style>
+    <style media="screen and (min-width: 700px)">
+        @media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}
+    </style>
+    <style media="print">
+        @media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}
+    </style>
+    <script crossorigin defer integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8="
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+    <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+    <article id="content">
+        <header>
+            <h1 class="title">Module <code>Utils</code></h1>
+        </header>
+        <section id="section-intro">
+            <details class="source">
+                <summary>
+                    <span>Expand source code</span>
+                </summary>
+                <pre><code class="python">import datetime as dt
+import os
+
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
+import pandas as pd
+from sklearn.cluster import MeanShift, estimate_bandwidth
+
+
+def pick_dataset(name, nb_days=-1, ):
+    name = name.lower()
+    my_path = os.path.abspath(os.path.dirname(__file__))
+
+    dataset = None
+    if &#39;toy&#39; in name:
+        path = os.path.join(my_path, &#34;./input/Toy/Simulation/{}.csv&#34;.format(name))
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;aruba&#39;:
+        path = os.path.join(my_path, &#34;./input/aruba/activity_dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;aruba_events&#39;:
+        path = os.path.join(my_path, &#34;./input/aruba/dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = dataset[&#39;date&#39;]
+
+    elif name == &#39;toulouse&#39;:
+        path = os.path.join(my_path, &#34;./input/Toulouse/toulouse_dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;mauricette&#39;:
+        path = os.path.join(my_path, &#34;./input/Mauricette/dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;habits_test&#39;:
+        path = os.path.join(my_path, &#34;./input/habits_toy_dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%d-%m %H:%M&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = dataset[&#39;date&#39;]
+
+    elif name.startswith(&#39;hh&#39;):
+        path = os.path.join(my_path, &#34;./input/HH/{}/dataset.csv&#34;.format(name))
+        dataset = pd.read_csv(path, delimiter=&#39;,&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name.startswith(&#39;bped&#39;):
+        path = os.path.join(my_path, &#34;./input/BPED/{}/activity_dataset.csv&#34;.format(name))
+        dataset = pd.read_csv(path, delimiter=&#39;,&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;ka_events&#39;:
+        filename = &#34;./input/{} House/{}_dataset.csv&#34;.format(&#39;KA&#39;, &#39;KA_label&#39;)
+        path = os.path.join(my_path, filename)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;])
+        dataset[&#39;end_date&#39;] = dataset[&#39;date&#39;]
+
+    elif name == &#39;kb_events&#39;:
+        filename = &#34;./input/{} House/{}_dataset.csv&#34;.format(&#39;KB&#39;, &#39;KB_label&#39;)
+        path = os.path.join(my_path, filename)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;])
+        dataset[&#39;end_date&#39;] = dataset[&#39;date&#39;]
+
+    else:
+        filename = &#34;./input/{} House/{}_dataset.csv&#34;.format(name, name)
+        path = os.path.join(my_path, filename)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;])
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;])
+
+    # We only take nb_days
+    if nb_days &gt; 0:
+        start_date = dataset.date.min().to_pydatetime()
+        end_date = start_date + dt.timedelta(days=nb_days)
+        dataset = dataset.loc[(dataset.date &gt;= start_date) &amp; (dataset.date &lt; end_date)].copy()
+
+    dataset.drop_duplicates([&#39;date&#39;, &#39;label&#39;], keep=&#39;last&#39;, inplace=True)
+
+    # dataset[&#39;id_patient&#39;] = dataset[&#39;date&#39;].apply(lambda x : x.timetuple().tm_yday)
+    # dataset[&#39;duree&#39;] = 0
+    # dataset[&#39;evt&#39;] = dataset[&#39;label&#39;]
+    # dataset[&#39;nbjours&#39;] = dataset.date.apply(
+    #         lambda x: int(Candidate_Study.modulo_datetime(x.to_pydatetime(), dt.timedelta(days=1))))
+    #
+    # dataset = dataset[[&#39;id_patient&#39;, &#39;duree&#39;, &#39;evt&#39;, &#39;nbjours&#39;]]
+    #
+    #
+    # dataset.to_csv(&#39;./{}_hugo_dataset.csv&#39;.format(name), period_ts_index=False, sep=&#34;;&#34;)
+
+    return dataset
+
+
+def pick_custom_dataset(path, nb_days=-1):
+    dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+    dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;])
+    dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;])
+
+    # We only take nb_days
+    if nb_days &gt; 0:
+        start_date = dataset.date.min().to_pydatetime()
+        end_date = start_date + dt.timedelta(days=nb_days)
+        dataset = dataset.loc[(dataset.date &gt;= start_date) &amp; (dataset.date &lt; end_date)].copy()
+
+    dataset.drop_duplicates([&#39;date&#39;, &#39;label&#39;], keep=&#39;last&#39;, inplace=True)
+
+    return dataset
+
+
+def empty_folder(path):
+    &#34;&#34;&#34;
+    Delete all the files in the folder
+    :param path:
+    :return:
+    &#34;&#34;&#34;
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            os.remove(os.path.join(root, file))
+
+
+def generate_random_color(n):
+    &#34;&#34;&#34;
+    Generate n random colors
+    :return:
+    &#34;&#34;&#34;
+
+    colors = []
+    # cmap = matplotlib.cm.get_cmap(&#39;Set1&#39;)
+    cmap = plt.get_cmap(&#39;tab20&#39;)
+    for i in range(n):
+        # color = matplotlib.cm.nipy_spectral(float(i) / n)
+        color = cmap(float(i) / n)
+        colors.append(color)
+
+    # random.shuffle(colors)
+    return colors
+
+
+def stringify_keys(d):
+    &#34;&#34;&#34;
+    Convert a dict&#39;s keys to strings if they are not.
+    &#34;&#34;&#34;
+    for key in d.keys():
+
+        # check inner dict
+        if isinstance(d[key], dict):
+            value = stringify_keys(d[key])
+        else:
+            value = d[key]
+
+        # convert nonstring to string if needed
+        if not isinstance(key, str):
+            try:
+                d[str(key)] = value
+            except Exception:
+                try:
+                    d[repr(key)] = value
+                except Exception:
+                    raise
+
+            # delete old key
+            del d[key]
+    return d
+
+
+def univariate_clustering(x):
+    &#34;&#34;&#34;
+    1d - Clustering
+    :param x:
+    :param quantile:
+    :return:
+    &#34;&#34;&#34;
+
+    X = np.array(list(zip(x, np.zeros(len(x)))), dtype=np.int)
+
+    if len(X) &lt;= 2:
+        X.reshape(-1, 1)
+    bandwidth = estimate_bandwidth(X, quantile=0.3)
+    if bandwidth == 0:
+        return {}
+
+    ms = MeanShift(bandwidth=bandwidth, bin_seeding=False, cluster_all=False)
+    ms.fit(X)
+    labels = ms.labels_
+    # cluster_centers = ms.cluster_centers_
+
+    X = X[labels &gt;= 0]  # Filter &#39;-1&#39; label, outliers
+
+    labels = labels[labels &gt;= 0]  # Filter &#39;-1&#39; label, outliers
+
+    labels_unique = np.unique(labels)
+    n_clusters_ = len(labels_unique)
+
+    clusters = {}
+
+    for k in range(n_clusters_):
+        my_members = labels == k
+
+        cluster_array = X[my_members, 0]
+
+        # print(&#34;cluster {0}: {1}&#34;.format(k, cluster_array))
+
+        clusters[k] = cluster_array
+
+    sorted_clusters = dict(sorted(clusters.items(), key=lambda x: clusters[x[0]].mean()))
+
+    return sorted_clusters
+
+
+def find_occurrences(data, episode, tep=30):
+    &#34;&#34;&#34;
+    Find the occurrences of the episode in the event log
+    :param data: Event log data
+    :param episode: list of labels
+    :param tep : Maximum duration of an occurrence
+    :return : A dataframe of occurrences with one date column
+    &#34;&#34;&#34;
+    tep = dt.timedelta(minutes=tep)
+
+    data = data[data.label.isin(episode)].copy()
+    occurrences = pd.DataFrame(columns=[&#34;date&#34;, &#34;end_date&#34;])
+
+    if len(data) == 0:
+        return occurrences
+
+    data.sort_values(by=[&#39;date&#39;], inplace=True)
+
+    if len(episode) == 1:
+        return data[[&#39;date&#39;, &#39;end_date&#39;]]
+
+    data[&#39;identical_next_label&#39;] = data[&#39;label&#39;].shift(-1) == data[&#39;label&#39;]
+
+    data[&#39;enough_time&#39;] = (data[&#39;date&#39;].shift(-1) - data[&#39;date&#39;]) &lt;= tep
+
+    def sliding_window(row):
+        &#34;&#34;&#34;
+        return true if there is an occurrence of the episode starting at this timestamp
+        &#34;&#34;&#34;
+        start_time = row.date
+        end_time = row.date + tep
+
+        date_condition = (data.date &gt;= start_time) &amp; (data.date &lt; end_time)
+
+        next_labels = set(data[date_condition].label.values)
+
+        return set(episode).issubset(next_labels)
+
+    condition = (data.identical_next_label == False) &amp; (data.enough_time == True)
+
+    data.loc[condition, &#34;occurrence&#34;] = data[condition].apply(sliding_window, axis=1)
+
+    data.fillna(False, inplace=True)
+
+    while (len(data[data.occurrence == True]) &gt; 0):
+        # Add a new occurrence
+        occ_time = data[data.occurrence == True].date.min().to_pydatetime()
+
+        # Marked the occurrences treated as &#34;False&#34;
+        # TODO: can be improved
+        indexes = []
+        for s in episode:
+            i = data[(data.date &gt;= occ_time) &amp; (data.label == s)].date.idxmin()
+            indexes.append(i)
+
+        data.loc[indexes, &#39;occurrence&#39;] = False
+
+        end_occ_time = data.loc[indexes, &#34;end_date&#34;].max().to_pydatetime()
+        # data.drop(indexes, inplace=True)
+        occurrences.loc[len(occurrences)] = [occ_time, end_occ_time]
+
+    occurrences.sort_values(by=[&#39;date&#39;], ascending=True, inplace=True)
+    return occurrences
+
+
+def plot_graph(matrix, labels, plot=False):
+    rows, cols = np.where(matrix &gt; 0)
+
+    gr = nx.Graph()
+
+    for label in labels:
+        gr.add_node(label)
+
+    for i in range(len(rows)):
+        row = rows[i]
+        col = cols[i]
+
+        gr.add_edge(labels[row], labels[col], weight=matrix[row][col])
+
+    # gr.add_edges_from(edges)
+    # nx.draw(gr, node_size=500, labels=labels, with_labels=True)
+
+    if plot:
+        nx.draw(gr, node_size=800, with_labels=True)
+        plt.show()
+
+    return gr
+
+
+def convert_data_XES_log(name, output_path, custom=False):
+    if custom:
+        data = pick_custom_dataset(name)
+    else:
+        data = pick_dataset(name)
+    # ID for each day date : &#39;YYYYMMDD&#39;
+    data[&#39;case_id&#39;] = data[&#39;date&#39;].apply(lambda x: &#34;{:04d}{:02d}{:02d}&#34;.format(x.year, x.month, x.day))
+
+    log = data[[&#39;case_id&#39;, &#39;date&#39;, &#39;end_date&#39;, &#39;label&#39;]]
+
+    log.to_csv(output_path, index=False, sep=&#39;;&#39;)
+
+
+if __name__ == &#39;__main__&#39;:
+    name = &#39;hh113&#39;
+    activity = &#39;sleep&#39;
+    # input = f&#39;./output/{name}/Simulation/Static_step_5mn/dataset_simulation_rep_1.csv&#39;
+    # output = f&#39;./input/XES/XES_log_Sim_{name}.csv&#39;
+    # convert_data_XES_log(input, output_path=output, custom=True)
+    dataset = pick_dataset(name)
+
+    generate_random_color(3)
+
+    dataset[&#39;duration&#39;] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds() / 60)</code></pre>
+            </details>
+        </section>
+        <section>
+        </section>
+        <section>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-functions">Functions</h2>
+            <dl>
+                <dt id="Utils.convert_data_XES_log"><code class="name flex">
+                    <span>def <span class="ident">convert_data_XES_log</span></span>(<span>name, output_path, custom=False)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def convert_data_XES_log(name, output_path, custom=False):
+    if custom:
+        data = pick_custom_dataset(name)
+    else:
+        data = pick_dataset(name)
+    # ID for each day date : &#39;YYYYMMDD&#39;
+    data[&#39;case_id&#39;] = data[&#39;date&#39;].apply(lambda x: &#34;{:04d}{:02d}{:02d}&#34;.format(x.year, x.month, x.day))
+
+    log = data[[&#39;case_id&#39;, &#39;date&#39;, &#39;end_date&#39;, &#39;label&#39;]]
+
+    log.to_csv(output_path, index=False, sep=&#39;;&#39;)</code></pre>
+                    </details>
+                </dd>
+                <dt id="Utils.empty_folder"><code class="name flex">
+                    <span>def <span class="ident">empty_folder</span></span>(<span>path)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Delete all the files in the folder
+                        :param path:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def empty_folder(path):
+    &#34;&#34;&#34;
+    Delete all the files in the folder
+    :param path:
+    :return:
+    &#34;&#34;&#34;
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            os.remove(os.path.join(root, file))</code></pre>
+                    </details>
+                </dd>
+                <dt id="Utils.find_occurrences"><code class="name flex">
+                    <span>def <span class="ident">find_occurrences</span></span>(<span>data, episode, tep=30)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Find the occurrences of the episode in the event log
+                        :param data: Event log data
+                        :param episode: list of labels
+                        :param tep : Maximum duration of an occurrence
+                        :return : A dataframe of occurrences with one date column</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def find_occurrences(data, episode, tep=30):
+    &#34;&#34;&#34;
+    Find the occurrences of the episode in the event log
+    :param data: Event log data
+    :param episode: list of labels
+    :param tep : Maximum duration of an occurrence
+    :return : A dataframe of occurrences with one date column
+    &#34;&#34;&#34;
+    tep = dt.timedelta(minutes=tep)
+
+    data = data[data.label.isin(episode)].copy()
+    occurrences = pd.DataFrame(columns=[&#34;date&#34;, &#34;end_date&#34;])
+
+    if len(data) == 0:
+        return occurrences
+
+    data.sort_values(by=[&#39;date&#39;], inplace=True)
+
+    if len(episode) == 1:
+        return data[[&#39;date&#39;, &#39;end_date&#39;]]
+
+    data[&#39;identical_next_label&#39;] = data[&#39;label&#39;].shift(-1) == data[&#39;label&#39;]
+
+    data[&#39;enough_time&#39;] = (data[&#39;date&#39;].shift(-1) - data[&#39;date&#39;]) &lt;= tep
+
+    def sliding_window(row):
+        &#34;&#34;&#34;
+        return true if there is an occurrence of the episode starting at this timestamp
+        &#34;&#34;&#34;
+        start_time = row.date
+        end_time = row.date + tep
+
+        date_condition = (data.date &gt;= start_time) &amp; (data.date &lt; end_time)
+
+        next_labels = set(data[date_condition].label.values)
+
+        return set(episode).issubset(next_labels)
+
+    condition = (data.identical_next_label == False) &amp; (data.enough_time == True)
+
+    data.loc[condition, &#34;occurrence&#34;] = data[condition].apply(sliding_window, axis=1)
+
+    data.fillna(False, inplace=True)
+
+    while (len(data[data.occurrence == True]) &gt; 0):
+        # Add a new occurrence
+        occ_time = data[data.occurrence == True].date.min().to_pydatetime()
+
+        # Marked the occurrences treated as &#34;False&#34;
+        # TODO: can be improved
+        indexes = []
+        for s in episode:
+            i = data[(data.date &gt;= occ_time) &amp; (data.label == s)].date.idxmin()
+            indexes.append(i)
+
+        data.loc[indexes, &#39;occurrence&#39;] = False
+
+        end_occ_time = data.loc[indexes, &#34;end_date&#34;].max().to_pydatetime()
+        # data.drop(indexes, inplace=True)
+        occurrences.loc[len(occurrences)] = [occ_time, end_occ_time]
+
+    occurrences.sort_values(by=[&#39;date&#39;], ascending=True, inplace=True)
+    return occurrences</code></pre>
+                    </details>
+                </dd>
+                <dt id="Utils.generate_random_color"><code class="name flex">
+                    <span>def <span class="ident">generate_random_color</span></span>(<span>n)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Generate n random colors
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def generate_random_color(n):
+    &#34;&#34;&#34;
+    Generate n random colors
+    :return:
+    &#34;&#34;&#34;
+
+    colors = []
+    # cmap = matplotlib.cm.get_cmap(&#39;Set1&#39;)
+    cmap = plt.get_cmap(&#39;tab20&#39;)
+    for i in range(n):
+        # color = matplotlib.cm.nipy_spectral(float(i) / n)
+        color = cmap(float(i) / n)
+        colors.append(color)
+
+    # random.shuffle(colors)
+    return colors</code></pre>
+                    </details>
+                </dd>
+                <dt id="Utils.pick_custom_dataset"><code class="name flex">
+                    <span>def <span class="ident">pick_custom_dataset</span></span>(<span>path, nb_days=-1)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def pick_custom_dataset(path, nb_days=-1):
+    dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+    dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;])
+    dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;])
+
+    # We only take nb_days
+    if nb_days &gt; 0:
+        start_date = dataset.date.min().to_pydatetime()
+        end_date = start_date + dt.timedelta(days=nb_days)
+        dataset = dataset.loc[(dataset.date &gt;= start_date) &amp; (dataset.date &lt; end_date)].copy()
+
+    dataset.drop_duplicates([&#39;date&#39;, &#39;label&#39;], keep=&#39;last&#39;, inplace=True)
+
+    return dataset</code></pre>
+                    </details>
+                </dd>
+                <dt id="Utils.pick_dataset"><code class="name flex">
+                    <span>def <span class="ident">pick_dataset</span></span>(<span>name, nb_days=-1)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def pick_dataset(name, nb_days=-1, ):
+    name = name.lower()
+    my_path = os.path.abspath(os.path.dirname(__file__))
+
+    dataset = None
+    if &#39;toy&#39; in name:
+        path = os.path.join(my_path, &#34;./input/Toy/Simulation/{}.csv&#34;.format(name))
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;aruba&#39;:
+        path = os.path.join(my_path, &#34;./input/aruba/activity_dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;aruba_events&#39;:
+        path = os.path.join(my_path, &#34;./input/aruba/dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = dataset[&#39;date&#39;]
+
+    elif name == &#39;toulouse&#39;:
+        path = os.path.join(my_path, &#34;./input/Toulouse/toulouse_dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;mauricette&#39;:
+        path = os.path.join(my_path, &#34;./input/Mauricette/dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;habits_test&#39;:
+        path = os.path.join(my_path, &#34;./input/habits_toy_dataset.csv&#34;)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        date_format = &#39;%Y-%d-%m %H:%M&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = dataset[&#39;date&#39;]
+
+    elif name.startswith(&#39;hh&#39;):
+        path = os.path.join(my_path, &#34;./input/HH/{}/dataset.csv&#34;.format(name))
+        dataset = pd.read_csv(path, delimiter=&#39;,&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name.startswith(&#39;bped&#39;):
+        path = os.path.join(my_path, &#34;./input/BPED/{}/activity_dataset.csv&#34;.format(name))
+        dataset = pd.read_csv(path, delimiter=&#39;,&#39;)
+        date_format = &#39;%Y-%m-%d %H:%M:%S.%f&#39;
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;], format=date_format)
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;], format=date_format)
+
+    elif name == &#39;ka_events&#39;:
+        filename = &#34;./input/{} House/{}_dataset.csv&#34;.format(&#39;KA&#39;, &#39;KA_label&#39;)
+        path = os.path.join(my_path, filename)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;])
+        dataset[&#39;end_date&#39;] = dataset[&#39;date&#39;]
+
+    elif name == &#39;kb_events&#39;:
+        filename = &#34;./input/{} House/{}_dataset.csv&#34;.format(&#39;KB&#39;, &#39;KB_label&#39;)
+        path = os.path.join(my_path, filename)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;])
+        dataset[&#39;end_date&#39;] = dataset[&#39;date&#39;]
+
+    else:
+        filename = &#34;./input/{} House/{}_dataset.csv&#34;.format(name, name)
+        path = os.path.join(my_path, filename)
+        dataset = pd.read_csv(path, delimiter=&#39;;&#39;)
+        dataset[&#39;date&#39;] = pd.to_datetime(dataset[&#39;date&#39;])
+        dataset[&#39;end_date&#39;] = pd.to_datetime(dataset[&#39;end_date&#39;])
+
+    # We only take nb_days
+    if nb_days &gt; 0:
+        start_date = dataset.date.min().to_pydatetime()
+        end_date = start_date + dt.timedelta(days=nb_days)
+        dataset = dataset.loc[(dataset.date &gt;= start_date) &amp; (dataset.date &lt; end_date)].copy()
+
+    dataset.drop_duplicates([&#39;date&#39;, &#39;label&#39;], keep=&#39;last&#39;, inplace=True)
+
+    # dataset[&#39;id_patient&#39;] = dataset[&#39;date&#39;].apply(lambda x : x.timetuple().tm_yday)
+    # dataset[&#39;duree&#39;] = 0
+    # dataset[&#39;evt&#39;] = dataset[&#39;label&#39;]
+    # dataset[&#39;nbjours&#39;] = dataset.date.apply(
+    #         lambda x: int(Candidate_Study.modulo_datetime(x.to_pydatetime(), dt.timedelta(days=1))))
+    #
+    # dataset = dataset[[&#39;id_patient&#39;, &#39;duree&#39;, &#39;evt&#39;, &#39;nbjours&#39;]]
+    #
+    #
+    # dataset.to_csv(&#39;./{}_hugo_dataset.csv&#39;.format(name), period_ts_index=False, sep=&#34;;&#34;)
+
+    return dataset</code></pre>
+                    </details>
+                </dd>
+                <dt id="Utils.plot_graph"><code class="name flex">
+                    <span>def <span class="ident">plot_graph</span></span>(<span>matrix, labels, plot=False)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def plot_graph(matrix, labels, plot=False):
+    rows, cols = np.where(matrix &gt; 0)
+
+    gr = nx.Graph()
+
+    for label in labels:
+        gr.add_node(label)
+
+    for i in range(len(rows)):
+        row = rows[i]
+        col = cols[i]
+
+        gr.add_edge(labels[row], labels[col], weight=matrix[row][col])
+
+    # gr.add_edges_from(edges)
+    # nx.draw(gr, node_size=500, labels=labels, with_labels=True)
+
+    if plot:
+        nx.draw(gr, node_size=800, with_labels=True)
+        plt.show()
+
+    return gr</code></pre>
+                    </details>
+                </dd>
+                <dt id="Utils.stringify_keys"><code class="name flex">
+                    <span>def <span class="ident">stringify_keys</span></span>(<span>d)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Convert a dict's keys to strings if they are not.</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def stringify_keys(d):
+    &#34;&#34;&#34;
+    Convert a dict&#39;s keys to strings if they are not.
+    &#34;&#34;&#34;
+    for key in d.keys():
+
+        # check inner dict
+        if isinstance(d[key], dict):
+            value = stringify_keys(d[key])
+        else:
+            value = d[key]
+
+        # convert nonstring to string if needed
+        if not isinstance(key, str):
+            try:
+                d[str(key)] = value
+            except Exception:
+                try:
+                    d[repr(key)] = value
+                except Exception:
+                    raise
+
+            # delete old key
+            del d[key]
+    return d</code></pre>
+                    </details>
+                </dd>
+                <dt id="Utils.univariate_clustering"><code class="name flex">
+                    <span>def <span class="ident">univariate_clustering</span></span>(<span>x)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>1d - Clustering
+                        :param x:
+                        :param quantile:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def univariate_clustering(x):
+    &#34;&#34;&#34;
+    1d - Clustering
+    :param x:
+    :param quantile:
+    :return:
+    &#34;&#34;&#34;
+
+    X = np.array(list(zip(x, np.zeros(len(x)))), dtype=np.int)
+
+    if len(X) &lt;= 2:
+        X.reshape(-1, 1)
+    bandwidth = estimate_bandwidth(X, quantile=0.3)
+    if bandwidth == 0:
+        return {}
+
+    ms = MeanShift(bandwidth=bandwidth, bin_seeding=False, cluster_all=False)
+    ms.fit(X)
+    labels = ms.labels_
+    # cluster_centers = ms.cluster_centers_
+
+    X = X[labels &gt;= 0]  # Filter &#39;-1&#39; label, outliers
+
+    labels = labels[labels &gt;= 0]  # Filter &#39;-1&#39; label, outliers
+
+    labels_unique = np.unique(labels)
+    n_clusters_ = len(labels_unique)
+
+    clusters = {}
+
+    for k in range(n_clusters_):
+        my_members = labels == k
+
+        cluster_array = X[my_members, 0]
+
+        # print(&#34;cluster {0}: {1}&#34;.format(k, cluster_array))
+
+        clusters[k] = cluster_array
+
+    sorted_clusters = dict(sorted(clusters.items(), key=lambda x: clusters[x[0]].mean()))
+
+    return sorted_clusters</code></pre>
+                    </details>
+                </dd>
+            </dl>
+        </section>
+        <section>
+        </section>
+    </article>
+    <nav id="sidebar">
+        <h1>Index</h1>
+        <div class="toc">
+            <ul></ul>
+        </div>
+        <ul id="index">
+            <li><h3><a href="#header-functions">Functions</a></h3>
+                <ul class="">
+                    <li><code><a href="#Utils.convert_data_XES_log" title="Utils.convert_data_XES_log">convert_data_XES_log</a></code>
+                    </li>
+                    <li><code><a href="#Utils.empty_folder" title="Utils.empty_folder">empty_folder</a></code></li>
+                    <li><code><a href="#Utils.find_occurrences"
+                                 title="Utils.find_occurrences">find_occurrences</a></code></li>
+                    <li><code><a href="#Utils.generate_random_color" title="Utils.generate_random_color">generate_random_color</a></code>
+                    </li>
+                    <li><code><a href="#Utils.pick_custom_dataset"
+                                 title="Utils.pick_custom_dataset">pick_custom_dataset</a></code></li>
+                    <li><code><a href="#Utils.pick_dataset" title="Utils.pick_dataset">pick_dataset</a></code></li>
+                    <li><code><a href="#Utils.plot_graph" title="Utils.plot_graph">plot_graph</a></code></li>
+                    <li><code><a href="#Utils.stringify_keys" title="Utils.stringify_keys">stringify_keys</a></code>
+                    </li>
+                    <li><code><a href="#Utils.univariate_clustering" title="Utils.univariate_clustering">univariate_clustering</a></code>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</main>
+<footer id="footer">
+    <p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

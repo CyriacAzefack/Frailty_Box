@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, minimum-scale=1" name="viewport"/>
+    <meta content="pdoc 0.9.2" name="generator"/>
+    <title>AutoEncoder.VariationalAutoEncoder API documentation</title>
+    <meta content="" name="description"/>
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css"
+          integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" rel="preload stylesheet">
+    <link as="style" crossorigin
+          href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css"
+          integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" rel="preload stylesheet">
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css"
+          rel="stylesheet preload">
+    <style>
+        :root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}
+    </style>
+    <style media="screen and (min-width: 700px)">
+        @media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}
+    </style>
+    <style media="print">
+        @media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}
+    </style>
+    <script crossorigin defer integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8="
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+    <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+    <article id="content">
+        <header>
+            <h1 class="title">Module <code>AutoEncoder.VariationalAutoEncoder</code></h1>
+        </header>
+        <section id="section-intro">
+            <details class="source">
+                <summary>
+                    <span>Expand source code</span>
+                </summary>
+                <pre><code class="python">import glob
+import logging
+from typing import Any
+
+import PIL
+import imageio
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+from IPython import display
+
+# import heva_theme
+# plt_heva_theme = pio.templates[&#39;heva_theme&#39;].layout.colorway
+
+tf.compat.v1.enable_eager_execution()
+logger = logging.getLogger(__name__)
+
+
+###### AUTO ENCODING ######
+
+def log_normal_pdf(sample, mean, logvar, raxis=1):
+    &#34;&#34;&#34;
+    Compute log normal density
+    &#34;&#34;&#34;
+    log2pi = tf.math.log(2. * np.pi)
+    return tf.reduce_sum(-.5 * ((sample - mean) ** 2. * tf.exp(-logvar) + logvar + log2pi), axis=raxis)
+
+
+def apply_gradients(optimizer, gradients, variables):
+    &#34;&#34;&#34;
+    Apply gradient to variables
+    &#34;&#34;&#34;
+    optimizer.apply_gradients(zip(gradients, variables))
+
+
+def compute_apply_gradients(model, x, optimizer):
+    with tf.GradientTape() as tape:
+        loss = model.compute_loss(x)
+    gradients = tape.gradient(loss, model.trainable_variables)
+    optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+
+
+def export_gif_file(anim_file, workspace):
+    &#34;&#34;&#34;
+    Export pictures to create a GIF (to vosualize encoding process)
+    &#34;&#34;&#34;
+    with imageio.get_writer(workspace + anim_file, mode=&#39;I&#39;) as writer:
+        filenames = glob.glob(f&#39;{workspace}image*.png&#39;)
+        filenames = sorted(filenames)
+        last = -1
+        for i, filename in enumerate(filenames):
+            frame = 2 * (i ** 0.5)
+            if round(frame) &gt; round(last):
+                last = frame
+            else:
+                continue
+            image = imageio.imread(filename)
+            writer.append_data(image)
+        image = imageio.imread(filename)
+        writer.append_data(image)
+
+
+def generate_and_save_images(model, epoch, test_input):
+    predictions = model.sample(test_input)
+    fig = plt.figure(figsize=(4, 4))
+
+    for i in range(predictions.shape[0]):
+        plt.subplot(4, 4, i + 1)
+        plt.imshow(predictions[i, :, :, 0], cmap=&#39;gray&#39;)
+        plt.axis(&#39;off&#39;)
+
+    # tight_layout minimizes the overlap between 2 sub-plots
+    plt.savefig(&#39;image_at_epoch_{:04d}.png&#39;.format(epoch))
+    plt.show()
+
+
+class AE(tf.keras.Model):
+    &#34;&#34;&#34;
+    Class to define an autoencoder (regular or denoising).
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        super().__init__()
+        self.name_model = &#39;AE&#39;
+
+    def compute_loss(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def sample(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def encode(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def decode(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def reparameterize(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def compute_gradients(self, x):
+        with tf.GradientTape() as tape:
+            loss = self.compute_loss(x)
+        return tape.gradient(loss, self.trainable_variables), loss
+
+    def display_image(self, epoch_no):
+        return PIL.Image.open(f&#39;../results/{self.name_model}/{self.name_model}_image_at_epoch_{epoch_no}.png&#39;)
+
+    def plot_loss(self, val_elbo_list: list, train_elbo_list: list, ref: str, show: bool = False):
+        &#34;&#34;&#34;
+        Plot the loss function (elbo values), for training and validation set.
+        Save image in &#39;../results/{self.name_model}/&#39; folder, with &#39;ref&#39; in filename.
+
+        :param val_elbo_list: list of elbo values of validation set
+        :param train_elbo_list: list of elbo values of training set
+        :param ref: ref of the iteration
+        :param show: If True, plot the graph in notebook.
+        &#34;&#34;&#34;
+        # Plot Elbo graph
+        list_x = [x + 1 for x in range(len(val_elbo_list))]
+        fig = plt.figure(figsize=(20, 5))
+        plt.plot(list_x, val_elbo_list, c=&#39;red&#39;, label=&#39;Loss - validation&#39;)
+        plt.plot(list_x, train_elbo_list, c=&#39;black&#39;, label=&#39;Loss - train&#39;)
+        fig.patch.set_facecolor(&#39;white&#39;)
+        plt.yscale(&#39;log&#39;)
+        plt.xticks((np.arange(0, max(list_x), step=10)))
+        plt.xlabel(&#39;Epochs&#39;)
+        plt.ylabel(&#39;Loss&#39;)
+        plt.legend()
+        plt.grid(True)
+        plt.savefig(f&#39;../results/{self.name_model}/Loss_{ref}_{self.name_model}.png&#39;)
+
+        if show == True:
+            plt.show()
+        else:
+            plt.close()
+
+    def plot_training_images(self, dae_data_validation: Any, x_logit: np.array, epoch: int):
+        &#34;&#34;&#34;
+        Plot image of validation input element and encoded/decoded output for comparison.
+
+        :param dae_data_validation: validation data
+        :param x_logit: array of decoded values
+        :param epoch: the actual epoch
+        &#34;&#34;&#34;
+        _, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+
+        ax1.imshow(dae_data_validation[0:self.num_examples_to_generate], cmap=&#39;gray&#39;)
+        ax1.axis(&#39;off&#39;)
+
+        ax2.imshow(x_logit[0:self.num_examples_to_generate], cmap=&#39;gray&#39;)
+        ax2.axis(&#39;off&#39;)
+        plt.savefig(f&#39;../results/{self.name_model}/image_at_epoch_{self.name_model}_{epoch}.png&#39;)
+
+    def train(self, optimizer: Any, train_dataset: Any, validation_dataset: Any, dae_data_validation: np.array,
+              latent_dim: int, epochs: int, batch_size: int, nb_features: int, ref: str,
+              early_stop_patience: int = 50, freq_print: int = 10, plot_test: bool = False, show: bool = False) -&gt; Any:
+        &#34;&#34;&#34;
+        Train autoencoder
+
+        :param optimizer: tf optimizer
+        :param train_dataset: tf dataset
+        :param validation_dataset: tf dataset
+        :param dae_data_validation: tf dataset
+        :param latent_dim: size of the latent space
+        :param epochs: number of epochs
+        :param batch_size: number of element for each batch
+        :param nb_features: number of features of input space
+        :param ref: reference for export names
+        :param early_stop_patience: number of iteration without improvement in validation set before stopping
+        :param freq_print: frequency for image plotting
+        :param plot_test: plot test images if True
+        :param show: show training results during training if True
+        :return: trained AE element
+
+        &#34;&#34;&#34;
+
+        self.freq_print = freq_print
+        self.batch_size = batch_size
+        self.nb_features = nb_features
+
+        self.num_examples_to_generate = min(self.batch_size, int(nb_features / 2))
+
+        elbo_list = []
+        train_elbo_list = []
+
+        early_stop_test = 0
+        loss_before = 1e10
+
+        for epoch in range(1, epochs + 1):
+
+            train_loss = tf.keras.metrics.Mean()
+
+            test_vector_for_generation = []
+
+            for train_x in train_dataset:
+                gradients, loss = self.compute_gradients(train_x)
+                apply_gradients(optimizer, gradients, self.trainable_variables)
+
+                train_loss(self.compute_loss(train_x))
+
+            loss = tf.keras.metrics.Mean()
+
+            for test_x in validation_dataset:
+                loss(self.compute_loss(test_x))
+
+                if self.name_model == &#39;VAE&#39;:
+                    mean, logvar = self.encode(test_x)
+                    z = self.reparameterize(mean, logvar)
+                else:
+                    z = self.encode(test_x)
+
+                test_vector_for_generation.append(z)
+
+            elbo = loss.result()
+            elbo_list.append(elbo)
+
+            train_elbo = train_loss.result()
+            train_elbo_list.append(train_elbo)
+
+            # Early stop
+            if elbo &gt; loss_before:
+                early_stop_test += 1
+                if early_stop_test &gt;= early_stop_patience:
+                    print(f&#39;early stop : {epoch}&#39;)
+                    # load json and create model
+                    json_file = open(&#39;model_encoder.json&#39;, &#39;r&#39;)
+                    loaded_model_json = json_file.read()
+                    json_file.close()
+                    self.inference_net = tf.keras.models.model_from_json(loaded_model_json)
+                    self.inference_net.build(input_shape=(batch_size, nb_features))
+                    json_file = open(&#39;model_decoder.json&#39;, &#39;r&#39;)
+                    loaded_model_json = json_file.read()
+                    json_file.close()
+                    self.generative_net = tf.keras.models.model_from_json(loaded_model_json)
+                    self.generative_net.build(input_shape=(batch_size, latent_dim))
+
+                    # load weights into new model
+                    self.inference_net.load_weights(&#34;model_encoder.h5&#34;)
+                    self.generative_net.load_weights(&#34;model_decoder.h5&#34;)
+                    print(&#34;Loaded model from disk&#34;)
+                    break
+            else:
+                early_stop_test = 0
+                loss_before = elbo
+                # serialize model to JSON
+                model_json_encoder = self.inference_net.to_json()
+                model_json_decoder = self.generative_net.to_json()
+                with open(&#34;model_encoder.json&#34;, &#34;w&#34;) as json_file:
+                    json_file.write(model_json_encoder)
+                with open(&#34;model_decoder.json&#34;, &#34;w&#34;) as json_file:
+                    json_file.write(model_json_decoder)
+                # serialize weights to HDF5
+                self.inference_net.save_weights(&#34;model_encoder.h5&#34;)
+                self.generative_net.save_weights(&#34;model_decoder.h5&#34;)
+
+            if epoch % freq_print == 0 and epoch &gt; 0:
+                display.clear_output(wait=False)
+                x_logit = self.decode(test_vector_for_generation, apply_sigmoid=True)
+
+                # Print
+                if show == True:
+                    print(f&#39;Epoch: {epoch} \nTrain set Loss: {train_elbo}, \nValidation set Loss: {elbo}&#39;)
+
+                # Plot image input and encoded/decoded
+                if plot_test == True:
+                    self.plot_training_images(dae_data_validation, x_logit, epoch)
+
+                # Plot ELBO
+                self.plot_loss(elbo_list, train_elbo_list, ref, show=show)
+
+        return self
+
+
+### VAE
+
+class VAE(AE):
+    &#34;&#34;&#34;
+    Class to define a variationnal autoencoder
+    &#34;&#34;&#34;
+
+    def __init__(self, latent_dim, nb_features):
+        super().__init__()
+        self.latent_dim = latent_dim
+        self.name_model = &#39;VAE&#39;
+        self.inference_net = tf.keras.Sequential(
+            [
+                tf.keras.layers.InputLayer(input_shape=(nb_features,), dtype=&#39;float32&#39;),
+                # tf.keras.layers.Dense(int(nb_features * 0.5), activation=&#39;relu&#39;),
+                tf.keras.layers.Dense(int(nb_features * 0.25), activation=&#39;relu&#39;),
+                tf.keras.layers.Dense(4 * latent_dim),
+                tf.keras.layers.Dense(latent_dim + latent_dim, activation=&#34;relu&#34;)
+            ]
+        )
+
+        self.generative_net = tf.keras.Sequential(
+            [
+                tf.keras.layers.InputLayer(input_shape=(latent_dim,)),
+                tf.keras.layers.InputLayer(input_shape=(2 * latent_dim,)),
+                tf.keras.layers.Dense(int(nb_features * 0.25), ),
+                # tf.keras.layers.Dense(int(nb_features * 0.5), activation=&#39;relu&#39;),
+                tf.keras.layers.Dense(nb_features, activation=&#34;sigmoid&#34;),
+            ]
+        )
+
+    def sample(self, eps=None):
+        if eps is None:
+            eps = tf.random.normal(shape=(100))
+        return self.decode(eps, apply_sigmoid=True)
+
+    def reparameterize(self, mean, logvar):
+        eps = tf.random.normal(shape=mean.shape)
+        return eps * tf.exp(logvar * .5) + mean
+
+    def encode(self, x):
+        mean, logvar = tf.split(self.inference_net(x), num_or_size_splits=2, axis=1)
+        return mean, logvar
+
+    def decode(self, z, apply_sigmoid=False):
+        logits = self.generative_net(z)
+        if apply_sigmoid:
+            probs = tf.sigmoid(logits)
+            return probs
+        return logits
+
+    def compute_loss(self, x):
+        mean, logvar = self.encode(x)
+        z = self.reparameterize(mean, logvar)
+        x_logit = self.decode(z)
+        x_logit = tf.cast(x_logit, tf.float32)
+
+        cross_ent = tf.nn.sigmoid_cross_entropy_with_logits(logits=x_logit, labels=x)
+
+        logpx_z = -tf.reduce_sum(cross_ent)
+        logpz = log_normal_pdf(z, 0., 0.)
+        logqz_x = log_normal_pdf(z, mean, logvar)
+
+        logpx_z = tf.cast(logpx_z, tf.float32)
+        logqz_x = tf.cast(logqz_x, tf.float32)
+        logpz = tf.cast(logpz, tf.float32)
+
+        return -tf.reduce_mean(logpx_z + logpz - logqz_x)</code></pre>
+            </details>
+        </section>
+        <section>
+        </section>
+        <section>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-functions">Functions</h2>
+            <dl>
+                <dt id="AutoEncoder.VariationalAutoEncoder.apply_gradients"><code class="name flex">
+                    <span>def <span
+                            class="ident">apply_gradients</span></span>(<span>optimizer, gradients, variables)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Apply gradient to variables</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def apply_gradients(optimizer, gradients, variables):
+    &#34;&#34;&#34;
+    Apply gradient to variables
+    &#34;&#34;&#34;
+    optimizer.apply_gradients(zip(gradients, variables))</code></pre>
+                    </details>
+                </dd>
+                <dt id="AutoEncoder.VariationalAutoEncoder.compute_apply_gradients"><code class="name flex">
+                    <span>def <span
+                            class="ident">compute_apply_gradients</span></span>(<span>model, x, optimizer)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def compute_apply_gradients(model, x, optimizer):
+    with tf.GradientTape() as tape:
+        loss = model.compute_loss(x)
+    gradients = tape.gradient(loss, model.trainable_variables)
+    optimizer.apply_gradients(zip(gradients, model.trainable_variables))</code></pre>
+                    </details>
+                </dd>
+                <dt id="AutoEncoder.VariationalAutoEncoder.export_gif_file"><code class="name flex">
+                    <span>def <span class="ident">export_gif_file</span></span>(<span>anim_file, workspace)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Export pictures to create a GIF (to vosualize encoding process)</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def export_gif_file(anim_file, workspace):
+    &#34;&#34;&#34;
+    Export pictures to create a GIF (to vosualize encoding process)
+    &#34;&#34;&#34;
+    with imageio.get_writer(workspace + anim_file, mode=&#39;I&#39;) as writer:
+        filenames = glob.glob(f&#39;{workspace}image*.png&#39;)
+        filenames = sorted(filenames)
+        last = -1
+        for i, filename in enumerate(filenames):
+            frame = 2 * (i ** 0.5)
+            if round(frame) &gt; round(last):
+                last = frame
+            else:
+                continue
+            image = imageio.imread(filename)
+            writer.append_data(image)
+        image = imageio.imread(filename)
+        writer.append_data(image)</code></pre>
+                    </details>
+                </dd>
+                <dt id="AutoEncoder.VariationalAutoEncoder.generate_and_save_images"><code class="name flex">
+                    <span>def <span
+                            class="ident">generate_and_save_images</span></span>(<span>model, epoch, test_input)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def generate_and_save_images(model, epoch, test_input):
+    predictions = model.sample(test_input)
+    fig = plt.figure(figsize=(4, 4))
+
+    for i in range(predictions.shape[0]):
+        plt.subplot(4, 4, i + 1)
+        plt.imshow(predictions[i, :, :, 0], cmap=&#39;gray&#39;)
+        plt.axis(&#39;off&#39;)
+
+    # tight_layout minimizes the overlap between 2 sub-plots
+    plt.savefig(&#39;image_at_epoch_{:04d}.png&#39;.format(epoch))
+    plt.show()</code></pre>
+                    </details>
+                </dd>
+                <dt id="AutoEncoder.VariationalAutoEncoder.log_normal_pdf"><code class="name flex">
+                    <span>def <span
+                            class="ident">log_normal_pdf</span></span>(<span>sample, mean, logvar, raxis=1)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Compute log normal density</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def log_normal_pdf(sample, mean, logvar, raxis=1):
+    &#34;&#34;&#34;
+    Compute log normal density
+    &#34;&#34;&#34;
+    log2pi = tf.math.log(2. * np.pi)
+    return tf.reduce_sum(-.5 * ((sample - mean) ** 2. * tf.exp(-logvar) + logvar + log2pi), axis=raxis)</code></pre>
+                    </details>
+                </dd>
+            </dl>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-classes">Classes</h2>
+            <dl>
+                <dt id="AutoEncoder.VariationalAutoEncoder.AE"><code class="flex name class">
+                    <span>class <span class="ident">AE</span></span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Class to define an autoencoder (regular or denoising).</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">class AE(tf.keras.Model):
+    &#34;&#34;&#34;
+    Class to define an autoencoder (regular or denoising).
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        super().__init__()
+        self.name_model = &#39;AE&#39;
+
+    def compute_loss(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def sample(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def encode(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def decode(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def reparameterize(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def compute_gradients(self, x):
+        with tf.GradientTape() as tape:
+            loss = self.compute_loss(x)
+        return tape.gradient(loss, self.trainable_variables), loss
+
+    def display_image(self, epoch_no):
+        return PIL.Image.open(f&#39;../results/{self.name_model}/{self.name_model}_image_at_epoch_{epoch_no}.png&#39;)
+
+    def plot_loss(self, val_elbo_list: list, train_elbo_list: list, ref: str, show: bool = False):
+        &#34;&#34;&#34;
+        Plot the loss function (elbo values), for training and validation set.
+        Save image in &#39;../results/{self.name_model}/&#39; folder, with &#39;ref&#39; in filename.
+
+        :param val_elbo_list: list of elbo values of validation set
+        :param train_elbo_list: list of elbo values of training set
+        :param ref: ref of the iteration
+        :param show: If True, plot the graph in notebook.
+        &#34;&#34;&#34;
+        # Plot Elbo graph
+        list_x = [x + 1 for x in range(len(val_elbo_list))]
+        fig = plt.figure(figsize=(20, 5))
+        plt.plot(list_x, val_elbo_list, c=&#39;red&#39;, label=&#39;Loss - validation&#39;)
+        plt.plot(list_x, train_elbo_list, c=&#39;black&#39;, label=&#39;Loss - train&#39;)
+        fig.patch.set_facecolor(&#39;white&#39;)
+        plt.yscale(&#39;log&#39;)
+        plt.xticks((np.arange(0, max(list_x), step=10)))
+        plt.xlabel(&#39;Epochs&#39;)
+        plt.ylabel(&#39;Loss&#39;)
+        plt.legend()
+        plt.grid(True)
+        plt.savefig(f&#39;../results/{self.name_model}/Loss_{ref}_{self.name_model}.png&#39;)
+
+        if show == True:
+            plt.show()
+        else:
+            plt.close()
+
+    def plot_training_images(self, dae_data_validation: Any, x_logit: np.array, epoch: int):
+        &#34;&#34;&#34;
+        Plot image of validation input element and encoded/decoded output for comparison.
+
+        :param dae_data_validation: validation data
+        :param x_logit: array of decoded values
+        :param epoch: the actual epoch
+        &#34;&#34;&#34;
+        _, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+
+        ax1.imshow(dae_data_validation[0:self.num_examples_to_generate], cmap=&#39;gray&#39;)
+        ax1.axis(&#39;off&#39;)
+
+        ax2.imshow(x_logit[0:self.num_examples_to_generate], cmap=&#39;gray&#39;)
+        ax2.axis(&#39;off&#39;)
+        plt.savefig(f&#39;../results/{self.name_model}/image_at_epoch_{self.name_model}_{epoch}.png&#39;)
+
+    def train(self, optimizer: Any, train_dataset: Any, validation_dataset: Any, dae_data_validation: np.array,
+              latent_dim: int, epochs: int, batch_size: int, nb_features: int, ref: str,
+              early_stop_patience: int = 50, freq_print: int = 10, plot_test: bool = False, show: bool = False) -&gt; Any:
+        &#34;&#34;&#34;
+        Train autoencoder
+
+        :param optimizer: tf optimizer
+        :param train_dataset: tf dataset
+        :param validation_dataset: tf dataset
+        :param dae_data_validation: tf dataset
+        :param latent_dim: size of the latent space
+        :param epochs: number of epochs
+        :param batch_size: number of element for each batch
+        :param nb_features: number of features of input space
+        :param ref: reference for export names
+        :param early_stop_patience: number of iteration without improvement in validation set before stopping
+        :param freq_print: frequency for image plotting
+        :param plot_test: plot test images if True
+        :param show: show training results during training if True
+        :return: trained AE element
+
+        &#34;&#34;&#34;
+
+        self.freq_print = freq_print
+        self.batch_size = batch_size
+        self.nb_features = nb_features
+
+        self.num_examples_to_generate = min(self.batch_size, int(nb_features / 2))
+
+        elbo_list = []
+        train_elbo_list = []
+
+        early_stop_test = 0
+        loss_before = 1e10
+
+        for epoch in range(1, epochs + 1):
+
+            train_loss = tf.keras.metrics.Mean()
+
+            test_vector_for_generation = []
+
+            for train_x in train_dataset:
+                gradients, loss = self.compute_gradients(train_x)
+                apply_gradients(optimizer, gradients, self.trainable_variables)
+
+                train_loss(self.compute_loss(train_x))
+
+            loss = tf.keras.metrics.Mean()
+
+            for test_x in validation_dataset:
+                loss(self.compute_loss(test_x))
+
+                if self.name_model == &#39;VAE&#39;:
+                    mean, logvar = self.encode(test_x)
+                    z = self.reparameterize(mean, logvar)
+                else:
+                    z = self.encode(test_x)
+
+                test_vector_for_generation.append(z)
+
+            elbo = loss.result()
+            elbo_list.append(elbo)
+
+            train_elbo = train_loss.result()
+            train_elbo_list.append(train_elbo)
+
+            # Early stop
+            if elbo &gt; loss_before:
+                early_stop_test += 1
+                if early_stop_test &gt;= early_stop_patience:
+                    print(f&#39;early stop : {epoch}&#39;)
+                    # load json and create model
+                    json_file = open(&#39;model_encoder.json&#39;, &#39;r&#39;)
+                    loaded_model_json = json_file.read()
+                    json_file.close()
+                    self.inference_net = tf.keras.models.model_from_json(loaded_model_json)
+                    self.inference_net.build(input_shape=(batch_size, nb_features))
+                    json_file = open(&#39;model_decoder.json&#39;, &#39;r&#39;)
+                    loaded_model_json = json_file.read()
+                    json_file.close()
+                    self.generative_net = tf.keras.models.model_from_json(loaded_model_json)
+                    self.generative_net.build(input_shape=(batch_size, latent_dim))
+
+                    # load weights into new model
+                    self.inference_net.load_weights(&#34;model_encoder.h5&#34;)
+                    self.generative_net.load_weights(&#34;model_decoder.h5&#34;)
+                    print(&#34;Loaded model from disk&#34;)
+                    break
+            else:
+                early_stop_test = 0
+                loss_before = elbo
+                # serialize model to JSON
+                model_json_encoder = self.inference_net.to_json()
+                model_json_decoder = self.generative_net.to_json()
+                with open(&#34;model_encoder.json&#34;, &#34;w&#34;) as json_file:
+                    json_file.write(model_json_encoder)
+                with open(&#34;model_decoder.json&#34;, &#34;w&#34;) as json_file:
+                    json_file.write(model_json_decoder)
+                # serialize weights to HDF5
+                self.inference_net.save_weights(&#34;model_encoder.h5&#34;)
+                self.generative_net.save_weights(&#34;model_decoder.h5&#34;)
+
+            if epoch % freq_print == 0 and epoch &gt; 0:
+                display.clear_output(wait=False)
+                x_logit = self.decode(test_vector_for_generation, apply_sigmoid=True)
+
+                # Print
+                if show == True:
+                    print(f&#39;Epoch: {epoch} \nTrain set Loss: {train_elbo}, \nValidation set Loss: {elbo}&#39;)
+
+                # Plot image input and encoded/decoded
+                if plot_test == True:
+                    self.plot_training_images(dae_data_validation, x_logit, epoch)
+
+                # Plot ELBO
+                self.plot_loss(elbo_list, train_elbo_list, ref, show=show)
+
+        return self</code></pre>
+                    </details>
+                    <h3>Ancestors</h3>
+                    <ul class="hlist">
+                        <li>tensorflow.python.keras.engine.training.Model</li>
+                        <li>tensorflow.python.keras.engine.network.Network</li>
+                        <li>tensorflow.python.keras.engine.base_layer.Layer</li>
+                        <li>tensorflow.python.module.module.Module</li>
+                        <li>tensorflow.python.training.tracking.tracking.AutoTrackable</li>
+                        <li>tensorflow.python.training.tracking.base.Trackable</li>
+                    </ul>
+                    <h3>Subclasses</h3>
+                    <ul class="hlist">
+                        <li><a href="#AutoEncoder.VariationalAutoEncoder.VAE"
+                               title="AutoEncoder.VariationalAutoEncoder.VAE">VAE</a></li>
+                    </ul>
+                    <h3>Methods</h3>
+                    <dl>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.compute_gradients"><code class="name flex">
+                            <span>def <span class="ident">compute_gradients</span></span>(<span>self, x)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def compute_gradients(self, x):
+    with tf.GradientTape() as tape:
+        loss = self.compute_loss(x)
+    return tape.gradient(loss, self.trainable_variables), loss</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.compute_loss"><code class="name flex">
+                            <span>def <span class="ident">compute_loss</span></span>(<span>self, *args, **kwargs)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def compute_loss(self, *args, **kwargs):
+    raise NotImplementedError</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.decode"><code class="name flex">
+                            <span>def <span class="ident">decode</span></span>(<span>self, *args, **kwargs)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def decode(self, *args, **kwargs):
+    raise NotImplementedError</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.display_image"><code class="name flex">
+                            <span>def <span class="ident">display_image</span></span>(<span>self, epoch_no)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def display_image(self, epoch_no):
+    return PIL.Image.open(f&#39;../results/{self.name_model}/{self.name_model}_image_at_epoch_{epoch_no}.png&#39;)</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.encode"><code class="name flex">
+                            <span>def <span class="ident">encode</span></span>(<span>self, *args, **kwargs)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def encode(self, *args, **kwargs):
+    raise NotImplementedError</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.plot_loss"><code class="name flex">
+                            <span>def <span class="ident">plot_loss</span></span>(<span>self, val_elbo_list: list, train_elbo_list: list, ref: str, show: bool = False)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Plot the loss function (elbo values), for training and validation set.
+                                Save image in '../results/{self.name_model}/' folder, with 'ref' in filename.</p>
+                                <p>:param val_elbo_list: list of elbo values of validation set
+                                    :param train_elbo_list: list of elbo values of training set
+                                    :param ref: ref of the iteration
+                                    :param show: If True, plot the graph in notebook.</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def plot_loss(self, val_elbo_list: list, train_elbo_list: list, ref: str, show: bool = False):
+    &#34;&#34;&#34;
+    Plot the loss function (elbo values), for training and validation set.
+    Save image in &#39;../results/{self.name_model}/&#39; folder, with &#39;ref&#39; in filename.
+
+    :param val_elbo_list: list of elbo values of validation set
+    :param train_elbo_list: list of elbo values of training set
+    :param ref: ref of the iteration
+    :param show: If True, plot the graph in notebook.
+    &#34;&#34;&#34;
+    # Plot Elbo graph
+    list_x = [x + 1 for x in range(len(val_elbo_list))]
+    fig = plt.figure(figsize=(20, 5))
+    plt.plot(list_x, val_elbo_list, c=&#39;red&#39;, label=&#39;Loss - validation&#39;)
+    plt.plot(list_x, train_elbo_list, c=&#39;black&#39;, label=&#39;Loss - train&#39;)
+    fig.patch.set_facecolor(&#39;white&#39;)
+    plt.yscale(&#39;log&#39;)
+    plt.xticks((np.arange(0, max(list_x), step=10)))
+    plt.xlabel(&#39;Epochs&#39;)
+    plt.ylabel(&#39;Loss&#39;)
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(f&#39;../results/{self.name_model}/Loss_{ref}_{self.name_model}.png&#39;)
+
+    if show == True:
+        plt.show()
+    else:
+        plt.close()</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.plot_training_images"><code class="name flex">
+                            <span>def <span class="ident">plot_training_images</span></span>(<span>self, dae_data_validation: Any, x_logit: <built-in function array>, epoch: int)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Plot image of validation input element and encoded/decoded output for
+                                comparison.</p>
+                                <p>:param dae_data_validation: validation data
+                                    :param x_logit: array of decoded values
+                                    :param epoch: the actual epoch</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def plot_training_images(self, dae_data_validation: Any, x_logit: np.array, epoch: int):
+    &#34;&#34;&#34;
+    Plot image of validation input element and encoded/decoded output for comparison.
+
+    :param dae_data_validation: validation data
+    :param x_logit: array of decoded values
+    :param epoch: the actual epoch
+    &#34;&#34;&#34;
+    _, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+
+    ax1.imshow(dae_data_validation[0:self.num_examples_to_generate], cmap=&#39;gray&#39;)
+    ax1.axis(&#39;off&#39;)
+
+    ax2.imshow(x_logit[0:self.num_examples_to_generate], cmap=&#39;gray&#39;)
+    ax2.axis(&#39;off&#39;)
+    plt.savefig(f&#39;../results/{self.name_model}/image_at_epoch_{self.name_model}_{epoch}.png&#39;)</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.reparameterize"><code class="name flex">
+                            <span>def <span
+                                    class="ident">reparameterize</span></span>(<span>self, *args, **kwargs)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def reparameterize(self, *args, **kwargs):
+    raise NotImplementedError</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.sample"><code class="name flex">
+                            <span>def <span class="ident">sample</span></span>(<span>self, *args, **kwargs)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def sample(self, *args, **kwargs):
+    raise NotImplementedError</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.AE.train"><code class="name flex">
+                            <span>def <span class="ident">train</span></span>(<span>self, optimizer: Any, train_dataset: Any, validation_dataset: Any, dae_data_validation: <built-in function array>, latent_dim: int, epochs: int, batch_size: int, nb_features: int, ref: str, early_stop_patience: int = 50, freq_print: int = 10, plot_test: bool = False, show: bool = False) ‑> Any</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Train autoencoder</p>
+                                <p>:param optimizer: tf optimizer
+                                    :param train_dataset: tf dataset
+                                    :param validation_dataset: tf dataset
+                                    :param dae_data_validation: tf dataset
+                                    :param latent_dim: size of the latent space
+                                    :param epochs: number of epochs
+                                    :param batch_size: number of element for each batch
+                                    :param nb_features: number of features of input space
+                                    :param ref: reference for export names
+                                    :param early_stop_patience: number of iteration without improvement in validation
+                                    set before stopping
+                                    :param freq_print: frequency for image plotting
+                                    :param plot_test: plot test images if True
+                                    :param show: show training results during training if True
+                                    :return: trained AE element</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def train(self, optimizer: Any, train_dataset: Any, validation_dataset: Any, dae_data_validation: np.array,
+          latent_dim: int, epochs: int, batch_size: int, nb_features: int, ref: str,
+          early_stop_patience: int = 50, freq_print: int = 10, plot_test: bool = False, show: bool = False) -&gt; Any:
+    &#34;&#34;&#34;
+    Train autoencoder
+
+    :param optimizer: tf optimizer
+    :param train_dataset: tf dataset
+    :param validation_dataset: tf dataset
+    :param dae_data_validation: tf dataset
+    :param latent_dim: size of the latent space
+    :param epochs: number of epochs
+    :param batch_size: number of element for each batch
+    :param nb_features: number of features of input space
+    :param ref: reference for export names
+    :param early_stop_patience: number of iteration without improvement in validation set before stopping
+    :param freq_print: frequency for image plotting
+    :param plot_test: plot test images if True
+    :param show: show training results during training if True
+    :return: trained AE element
+
+    &#34;&#34;&#34;
+
+    self.freq_print = freq_print
+    self.batch_size = batch_size
+    self.nb_features = nb_features
+
+    self.num_examples_to_generate = min(self.batch_size, int(nb_features / 2))
+
+    elbo_list = []
+    train_elbo_list = []
+
+    early_stop_test = 0
+    loss_before = 1e10
+
+    for epoch in range(1, epochs + 1):
+
+        train_loss = tf.keras.metrics.Mean()
+
+        test_vector_for_generation = []
+
+        for train_x in train_dataset:
+            gradients, loss = self.compute_gradients(train_x)
+            apply_gradients(optimizer, gradients, self.trainable_variables)
+
+            train_loss(self.compute_loss(train_x))
+
+        loss = tf.keras.metrics.Mean()
+
+        for test_x in validation_dataset:
+            loss(self.compute_loss(test_x))
+
+            if self.name_model == &#39;VAE&#39;:
+                mean, logvar = self.encode(test_x)
+                z = self.reparameterize(mean, logvar)
+            else:
+                z = self.encode(test_x)
+
+            test_vector_for_generation.append(z)
+
+        elbo = loss.result()
+        elbo_list.append(elbo)
+
+        train_elbo = train_loss.result()
+        train_elbo_list.append(train_elbo)
+
+        # Early stop
+        if elbo &gt; loss_before:
+            early_stop_test += 1
+            if early_stop_test &gt;= early_stop_patience:
+                print(f&#39;early stop : {epoch}&#39;)
+                # load json and create model
+                json_file = open(&#39;model_encoder.json&#39;, &#39;r&#39;)
+                loaded_model_json = json_file.read()
+                json_file.close()
+                self.inference_net = tf.keras.models.model_from_json(loaded_model_json)
+                self.inference_net.build(input_shape=(batch_size, nb_features))
+                json_file = open(&#39;model_decoder.json&#39;, &#39;r&#39;)
+                loaded_model_json = json_file.read()
+                json_file.close()
+                self.generative_net = tf.keras.models.model_from_json(loaded_model_json)
+                self.generative_net.build(input_shape=(batch_size, latent_dim))
+
+                # load weights into new model
+                self.inference_net.load_weights(&#34;model_encoder.h5&#34;)
+                self.generative_net.load_weights(&#34;model_decoder.h5&#34;)
+                print(&#34;Loaded model from disk&#34;)
+                break
+        else:
+            early_stop_test = 0
+            loss_before = elbo
+            # serialize model to JSON
+            model_json_encoder = self.inference_net.to_json()
+            model_json_decoder = self.generative_net.to_json()
+            with open(&#34;model_encoder.json&#34;, &#34;w&#34;) as json_file:
+                json_file.write(model_json_encoder)
+            with open(&#34;model_decoder.json&#34;, &#34;w&#34;) as json_file:
+                json_file.write(model_json_decoder)
+            # serialize weights to HDF5
+            self.inference_net.save_weights(&#34;model_encoder.h5&#34;)
+            self.generative_net.save_weights(&#34;model_decoder.h5&#34;)
+
+        if epoch % freq_print == 0 and epoch &gt; 0:
+            display.clear_output(wait=False)
+            x_logit = self.decode(test_vector_for_generation, apply_sigmoid=True)
+
+            # Print
+            if show == True:
+                print(f&#39;Epoch: {epoch} \nTrain set Loss: {train_elbo}, \nValidation set Loss: {elbo}&#39;)
+
+            # Plot image input and encoded/decoded
+            if plot_test == True:
+                self.plot_training_images(dae_data_validation, x_logit, epoch)
+
+            # Plot ELBO
+            self.plot_loss(elbo_list, train_elbo_list, ref, show=show)
+
+    return self</code></pre>
+                            </details>
+                        </dd>
+                    </dl>
+                </dd>
+                <dt id="AutoEncoder.VariationalAutoEncoder.VAE"><code class="flex name class">
+                    <span>class <span class="ident">VAE</span></span>
+                    <span>(</span><span>latent_dim, nb_features)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Class to define a variationnal autoencoder</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">class VAE(AE):
+    &#34;&#34;&#34;
+    Class to define a variationnal autoencoder
+    &#34;&#34;&#34;
+
+    def __init__(self, latent_dim, nb_features):
+        super().__init__()
+        self.latent_dim = latent_dim
+        self.name_model = &#39;VAE&#39;
+        self.inference_net = tf.keras.Sequential(
+            [
+                tf.keras.layers.InputLayer(input_shape=(nb_features,), dtype=&#39;float32&#39;),
+                # tf.keras.layers.Dense(int(nb_features * 0.5), activation=&#39;relu&#39;),
+                tf.keras.layers.Dense(int(nb_features * 0.25), activation=&#39;relu&#39;),
+                tf.keras.layers.Dense(4 * latent_dim),
+                tf.keras.layers.Dense(latent_dim + latent_dim, activation=&#34;relu&#34;)
+            ]
+        )
+
+        self.generative_net = tf.keras.Sequential(
+            [
+                tf.keras.layers.InputLayer(input_shape=(latent_dim,)),
+                tf.keras.layers.InputLayer(input_shape=(2 * latent_dim,)),
+                tf.keras.layers.Dense(int(nb_features * 0.25), ),
+                # tf.keras.layers.Dense(int(nb_features * 0.5), activation=&#39;relu&#39;),
+                tf.keras.layers.Dense(nb_features, activation=&#34;sigmoid&#34;),
+            ]
+        )
+
+    def sample(self, eps=None):
+        if eps is None:
+            eps = tf.random.normal(shape=(100))
+        return self.decode(eps, apply_sigmoid=True)
+
+    def reparameterize(self, mean, logvar):
+        eps = tf.random.normal(shape=mean.shape)
+        return eps * tf.exp(logvar * .5) + mean
+
+    def encode(self, x):
+        mean, logvar = tf.split(self.inference_net(x), num_or_size_splits=2, axis=1)
+        return mean, logvar
+
+    def decode(self, z, apply_sigmoid=False):
+        logits = self.generative_net(z)
+        if apply_sigmoid:
+            probs = tf.sigmoid(logits)
+            return probs
+        return logits
+
+    def compute_loss(self, x):
+        mean, logvar = self.encode(x)
+        z = self.reparameterize(mean, logvar)
+        x_logit = self.decode(z)
+        x_logit = tf.cast(x_logit, tf.float32)
+
+        cross_ent = tf.nn.sigmoid_cross_entropy_with_logits(logits=x_logit, labels=x)
+
+        logpx_z = -tf.reduce_sum(cross_ent)
+        logpz = log_normal_pdf(z, 0., 0.)
+        logqz_x = log_normal_pdf(z, mean, logvar)
+
+        logpx_z = tf.cast(logpx_z, tf.float32)
+        logqz_x = tf.cast(logqz_x, tf.float32)
+        logpz = tf.cast(logpz, tf.float32)
+
+        return -tf.reduce_mean(logpx_z + logpz - logqz_x)</code></pre>
+                    </details>
+                    <h3>Ancestors</h3>
+                    <ul class="hlist">
+                        <li><a href="#AutoEncoder.VariationalAutoEncoder.AE"
+                               title="AutoEncoder.VariationalAutoEncoder.AE">AE</a></li>
+                        <li>tensorflow.python.keras.engine.training.Model</li>
+                        <li>tensorflow.python.keras.engine.network.Network</li>
+                        <li>tensorflow.python.keras.engine.base_layer.Layer</li>
+                        <li>tensorflow.python.module.module.Module</li>
+                        <li>tensorflow.python.training.tracking.tracking.AutoTrackable</li>
+                        <li>tensorflow.python.training.tracking.base.Trackable</li>
+                    </ul>
+                    <h3>Methods</h3>
+                    <dl>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.VAE.compute_loss"><code class="name flex">
+                            <span>def <span class="ident">compute_loss</span></span>(<span>self, x)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def compute_loss(self, x):
+    mean, logvar = self.encode(x)
+    z = self.reparameterize(mean, logvar)
+    x_logit = self.decode(z)
+    x_logit = tf.cast(x_logit, tf.float32)
+
+    cross_ent = tf.nn.sigmoid_cross_entropy_with_logits(logits=x_logit, labels=x)
+
+    logpx_z = -tf.reduce_sum(cross_ent)
+    logpz = log_normal_pdf(z, 0., 0.)
+    logqz_x = log_normal_pdf(z, mean, logvar)
+
+    logpx_z = tf.cast(logpx_z, tf.float32)
+    logqz_x = tf.cast(logqz_x, tf.float32)
+    logpz = tf.cast(logpz, tf.float32)
+
+    return -tf.reduce_mean(logpx_z + logpz - logqz_x)</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.VAE.decode"><code class="name flex">
+                            <span>def <span
+                                    class="ident">decode</span></span>(<span>self, z, apply_sigmoid=False)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def decode(self, z, apply_sigmoid=False):
+    logits = self.generative_net(z)
+    if apply_sigmoid:
+        probs = tf.sigmoid(logits)
+        return probs
+    return logits</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.VAE.encode"><code class="name flex">
+                            <span>def <span class="ident">encode</span></span>(<span>self, x)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def encode(self, x):
+    mean, logvar = tf.split(self.inference_net(x), num_or_size_splits=2, axis=1)
+    return mean, logvar</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.VAE.reparameterize"><code class="name flex">
+                            <span>def <span class="ident">reparameterize</span></span>(<span>self, mean, logvar)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def reparameterize(self, mean, logvar):
+    eps = tf.random.normal(shape=mean.shape)
+    return eps * tf.exp(logvar * .5) + mean</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="AutoEncoder.VariationalAutoEncoder.VAE.sample"><code class="name flex">
+                            <span>def <span class="ident">sample</span></span>(<span>self, eps=None)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def sample(self, eps=None):
+    if eps is None:
+        eps = tf.random.normal(shape=(100))
+    return self.decode(eps, apply_sigmoid=True)</code></pre>
+                            </details>
+                        </dd>
+                    </dl>
+                    <h3>Inherited members</h3>
+                    <ul class="hlist">
+                        <li><code><b><a href="#AutoEncoder.VariationalAutoEncoder.AE"
+                                        title="AutoEncoder.VariationalAutoEncoder.AE">AE</a></b></code>:
+                            <ul class="hlist">
+                                <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.plot_loss"
+                                             title="AutoEncoder.VariationalAutoEncoder.AE.plot_loss">plot_loss</a></code>
+                                </li>
+                                <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.plot_training_images"
+                                             title="AutoEncoder.VariationalAutoEncoder.AE.plot_training_images">plot_training_images</a></code>
+                                </li>
+                                <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.train"
+                                             title="AutoEncoder.VariationalAutoEncoder.AE.train">train</a></code></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+        </section>
+    </article>
+    <nav id="sidebar">
+        <h1>Index</h1>
+        <div class="toc">
+            <ul></ul>
+        </div>
+        <ul id="index">
+            <li><h3>Super-module</h3>
+                <ul>
+                    <li><code><a href="index.html" title="AutoEncoder">AutoEncoder</a></code></li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-functions">Functions</a></h3>
+                <ul class="">
+                    <li><code><a href="#AutoEncoder.VariationalAutoEncoder.apply_gradients"
+                                 title="AutoEncoder.VariationalAutoEncoder.apply_gradients">apply_gradients</a></code>
+                    </li>
+                    <li><code><a href="#AutoEncoder.VariationalAutoEncoder.compute_apply_gradients"
+                                 title="AutoEncoder.VariationalAutoEncoder.compute_apply_gradients">compute_apply_gradients</a></code>
+                    </li>
+                    <li><code><a href="#AutoEncoder.VariationalAutoEncoder.export_gif_file"
+                                 title="AutoEncoder.VariationalAutoEncoder.export_gif_file">export_gif_file</a></code>
+                    </li>
+                    <li><code><a href="#AutoEncoder.VariationalAutoEncoder.generate_and_save_images"
+                                 title="AutoEncoder.VariationalAutoEncoder.generate_and_save_images">generate_and_save_images</a></code>
+                    </li>
+                    <li><code><a href="#AutoEncoder.VariationalAutoEncoder.log_normal_pdf"
+                                 title="AutoEncoder.VariationalAutoEncoder.log_normal_pdf">log_normal_pdf</a></code>
+                    </li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-classes">Classes</a></h3>
+                <ul>
+                    <li>
+                        <h4><code><a href="#AutoEncoder.VariationalAutoEncoder.AE"
+                                     title="AutoEncoder.VariationalAutoEncoder.AE">AE</a></code></h4>
+                        <ul class="">
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.compute_gradients"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.compute_gradients">compute_gradients</a></code>
+                            </li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.compute_loss"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.compute_loss">compute_loss</a></code>
+                            </li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.decode"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.decode">decode</a></code></li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.display_image"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.display_image">display_image</a></code>
+                            </li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.encode"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.encode">encode</a></code></li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.plot_loss"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.plot_loss">plot_loss</a></code>
+                            </li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.plot_training_images"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.plot_training_images">plot_training_images</a></code>
+                            </li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.reparameterize"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.reparameterize">reparameterize</a></code>
+                            </li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.sample"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.sample">sample</a></code></li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.AE.train"
+                                         title="AutoEncoder.VariationalAutoEncoder.AE.train">train</a></code></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h4><code><a href="#AutoEncoder.VariationalAutoEncoder.VAE"
+                                     title="AutoEncoder.VariationalAutoEncoder.VAE">VAE</a></code></h4>
+                        <ul class="">
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.VAE.compute_loss"
+                                         title="AutoEncoder.VariationalAutoEncoder.VAE.compute_loss">compute_loss</a></code>
+                            </li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.VAE.decode"
+                                         title="AutoEncoder.VariationalAutoEncoder.VAE.decode">decode</a></code></li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.VAE.encode"
+                                         title="AutoEncoder.VariationalAutoEncoder.VAE.encode">encode</a></code></li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.VAE.reparameterize"
+                                         title="AutoEncoder.VariationalAutoEncoder.VAE.reparameterize">reparameterize</a></code>
+                            </li>
+                            <li><code><a href="#AutoEncoder.VariationalAutoEncoder.VAE.sample"
+                                         title="AutoEncoder.VariationalAutoEncoder.VAE.sample">sample</a></code></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</main>
+<footer id="footer">
+    <p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

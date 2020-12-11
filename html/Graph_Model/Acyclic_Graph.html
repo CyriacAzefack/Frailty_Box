@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, minimum-scale=1" name="viewport"/>
+    <meta content="pdoc 0.9.2" name="generator"/>
+    <title>Graph_Model.Acyclic_Graph API documentation</title>
+    <meta content="" name="description"/>
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css"
+          integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" rel="preload stylesheet">
+    <link as="style" crossorigin
+          href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css"
+          integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" rel="preload stylesheet">
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css"
+          rel="stylesheet preload">
+    <style>
+        :root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}
+    </style>
+    <style media="screen and (min-width: 700px)">
+        @media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}
+    </style>
+    <style media="print">
+        @media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}
+    </style>
+    <script crossorigin defer integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8="
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+    <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+    <article id="content">
+        <header>
+            <h1 class="title">Module <code>Graph_Model.Acyclic_Graph</code></h1>
+        </header>
+        <section id="section-intro">
+            <details class="source">
+                <summary>
+                    <span>Expand source code</span>
+                </summary>
+                <pre><code class="python">import datetime as dt
+import sys
+from pprint import pprint
+from random import random
+from subprocess import check_call
+
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
+import pandas as pd
+import scipy.stats as st
+
+from Pattern_Mining.Candidate_Study import modulo_datetime
+
+
+# from Graph_Model import Build_Graph
+
+class Acyclic_Graph:
+    ID = 0
+    NB_PERIODS_SLIDING_WINDOW = dt.timedelta(days=30)
+    START_NODE = &#34;START PERIOD&#34;
+    NONE_NODE = &#34;END&#34;
+
+    def __init__(self, nodes, labels, period, prob_matrix, wait_matrix, activities_duration):
+        &#39;&#39;&#39;
+        Initialization of one Pattern_Graph
+        :param nodes: starts with &#34;START_PERIOD&#34;
+        :param labels: labels of the Pattern
+        :param period:
+        :param mu:
+        :param sigma:
+        :param prob_matrix:
+        :param wait_matrix:
+        &#39;&#39;&#39;
+
+        Acyclic_Graph.ID += 1
+
+        self.graph_nodes = nodes  # len(graph_nodes) = n
+        self.labels = labels  # len(labels) = l
+        self.graph_labels = labels + [Acyclic_Graph.NONE_NODE]  # len (graph_labels) = l + 1
+        self.period = period
+        self.sliding_time_window = Acyclic_Graph.NB_PERIODS_SLIDING_WINDOW
+        self.prob_matrix = prob_matrix  # size = (n x l+1)
+        self.time_matrix = wait_matrix  # size = (n x l+1)
+        self.activities_duration = activities_duration
+        self.ID = Acyclic_Graph.ID
+        self.graph = None
+        self.time_evo_prob_matrix = None
+        self.time_evo_time_matrix = None
+        self.time_evo_activties_duration = None
+
+    def display(self, output_folder, debug=False):
+
+        filename = &#39;graph&#39;
+
+        title = &#39;Period : &#39; + str(self.period) + &#39;\n&#39;
+        title += &#39;Activities : &#39; + &#39;-&#39;.join(self.labels) + &#39;\n&#39;
+
+        self.draw_directed_graph(filename=output_folder + filename,
+                                 title=title, debug=debug)
+
+    def draw_directed_graph(self, filename, title, debug=False):
+        &#39;&#39;&#39;
+        Draw the directed graph corresponding and save the image
+        :param graph_nodes: Nodes of the graph
+        :param prob_matrix: Transition distance_matrix
+        :param filename: File path where the graph image is saved
+        :param debug: If True, plot the image
+        :return:
+        &#39;&#39;&#39;
+        Q = pd.DataFrame(self.prob_matrix)
+        Q.columns = self.graph_labels
+        Q.index = self.graph_nodes
+        edges_wts = self.get_markov_edges(Q)
+
+        # create graph object
+        G = nx.MultiDiGraph()
+
+        # graph_nodes correspond to states
+        # G.add_nodes_from(self.graph_nodes)
+
+        G.graph[&#39;graph&#39;] = {&#39;label&#39;: title, &#39;labelloc&#39;: &#39;t&#39;, &#39;fontsize&#39;: &#39;20 &#39;, &#39;fontcolor&#39;: &#39;blue&#39;,
+                            &#39;fontname&#39;: &#39;times-bold&#39;}  # default
+        # edges represent transition probabilities
+        for k, prob in edges_wts.items():
+            tmp_origin, tmp_destination = k[0], k[1]
+
+            # Add Origin Node
+            if tmp_origin == Acyclic_Graph.START_NODE:
+                G.add_node(tmp_origin, color=&#39;black&#39;, style=&#39;filled&#39;, fillcolor=&#39;red&#39;)
+            else:
+                G.add_node(tmp_origin, color=&#39;green&#39;)
+
+            # Add Destination Node
+            if tmp_destination == Acyclic_Graph.NONE_NODE:
+                G.add_node(tmp_destination, color=&#39;black&#39;, style=&#39;filled&#39;, fillcolor=&#39;blue&#39;)
+            else:
+
+                G.add_node(tmp_destination, color=&#39;green&#39;)
+                # G.add_node(tmp_destination, color=&#39;green&#39;)
+
+            # Add Edge
+
+            G.add_edge(tmp_origin, tmp_destination, weight=prob, penwidth=2 if prob &gt; 0.5 else 1, label=prob,
+                       color=&#39;blue&#39; if prob &gt; 0.5 else &#39;black&#39;)
+
+            # Add Edge with waiting time label
+            # G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v &gt; 0.5 else 1, label=v,
+            #                 color=&#39;blue&#39; if v &gt; 0.5 else &#39;black&#39;,
+            #                 headlabel=self.time_matrix[self.graph_nodes.period_ts_index(tmp_origin)][self.labels.period_ts_index(destination_label)])
+        if debug:
+            print(&#39;Edges:&#39;)
+            pprint(G.edges(data=True))
+        # pprint(G.graph.get(&#39;graph&#39;, {}))
+
+        pos = nx.drawing.nx_pydot.graphviz_layout(G, prog=&#39;dot&#39;)
+        nx.draw_networkx(G, pos)
+
+        # create edge labels for jupyter plot but is not necessary
+        edge_labels = {(n1, n2): d[&#39;label&#39;] for n1, n2, d in G.edges(data=True)}
+
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
+        nx.drawing.nx_pydot.write_dot(G, filename + &#39;.dot&#39;)
+        check_call([&#39;dot&#39;, &#39;-Tpng&#39;, filename + &#39;.dot&#39;, &#39;-o&#39;, filename + &#39;.png&#39;])
+        self.graph = G
+        if debug:
+            plt.clf()
+            plt.axis(&#39;off&#39;)
+            img = mpimg.imread(filename + &#39;.png&#39;)
+            plt.imshow(img)
+            plt.show()
+
+    def get_markov_edges(self, Q):
+        &#39;&#39;&#39;
+        Return the edges of the graph
+        :param Q:
+        :return:
+        &#39;&#39;&#39;
+        edges = {}
+        for label in Q.columns:
+            for graph_node in Q.index:
+                if Q.loc[graph_node, label] != 0:
+                    # Build the name of the transition
+                    id = &#39;&#39;
+                    if graph_node != Acyclic_Graph.START_NODE:
+                        id = graph_node[graph_node.rindex(&#39;_&#39;) + 1:]
+
+                    next_graph_node = label
+                    if label != Acyclic_Graph.NONE_NODE:
+                        next_graph_node = label + &#39;_&#39; + id + str(self.labels.index(label))
+                    edges[(graph_node, next_graph_node)] = round(Q.loc[graph_node, label], 3)
+        return edges
+
+    def get_prob_matrix(self):
+        return self.prob_matrix
+
+    def get_time_matrix(self):
+        return self.time_matrix
+
+    def get_activities_duration(self):
+        return self.activities_duration
+
+    def get_nodes(self):
+        return self.graph_nodes
+
+    def simulate(self, start_date, end_date):
+        &#34;&#34;&#34;
+        Simulate the current graph for the given period of time
+        :param start_date:
+        :param end_date:
+        :return: simulation results
+        &#34;&#34;&#34;
+        # self.extrapolate_time_evolution(start_date)
+        # prob_matrix, time_matrix = self.get_date_status(start_date)
+        # time_matrix = self.time_matrix
+
+        prob_matrix, time_matrix, activities_duration = self.prob_matrix, self.time_matrix, self.activities_duration
+
+        l = len(self.graph_labels)
+        n = len(self.graph_nodes)
+
+        simulation_results = pd.DataFrame(columns=[&#34;date&#34;, &#34;end_date&#34;, &#34;label&#34;])
+
+        current_state = Acyclic_Graph.START_NODE
+        current_date = start_date
+
+        while current_date &lt; end_date:
+            state_index = self.graph_nodes.index(current_state)
+            row = prob_matrix[state_index, :]
+            cs_row = np.cumsum(row)
+
+            # Pick a random number between 0 -- 1
+            rand = random()
+            destination_index = None
+
+            for index in range(l):
+                if rand &lt;= cs_row[index]:
+                    destination_index = index
+                    break
+
+            if destination_index is None or destination_index == l - 1:  # We reached one end of the graph
+                destination_state = Acyclic_Graph.START_NODE  # Come back to the beginning
+
+                # We move to the start of the next period
+                destination_date = current_date + dt.timedelta(
+                    seconds=self.period.total_seconds() - modulo_datetime(current_date, self.period))
+
+            else:
+                # Turn the column label to a node name
+                destination_label = self.graph_labels[destination_index]
+                current_id = &#39;&#39;
+                if current_state != Acyclic_Graph.START_NODE:
+                    current_id = current_state[current_state.rindex(&#39;_&#39;) + 1:]
+
+                destination_state = destination_label + &#39;_&#39; + current_id + str(self.labels.index(destination_label))
+
+                # Waiting Time distribution
+                waiting_tuple = time_matrix[state_index][destination_index]
+                waiting_dist_name = waiting_tuple[0]
+                waiting_param = waiting_tuple[1:][0]
+                waiting_dist = getattr(st, waiting_dist_name)
+                waiting_arg = waiting_param[:-2]
+                waiting_loc = waiting_param[-2]
+                waiting_scale = waiting_param[-1]
+
+                # Activity duration Time distribution
+                activity_duration = self.activities_duration[self.graph_nodes.index(destination_state)]
+                duration_dist_name = activity_duration[0]
+                duration_param = activity_duration[1:][0]
+                duration_dist = getattr(st, duration_dist_name)
+                duration_arg = duration_param[:-2]
+                duration_loc = duration_param[-2]
+                duration_scale = duration_param[-1]
+
+                # Compute time intervals to avoid concurrency
+
+                while True:
+
+                    waiting_time = int(waiting_dist.rvs(loc=waiting_loc, scale=waiting_scale, *waiting_arg))
+                    duration_time = int(duration_dist.rvs(loc=duration_loc, scale=duration_scale, *duration_arg))
+
+                    try:
+                        activity_start_date = current_date + dt.timedelta(seconds=waiting_time)
+                        activity_end_date = activity_start_date + dt.timedelta(seconds=duration_time)
+
+                        break
+                    except ValueError as er:
+                        print(&#34;OOOps ! Date Overflow. Let&#39;s try again...&#34;)
+
+                simulation_results.loc[len(simulation_results)] = [activity_start_date, activity_end_date,
+                                                                   destination_label]
+                destination_date = activity_end_date
+
+            current_state = destination_state
+            current_date = destination_date
+
+        return simulation_results
+
+    def compute_time_evolution(self, data, nb_patterns):
+        &#39;&#39;&#39;
+        Compute the pattern time evolution by sliding a time window through the original data
+        :param data:
+        :return:
+        &#39;&#39;&#39;
+
+        n = len(self.graph_nodes)
+        l = len(self.graph_labels)
+        nb_days_per_periods = self.period.days
+
+        start_date = data.date.min().to_pydatetime()
+        # We start at the beginning of the first period
+        start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
+        end_date = data.date.max().to_pydatetime()
+
+        time_evo_prob_matrix = [
+            [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + &#39;D&#39;),
+                          columns=[&#39;probability&#39;]).fillna(0) for j in range(l)] for i in
+            range(n)]  # Date as period_ts_index
+
+        time_evo_time_matrix = [
+            [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + &#39;D&#39;),
+                          columns=[&#39;mean_time&#39;, &#39;sigma_time&#39;]).fillna(0) for j in range(l)] for i in
+            range(n)]  # Date as period_ts_index
+
+        time_evo_activties_duration = [
+            pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + &#39;D&#39;),
+                         columns=[&#39;mean_time&#39;, &#39;sigma_time&#39;]).fillna(0) for i in range(n)]
+
+        # We take the time window into account for the end_date
+        end_date = end_date - self.sliding_time_window
+
+        nb_periods = int((end_date - start_date).total_seconds() / self.period.total_seconds()) + 1
+
+        period_index = 0
+        current_start_date = start_date
+
+        while current_start_date &lt; end_date:
+            current_end_date = current_start_date + self.sliding_time_window
+            sub_graph = Build_Graph.build_graph(data, labels=self.labels, period=self.period,
+                                                start_date=current_start_date, end_date=current_end_date,
+                                                display_graph=False)
+
+            if len(sub_graph) == 0:
+                current_start_date += self.period
+                continue
+
+            sub_graph = sub_graph[0]  # Since we have one time_description, we have one graph to fetch
+            sub_graph_prob_matrix = sub_graph.get_prob_matrix()
+            sub_graph_time_matrix = sub_graph.get_time_matrix()
+            sub_graph_activities_duration = sub_graph.get_activities_duration()
+            sub_graph_nodes = sub_graph.get_nodes()
+
+            # Fill time_evo_prob_matrix and time_evo_time_matrix
+            for sub_graph_node_i in sub_graph_nodes:
+                sub_i = sub_graph_nodes.index(sub_graph_node_i)
+                i = self.graph_nodes.index(sub_graph_node_i)
+
+                act_duration_df = time_evo_activties_duration[i]
+                act_duration_df.loc[current_start_date] = sub_graph_activities_duration[sub_i]
+                for label in self.graph_labels:
+
+                    j = self.graph_labels.index(label)
+
+                    prob_df = time_evo_prob_matrix[i][j]
+                    prob_df.loc[current_start_date] = sub_graph_prob_matrix[sub_i, j]
+
+                    if sub_graph_time_matrix[sub_i][j]:
+                        time_df = time_evo_time_matrix[i][j]
+
+                        # TODO : Manage with other distribution than &#39;norm&#39;
+                        time_df.loc[current_start_date] = [sub_graph_time_matrix[sub_i][j][1][0],
+                                                           sub_graph_time_matrix[sub_i][j][1][1]]
+
+            current_start_date += self.period
+            evolution_percentage = round(100 * (period_index + 1) / nb_periods, 2)
+            sys.stdout.write(&#34;\r{} %% of time evolution computed for the GRAPH N°{}/{}!!&#34;.format(evolution_percentage,
+                                                                                                 self.ID, nb_patterns))
+            sys.stdout.flush()
+            period_index += 1
+        sys.stdout.write(&#34;\n&#34;)
+
+        self.time_evo_prob_matrix = time_evo_prob_matrix
+        self.time_evo_time_matrix = time_evo_time_matrix
+        self.time_evo_activties_duration = time_evo_activties_duration
+
+    def get_date_status(self, start_date):
+        # We start at the beginning of the first period
+        start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
+
+        n = len(self.graph_nodes)
+        l = len(self.graph_labels)
+
+        prob_matrix = [[self.time_evo_prob_matrix[i][j].loc[start_date, &#34;probability&#34;] for j in range(l)] for i in
+                       range(n)]
+        prob_matrix = np.array(prob_matrix)
+        prob_matrix.reshape((n, l))
+
+        time_matrix = [[self.time_evo_time_matrix[i][j].loc[start_date, [&#34;mean_time&#34;, &#34;sigma_time&#34;]].values
+                        for j in range(l)] for i in range(n)]
+        for i in range(n):
+            for j in range(l):
+                time_matrix[i][j] = (&#39;norm&#39;, time_matrix[i][j])
+
+        activities_duration = [self.time_evo_activties_duration[i]]
+
+        return prob_matrix, time_matrix
+
+    @staticmethod
+    def node2label(txt):
+        &#39;&#39;&#39;
+        turn a node name to the label name
+        :param str:
+        :return:
+        &#39;&#39;&#39;
+        return txt[0: txt.rindex(&#39;_&#39;)]  # We remove everything after the last &#39;_&#39;</code></pre>
+            </details>
+        </section>
+        <section>
+        </section>
+        <section>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-functions">Functions</h2>
+            <dl>
+                <dt id="Graph_Model.Acyclic_Graph.random"><code class="name flex">
+                    <span>def <span class="ident">random</span></span>(<span>)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>random() -&gt; x in the interval [0, 1).</p></div>
+                </dd>
+            </dl>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-classes">Classes</h2>
+            <dl>
+                <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph"><code class="flex name class">
+                    <span>class <span class="ident">Acyclic_Graph</span></span>
+                    <span>(</span><span>nodes, labels, period, prob_matrix, wait_matrix, activities_duration)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Initialization of one Pattern_Graph
+                        :param nodes: starts with "START_PERIOD"
+                        :param labels: labels of the Pattern
+                        :param period:
+                        :param mu:
+                        :param sigma:
+                        :param prob_matrix:
+                        :param wait_matrix:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">class Acyclic_Graph:
+    ID = 0
+    NB_PERIODS_SLIDING_WINDOW = dt.timedelta(days=30)
+    START_NODE = &#34;START PERIOD&#34;
+    NONE_NODE = &#34;END&#34;
+
+    def __init__(self, nodes, labels, period, prob_matrix, wait_matrix, activities_duration):
+        &#39;&#39;&#39;
+        Initialization of one Pattern_Graph
+        :param nodes: starts with &#34;START_PERIOD&#34;
+        :param labels: labels of the Pattern
+        :param period:
+        :param mu:
+        :param sigma:
+        :param prob_matrix:
+        :param wait_matrix:
+        &#39;&#39;&#39;
+
+        Acyclic_Graph.ID += 1
+
+        self.graph_nodes = nodes  # len(graph_nodes) = n
+        self.labels = labels  # len(labels) = l
+        self.graph_labels = labels + [Acyclic_Graph.NONE_NODE]  # len (graph_labels) = l + 1
+        self.period = period
+        self.sliding_time_window = Acyclic_Graph.NB_PERIODS_SLIDING_WINDOW
+        self.prob_matrix = prob_matrix  # size = (n x l+1)
+        self.time_matrix = wait_matrix  # size = (n x l+1)
+        self.activities_duration = activities_duration
+        self.ID = Acyclic_Graph.ID
+        self.graph = None
+        self.time_evo_prob_matrix = None
+        self.time_evo_time_matrix = None
+        self.time_evo_activties_duration = None
+
+    def display(self, output_folder, debug=False):
+
+        filename = &#39;graph&#39;
+
+        title = &#39;Period : &#39; + str(self.period) + &#39;\n&#39;
+        title += &#39;Activities : &#39; + &#39;-&#39;.join(self.labels) + &#39;\n&#39;
+
+        self.draw_directed_graph(filename=output_folder + filename,
+                                 title=title, debug=debug)
+
+    def draw_directed_graph(self, filename, title, debug=False):
+        &#39;&#39;&#39;
+        Draw the directed graph corresponding and save the image
+        :param graph_nodes: Nodes of the graph
+        :param prob_matrix: Transition distance_matrix
+        :param filename: File path where the graph image is saved
+        :param debug: If True, plot the image
+        :return:
+        &#39;&#39;&#39;
+        Q = pd.DataFrame(self.prob_matrix)
+        Q.columns = self.graph_labels
+        Q.index = self.graph_nodes
+        edges_wts = self.get_markov_edges(Q)
+
+        # create graph object
+        G = nx.MultiDiGraph()
+
+        # graph_nodes correspond to states
+        # G.add_nodes_from(self.graph_nodes)
+
+        G.graph[&#39;graph&#39;] = {&#39;label&#39;: title, &#39;labelloc&#39;: &#39;t&#39;, &#39;fontsize&#39;: &#39;20 &#39;, &#39;fontcolor&#39;: &#39;blue&#39;,
+                            &#39;fontname&#39;: &#39;times-bold&#39;}  # default
+        # edges represent transition probabilities
+        for k, prob in edges_wts.items():
+            tmp_origin, tmp_destination = k[0], k[1]
+
+            # Add Origin Node
+            if tmp_origin == Acyclic_Graph.START_NODE:
+                G.add_node(tmp_origin, color=&#39;black&#39;, style=&#39;filled&#39;, fillcolor=&#39;red&#39;)
+            else:
+                G.add_node(tmp_origin, color=&#39;green&#39;)
+
+            # Add Destination Node
+            if tmp_destination == Acyclic_Graph.NONE_NODE:
+                G.add_node(tmp_destination, color=&#39;black&#39;, style=&#39;filled&#39;, fillcolor=&#39;blue&#39;)
+            else:
+
+                G.add_node(tmp_destination, color=&#39;green&#39;)
+                # G.add_node(tmp_destination, color=&#39;green&#39;)
+
+            # Add Edge
+
+            G.add_edge(tmp_origin, tmp_destination, weight=prob, penwidth=2 if prob &gt; 0.5 else 1, label=prob,
+                       color=&#39;blue&#39; if prob &gt; 0.5 else &#39;black&#39;)
+
+            # Add Edge with waiting time label
+            # G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v &gt; 0.5 else 1, label=v,
+            #                 color=&#39;blue&#39; if v &gt; 0.5 else &#39;black&#39;,
+            #                 headlabel=self.time_matrix[self.graph_nodes.period_ts_index(tmp_origin)][self.labels.period_ts_index(destination_label)])
+        if debug:
+            print(&#39;Edges:&#39;)
+            pprint(G.edges(data=True))
+        # pprint(G.graph.get(&#39;graph&#39;, {}))
+
+        pos = nx.drawing.nx_pydot.graphviz_layout(G, prog=&#39;dot&#39;)
+        nx.draw_networkx(G, pos)
+
+        # create edge labels for jupyter plot but is not necessary
+        edge_labels = {(n1, n2): d[&#39;label&#39;] for n1, n2, d in G.edges(data=True)}
+
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
+        nx.drawing.nx_pydot.write_dot(G, filename + &#39;.dot&#39;)
+        check_call([&#39;dot&#39;, &#39;-Tpng&#39;, filename + &#39;.dot&#39;, &#39;-o&#39;, filename + &#39;.png&#39;])
+        self.graph = G
+        if debug:
+            plt.clf()
+            plt.axis(&#39;off&#39;)
+            img = mpimg.imread(filename + &#39;.png&#39;)
+            plt.imshow(img)
+            plt.show()
+
+    def get_markov_edges(self, Q):
+        &#39;&#39;&#39;
+        Return the edges of the graph
+        :param Q:
+        :return:
+        &#39;&#39;&#39;
+        edges = {}
+        for label in Q.columns:
+            for graph_node in Q.index:
+                if Q.loc[graph_node, label] != 0:
+                    # Build the name of the transition
+                    id = &#39;&#39;
+                    if graph_node != Acyclic_Graph.START_NODE:
+                        id = graph_node[graph_node.rindex(&#39;_&#39;) + 1:]
+
+                    next_graph_node = label
+                    if label != Acyclic_Graph.NONE_NODE:
+                        next_graph_node = label + &#39;_&#39; + id + str(self.labels.index(label))
+                    edges[(graph_node, next_graph_node)] = round(Q.loc[graph_node, label], 3)
+        return edges
+
+    def get_prob_matrix(self):
+        return self.prob_matrix
+
+    def get_time_matrix(self):
+        return self.time_matrix
+
+    def get_activities_duration(self):
+        return self.activities_duration
+
+    def get_nodes(self):
+        return self.graph_nodes
+
+    def simulate(self, start_date, end_date):
+        &#34;&#34;&#34;
+        Simulate the current graph for the given period of time
+        :param start_date:
+        :param end_date:
+        :return: simulation results
+        &#34;&#34;&#34;
+        # self.extrapolate_time_evolution(start_date)
+        # prob_matrix, time_matrix = self.get_date_status(start_date)
+        # time_matrix = self.time_matrix
+
+        prob_matrix, time_matrix, activities_duration = self.prob_matrix, self.time_matrix, self.activities_duration
+
+        l = len(self.graph_labels)
+        n = len(self.graph_nodes)
+
+        simulation_results = pd.DataFrame(columns=[&#34;date&#34;, &#34;end_date&#34;, &#34;label&#34;])
+
+        current_state = Acyclic_Graph.START_NODE
+        current_date = start_date
+
+        while current_date &lt; end_date:
+            state_index = self.graph_nodes.index(current_state)
+            row = prob_matrix[state_index, :]
+            cs_row = np.cumsum(row)
+
+            # Pick a random number between 0 -- 1
+            rand = random()
+            destination_index = None
+
+            for index in range(l):
+                if rand &lt;= cs_row[index]:
+                    destination_index = index
+                    break
+
+            if destination_index is None or destination_index == l - 1:  # We reached one end of the graph
+                destination_state = Acyclic_Graph.START_NODE  # Come back to the beginning
+
+                # We move to the start of the next period
+                destination_date = current_date + dt.timedelta(
+                    seconds=self.period.total_seconds() - modulo_datetime(current_date, self.period))
+
+            else:
+                # Turn the column label to a node name
+                destination_label = self.graph_labels[destination_index]
+                current_id = &#39;&#39;
+                if current_state != Acyclic_Graph.START_NODE:
+                    current_id = current_state[current_state.rindex(&#39;_&#39;) + 1:]
+
+                destination_state = destination_label + &#39;_&#39; + current_id + str(self.labels.index(destination_label))
+
+                # Waiting Time distribution
+                waiting_tuple = time_matrix[state_index][destination_index]
+                waiting_dist_name = waiting_tuple[0]
+                waiting_param = waiting_tuple[1:][0]
+                waiting_dist = getattr(st, waiting_dist_name)
+                waiting_arg = waiting_param[:-2]
+                waiting_loc = waiting_param[-2]
+                waiting_scale = waiting_param[-1]
+
+                # Activity duration Time distribution
+                activity_duration = self.activities_duration[self.graph_nodes.index(destination_state)]
+                duration_dist_name = activity_duration[0]
+                duration_param = activity_duration[1:][0]
+                duration_dist = getattr(st, duration_dist_name)
+                duration_arg = duration_param[:-2]
+                duration_loc = duration_param[-2]
+                duration_scale = duration_param[-1]
+
+                # Compute time intervals to avoid concurrency
+
+                while True:
+
+                    waiting_time = int(waiting_dist.rvs(loc=waiting_loc, scale=waiting_scale, *waiting_arg))
+                    duration_time = int(duration_dist.rvs(loc=duration_loc, scale=duration_scale, *duration_arg))
+
+                    try:
+                        activity_start_date = current_date + dt.timedelta(seconds=waiting_time)
+                        activity_end_date = activity_start_date + dt.timedelta(seconds=duration_time)
+
+                        break
+                    except ValueError as er:
+                        print(&#34;OOOps ! Date Overflow. Let&#39;s try again...&#34;)
+
+                simulation_results.loc[len(simulation_results)] = [activity_start_date, activity_end_date,
+                                                                   destination_label]
+                destination_date = activity_end_date
+
+            current_state = destination_state
+            current_date = destination_date
+
+        return simulation_results
+
+    def compute_time_evolution(self, data, nb_patterns):
+        &#39;&#39;&#39;
+        Compute the pattern time evolution by sliding a time window through the original data
+        :param data:
+        :return:
+        &#39;&#39;&#39;
+
+        n = len(self.graph_nodes)
+        l = len(self.graph_labels)
+        nb_days_per_periods = self.period.days
+
+        start_date = data.date.min().to_pydatetime()
+        # We start at the beginning of the first period
+        start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
+        end_date = data.date.max().to_pydatetime()
+
+        time_evo_prob_matrix = [
+            [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + &#39;D&#39;),
+                          columns=[&#39;probability&#39;]).fillna(0) for j in range(l)] for i in
+            range(n)]  # Date as period_ts_index
+
+        time_evo_time_matrix = [
+            [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + &#39;D&#39;),
+                          columns=[&#39;mean_time&#39;, &#39;sigma_time&#39;]).fillna(0) for j in range(l)] for i in
+            range(n)]  # Date as period_ts_index
+
+        time_evo_activties_duration = [
+            pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + &#39;D&#39;),
+                         columns=[&#39;mean_time&#39;, &#39;sigma_time&#39;]).fillna(0) for i in range(n)]
+
+        # We take the time window into account for the end_date
+        end_date = end_date - self.sliding_time_window
+
+        nb_periods = int((end_date - start_date).total_seconds() / self.period.total_seconds()) + 1
+
+        period_index = 0
+        current_start_date = start_date
+
+        while current_start_date &lt; end_date:
+            current_end_date = current_start_date + self.sliding_time_window
+            sub_graph = Build_Graph.build_graph(data, labels=self.labels, period=self.period,
+                                                start_date=current_start_date, end_date=current_end_date,
+                                                display_graph=False)
+
+            if len(sub_graph) == 0:
+                current_start_date += self.period
+                continue
+
+            sub_graph = sub_graph[0]  # Since we have one time_description, we have one graph to fetch
+            sub_graph_prob_matrix = sub_graph.get_prob_matrix()
+            sub_graph_time_matrix = sub_graph.get_time_matrix()
+            sub_graph_activities_duration = sub_graph.get_activities_duration()
+            sub_graph_nodes = sub_graph.get_nodes()
+
+            # Fill time_evo_prob_matrix and time_evo_time_matrix
+            for sub_graph_node_i in sub_graph_nodes:
+                sub_i = sub_graph_nodes.index(sub_graph_node_i)
+                i = self.graph_nodes.index(sub_graph_node_i)
+
+                act_duration_df = time_evo_activties_duration[i]
+                act_duration_df.loc[current_start_date] = sub_graph_activities_duration[sub_i]
+                for label in self.graph_labels:
+
+                    j = self.graph_labels.index(label)
+
+                    prob_df = time_evo_prob_matrix[i][j]
+                    prob_df.loc[current_start_date] = sub_graph_prob_matrix[sub_i, j]
+
+                    if sub_graph_time_matrix[sub_i][j]:
+                        time_df = time_evo_time_matrix[i][j]
+
+                        # TODO : Manage with other distribution than &#39;norm&#39;
+                        time_df.loc[current_start_date] = [sub_graph_time_matrix[sub_i][j][1][0],
+                                                           sub_graph_time_matrix[sub_i][j][1][1]]
+
+            current_start_date += self.period
+            evolution_percentage = round(100 * (period_index + 1) / nb_periods, 2)
+            sys.stdout.write(&#34;\r{} %% of time evolution computed for the GRAPH N°{}/{}!!&#34;.format(evolution_percentage,
+                                                                                                 self.ID, nb_patterns))
+            sys.stdout.flush()
+            period_index += 1
+        sys.stdout.write(&#34;\n&#34;)
+
+        self.time_evo_prob_matrix = time_evo_prob_matrix
+        self.time_evo_time_matrix = time_evo_time_matrix
+        self.time_evo_activties_duration = time_evo_activties_duration
+
+    def get_date_status(self, start_date):
+        # We start at the beginning of the first period
+        start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
+
+        n = len(self.graph_nodes)
+        l = len(self.graph_labels)
+
+        prob_matrix = [[self.time_evo_prob_matrix[i][j].loc[start_date, &#34;probability&#34;] for j in range(l)] for i in
+                       range(n)]
+        prob_matrix = np.array(prob_matrix)
+        prob_matrix.reshape((n, l))
+
+        time_matrix = [[self.time_evo_time_matrix[i][j].loc[start_date, [&#34;mean_time&#34;, &#34;sigma_time&#34;]].values
+                        for j in range(l)] for i in range(n)]
+        for i in range(n):
+            for j in range(l):
+                time_matrix[i][j] = (&#39;norm&#39;, time_matrix[i][j])
+
+        activities_duration = [self.time_evo_activties_duration[i]]
+
+        return prob_matrix, time_matrix
+
+    @staticmethod
+    def node2label(txt):
+        &#39;&#39;&#39;
+        turn a node name to the label name
+        :param str:
+        :return:
+        &#39;&#39;&#39;
+        return txt[0: txt.rindex(&#39;_&#39;)]  # We remove everything after the last &#39;_&#39;</code></pre>
+                    </details>
+                    <h3>Class variables</h3>
+                    <dl>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.ID"><code class="name">var <span class="ident">ID</span></code>
+                        </dt>
+                        <dd>
+                            <div class="desc"></div>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.NB_PERIODS_SLIDING_WINDOW"><code class="name">var
+                            <span class="ident">NB_PERIODS_SLIDING_WINDOW</span></code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.NONE_NODE"><code class="name">var <span
+                                class="ident">NONE_NODE</span></code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.START_NODE"><code class="name">var <span
+                                class="ident">START_NODE</span></code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                        </dd>
+                    </dl>
+                    <h3>Static methods</h3>
+                    <dl>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.node2label"><code class="name flex">
+                            <span>def <span class="ident">node2label</span></span>(<span>txt)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>turn a node name to the label name
+                                :param str:
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">@staticmethod
+def node2label(txt):
+    &#39;&#39;&#39;
+    turn a node name to the label name
+    :param str:
+    :return:
+    &#39;&#39;&#39;
+    return txt[0: txt.rindex(&#39;_&#39;)]  # We remove everything after the last &#39;_&#39;</code></pre>
+                            </details>
+                        </dd>
+                    </dl>
+                    <h3>Methods</h3>
+                    <dl>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.compute_time_evolution"><code class="name flex">
+                            <span>def <span class="ident">compute_time_evolution</span></span>(<span>self, data, nb_patterns)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Compute the pattern time evolution by sliding a time window through the
+                                original data
+                                :param data:
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def compute_time_evolution(self, data, nb_patterns):
+    &#39;&#39;&#39;
+    Compute the pattern time evolution by sliding a time window through the original data
+    :param data:
+    :return:
+    &#39;&#39;&#39;
+
+    n = len(self.graph_nodes)
+    l = len(self.graph_labels)
+    nb_days_per_periods = self.period.days
+
+    start_date = data.date.min().to_pydatetime()
+    # We start at the beginning of the first period
+    start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
+    end_date = data.date.max().to_pydatetime()
+
+    time_evo_prob_matrix = [
+        [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + &#39;D&#39;),
+                      columns=[&#39;probability&#39;]).fillna(0) for j in range(l)] for i in
+        range(n)]  # Date as period_ts_index
+
+    time_evo_time_matrix = [
+        [pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + &#39;D&#39;),
+                      columns=[&#39;mean_time&#39;, &#39;sigma_time&#39;]).fillna(0) for j in range(l)] for i in
+        range(n)]  # Date as period_ts_index
+
+    time_evo_activties_duration = [
+        pd.DataFrame(index=pd.date_range(start_date, end_date, freq=str(nb_days_per_periods) + &#39;D&#39;),
+                     columns=[&#39;mean_time&#39;, &#39;sigma_time&#39;]).fillna(0) for i in range(n)]
+
+    # We take the time window into account for the end_date
+    end_date = end_date - self.sliding_time_window
+
+    nb_periods = int((end_date - start_date).total_seconds() / self.period.total_seconds()) + 1
+
+    period_index = 0
+    current_start_date = start_date
+
+    while current_start_date &lt; end_date:
+        current_end_date = current_start_date + self.sliding_time_window
+        sub_graph = Build_Graph.build_graph(data, labels=self.labels, period=self.period,
+                                            start_date=current_start_date, end_date=current_end_date,
+                                            display_graph=False)
+
+        if len(sub_graph) == 0:
+            current_start_date += self.period
+            continue
+
+        sub_graph = sub_graph[0]  # Since we have one time_description, we have one graph to fetch
+        sub_graph_prob_matrix = sub_graph.get_prob_matrix()
+        sub_graph_time_matrix = sub_graph.get_time_matrix()
+        sub_graph_activities_duration = sub_graph.get_activities_duration()
+        sub_graph_nodes = sub_graph.get_nodes()
+
+        # Fill time_evo_prob_matrix and time_evo_time_matrix
+        for sub_graph_node_i in sub_graph_nodes:
+            sub_i = sub_graph_nodes.index(sub_graph_node_i)
+            i = self.graph_nodes.index(sub_graph_node_i)
+
+            act_duration_df = time_evo_activties_duration[i]
+            act_duration_df.loc[current_start_date] = sub_graph_activities_duration[sub_i]
+            for label in self.graph_labels:
+
+                j = self.graph_labels.index(label)
+
+                prob_df = time_evo_prob_matrix[i][j]
+                prob_df.loc[current_start_date] = sub_graph_prob_matrix[sub_i, j]
+
+                if sub_graph_time_matrix[sub_i][j]:
+                    time_df = time_evo_time_matrix[i][j]
+
+                    # TODO : Manage with other distribution than &#39;norm&#39;
+                    time_df.loc[current_start_date] = [sub_graph_time_matrix[sub_i][j][1][0],
+                                                       sub_graph_time_matrix[sub_i][j][1][1]]
+
+        current_start_date += self.period
+        evolution_percentage = round(100 * (period_index + 1) / nb_periods, 2)
+        sys.stdout.write(&#34;\r{} %% of time evolution computed for the GRAPH N°{}/{}!!&#34;.format(evolution_percentage,
+                                                                                             self.ID, nb_patterns))
+        sys.stdout.flush()
+        period_index += 1
+    sys.stdout.write(&#34;\n&#34;)
+
+    self.time_evo_prob_matrix = time_evo_prob_matrix
+    self.time_evo_time_matrix = time_evo_time_matrix
+    self.time_evo_activties_duration = time_evo_activties_duration</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.display"><code class="name flex">
+                            <span>def <span
+                                    class="ident">display</span></span>(<span>self, output_folder, debug=False)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def display(self, output_folder, debug=False):
+
+    filename = &#39;graph&#39;
+
+    title = &#39;Period : &#39; + str(self.period) + &#39;\n&#39;
+    title += &#39;Activities : &#39; + &#39;-&#39;.join(self.labels) + &#39;\n&#39;
+
+    self.draw_directed_graph(filename=output_folder + filename,
+                             title=title, debug=debug)</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.draw_directed_graph"><code class="name flex">
+                            <span>def <span class="ident">draw_directed_graph</span></span>(<span>self, filename, title, debug=False)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Draw the directed graph corresponding and save the image
+                                :param graph_nodes: Nodes of the graph
+                                :param prob_matrix: Transition distance_matrix
+                                :param filename: File path where the graph image is saved
+                                :param debug: If True, plot the image
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def draw_directed_graph(self, filename, title, debug=False):
+    &#39;&#39;&#39;
+    Draw the directed graph corresponding and save the image
+    :param graph_nodes: Nodes of the graph
+    :param prob_matrix: Transition distance_matrix
+    :param filename: File path where the graph image is saved
+    :param debug: If True, plot the image
+    :return:
+    &#39;&#39;&#39;
+    Q = pd.DataFrame(self.prob_matrix)
+    Q.columns = self.graph_labels
+    Q.index = self.graph_nodes
+    edges_wts = self.get_markov_edges(Q)
+
+    # create graph object
+    G = nx.MultiDiGraph()
+
+    # graph_nodes correspond to states
+    # G.add_nodes_from(self.graph_nodes)
+
+    G.graph[&#39;graph&#39;] = {&#39;label&#39;: title, &#39;labelloc&#39;: &#39;t&#39;, &#39;fontsize&#39;: &#39;20 &#39;, &#39;fontcolor&#39;: &#39;blue&#39;,
+                        &#39;fontname&#39;: &#39;times-bold&#39;}  # default
+    # edges represent transition probabilities
+    for k, prob in edges_wts.items():
+        tmp_origin, tmp_destination = k[0], k[1]
+
+        # Add Origin Node
+        if tmp_origin == Acyclic_Graph.START_NODE:
+            G.add_node(tmp_origin, color=&#39;black&#39;, style=&#39;filled&#39;, fillcolor=&#39;red&#39;)
+        else:
+            G.add_node(tmp_origin, color=&#39;green&#39;)
+
+        # Add Destination Node
+        if tmp_destination == Acyclic_Graph.NONE_NODE:
+            G.add_node(tmp_destination, color=&#39;black&#39;, style=&#39;filled&#39;, fillcolor=&#39;blue&#39;)
+        else:
+
+            G.add_node(tmp_destination, color=&#39;green&#39;)
+            # G.add_node(tmp_destination, color=&#39;green&#39;)
+
+        # Add Edge
+
+        G.add_edge(tmp_origin, tmp_destination, weight=prob, penwidth=2 if prob &gt; 0.5 else 1, label=prob,
+                   color=&#39;blue&#39; if prob &gt; 0.5 else &#39;black&#39;)
+
+        # Add Edge with waiting time label
+        # G.add_edge(tmp_origin, tmp_destination, weight=v, penwidth=2 if v &gt; 0.5 else 1, label=v,
+        #                 color=&#39;blue&#39; if v &gt; 0.5 else &#39;black&#39;,
+        #                 headlabel=self.time_matrix[self.graph_nodes.period_ts_index(tmp_origin)][self.labels.period_ts_index(destination_label)])
+    if debug:
+        print(&#39;Edges:&#39;)
+        pprint(G.edges(data=True))
+    # pprint(G.graph.get(&#39;graph&#39;, {}))
+
+    pos = nx.drawing.nx_pydot.graphviz_layout(G, prog=&#39;dot&#39;)
+    nx.draw_networkx(G, pos)
+
+    # create edge labels for jupyter plot but is not necessary
+    edge_labels = {(n1, n2): d[&#39;label&#39;] for n1, n2, d in G.edges(data=True)}
+
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
+    nx.drawing.nx_pydot.write_dot(G, filename + &#39;.dot&#39;)
+    check_call([&#39;dot&#39;, &#39;-Tpng&#39;, filename + &#39;.dot&#39;, &#39;-o&#39;, filename + &#39;.png&#39;])
+    self.graph = G
+    if debug:
+        plt.clf()
+        plt.axis(&#39;off&#39;)
+        img = mpimg.imread(filename + &#39;.png&#39;)
+        plt.imshow(img)
+        plt.show()</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_activities_duration"><code
+                                class="name flex">
+                            <span>def <span class="ident">get_activities_duration</span></span>(<span>self)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def get_activities_duration(self):
+    return self.activities_duration</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_date_status"><code class="name flex">
+                            <span>def <span class="ident">get_date_status</span></span>(<span>self, start_date)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def get_date_status(self, start_date):
+    # We start at the beginning of the first period
+    start_date = start_date - dt.timedelta(seconds=modulo_datetime(start_date, self.period))
+
+    n = len(self.graph_nodes)
+    l = len(self.graph_labels)
+
+    prob_matrix = [[self.time_evo_prob_matrix[i][j].loc[start_date, &#34;probability&#34;] for j in range(l)] for i in
+                   range(n)]
+    prob_matrix = np.array(prob_matrix)
+    prob_matrix.reshape((n, l))
+
+    time_matrix = [[self.time_evo_time_matrix[i][j].loc[start_date, [&#34;mean_time&#34;, &#34;sigma_time&#34;]].values
+                    for j in range(l)] for i in range(n)]
+    for i in range(n):
+        for j in range(l):
+            time_matrix[i][j] = (&#39;norm&#39;, time_matrix[i][j])
+
+    activities_duration = [self.time_evo_activties_duration[i]]
+
+    return prob_matrix, time_matrix</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_markov_edges"><code class="name flex">
+                            <span>def <span class="ident">get_markov_edges</span></span>(<span>self, Q)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Return the edges of the graph
+                                :param Q:
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def get_markov_edges(self, Q):
+    &#39;&#39;&#39;
+    Return the edges of the graph
+    :param Q:
+    :return:
+    &#39;&#39;&#39;
+    edges = {}
+    for label in Q.columns:
+        for graph_node in Q.index:
+            if Q.loc[graph_node, label] != 0:
+                # Build the name of the transition
+                id = &#39;&#39;
+                if graph_node != Acyclic_Graph.START_NODE:
+                    id = graph_node[graph_node.rindex(&#39;_&#39;) + 1:]
+
+                next_graph_node = label
+                if label != Acyclic_Graph.NONE_NODE:
+                    next_graph_node = label + &#39;_&#39; + id + str(self.labels.index(label))
+                edges[(graph_node, next_graph_node)] = round(Q.loc[graph_node, label], 3)
+    return edges</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_nodes"><code class="name flex">
+                            <span>def <span class="ident">get_nodes</span></span>(<span>self)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def get_nodes(self):
+    return self.graph_nodes</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_prob_matrix"><code class="name flex">
+                            <span>def <span class="ident">get_prob_matrix</span></span>(<span>self)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def get_prob_matrix(self):
+    return self.prob_matrix</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_time_matrix"><code class="name flex">
+                            <span>def <span class="ident">get_time_matrix</span></span>(<span>self)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def get_time_matrix(self):
+    return self.time_matrix</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Graph_Model.Acyclic_Graph.Acyclic_Graph.simulate"><code class="name flex">
+                            <span>def <span
+                                    class="ident">simulate</span></span>(<span>self, start_date, end_date)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Simulate the current graph for the given period of time
+                                :param start_date:
+                                :param end_date:
+                                :return: simulation results</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def simulate(self, start_date, end_date):
+    &#34;&#34;&#34;
+    Simulate the current graph for the given period of time
+    :param start_date:
+    :param end_date:
+    :return: simulation results
+    &#34;&#34;&#34;
+    # self.extrapolate_time_evolution(start_date)
+    # prob_matrix, time_matrix = self.get_date_status(start_date)
+    # time_matrix = self.time_matrix
+
+    prob_matrix, time_matrix, activities_duration = self.prob_matrix, self.time_matrix, self.activities_duration
+
+    l = len(self.graph_labels)
+    n = len(self.graph_nodes)
+
+    simulation_results = pd.DataFrame(columns=[&#34;date&#34;, &#34;end_date&#34;, &#34;label&#34;])
+
+    current_state = Acyclic_Graph.START_NODE
+    current_date = start_date
+
+    while current_date &lt; end_date:
+        state_index = self.graph_nodes.index(current_state)
+        row = prob_matrix[state_index, :]
+        cs_row = np.cumsum(row)
+
+        # Pick a random number between 0 -- 1
+        rand = random()
+        destination_index = None
+
+        for index in range(l):
+            if rand &lt;= cs_row[index]:
+                destination_index = index
+                break
+
+        if destination_index is None or destination_index == l - 1:  # We reached one end of the graph
+            destination_state = Acyclic_Graph.START_NODE  # Come back to the beginning
+
+            # We move to the start of the next period
+            destination_date = current_date + dt.timedelta(
+                seconds=self.period.total_seconds() - modulo_datetime(current_date, self.period))
+
+        else:
+            # Turn the column label to a node name
+            destination_label = self.graph_labels[destination_index]
+            current_id = &#39;&#39;
+            if current_state != Acyclic_Graph.START_NODE:
+                current_id = current_state[current_state.rindex(&#39;_&#39;) + 1:]
+
+            destination_state = destination_label + &#39;_&#39; + current_id + str(self.labels.index(destination_label))
+
+            # Waiting Time distribution
+            waiting_tuple = time_matrix[state_index][destination_index]
+            waiting_dist_name = waiting_tuple[0]
+            waiting_param = waiting_tuple[1:][0]
+            waiting_dist = getattr(st, waiting_dist_name)
+            waiting_arg = waiting_param[:-2]
+            waiting_loc = waiting_param[-2]
+            waiting_scale = waiting_param[-1]
+
+            # Activity duration Time distribution
+            activity_duration = self.activities_duration[self.graph_nodes.index(destination_state)]
+            duration_dist_name = activity_duration[0]
+            duration_param = activity_duration[1:][0]
+            duration_dist = getattr(st, duration_dist_name)
+            duration_arg = duration_param[:-2]
+            duration_loc = duration_param[-2]
+            duration_scale = duration_param[-1]
+
+            # Compute time intervals to avoid concurrency
+
+            while True:
+
+                waiting_time = int(waiting_dist.rvs(loc=waiting_loc, scale=waiting_scale, *waiting_arg))
+                duration_time = int(duration_dist.rvs(loc=duration_loc, scale=duration_scale, *duration_arg))
+
+                try:
+                    activity_start_date = current_date + dt.timedelta(seconds=waiting_time)
+                    activity_end_date = activity_start_date + dt.timedelta(seconds=duration_time)
+
+                    break
+                except ValueError as er:
+                    print(&#34;OOOps ! Date Overflow. Let&#39;s try again...&#34;)
+
+            simulation_results.loc[len(simulation_results)] = [activity_start_date, activity_end_date,
+                                                               destination_label]
+            destination_date = activity_end_date
+
+        current_state = destination_state
+        current_date = destination_date
+
+    return simulation_results</code></pre>
+                            </details>
+                        </dd>
+                    </dl>
+                </dd>
+            </dl>
+        </section>
+    </article>
+    <nav id="sidebar">
+        <h1>Index</h1>
+        <div class="toc">
+            <ul></ul>
+        </div>
+        <ul id="index">
+            <li><h3>Super-module</h3>
+                <ul>
+                    <li><code><a href="index.html" title="Graph_Model">Graph_Model</a></code></li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-functions">Functions</a></h3>
+                <ul class="">
+                    <li><code><a href="#Graph_Model.Acyclic_Graph.random" title="Graph_Model.Acyclic_Graph.random">random</a></code>
+                    </li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-classes">Classes</a></h3>
+                <ul>
+                    <li>
+                        <h4><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph"
+                                     title="Graph_Model.Acyclic_Graph.Acyclic_Graph">Acyclic_Graph</a></code></h4>
+                        <ul class="">
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.ID"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.ID">ID</a></code></li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.NB_PERIODS_SLIDING_WINDOW"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.NB_PERIODS_SLIDING_WINDOW">NB_PERIODS_SLIDING_WINDOW</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.NONE_NODE"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.NONE_NODE">NONE_NODE</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.START_NODE"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.START_NODE">START_NODE</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.compute_time_evolution"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.compute_time_evolution">compute_time_evolution</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.display"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.display">display</a></code></li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.draw_directed_graph"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.draw_directed_graph">draw_directed_graph</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.get_activities_duration"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_activities_duration">get_activities_duration</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.get_date_status"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_date_status">get_date_status</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.get_markov_edges"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_markov_edges">get_markov_edges</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.get_nodes"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_nodes">get_nodes</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.get_prob_matrix"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_prob_matrix">get_prob_matrix</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.get_time_matrix"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.get_time_matrix">get_time_matrix</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.node2label"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.node2label">node2label</a></code>
+                            </li>
+                            <li><code><a href="#Graph_Model.Acyclic_Graph.Acyclic_Graph.simulate"
+                                         title="Graph_Model.Acyclic_Graph.Acyclic_Graph.simulate">simulate</a></code>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</main>
+<footer id="footer">
+    <p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

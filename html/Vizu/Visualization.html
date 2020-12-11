@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, minimum-scale=1" name="viewport"/>
+    <meta content="pdoc 0.9.2" name="generator"/>
+    <title>Vizu.Visualization API documentation</title>
+    <meta content="" name="description"/>
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css"
+          integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" rel="preload stylesheet">
+    <link as="style" crossorigin
+          href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css"
+          integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" rel="preload stylesheet">
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css"
+          rel="stylesheet preload">
+    <style>
+        :root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}
+    </style>
+    <style media="screen and (min-width: 700px)">
+        @media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}
+    </style>
+    <style media="print">
+        @media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}
+    </style>
+    <script crossorigin defer integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8="
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+    <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+    <article id="content">
+        <header>
+            <h1 class="title">Module <code>Vizu.Visualization</code></h1>
+        </header>
+        <section id="section-intro">
+            <details class="source">
+                <summary>
+                    <span>Expand source code</span>
+                </summary>
+                <pre><code class="python">import imageio
+import matplotlib
+import matplotlib.dates as dat
+import seaborn as sns
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.collections import LineCollection
+from numpy import random
+from tqdm import trange
+
+import Utils
+from Data_Drift import Drift_Detector
+from Pattern_Mining.Candidate_Study import modulo_datetime
+from Pattern_Mining.Pattern_Discovery import *
+
+sns.set_style(&#39;darkgrid&#39;)
+
+
+# plt.xkcd()
+
+
+def main():
+    dataset_name = &#39;aruba&#39;
+    #
+    sim_type = &#39;STATIC&#39;
+    tstep = 5
+    #
+    period = dt.timedelta(days=1)
+    dataset = pick_dataset(dataset_name, nb_days=-1)
+
+    path = &#34;C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/aruba/Simulation/DYNAMIC_tw_30&#34; \
+           &#34;/dataset_simulation_rep_6.csv &#34;
+    dataset = pick_custom_dataset(path, nb_days=-1)
+
+    dataset[&#39;relative_time&#39;] = dataset[&#39;date&#39;].apply(lambda x: modulo_datetime(x.to_pydatetime(), period) / 3600)
+    #
+    dataset[&#39;duration&#39;] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds())
+    #
+
+    plt.hist(dataset[dataset.label == &#39;housekeeping&#39;].relative_time)
+
+    plt.show()
+
+    plot_dataset = dataset.groupby([&#39;label&#39;]).count()
+    plot_dataset[&#39;label&#39;] = plot_dataset.index
+    plot_dataset.sort_values([&#39;end_date&#39;], ascending=False, inplace=True)
+
+    sns.barplot(x=&#34;end_date&#34;, y=&#34;label&#34;, data=plot_dataset,
+                label=&#34;label&#34;, color=&#34;b&#34;)
+
+    # plt.xscale(&#39;log&#39;)
+    plt.xlabel(&#39;Nombre d\&#39;occurrences&#39;)
+    plt.show()
+
+    # labels = [&#34;sleeping_begin&#34;, &#34;leave_home_begin&#34;, &#34;sleeping_end&#34;]
+    #
+    # dataset = dataset[dataset.label.isin(labels)]
+    #
+    # for label in labels :
+    #     sns.distplot(dataset[dataset.label == label].relative_time, bins=30, label=label, kde=False)
+    #
+    # plt.legend()
+    # plt.show()
+    #
+    #
+    # path = &#34;C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/3_drift_toy_data_7.csv&#34;
+    # dataset = pick_custom_dataset(path, nb_days=-1)
+
+    # tw = dt.timedelta(days=7)
+
+    # distribution_evolution(dataset, time_window_duration=tw, label=&#39;eating&#39;, output_folder=&#34;../output/videos&#34;)
+    #
+    # sim_file = f&#34;../output/{dataset_name}/Simulation/{sim_type}_step_{tstep}mn/dataset_simulation_rep_1.csv&#34;
+    #
+    # simu_dataset = pick_custom_dataset(path=sim_file)
+    #
+    # start_date = dataset.date.min().to_pydatetime()
+    #
+    # simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
+    #
+    real_graph = ActivityOccurrencesGraph(dataset_name, dataset, nb_days=-1)
+    #
+    plt.show()
+
+
+def visualize(data, start_date=None, end_date=None):
+    &#39;&#39;&#39;
+    Visualize the log log_dataset
+    :param data:
+    :param start_date:
+    :param end_date:
+    :return:
+    &#39;&#39;&#39;
+
+    if start_date is None:
+        start_date = data.date.min().to_pydatetime()
+
+    if end_date is None:
+        end_date = data.date.max().to_pydatetime()
+
+    data = data[(data.date &gt;= start_date) &amp; (data.date &lt;= end_date)].copy()
+    # Turn the log_dataset into an activity log_dataset
+
+    data[&#39;duration&#39;] = data[&#39;end_date&#39;] - data[&#39;date&#39;]
+    data[&#39;duration&#39;] = data[&#39;duration&#39;].apply(lambda x: x.total_seconds() / 60)
+
+    # print(data.describe())
+    # sns.distplot(data.duration)
+    # plt.show()
+
+    activities = list(data.groupby([&#39;label&#39;], as_index=False).agg({&#39;duration&#39;: &#39;sum&#39;}).sort_values(&#34;duration&#34;,
+                                                                                                   ascending=False).label.values)
+
+    # activities = list(data.label.unique())
+
+    df_data = pd.DataFrame(columns=[&#39;activity&#39;, &#39;start&#39;, &#39;end&#39;, &#39;level&#39;])
+
+    fig = plt.figure()
+    # fig.set_size_inches(1800 / 1200, 1, forward=False)
+    ax = fig.add_subplot(111)
+    xfmt = dat.DateFormatter(&#39;%d-%m-%y %H:%M&#39;)
+    ax.xaxis.set_major_formatter(xfmt)
+    ax = ax.xaxis_date()
+
+    for activity in activities:
+        lvl = activities.index(activity) * 5
+        data_activity = data[data.label == activity].copy()
+        data_activity[&#39;level&#39;] = lvl
+
+        date = data_activity.date.min().to_pydatetime()
+
+        data_activity.date = data_activity.date.dt.to_pydatetime()
+        data_activity.end_date = data_activity.end_date.dt.to_pydatetime()
+
+        color = random.rand(3, )
+        plt.text(dat.date2num(date), lvl, activity, fontsize=14)
+        ax = plt.hlines(data_activity.level, dat.date2num(data_activity.date), dat.date2num(data_activity.end_date),
+                        label=activity,
+                        linewidth=75, color=color)
+        # df_data = pd.concat([df_data, result], axis=0)
+    # plt.legend()
+
+    plt.savefig(&#39;out.png&#39;, transparent=True)
+    plt.show()
+
+    print(&#34;done&#34;)
+
+
+def plot_activity_occurrence_time(data, label, start_date=None, end_date=None, duration=True):
+    data = data[data.label == label].copy()
+
+    if not start_date:
+        start_date = data.date.min().to_pydatetime()
+
+    if not end_date:
+        end_date = data.date.max().to_pydatetime()
+
+    data = data[(data.date &gt;= start_date) &amp; (data.date &lt; end_date)].copy()
+
+    # Compute the timestamp of all the events
+    # Timestamp : Nb of seconds since the beginning of the day
+    data[&#39;day_date&#39;] = data[&#39;date&#39;].dt.date.apply(lambda x: dt.datetime.combine(x, dt.datetime.min.time()))
+    data[&#39;timestamp&#39;] = (data[&#39;date&#39;] - data[&#39;day_date&#39;]).apply(lambda x: x.total_seconds()) / 3600  # Hour in the day
+
+    # Duration in minutes
+    data[&#39;duration&#39;] = (data.end_date - data.date).apply(lambda x: x.total_seconds() / 60)
+
+    fig = plt.figure()
+    plt.plot(data.date, data.timestamp, &#39;bo&#39;)
+    # plt.legend()
+    plt.title(&#34;Occurrences of &#39;{}&#39;&#34;.format(label))
+    plt.xlabel(&#34;Date&#34;)
+    plt.ylabel(&#34;Hour of the day&#34;)
+    plt.xticks(rotation=45)
+
+    if duration:
+        fig = plt.figure()
+        plt.plot(data.timestamp, data.duration, &#39;bo&#39;)
+        plt.title(&#34;Occurrences and Duration of &#39;{}&#39;&#34;.format(label))
+        plt.ylabel(&#34;Duration (hour)&#34;)
+        plt.xlabel(&#34;Heure de la journée&#34;)
+
+    plt.show()
+
+    # plt.savefig(&#39;output/videos/foo.png&#39;)
+    # plt.close(fig)
+
+
+def plot_activiy_duration(data, label, start_date=None, end_date=None):
+    data = data[data.label == label].copy()
+
+    if not start_date:
+        start_date = data.date.min().to_pydatetime()
+
+    if not end_date:
+        end_date = data.date.max().to_pydatetime()
+
+    data = data[(data.date &gt;= start_date) &amp; (data.date &lt; end_date)].copy()
+
+    # Duration in minutes
+    data[&#39;duration&#39;] = (data.end_date - data.date).apply(lambda x: x.total_seconds() / 60)
+
+    plt.title(&#39;Duration of the activity {}&#39;.format(label))
+    plt.plot(data.date, data.duration, &#39;bo&#39;)
+    plt.legend()
+    plt.show()
+
+
+def distribution_evolution(data, time_window_duration, label, output_folder=&#34;./output/videos&#34;):
+    &#34;&#34;&#34;
+    Plot the evolution of the occurrence time and duration distribution through the log_dataset
+    :param data:
+    :param time_window_duration:
+    :param label:
+    :return:
+    &#34;&#34;&#34;
+    data[&#39;day_date&#39;] = data[&#39;date&#39;].dt.date.apply(lambda x: dt.datetime.combine(x, dt.datetime.min.time()))
+    data[&#39;timestamp&#39;] = (data[&#39;date&#39;] - data[&#39;day_date&#39;]).apply(lambda x: x.total_seconds())
+
+    data[&#39;duration&#39;] = (data[&#39;end_date&#39;] - data[&#39;date&#39;]).apply(lambda x: x.total_seconds() / 3600)
+
+    time_windows_data = Drift_Detector.create_time_windows(data, time_window_duration)
+
+    ## Visualisation of the evolution of some distribution
+
+    empty_folder(output_folder)
+    images_occ_times = []
+    images_durations = []
+
+    duration_max = data[data.label == label].duration.max()
+    for tw_index in trange(len(time_windows_data), desc=&#39;Extract features from Time Windows&#39;):
+        tw_data = time_windows_data[tw_index]
+        tw_data = tw_data[tw_data.label == label]
+        occ_times = tw_data.timestamp.values / 3600
+
+        fig = plt.figure()
+        canvas = FigureCanvas(fig)
+        sns.kdeplot(occ_times, shade_lowest=False, shade=True, color=&#39;green&#39;)
+        plt.title(&#39;&#34;{}&#34; Distribution\nWindow {}&#39;.format(label, tw_index))
+        plt.xlim(0, 24)
+        plt.ylim(0, 1)
+        plt.xlabel(&#39;Heure de la journée&#39;)
+
+        canvas.draw()
+        width, height = fig.get_size_inches() * fig.get_dpi()
+        image_occ_times = np.fromstring(canvas.tostring_rgb(), dtype=&#39;uint8&#39;).reshape(int(height), int(width), 3)
+        images_occ_times.append(image_occ_times)
+
+        durations = tw_data.duration.values
+        fig = plt.figure()
+        canvas = FigureCanvas(fig)
+        sns.kdeplot(durations, shade_lowest=False, shade=True, color=&#39;green&#39;)
+        plt.title(&#39;&#34;{}&#34; Distribution\nWindow {}&#39;.format(label, tw_index))
+
+        plt.xlim(0, duration_max)
+        # plt.ylim(0, 1/duration_max)
+        plt.xlabel(&#39;Duration (hours)&#39;)
+
+        canvas.draw()
+        width, height = fig.get_size_inches() * fig.get_dpi()
+        image_durations = np.fromstring(canvas.tostring_rgb(), dtype=&#39;uint8&#39;).reshape(int(height), int(width), 3)
+        images_durations.append(image_durations)
+
+    imageio.mimsave(output_folder + &#39;/dist_occ_times.gif&#39;, images_occ_times, duration=0.2)
+    imageio.mimsave(output_folder + &#39;/dist_durations.gif&#39;, images_durations, duration=0.2)
+
+
+&#34;&#34;&#34;
+Plot a graph
+&#34;&#34;&#34;
+
+
+class ActivityOccurrencesGraph:
+
+    def __init__(self, plot_label, dataset, start_date=None, nb_days=-1):
+        if start_date is None:
+            start_date = dataset.date.min().to_pydatetime()
+            # Get the date of the beginning of the day
+            start_date = start_date.date()
+            start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
+
+        end_date = start_date + dt.timedelta(days=nb_days)
+        if nb_days &lt;= 0:
+            end_date = dataset.end_date.max().to_pydatetime()
+            # Get the date of the beginning of the day
+            end_date = end_date.date()
+            end_date = dt.datetime.combine(end_date, dt.datetime.min.time())
+            end_date += dt.timedelta(days=1)
+
+        self.start_date = start_date
+        self.nb_days = int((end_date - start_date) / dt.timedelta(days=1))
+
+        self.dataset = dataset[(dataset.date &gt;= start_date) &amp; (dataset.date &lt; end_date)].copy()
+
+        # self.dataset[&#39;duration&#39;] = (self.dataset.end_date - self.dataset.date).apply(lambda x: x.total_seconds())
+        self.plot_label = plot_label
+
+        # Choose a color for each activity
+        self.labels = dataset.label.unique()
+        self.labels = sorted(self.labels, reverse=True)
+        colors = Utils.generate_random_color(len(self.labels))
+        self.label_color = {}
+        for i in range(len(self.labels)):
+            self.label_color[self.labels[i]] = colors[i]
+
+        self.days_dataset = self.extract_days()
+        print(&#39;#######################&#39;)
+        print(&#39;# Days Extracted ...  #&#39;)
+        print(&#39;#######################&#39;)
+
+        self.plot_day_bars()
+        self.duration_pie_chart()
+
+    def extract_days(self):
+        &#34;&#34;&#34;
+        Extract each days from the log_dataset,
+        :return:
+        &#34;&#34;&#34;
+
+        data = self.dataset.copy()
+
+        def isnightly(row):
+            return row[&#39;end_date&#39;].day != row[&#39;date&#39;].day
+
+        data[&#39;nightly&#39;] = data.apply(isnightly, axis=1)
+
+        nightly_dataset = data[data.nightly == 1]
+
+        reformat_nightly_dataset = pd.DataFrame(columns=[&#39;date&#39;, &#39;end_date&#39;, &#39;label&#39;])
+
+        def nightly(row):
+            day_end_date = row.end_date.date()
+            day_end_date = dt.datetime.combine(day_end_date, dt.datetime.min.time())
+            reformat_nightly_dataset.loc[len(reformat_nightly_dataset)] = [row.date, day_end_date, row.label]
+            reformat_nightly_dataset.loc[len(reformat_nightly_dataset)] = [day_end_date, row.end_date, row.label]
+
+        nightly_dataset.apply(nightly, axis=1)
+
+        self.dataset = data[data.nightly == 0].append(reformat_nightly_dataset)
+
+        self.dataset.sort_values([&#39;date&#39;], inplace=True)
+
+        days_data = []
+        # Split nightly activities in 2
+        for day_index in trange(self.nb_days, desc=&#39;Days extraction&#39;):
+            start_date = self.start_date + dt.timedelta(days=day_index)
+            end_date = start_date + dt.timedelta(days=1)
+            day_dataset = self.dataset[(self.dataset.date &gt;= start_date) &amp; (self.dataset.date &lt; end_date)].copy()
+
+            days_data.append(day_dataset)
+
+        return days_data
+
+    def plot_day_bars(self):
+        &#34;&#34;&#34;
+        Plot the days bars
+        :return:
+        &#34;&#34;&#34;
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        def timeTicks(x, pos):
+            d = dt.timedelta(seconds=x)
+            return int(d.seconds / 3600)
+
+        formatter = matplotlib.ticker.FuncFormatter(timeTicks)
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(plt.MultipleLocator(3600))  # Ticks every hour
+        ax.set_xlim(0, 24 * 3600)
+
+        yticks = []
+        yticks_labels = []
+
+        for label in self.labels:
+            label_segments = []
+
+            dates_list = []
+
+            kwargs = {&#39;color&#39;: self.label_color[label], &#39;linewidth&#39;: 300 / self.nb_days}
+
+            for day_id in range(len(self.days_dataset)):
+                day_dataset = self.days_dataset[day_id]
+                day_dataset = day_dataset[day_dataset.label == label]
+
+                # Retrieve the date of the day
+                day_start_date = day_dataset.date.min().to_pydatetime()
+                day_start_date = day_start_date.date()
+                day_start_date = dt.datetime.combine(day_start_date, dt.datetime.min.time())
+
+                if day_id % int(np.ceil(self.nb_days / 30)) == 0:
+                    yticks.append(day_id)
+                    yticks_labels.append(day_start_date)
+
+                dates_list.append(day_start_date)
+
+                day_dataset[&#39;start_ts&#39;] = day_dataset.date.apply(lambda x: (x - day_start_date).total_seconds())
+                day_dataset[&#39;end_ts&#39;] = day_dataset.end_date.apply(lambda x: (x - day_start_date).total_seconds())
+
+                segments = list(day_dataset[[&#39;start_ts&#39;, &#39;end_ts&#39;]].values)
+
+                if len(segments) &gt; 0:
+                    for x in segments:
+                        label_segments.append([x[0], day_id, x[1], day_id])
+
+            label_segments = np.asarray(label_segments)
+            if len(label_segments) &gt; 0:
+                xs = label_segments[:, ::2]
+                ys = label_segments[:, 1::2]
+                lines = LineCollection([list(zip(x, y)) for x, y in zip(xs, ys)], label=label, **kwargs)
+                ax.add_collection(lines)
+
+        ax.legend()
+        ax.set_yticks(yticks)
+        # ax.set_yticklabels(yticks_labels)
+        plt.xlabel(&#34;Heure de la journée&#34;)
+        # plt.title(title)
+        plt.legend(loc=&#39;upper left&#39;, fancybox=True, shadow=True, ncol=1, bbox_to_anchor=(1, 1))
+
+    def duration_pie_chart(self):
+
+        #####################################
+        #   Activities Frequency Pie Chart  #
+        #####################################
+
+        self.dataset[&#39;duration&#39;] = (self.dataset.end_date - self.dataset.date).apply(lambda x: x.total_seconds())
+
+        labels_duration_df = self.dataset.groupby([&#39;label&#39;]).sum()
+
+        labels_duration_df.sort_values([&#39;duration&#39;], ascending=False, inplace=True)
+
+        colors = []
+        for label in labels_duration_df.index:
+            colors.append(self.label_color[label])
+
+        fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect=&#34;equal&#34;))
+
+        labels_duration_df.duration.plot(kind=&#39;pie&#39;, fontsize=18, colors=colors, startangle=90)
+
+        plt.legend(labels=labels_duration_df.index, loc=&#34;best&#34;)
+        plt.axis(&#39;equal&#39;)
+        plt.tight_layout()
+        plt.ylabel(&#39;&#39;)
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre>
+            </details>
+        </section>
+        <section>
+        </section>
+        <section>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-functions">Functions</h2>
+            <dl>
+                <dt id="Vizu.Visualization.distribution_evolution"><code class="name flex">
+                    <span>def <span class="ident">distribution_evolution</span></span>(<span>data, time_window_duration, label, output_folder='./output/videos')</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Plot the evolution of the occurrence time and duration distribution through the
+                        log_dataset
+                        :param data:
+                        :param time_window_duration:
+                        :param label:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def distribution_evolution(data, time_window_duration, label, output_folder=&#34;./output/videos&#34;):
+    &#34;&#34;&#34;
+    Plot the evolution of the occurrence time and duration distribution through the log_dataset
+    :param data:
+    :param time_window_duration:
+    :param label:
+    :return:
+    &#34;&#34;&#34;
+    data[&#39;day_date&#39;] = data[&#39;date&#39;].dt.date.apply(lambda x: dt.datetime.combine(x, dt.datetime.min.time()))
+    data[&#39;timestamp&#39;] = (data[&#39;date&#39;] - data[&#39;day_date&#39;]).apply(lambda x: x.total_seconds())
+
+    data[&#39;duration&#39;] = (data[&#39;end_date&#39;] - data[&#39;date&#39;]).apply(lambda x: x.total_seconds() / 3600)
+
+    time_windows_data = Drift_Detector.create_time_windows(data, time_window_duration)
+
+    ## Visualisation of the evolution of some distribution
+
+    empty_folder(output_folder)
+    images_occ_times = []
+    images_durations = []
+
+    duration_max = data[data.label == label].duration.max()
+    for tw_index in trange(len(time_windows_data), desc=&#39;Extract features from Time Windows&#39;):
+        tw_data = time_windows_data[tw_index]
+        tw_data = tw_data[tw_data.label == label]
+        occ_times = tw_data.timestamp.values / 3600
+
+        fig = plt.figure()
+        canvas = FigureCanvas(fig)
+        sns.kdeplot(occ_times, shade_lowest=False, shade=True, color=&#39;green&#39;)
+        plt.title(&#39;&#34;{}&#34; Distribution\nWindow {}&#39;.format(label, tw_index))
+        plt.xlim(0, 24)
+        plt.ylim(0, 1)
+        plt.xlabel(&#39;Heure de la journée&#39;)
+
+        canvas.draw()
+        width, height = fig.get_size_inches() * fig.get_dpi()
+        image_occ_times = np.fromstring(canvas.tostring_rgb(), dtype=&#39;uint8&#39;).reshape(int(height), int(width), 3)
+        images_occ_times.append(image_occ_times)
+
+        durations = tw_data.duration.values
+        fig = plt.figure()
+        canvas = FigureCanvas(fig)
+        sns.kdeplot(durations, shade_lowest=False, shade=True, color=&#39;green&#39;)
+        plt.title(&#39;&#34;{}&#34; Distribution\nWindow {}&#39;.format(label, tw_index))
+
+        plt.xlim(0, duration_max)
+        # plt.ylim(0, 1/duration_max)
+        plt.xlabel(&#39;Duration (hours)&#39;)
+
+        canvas.draw()
+        width, height = fig.get_size_inches() * fig.get_dpi()
+        image_durations = np.fromstring(canvas.tostring_rgb(), dtype=&#39;uint8&#39;).reshape(int(height), int(width), 3)
+        images_durations.append(image_durations)
+
+    imageio.mimsave(output_folder + &#39;/dist_occ_times.gif&#39;, images_occ_times, duration=0.2)
+    imageio.mimsave(output_folder + &#39;/dist_durations.gif&#39;, images_durations, duration=0.2)</code></pre>
+                    </details>
+                </dd>
+                <dt id="Vizu.Visualization.main"><code class="name flex">
+                    <span>def <span class="ident">main</span></span>(<span>)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def main():
+    dataset_name = &#39;aruba&#39;
+    #
+    sim_type = &#39;STATIC&#39;
+    tstep = 5
+    #
+    period = dt.timedelta(days=1)
+    dataset = pick_dataset(dataset_name, nb_days=-1)
+
+    path = &#34;C:/Users/cyriac.azefack/Workspace/Frailty_Box/output/aruba/Simulation/DYNAMIC_tw_30&#34; \
+           &#34;/dataset_simulation_rep_6.csv &#34;
+    dataset = pick_custom_dataset(path, nb_days=-1)
+
+    dataset[&#39;relative_time&#39;] = dataset[&#39;date&#39;].apply(lambda x: modulo_datetime(x.to_pydatetime(), period) / 3600)
+    #
+    dataset[&#39;duration&#39;] = (dataset.end_date - dataset.date).apply(lambda x: x.total_seconds())
+    #
+
+    plt.hist(dataset[dataset.label == &#39;housekeeping&#39;].relative_time)
+
+    plt.show()
+
+    plot_dataset = dataset.groupby([&#39;label&#39;]).count()
+    plot_dataset[&#39;label&#39;] = plot_dataset.index
+    plot_dataset.sort_values([&#39;end_date&#39;], ascending=False, inplace=True)
+
+    sns.barplot(x=&#34;end_date&#34;, y=&#34;label&#34;, data=plot_dataset,
+                label=&#34;label&#34;, color=&#34;b&#34;)
+
+    # plt.xscale(&#39;log&#39;)
+    plt.xlabel(&#39;Nombre d\&#39;occurrences&#39;)
+    plt.show()
+
+    # labels = [&#34;sleeping_begin&#34;, &#34;leave_home_begin&#34;, &#34;sleeping_end&#34;]
+    #
+    # dataset = dataset[dataset.label.isin(labels)]
+    #
+    # for label in labels :
+    #     sns.distplot(dataset[dataset.label == label].relative_time, bins=30, label=label, kde=False)
+    #
+    # plt.legend()
+    # plt.show()
+    #
+    #
+    # path = &#34;C:/Users/cyriac.azefack/Workspace/Frailty_Box/input/Drift_Toy/3_drift_toy_data_7.csv&#34;
+    # dataset = pick_custom_dataset(path, nb_days=-1)
+
+    # tw = dt.timedelta(days=7)
+
+    # distribution_evolution(dataset, time_window_duration=tw, label=&#39;eating&#39;, output_folder=&#34;../output/videos&#34;)
+    #
+    # sim_file = f&#34;../output/{dataset_name}/Simulation/{sim_type}_step_{tstep}mn/dataset_simulation_rep_1.csv&#34;
+    #
+    # simu_dataset = pick_custom_dataset(path=sim_file)
+    #
+    # start_date = dataset.date.min().to_pydatetime()
+    #
+    # simu_graph = ActivityOccurrencesGraph(dataset_name, simu_dataset, nb_days=-1)
+    #
+    real_graph = ActivityOccurrencesGraph(dataset_name, dataset, nb_days=-1)
+    #
+    plt.show()</code></pre>
+                    </details>
+                </dd>
+                <dt id="Vizu.Visualization.plot_activity_occurrence_time"><code class="name flex">
+                    <span>def <span class="ident">plot_activity_occurrence_time</span></span>(<span>data, label, start_date=None, end_date=None, duration=True)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def plot_activity_occurrence_time(data, label, start_date=None, end_date=None, duration=True):
+    data = data[data.label == label].copy()
+
+    if not start_date:
+        start_date = data.date.min().to_pydatetime()
+
+    if not end_date:
+        end_date = data.date.max().to_pydatetime()
+
+    data = data[(data.date &gt;= start_date) &amp; (data.date &lt; end_date)].copy()
+
+    # Compute the timestamp of all the events
+    # Timestamp : Nb of seconds since the beginning of the day
+    data[&#39;day_date&#39;] = data[&#39;date&#39;].dt.date.apply(lambda x: dt.datetime.combine(x, dt.datetime.min.time()))
+    data[&#39;timestamp&#39;] = (data[&#39;date&#39;] - data[&#39;day_date&#39;]).apply(lambda x: x.total_seconds()) / 3600  # Hour in the day
+
+    # Duration in minutes
+    data[&#39;duration&#39;] = (data.end_date - data.date).apply(lambda x: x.total_seconds() / 60)
+
+    fig = plt.figure()
+    plt.plot(data.date, data.timestamp, &#39;bo&#39;)
+    # plt.legend()
+    plt.title(&#34;Occurrences of &#39;{}&#39;&#34;.format(label))
+    plt.xlabel(&#34;Date&#34;)
+    plt.ylabel(&#34;Hour of the day&#34;)
+    plt.xticks(rotation=45)
+
+    if duration:
+        fig = plt.figure()
+        plt.plot(data.timestamp, data.duration, &#39;bo&#39;)
+        plt.title(&#34;Occurrences and Duration of &#39;{}&#39;&#34;.format(label))
+        plt.ylabel(&#34;Duration (hour)&#34;)
+        plt.xlabel(&#34;Heure de la journée&#34;)
+
+    plt.show()</code></pre>
+                    </details>
+                </dd>
+                <dt id="Vizu.Visualization.plot_activiy_duration"><code class="name flex">
+                    <span>def <span class="ident">plot_activiy_duration</span></span>(<span>data, label, start_date=None, end_date=None)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def plot_activiy_duration(data, label, start_date=None, end_date=None):
+    data = data[data.label == label].copy()
+
+    if not start_date:
+        start_date = data.date.min().to_pydatetime()
+
+    if not end_date:
+        end_date = data.date.max().to_pydatetime()
+
+    data = data[(data.date &gt;= start_date) &amp; (data.date &lt; end_date)].copy()
+
+    # Duration in minutes
+    data[&#39;duration&#39;] = (data.end_date - data.date).apply(lambda x: x.total_seconds() / 60)
+
+    plt.title(&#39;Duration of the activity {}&#39;.format(label))
+    plt.plot(data.date, data.duration, &#39;bo&#39;)
+    plt.legend()
+    plt.show()</code></pre>
+                    </details>
+                </dd>
+                <dt id="Vizu.Visualization.visualize"><code class="name flex">
+                    <span>def <span
+                            class="ident">visualize</span></span>(<span>data, start_date=None, end_date=None)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Visualize the log log_dataset
+                        :param data:
+                        :param start_date:
+                        :param end_date:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def visualize(data, start_date=None, end_date=None):
+    &#39;&#39;&#39;
+    Visualize the log log_dataset
+    :param data:
+    :param start_date:
+    :param end_date:
+    :return:
+    &#39;&#39;&#39;
+
+    if start_date is None:
+        start_date = data.date.min().to_pydatetime()
+
+    if end_date is None:
+        end_date = data.date.max().to_pydatetime()
+
+    data = data[(data.date &gt;= start_date) &amp; (data.date &lt;= end_date)].copy()
+    # Turn the log_dataset into an activity log_dataset
+
+    data[&#39;duration&#39;] = data[&#39;end_date&#39;] - data[&#39;date&#39;]
+    data[&#39;duration&#39;] = data[&#39;duration&#39;].apply(lambda x: x.total_seconds() / 60)
+
+    # print(data.describe())
+    # sns.distplot(data.duration)
+    # plt.show()
+
+    activities = list(data.groupby([&#39;label&#39;], as_index=False).agg({&#39;duration&#39;: &#39;sum&#39;}).sort_values(&#34;duration&#34;,
+                                                                                                   ascending=False).label.values)
+
+    # activities = list(data.label.unique())
+
+    df_data = pd.DataFrame(columns=[&#39;activity&#39;, &#39;start&#39;, &#39;end&#39;, &#39;level&#39;])
+
+    fig = plt.figure()
+    # fig.set_size_inches(1800 / 1200, 1, forward=False)
+    ax = fig.add_subplot(111)
+    xfmt = dat.DateFormatter(&#39;%d-%m-%y %H:%M&#39;)
+    ax.xaxis.set_major_formatter(xfmt)
+    ax = ax.xaxis_date()
+
+    for activity in activities:
+        lvl = activities.index(activity) * 5
+        data_activity = data[data.label == activity].copy()
+        data_activity[&#39;level&#39;] = lvl
+
+        date = data_activity.date.min().to_pydatetime()
+
+        data_activity.date = data_activity.date.dt.to_pydatetime()
+        data_activity.end_date = data_activity.end_date.dt.to_pydatetime()
+
+        color = random.rand(3, )
+        plt.text(dat.date2num(date), lvl, activity, fontsize=14)
+        ax = plt.hlines(data_activity.level, dat.date2num(data_activity.date), dat.date2num(data_activity.end_date),
+                        label=activity,
+                        linewidth=75, color=color)
+        # df_data = pd.concat([df_data, result], axis=0)
+    # plt.legend()
+
+    plt.savefig(&#39;out.png&#39;, transparent=True)
+    plt.show()
+
+    print(&#34;done&#34;)</code></pre>
+                    </details>
+                </dd>
+            </dl>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-classes">Classes</h2>
+            <dl>
+                <dt id="Vizu.Visualization.ActivityOccurrencesGraph"><code class="flex name class">
+                    <span>class <span class="ident">ActivityOccurrencesGraph</span></span>
+                    <span>(</span><span>plot_label, dataset, start_date=None, nb_days=-1)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">class ActivityOccurrencesGraph:
+
+    def __init__(self, plot_label, dataset, start_date=None, nb_days=-1):
+        if start_date is None:
+            start_date = dataset.date.min().to_pydatetime()
+            # Get the date of the beginning of the day
+            start_date = start_date.date()
+            start_date = dt.datetime.combine(start_date, dt.datetime.min.time())
+
+        end_date = start_date + dt.timedelta(days=nb_days)
+        if nb_days &lt;= 0:
+            end_date = dataset.end_date.max().to_pydatetime()
+            # Get the date of the beginning of the day
+            end_date = end_date.date()
+            end_date = dt.datetime.combine(end_date, dt.datetime.min.time())
+            end_date += dt.timedelta(days=1)
+
+        self.start_date = start_date
+        self.nb_days = int((end_date - start_date) / dt.timedelta(days=1))
+
+        self.dataset = dataset[(dataset.date &gt;= start_date) &amp; (dataset.date &lt; end_date)].copy()
+
+        # self.dataset[&#39;duration&#39;] = (self.dataset.end_date - self.dataset.date).apply(lambda x: x.total_seconds())
+        self.plot_label = plot_label
+
+        # Choose a color for each activity
+        self.labels = dataset.label.unique()
+        self.labels = sorted(self.labels, reverse=True)
+        colors = Utils.generate_random_color(len(self.labels))
+        self.label_color = {}
+        for i in range(len(self.labels)):
+            self.label_color[self.labels[i]] = colors[i]
+
+        self.days_dataset = self.extract_days()
+        print(&#39;#######################&#39;)
+        print(&#39;# Days Extracted ...  #&#39;)
+        print(&#39;#######################&#39;)
+
+        self.plot_day_bars()
+        self.duration_pie_chart()
+
+    def extract_days(self):
+        &#34;&#34;&#34;
+        Extract each days from the log_dataset,
+        :return:
+        &#34;&#34;&#34;
+
+        data = self.dataset.copy()
+
+        def isnightly(row):
+            return row[&#39;end_date&#39;].day != row[&#39;date&#39;].day
+
+        data[&#39;nightly&#39;] = data.apply(isnightly, axis=1)
+
+        nightly_dataset = data[data.nightly == 1]
+
+        reformat_nightly_dataset = pd.DataFrame(columns=[&#39;date&#39;, &#39;end_date&#39;, &#39;label&#39;])
+
+        def nightly(row):
+            day_end_date = row.end_date.date()
+            day_end_date = dt.datetime.combine(day_end_date, dt.datetime.min.time())
+            reformat_nightly_dataset.loc[len(reformat_nightly_dataset)] = [row.date, day_end_date, row.label]
+            reformat_nightly_dataset.loc[len(reformat_nightly_dataset)] = [day_end_date, row.end_date, row.label]
+
+        nightly_dataset.apply(nightly, axis=1)
+
+        self.dataset = data[data.nightly == 0].append(reformat_nightly_dataset)
+
+        self.dataset.sort_values([&#39;date&#39;], inplace=True)
+
+        days_data = []
+        # Split nightly activities in 2
+        for day_index in trange(self.nb_days, desc=&#39;Days extraction&#39;):
+            start_date = self.start_date + dt.timedelta(days=day_index)
+            end_date = start_date + dt.timedelta(days=1)
+            day_dataset = self.dataset[(self.dataset.date &gt;= start_date) &amp; (self.dataset.date &lt; end_date)].copy()
+
+            days_data.append(day_dataset)
+
+        return days_data
+
+    def plot_day_bars(self):
+        &#34;&#34;&#34;
+        Plot the days bars
+        :return:
+        &#34;&#34;&#34;
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        def timeTicks(x, pos):
+            d = dt.timedelta(seconds=x)
+            return int(d.seconds / 3600)
+
+        formatter = matplotlib.ticker.FuncFormatter(timeTicks)
+        ax.xaxis.set_major_formatter(formatter)
+        ax.xaxis.set_major_locator(plt.MultipleLocator(3600))  # Ticks every hour
+        ax.set_xlim(0, 24 * 3600)
+
+        yticks = []
+        yticks_labels = []
+
+        for label in self.labels:
+            label_segments = []
+
+            dates_list = []
+
+            kwargs = {&#39;color&#39;: self.label_color[label], &#39;linewidth&#39;: 300 / self.nb_days}
+
+            for day_id in range(len(self.days_dataset)):
+                day_dataset = self.days_dataset[day_id]
+                day_dataset = day_dataset[day_dataset.label == label]
+
+                # Retrieve the date of the day
+                day_start_date = day_dataset.date.min().to_pydatetime()
+                day_start_date = day_start_date.date()
+                day_start_date = dt.datetime.combine(day_start_date, dt.datetime.min.time())
+
+                if day_id % int(np.ceil(self.nb_days / 30)) == 0:
+                    yticks.append(day_id)
+                    yticks_labels.append(day_start_date)
+
+                dates_list.append(day_start_date)
+
+                day_dataset[&#39;start_ts&#39;] = day_dataset.date.apply(lambda x: (x - day_start_date).total_seconds())
+                day_dataset[&#39;end_ts&#39;] = day_dataset.end_date.apply(lambda x: (x - day_start_date).total_seconds())
+
+                segments = list(day_dataset[[&#39;start_ts&#39;, &#39;end_ts&#39;]].values)
+
+                if len(segments) &gt; 0:
+                    for x in segments:
+                        label_segments.append([x[0], day_id, x[1], day_id])
+
+            label_segments = np.asarray(label_segments)
+            if len(label_segments) &gt; 0:
+                xs = label_segments[:, ::2]
+                ys = label_segments[:, 1::2]
+                lines = LineCollection([list(zip(x, y)) for x, y in zip(xs, ys)], label=label, **kwargs)
+                ax.add_collection(lines)
+
+        ax.legend()
+        ax.set_yticks(yticks)
+        # ax.set_yticklabels(yticks_labels)
+        plt.xlabel(&#34;Heure de la journée&#34;)
+        # plt.title(title)
+        plt.legend(loc=&#39;upper left&#39;, fancybox=True, shadow=True, ncol=1, bbox_to_anchor=(1, 1))
+
+    def duration_pie_chart(self):
+
+        #####################################
+        #   Activities Frequency Pie Chart  #
+        #####################################
+
+        self.dataset[&#39;duration&#39;] = (self.dataset.end_date - self.dataset.date).apply(lambda x: x.total_seconds())
+
+        labels_duration_df = self.dataset.groupby([&#39;label&#39;]).sum()
+
+        labels_duration_df.sort_values([&#39;duration&#39;], ascending=False, inplace=True)
+
+        colors = []
+        for label in labels_duration_df.index:
+            colors.append(self.label_color[label])
+
+        fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect=&#34;equal&#34;))
+
+        labels_duration_df.duration.plot(kind=&#39;pie&#39;, fontsize=18, colors=colors, startangle=90)
+
+        plt.legend(labels=labels_duration_df.index, loc=&#34;best&#34;)
+        plt.axis(&#39;equal&#39;)
+        plt.tight_layout()
+        plt.ylabel(&#39;&#39;)</code></pre>
+                    </details>
+                    <h3>Methods</h3>
+                    <dl>
+                        <dt id="Vizu.Visualization.ActivityOccurrencesGraph.duration_pie_chart"><code class="name flex">
+                            <span>def <span class="ident">duration_pie_chart</span></span>(<span>self)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def duration_pie_chart(self):
+
+    #####################################
+    #   Activities Frequency Pie Chart  #
+    #####################################
+
+    self.dataset[&#39;duration&#39;] = (self.dataset.end_date - self.dataset.date).apply(lambda x: x.total_seconds())
+
+    labels_duration_df = self.dataset.groupby([&#39;label&#39;]).sum()
+
+    labels_duration_df.sort_values([&#39;duration&#39;], ascending=False, inplace=True)
+
+    colors = []
+    for label in labels_duration_df.index:
+        colors.append(self.label_color[label])
+
+    fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect=&#34;equal&#34;))
+
+    labels_duration_df.duration.plot(kind=&#39;pie&#39;, fontsize=18, colors=colors, startangle=90)
+
+    plt.legend(labels=labels_duration_df.index, loc=&#34;best&#34;)
+    plt.axis(&#39;equal&#39;)
+    plt.tight_layout()
+    plt.ylabel(&#39;&#39;)</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Vizu.Visualization.ActivityOccurrencesGraph.extract_days"><code class="name flex">
+                            <span>def <span class="ident">extract_days</span></span>(<span>self)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Extract each days from the log_dataset,
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def extract_days(self):
+    &#34;&#34;&#34;
+    Extract each days from the log_dataset,
+    :return:
+    &#34;&#34;&#34;
+
+    data = self.dataset.copy()
+
+    def isnightly(row):
+        return row[&#39;end_date&#39;].day != row[&#39;date&#39;].day
+
+    data[&#39;nightly&#39;] = data.apply(isnightly, axis=1)
+
+    nightly_dataset = data[data.nightly == 1]
+
+    reformat_nightly_dataset = pd.DataFrame(columns=[&#39;date&#39;, &#39;end_date&#39;, &#39;label&#39;])
+
+    def nightly(row):
+        day_end_date = row.end_date.date()
+        day_end_date = dt.datetime.combine(day_end_date, dt.datetime.min.time())
+        reformat_nightly_dataset.loc[len(reformat_nightly_dataset)] = [row.date, day_end_date, row.label]
+        reformat_nightly_dataset.loc[len(reformat_nightly_dataset)] = [day_end_date, row.end_date, row.label]
+
+    nightly_dataset.apply(nightly, axis=1)
+
+    self.dataset = data[data.nightly == 0].append(reformat_nightly_dataset)
+
+    self.dataset.sort_values([&#39;date&#39;], inplace=True)
+
+    days_data = []
+    # Split nightly activities in 2
+    for day_index in trange(self.nb_days, desc=&#39;Days extraction&#39;):
+        start_date = self.start_date + dt.timedelta(days=day_index)
+        end_date = start_date + dt.timedelta(days=1)
+        day_dataset = self.dataset[(self.dataset.date &gt;= start_date) &amp; (self.dataset.date &lt; end_date)].copy()
+
+        days_data.append(day_dataset)
+
+    return days_data</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Vizu.Visualization.ActivityOccurrencesGraph.plot_day_bars"><code class="name flex">
+                            <span>def <span class="ident">plot_day_bars</span></span>(<span>self)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Plot the days bars
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def plot_day_bars(self):
+    &#34;&#34;&#34;
+    Plot the days bars
+    :return:
+    &#34;&#34;&#34;
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    def timeTicks(x, pos):
+        d = dt.timedelta(seconds=x)
+        return int(d.seconds / 3600)
+
+    formatter = matplotlib.ticker.FuncFormatter(timeTicks)
+    ax.xaxis.set_major_formatter(formatter)
+    ax.xaxis.set_major_locator(plt.MultipleLocator(3600))  # Ticks every hour
+    ax.set_xlim(0, 24 * 3600)
+
+    yticks = []
+    yticks_labels = []
+
+    for label in self.labels:
+        label_segments = []
+
+        dates_list = []
+
+        kwargs = {&#39;color&#39;: self.label_color[label], &#39;linewidth&#39;: 300 / self.nb_days}
+
+        for day_id in range(len(self.days_dataset)):
+            day_dataset = self.days_dataset[day_id]
+            day_dataset = day_dataset[day_dataset.label == label]
+
+            # Retrieve the date of the day
+            day_start_date = day_dataset.date.min().to_pydatetime()
+            day_start_date = day_start_date.date()
+            day_start_date = dt.datetime.combine(day_start_date, dt.datetime.min.time())
+
+            if day_id % int(np.ceil(self.nb_days / 30)) == 0:
+                yticks.append(day_id)
+                yticks_labels.append(day_start_date)
+
+            dates_list.append(day_start_date)
+
+            day_dataset[&#39;start_ts&#39;] = day_dataset.date.apply(lambda x: (x - day_start_date).total_seconds())
+            day_dataset[&#39;end_ts&#39;] = day_dataset.end_date.apply(lambda x: (x - day_start_date).total_seconds())
+
+            segments = list(day_dataset[[&#39;start_ts&#39;, &#39;end_ts&#39;]].values)
+
+            if len(segments) &gt; 0:
+                for x in segments:
+                    label_segments.append([x[0], day_id, x[1], day_id])
+
+        label_segments = np.asarray(label_segments)
+        if len(label_segments) &gt; 0:
+            xs = label_segments[:, ::2]
+            ys = label_segments[:, 1::2]
+            lines = LineCollection([list(zip(x, y)) for x, y in zip(xs, ys)], label=label, **kwargs)
+            ax.add_collection(lines)
+
+    ax.legend()
+    ax.set_yticks(yticks)
+    # ax.set_yticklabels(yticks_labels)
+    plt.xlabel(&#34;Heure de la journée&#34;)
+    # plt.title(title)
+    plt.legend(loc=&#39;upper left&#39;, fancybox=True, shadow=True, ncol=1, bbox_to_anchor=(1, 1))</code></pre>
+                            </details>
+                        </dd>
+                    </dl>
+                </dd>
+            </dl>
+        </section>
+    </article>
+    <nav id="sidebar">
+        <h1>Index</h1>
+        <div class="toc">
+            <ul></ul>
+        </div>
+        <ul id="index">
+            <li><h3>Super-module</h3>
+                <ul>
+                    <li><code><a href="index.html" title="Vizu">Vizu</a></code></li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-functions">Functions</a></h3>
+                <ul class="">
+                    <li><code><a href="#Vizu.Visualization.distribution_evolution"
+                                 title="Vizu.Visualization.distribution_evolution">distribution_evolution</a></code>
+                    </li>
+                    <li><code><a href="#Vizu.Visualization.main" title="Vizu.Visualization.main">main</a></code></li>
+                    <li><code><a href="#Vizu.Visualization.plot_activity_occurrence_time"
+                                 title="Vizu.Visualization.plot_activity_occurrence_time">plot_activity_occurrence_time</a></code>
+                    </li>
+                    <li><code><a href="#Vizu.Visualization.plot_activiy_duration"
+                                 title="Vizu.Visualization.plot_activiy_duration">plot_activiy_duration</a></code></li>
+                    <li><code><a href="#Vizu.Visualization.visualize" title="Vizu.Visualization.visualize">visualize</a></code>
+                    </li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-classes">Classes</a></h3>
+                <ul>
+                    <li>
+                        <h4><code><a href="#Vizu.Visualization.ActivityOccurrencesGraph"
+                                     title="Vizu.Visualization.ActivityOccurrencesGraph">ActivityOccurrencesGraph</a></code>
+                        </h4>
+                        <ul class="">
+                            <li><code><a href="#Vizu.Visualization.ActivityOccurrencesGraph.duration_pie_chart"
+                                         title="Vizu.Visualization.ActivityOccurrencesGraph.duration_pie_chart">duration_pie_chart</a></code>
+                            </li>
+                            <li><code><a href="#Vizu.Visualization.ActivityOccurrencesGraph.extract_days"
+                                         title="Vizu.Visualization.ActivityOccurrencesGraph.extract_days">extract_days</a></code>
+                            </li>
+                            <li><code><a href="#Vizu.Visualization.ActivityOccurrencesGraph.plot_day_bars"
+                                         title="Vizu.Visualization.ActivityOccurrencesGraph.plot_day_bars">plot_day_bars</a></code>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</main>
+<footer id="footer">
+    <p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

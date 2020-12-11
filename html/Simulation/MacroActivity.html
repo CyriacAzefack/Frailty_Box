@@ -1,0 +1,2331 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, minimum-scale=1" name="viewport"/>
+    <meta content="pdoc 0.9.2" name="generator"/>
+    <title>Simulation.MacroActivity API documentation</title>
+    <meta content="" name="description"/>
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css"
+          integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" rel="preload stylesheet">
+    <link as="style" crossorigin
+          href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css"
+          integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" rel="preload stylesheet">
+    <link as="style" crossorigin href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css"
+          rel="stylesheet preload">
+    <style>
+        :root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}
+    </style>
+    <style media="screen and (min-width: 700px)">
+        @media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}
+    </style>
+    <style media="print">
+        @media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}
+    </style>
+    <script crossorigin defer integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8="
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+    <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+    <article id="content">
+        <header>
+            <h1 class="title">Module <code>Simulation.MacroActivity</code></h1>
+        </header>
+        <section id="section-intro">
+            <details class="source">
+                <summary>
+                    <span>Expand source code</span>
+                </summary>
+                <pre><code class="python">import datetime as dt
+import errno
+import math
+import os
+import pickle
+import sys
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from scipy.stats import expon
+from sklearn.metrics import mean_squared_error
+from statsmodels.tsa.arima_model import ARIMA
+from statsmodels.tsa.statespace import sarimax
+from statsmodels.tsa.statespace.varmax import VARMAX
+from statsmodels.tsa.stattools import acf, pacf
+
+# from Graph_Model.Pattern2Graph import *
+from Pattern_Mining.Candidate_Study import modulo_datetime
+from Pattern_Mining.Extract_Macro_Activities import compute_episode_occurrences
+from Pattern_Mining.Pattern_Discovery import pick_dataset
+
+sns.set_style(&#34;darkgrid&#34;)
+
+
+# np.random.seed(1996)
+
+def main():
+    dataset_name = &#39;aruba&#39;
+    # dataset_name = &#39;hh101&#39;
+    dataset = pick_dataset(dataset_name)
+    # SIM_MODEL PARAMETERS
+    episode = (&#39;toilet&#39;, &#39;dress&#39;)
+    # episode = (&#39;relax&#39;,)
+    # episode = (&#39;enter_home&#39;, &#39;leave_home&#39;, &#39;watch_tv&#39;)
+    period = dt.timedelta(days=1)
+    time_step = dt.timedelta(minutes=60)
+    tep = 30
+
+    ############################
+    # PREDICTION PARAMETERS
+    train_ratio = 0.8
+
+    # TIME WINDOW PARAMETERS
+    window_size = 30
+    time_window_duration = dt.timedelta(days=window_size)
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime() - time_window_duration
+
+    nb_days = int((end_date - start_date) / period) + 1
+
+    activity = MacroActivity(episode=episode, period=period, time_step=time_step, tep=tep)
+
+    tw_id = 0
+    while True:
+        window_start_date = start_date + tw_id * period
+        window_end_date = window_start_date + time_window_duration
+
+        if window_start_date &gt;= end_date:
+            break
+
+        window_dataset = dataset[(dataset.date &gt;= window_start_date) &amp; (dataset.date &lt; window_end_date)].copy()
+
+        occurrences, events = compute_episode_occurrences(dataset=window_dataset, episode=episode, tep=tep)
+
+        if len(occurrences) == 0:
+            print(&#39;No occurrences found !!&#39;)
+            tw_id += 1
+            continue
+        # print(&#39;{} occurrences of the episode {}&#39;.format(len(occurrences), episode))
+        activity.add_time_window(occurrences=occurrences, events=events, time_window_id=tw_id, display=False)
+
+        tw_id += 1
+
+        sys.stdout.write(&#34;\r{}/{} Time Windows CAPTURED&#34;.format(tw_id, nb_days))
+        sys.stdout.flush()
+    sys.stdout.write(&#34;\n&#34;)
+
+    # Dump Parameters
+    output = &#39;../output/{}/Activity_{}/&#39;.format(dataset_name, episode)
+    # Create the folder if it does not exist yet
+    if not os.path.exists(os.path.dirname(output)):
+        try:
+            os.makedirs(os.path.dirname(output))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+    # Dump Activity Daily Profile
+    pickle.dump(activity.count_histogram, open(output + &#34;/daily_profile.pkl&#34;, &#39;wb&#39;))
+
+    # Dump Activity Durations
+    pickle.dump(activity.duration_distrib, open(output + &#34;/durations_distrib.pkl&#34;, &#39;wb&#39;))
+
+    # Dump Execution order
+    pickle.dump(activity.occurrence_order, open(output + &#34;/execution_order.pkl&#34;, &#39;wb&#39;))
+
+    # Dump INTER-EVENTS duration
+    pickle.dump(activity.expon_lambda, open(output + &#34;/inter_events.pkl&#34;, &#39;wb&#39;))
+
+    activity.plot_time_series()
+
+    # Build the model with a lot of time windows
+    print(&#34;#####################################&#34;)
+    print(&#34;#    TRAINING FORECASTING MODEL     #&#34;)
+    print(&#34;#####################################&#34;)
+    error = activity.forecast_history_count(train_ratio=train_ratio, last_time_window_id=tw_id - 1,
+                                            nb_periods_to_forecast=10, display=True)
+
+    duration_errors = activity.forecast_durations(train_ratio=train_ratio,
+                                                  last_time_window_id=tw_id - 1,
+                                                  nb_periods_to_forecast=10, display=True)
+
+
+class MacroActivity:
+    ID = 0  # Identifier of the macro-activity
+
+    LSTM = 0
+    SARIMAX = 1
+
+    def __init__(self, episode, period, time_step, tep=30):
+        &#34;&#34;&#34;
+        Creation of a Macro-Activity
+
+        &#34;&#34;&#34;
+
+        print(&#39;\n&#39;)
+        print(&#34;##################################################&#34;)
+        print(&#34;## Creation of the Macro-Activity &#39;{}&#39; ##&#34;.format(episode))
+        print(&#34;####################################################&#34;)
+        print(&#39;\n&#39;)
+        self.episode = episode
+        self.period = period
+        self.time_step = time_step
+        self.period_ts_index = np.arange(int(period.total_seconds() / time_step.total_seconds()))
+        self.tep = dt.timedelta(minutes=tep)
+
+        # ACTIVITY DAILY PROFILE
+        # Initialize the histogram for the activity periodicity profile
+        hist_columns = [&#39;tw_id&#39;] + [&#39;ts_{}&#39;.format(ts_id) for ts_id in self.period_ts_index]
+        self.count_histogram = pd.DataFrame(columns=hist_columns)  # For daily profiles
+
+        # ACTIVITY DURATION PROBABILITY DISTRIBUTIONS
+        # Key: label, Value: DataFrame with [&#39;tw_id&#39;, &#39;mean&#39;, &#39;std&#39;]
+        self.duration_distrib = {}  # For activity duration laws
+
+        for label in self.episode:
+            # Stored as Gaussian Distribution
+            self.duration_distrib[label] = pd.DataFrame(columns=[&#39;tw_id&#39;, &#39;mean&#39;, &#39;std&#39;])
+
+        # EXECUTION ORDER
+        self.occurrence_order = pd.DataFrame(
+            columns=[&#39;tw_id&#39;])  # For execution orders, the columns of the df are like &#39;0132&#39;
+
+        # INTER-EVENTS DURATIONS
+        self.expon_lambda = pd.DataFrame(columns=[&#39;tw_id&#39;, &#39;lambda&#39;])
+
+        # self.add_time_window(occurrences, events, start_time_window_id, display=display)
+
+        # self.build_histogram(occurrences, display=display)
+        self.nb_updates = 0
+        MacroActivity.ID += 1
+
+    def __repr__(self):
+
+        str = &#39;&#39;
+        if len(self.episode) &gt; 1:
+            str += &#39;MACRO-ACTIVITY&#39;
+        else:
+            str += &#39;SINGLE-ACTIVITY&#39;
+        str += &#39;{&#39; + &#39; -- &#39;.join(self.episode) + &#39;}&#39;
+        return str
+
+    def get_set_episode(self):
+        return frozenset(self.episode)
+
+    def preprocessing(self, occurrences, events):
+        &#39;&#39;&#39;
+        Preprocessing the occurrences and the events
+        :param occurrences:
+        :return:
+        &#39;&#39;&#39;
+        occurrences[&#39;relative_date&#39;] = occurrences.date.apply(
+            lambda x: modulo_datetime(x.to_pydatetime(), self.period))
+        occurrences[&#39;time_step_id&#39;] = occurrences[&#39;relative_date&#39;] / self.time_step.total_seconds()
+        occurrences[&#39;time_step_id&#39;] = occurrences[&#39;time_step_id&#39;].apply(math.floor)
+        occurrences[&#39;activity_duration&#39;] = occurrences.end_date - occurrences.date
+        occurrences[&#39;activity_duration&#39;] = occurrences[&#39;activity_duration&#39;].apply(lambda x: x.total_seconds())
+
+        events[&#39;activity_duration&#39;] = events.end_date - events.date
+        events[&#39;activity_duration&#39;] = events[&#39;activity_duration&#39;].apply(lambda x: x.total_seconds())
+
+        return occurrences, events
+
+    def build_histogram(self, occurrences, display=False):
+        &#39;&#39;&#39;
+        Build the Time distribution count_histogram on occurrences
+        :param occurrences:
+        :param display:
+        :return:
+        &#39;&#39;&#39;
+
+        # Remove duplicates &#39;day_date - time_step_id&#39;
+        occurrences[&#39;day_date&#39;] = occurrences.date.apply(lambda x: x.date())
+        occurrences.drop_duplicates([&#39;day_date&#39;, &#39;time_step_id&#39;], inplace=True)
+
+        hist = occurrences.groupby([&#39;time_step_id&#39;]).count()[&#39;date&#39;]
+
+        # Create an period_ts_index to have every time steps in the period
+
+        hist = hist.reindex(self.period_ts_index)
+
+        hist.fillna(0, inplace=True)
+
+        # hist = hist/len(hist)  # normalize
+
+        if display:
+            plt.bar(hist.index, hist.values)
+            plt.title(&#34;Activity Daily Profile\n&#34; +
+                      &#39;--&#39;.join(self.episode) +
+                      &#39;\nTime step : {} min&#39;.format(round(self.time_step.total_seconds() / 60, 1)))
+            plt.ylabel(&#39;Probability&#39;)
+            plt.show()
+
+        return hist
+
+    def add_time_window(self, occurrences, events, time_window_id, display=False):
+        &#34;&#34;&#34;
+        Update the ocurrence time Histogram and the duration laws history with the new time window data
+        :param display:
+        :param time_window_id:
+        :param events:
+        :param occurrences:
+        :return:
+        &#34;&#34;&#34;
+        self.nb_updates += 1  # Useful to know the number of available data for forecasting
+
+        occurrences, events = self.preprocessing(occurrences, events)
+
+        if len(self.count_histogram) &gt; 0:
+            last_filled_tw_id = self.count_histogram.tw_id.max()
+        else:
+            last_filled_tw_id = -1
+
+        # Fill the missing time windows data
+        hist = self.build_histogram(occurrences, display=display)
+        for tw_id in range(last_filled_tw_id + 1, time_window_id):
+            self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(len(hist)))
+
+            for label in self.episode:
+                duration_df = self.duration_distrib[label]
+                previous_mean_duration, previous_std_duration = 0, 0
+                if len(duration_df) &gt; 0:
+                    previous_mean_duration, previous_std_duration = duration_df.iloc[-1][&#39;mean&#39;], duration_df.iloc[-1][
+                        &#39;std&#39;]
+                duration_df.at[tw_id] = [tw_id, previous_mean_duration, previous_std_duration]
+
+            self.occurrence_order.at[tw_id, &#39;tw_id&#39;] = tw_id
+            self.expon_lambda.at[tw_id] = [tw_id, 0]
+
+        ## ACTIVITY DAILY PROFILE &amp; ACTIVITIES DURATIONS
+        # Update histogram count history
+        self.count_histogram.at[time_window_id] = [time_window_id] + list(hist.values.T)
+
+        # print(&#39;Histogram count [UPDATED]&#39;)
+        #
+        # UPDATE DURATIONS LAWS
+        for label in self.episode:
+            label_df = events[events.label == label]
+            duration_df = self.duration_distrib[label]
+
+            mean_duration = np.mean(label_df.activity_duration)
+            std_duration = np.std(label_df.activity_duration)
+            duration_df.at[time_window_id] = [time_window_id, float(mean_duration), float(std_duration)]
+
+        # print(&#39;Duration Gaussian Distribution [UPDATED]&#39;)
+
+        ## STOP HERE IF SINGLE ACTIVITY
+        if len(self.episode) &lt; 2:
+            return
+
+        ## UPDATE EXECUTION ORDER
+        occ_order_probability_dict = {}
+
+        # Replace labels by their alphabetic identifier
+        for label in self.episode:
+            events.loc[events.label == label, &#39;alph_id&#39;] = sorted(self.episode).index(label)
+
+        for id, occ_row in occurrences.iterrows():
+            start_date = occ_row.date
+            end_date = start_date + self.tep
+            arr = list(events.loc[(events.date &gt;= start_date) &amp; (events.date &lt; end_date), &#39;alph_id&#39;].values)
+            # remove duplicates
+            arr = list(dict.fromkeys(arr))
+            occ_order_str = &#39;&#39;.join([str(int(x)) for x in arr])
+
+            if occ_order_str in occ_order_probability_dict:
+                occ_order_probability_dict[occ_order_str] += 1 / len(occurrences)
+            else:
+                occ_order_probability_dict[occ_order_str] = 1 / len(occurrences)
+
+        self.occurrence_order.at[time_window_id, &#39;tw_id&#39;] = time_window_id
+        for occ_order_str, prob in occ_order_probability_dict.items():
+            self.occurrence_order.at[time_window_id, occ_order_str] = prob
+
+        self.occurrence_order.fillna(0, inplace=True)
+
+        # print(&#39;Execution Order Probability [UPDATED]&#39;)
+
+        ## UPDATE INTER-EVENTS DURATION
+        # Add occ_id to events
+        events[&#34;occ_id&#34;] = events.index
+        events[&#34;occ_id&#34;] = events.occ_id.apply(lambda x: math.floor(x / len(self.episode)))
+
+        events = events.join(events.groupby([&#39;occ_id&#39;])[[&#39;date&#39;]].shift(-1).add_suffix(&#39;_next&#39;))
+        events.rename(columns={events.columns[-1]: &#34;date_next&#34;}, inplace=True)
+
+        events.dropna(inplace=True)
+        inter_event_durations = (events.date_next - events.date).apply(lambda x: x.total_seconds()).values
+
+        # Fit an exponential distribution
+        loc, scale = expon.fit(inter_event_durations.astype(np.float64), floc=0)
+
+        self.expon_lambda.at[time_window_id] = [time_window_id, 1 / scale]
+
+    def get_count_histogram(self, time_window_id):
+        &#34;&#34;&#34;
+        :param time_window_id: time window identifier
+        :return: the histogram count at a specific time window
+        &#34;&#34;&#34;
+        return self.count_histogram.loc[[time_window_id]]
+
+    def forecast_history_count(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
+                               display=False):
+        &#34;&#34;&#34;
+        Fit a time series forecasting model to the history count data
+        :param train_ratio:
+        :param last_time_window_id: Last time window id registered by the manager
+        :param nb_periods_to_forecast:
+        :param display:
+        :return: Normalised Mean Squared Error (NMSE)
+        &#34;&#34;&#34;
+
+        nb_tstep = len(self.count_histogram.columns) - 1
+        nb_steps_to_forecast = nb_periods_to_forecast * nb_tstep
+
+        # Fill history count df until last time window registered
+        last_filled_tw_id = int(self.count_histogram.tw_id.max())
+
+        for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
+            self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(nb_tstep))
+
+        raw_dataset = self.count_histogram.drop([&#39;tw_id&#39;], axis=1)
+        dataset = raw_dataset.values.flatten()
+
+        if self.nb_updates &lt; 10:  # Can&#39;t train on such less data
+            # Just copy the last known information
+            current_tw_id = last_time_window_id
+            hist_count = list(self.count_histogram.values[-1])[1:]  # remove the &#39;tw_id&#39; column
+            for i in range(nb_periods_to_forecast):
+                current_tw_id += 1
+                self.count_histogram.at[current_tw_id] = [current_tw_id] + hist_count
+            return None
+
+        dataset = dataset.astype(int)
+
+        train_size = int(len(dataset) * train_ratio)
+
+        train, test = dataset[:train_size], dataset[train_size:]
+
+        test_size = test.shape[0]
+
+        sarima_model = sarimax.SARIMAX(train, order=(2, 0, 2), seasonal_order=(1, 0, 0, nb_tstep),
+                                       enforce_stationarity=False,
+                                       enforce_invertibility=False)
+
+        sarima_model = sarima_model.fit(disp=False)
+
+        raw_forecast = sarima_model.predict(start=train_size, end=-1 + train_size + test_size + nb_steps_to_forecast)
+
+        raw_forecast = pd.Series(raw_forecast)
+
+        validation_forecast = raw_forecast[:test_size]
+        mse_error = mean_squared_error(test, validation_forecast)
+
+        # Forecast to use
+        forecasts = raw_forecast[test_size:]
+
+        # Replace all negative values by 0
+        forecasts = np.where(forecasts &gt; 0, forecasts, 0)
+        forecasts = forecasts.reshape((nb_periods_to_forecast, nb_tstep))
+
+        current_tw_id = last_time_window_id
+        for hist_count in forecasts:
+            current_tw_id += 1
+            self.count_histogram.at[current_tw_id] = [current_tw_id] + list(hist_count)
+
+        if display:
+            plt.figure(figsize=(10, 5))
+            plt.plot(np.arange(train_size, train_size + len(validation_forecast)), validation_forecast, &#39;r&#39;)
+            plt.plot(dataset, &#39;b&#39;, alpha=0.5)
+            plt.plot(np.arange(len(dataset), len(dataset) + len(raw_forecast)), raw_forecast, &#39;red&#39;, alpha=0.7)
+
+            plt.title(&#39;{}\nTest MSE: {:.3f}&#39;.format(self.episode, mse_error))
+            plt.xlabel(&#39;Time&#39;)
+            plt.ylabel(&#39;count&#39;)
+            plt.axvline(x=train_size, color=&#39;black&#39;)
+            plt.show()
+
+        return mse_error
+
+    def forecast_durations(self, train_ratio, last_time_window_id, nb_periods_to_forecast, display=False):
+        &#34;&#34;&#34;
+        forecast the activities duration
+        :param train_ratio:
+        :param last_time_window_id:
+        :param nb_periods_to_forecast:
+        :param display:
+        :return: Two dict like object {label: r2_score}
+        &#34;&#34;&#34;
+
+        duration_dist_errors = pd.DataFrame(columns=[&#39;label&#39;, &#39;mean_error&#39;, &#39;std_error&#39;])
+
+        for label in self.episode:
+            print(&#39;[{}] Duration forecasting...&#39;.format(label))
+
+            # Fill history count df until last time window registered
+
+            last_filled_tw_id = int(self.duration_distrib[label].tw_id.max())
+
+            for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
+                self.duration_distrib[label].at[tw_id] = [tw_id, 0, 0]
+
+            forecast_df = pd.DataFrame(columns=[&#39;tw_id&#39;, &#39;mean&#39;, &#39;std&#39;])
+
+            forecast_df.tw_id = np.arange(last_time_window_id, last_time_window_id + nb_periods_to_forecast)
+
+            # Fit &amp; Predict Duration Mean values
+            # print(&#39;Mean Duration Forecasting...&#39;)
+            duration_dist_data = self.duration_distrib[label][[&#39;mean&#39;, &#39;std&#39;]]
+            # mean_duration_data = list(self.duration_distrib[label][&#39;mean&#39;].values)
+            # std_duration_data = list(self.duration_distrib[label][&#39;std&#39;].values)
+
+            if len(duration_dist_data) &lt; 10:
+                forecast_df[&#39;mean&#39;] = [duration_dist_data[&#39;mean&#39;].values[-1]] * nb_periods_to_forecast
+                forecast_df[&#39;std&#39;] = [duration_dist_data[&#39;std&#39;].values[-1]] * nb_periods_to_forecast
+                self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+                # TODO : Do a real MSE ERROR calculation even here
+                duration_dist_errors.loc[len(duration_dist_data)] = [label, np.nan, np.nan]
+                continue
+
+            nmse_error_mean, nmse_error_std, duration_dist_forecast_values = arima_forecast_duration_dist(
+                data=duration_dist_data,
+                train_ratio=train_ratio,
+                nb_steps_to_forecast=nb_periods_to_forecast,
+                label=f&#39;{label} - Duration Distribution&#39;,
+                display=display)
+
+            if duration_dist_forecast_values is None:
+                forecast_df[&#39;mean&#39;] = [duration_dist_data[&#39;mean&#39;].values[-1]] * nb_periods_to_forecast
+                forecast_df[&#39;std&#39;] = [duration_dist_data[&#39;std&#39;].values[-1]] * nb_periods_to_forecast
+                self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+                # TODO : Do a real MSE ERROR calculation even here
+                duration_dist_errors.loc[len(duration_dist_data)] = [label, np.nan, np.nan]
+                continue
+
+            # print(&#34;Mean Duration Error (NMSE) : {:.2f}&#34;.format(mean_duration_error))
+            duration_dist_errors.loc[len(duration_dist_data)] = [label, nmse_error_mean, nmse_error_std]
+
+            forecast_df[&#39;mean&#39;] = duration_dist_forecast_values[&#39;mean&#39;].values
+            forecast_df[&#39;std&#39;] = duration_dist_forecast_values[&#39;std&#39;].values
+
+            self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+
+        return duration_dist_errors
+
+    def forecast_execution_order(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
+                                 display=False):
+        &#34;&#34;&#34;
+        Fit the execution order
+        :param train_ratio:
+        :param last_time_window_id:
+        :param nb_periods_to_forecast:
+        :param display:
+        :return:
+        &#34;&#34;&#34;
+
+        pass
+
+    def simulate(self, start_date, time_step_id, time_window_id):
+        &#34;&#34;&#34;
+        Generate events on the macro-activity
+        :param start_date:
+        :param time_step_id:
+        :param time_window_id:
+        :return:
+        &#34;&#34;&#34;
+
+        events = pd.DataFrame(columns=[&#39;date&#39;, &#39;end_date&#39;, &#39;label&#39;])
+
+        current_date = start_date
+
+        # TODO : Take the execution order into account
+        for label in self.episode:
+            mean = self.duration_distrib[label].loc[time_window_id][&#39;mean&#39;]
+            std = self.duration_distrib[label].loc[time_window_id][&#39;std&#39;]
+
+            # To avoid negative durations
+            if (mean == 0) and (std == 0):
+                continue
+            if (np.isnan(mean)) or (np.isnan(std)):
+                continue
+            duration = -1
+            while duration &lt; 0:
+                duration = math.ceil(np.random.normal(mean, std))
+
+            end_date = current_date + dt.timedelta(seconds=duration)
+            events.loc[len(events)] = [current_date, end_date, label]
+
+            current_date = end_date
+
+        return events
+
+    def plot_time_series(self):
+        &#34;&#34;&#34;
+        Display all the time series present in the Macro-Activity
+        :return:
+        &#34;&#34;&#34;
+
+        ## ACTIVITY DAILY PROFILE Time Series
+        ######################################
+
+        raw_dataset = self.count_histogram.drop([&#39;tw_id&#39;], axis=1)
+        dataset = raw_dataset.values.flatten()
+
+        plt.figure()
+        plt.plot(dataset)
+        plt.title(&#34;Histogram Count&#34;)
+
+        ## ACTIVITY DURATIONS
+        #####################
+        plt.figure()
+        for label in self.episode:
+            df = self.duration_distrib[label]
+            df[&#39;mean&#39;] /= 60
+            plt.plot(df.tw_id, df[&#39;mean&#39;], label=label)
+            # sns.lineplot(x=&#39;tw_id&#39;, y=&#39;mean&#39;, data=df, label=label)
+        plt.title(&#39;Mean Activity Duration&#39;)
+        plt.xlabel(&#39;Time Windows ID&#39;)
+        plt.ylabel(&#39;Duration (min)&#39;)
+        plt.legend()
+
+        # EXECUTION ORDER
+
+        if len(self.episode) &lt; 2:
+            plt.show()
+            return
+
+        df = self.occurrence_order
+        df = df.melt(&#39;tw_id&#39;, var_name=&#39;cols&#39;, value_name=&#39;vals&#39;)
+        g = sns.factorplot(x=&#34;tw_id&#34;, y=&#34;vals&#34;, hue=&#39;cols&#39;, data=df)
+
+        plt.xlabel(&#39;Time Windows ID&#39;)
+        plt.ylabel(&#39;Probability&#39;)
+        plt.title(&#34;Execution Order : {}&#34;.format(self.episode))
+        plt.legend()
+
+        # INTER-EVENTS DURATIONS
+        plt.figure()
+        df = self.expon_lambda
+        plt.plot(df[&#39;tw_id&#39;], df[&#39;lambda&#39;])
+        # sns.lineplot(x=&#39;tw_id&#39;, y=&#39;lambda&#39;, data=df)
+
+        plt.xlabel(&#39;Time Windows ID&#39;)
+        plt.ylabel(&#39;Lambda&#39;)
+        plt.title(&#39;Exponenital Distrib Parameter&#39;)
+
+        plt.show()
+
+    def dump_data(self, output):
+        &#34;&#34;&#34;
+        Dump All the data in the output_dir
+        :return:
+        &#34;&#34;&#34;
+
+        # Create the directory for the macro-activity
+
+        output += f&#39;{str(self)}/&#39;
+        # Create the folder if it does not exist yet
+        if not os.path.exists(os.path.dirname(output)):
+            try:
+                os.makedirs(os.path.dirname(output))
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+        # Dump the histogram count
+        self.count_histogram.to_csv(output + &#34;/count_histogram.csv&#34;, index=False, sep=&#34;;&#34;)
+
+        for label, duration_distrib in self.duration_distrib.items():
+            # Stored as Gaussian Distribution
+            duration_distrib.to_csv(output + f&#34;{label}_duration_distribution.csv&#34;, index=False, sep=&#34;;&#34;)
+
+
+def fit_and_forecast(data, train_ratio, nb_periods_predict):
+    &#34;&#34;&#34;
+    Fit and predict the values of the time series
+    :param data:
+    :return:
+    &#34;&#34;&#34;
+
+    train_size = int(train_ratio * len(data))
+
+    train, test = data[:train_size], data[train_size:]
+
+    # plt.plot(train)
+    # plt.show()
+
+    model = ARIMA(train, order=(2, 1, 0))
+    # model = SARIMAX(train, order=(4, 0, 0), seasonal_order=(0, 0, 0, 1), enforce_stationarity=True,
+    #         enforce_invertibility=False)
+
+    model_fit = model.fit(disp=False)
+
+    validation_forecast = model_fit.forecast(len(test))[0]
+
+    error = mean_squared_error(test, validation_forecast) / np.mean(test)
+
+    real_forecast = model_fit.forecast(len(test) + nb_periods_predict)[0][len(test):]
+
+    return error, real_forecast
+
+
+def arima_forecast_duration_dist(data, train_ratio, nb_steps_to_forecast, label, display=False):
+    &#34;&#34;&#34;
+    Train an ARIMA model to forecast the data
+    :param data:
+    :param train_ratio:
+    :param seasonality:
+    :return:
+    &#34;&#34;&#34;
+    train_size = int(len(data) * train_ratio)
+
+    train, test = data[:train_size], data[train_size:]
+
+    test_size = test.shape[0]
+
+    model = VARMAX(train.values, order=(3, 2), enforce_stationarity=True, enforce_invertibility=False)
+    try:
+        model = model.fit(disp=False)
+    except np.linalg.LinAlgError as e:
+        return None, None, None
+
+    raw_forecast = model.forecast(test_size + nb_steps_to_forecast)
+
+    index = np.arange(train_size + 1, train_size + 1 + test_size + nb_steps_to_forecast)
+    raw_forecast = pd.DataFrame(raw_forecast, index, [&#39;mean&#39;, &#39;std&#39;])
+
+    # all_forecast = pd.Series(all_forecast)
+    # raw_forecast = sarima_model.get_forecast(
+    #     steps=test_size + nb_steps_to_forecast).predicted_mean  # predict N steps into the future
+
+    # raw_forecast = all_forecast_df[train_size:]
+
+    validation_forecast = raw_forecast[:test_size]
+    nmse_error_mean = mean_squared_error(test[&#39;mean&#39;], validation_forecast[&#39;mean&#39;]) / np.mean(test[&#39;mean&#39;])
+    nmse_error_std = mean_squared_error(test[&#39;std&#39;], validation_forecast[&#39;std&#39;]) / np.mean(test[&#39;std&#39;])
+
+    # Forecast to use
+    forecasts = raw_forecast[test_size:]
+
+    # Replace all negative values by 0
+    forecasts[forecasts &lt; 0] = 0
+    # forecasts = np.where(forecasts &gt; 0, forecasts, 0)
+    # forecasts = forecasts.reshape((nb_periods_to_forecast, nb_tstep))
+
+    if display:
+        # Visualize the forecasts (blue=train, green=forecasts)
+        # print(sarima_model.summary())
+        data = data.astype(&#39;float&#39;)
+        raw_forecast = raw_forecast.astype(&#39;float&#39;)
+        sns.lineplot(data=data, palette=&#34;tab10&#34;, linewidth=2.5, style=&#39;event&#39;, markers=True, dashes=False)
+        sns.lineplot(data=raw_forecast, palette=&#34;prism&#34;, linewidth=2.5, style=&#39;event&#39;, markers=True, dashes=False)
+        # plt.plot(np.arange(train_size, train_size + len(raw_forecast)), raw_forecast, label=&#39;Predicted data&#39;)
+        # plt.plot(all_forecast, label=&#39;Predicted data&#39;)
+        plt.title(f&#39;{label}\nNMSE ERROR Mean: {nmse_error_mean:.3f}\nNMSE ERROR Std: {nmse_error_std:.3f}&#39;)
+        plt.legend()
+        plt.show()
+
+    return nmse_error_mean, nmse_error_std, forecasts.astype(&#39;float&#39;)
+
+
+def find_ARIMA_params(data, seasonality):
+    &#34;&#34;&#34;
+
+    :param data:
+    :param seasonality:
+    :return:
+    &#34;&#34;&#34;
+
+    plt.plot(data)
+    plt.show()
+
+    diff_train = pd.Series(np.log(data))
+
+    diff_train = diff_train.diff(periods=seasonality)[seasonality:]
+    diff_train.replace([np.inf, -np.inf], np.nan, inplace=True)
+
+    diff_train = diff_train.fillna(0)
+
+    #
+    plt.plot(diff_train)
+    plt.show()
+    #
+    lag_acf = acf(diff_train, nlags=20)
+    lag_pacf = pacf(diff_train, nlags=20, method=&#39;ols&#39;)
+
+    born_supp = 1.96 / np.sqrt(len(diff_train))
+    born_inf = -born_supp
+
+    # Plot ACF:
+    plt.figure(figsize=(15, 5))
+    plt.subplot(121)
+    plt.stem(lag_acf)
+    plt.axhline(y=0, linestyle=&#39;-&#39;, color=&#39;black&#39;)
+    plt.axhline(y=-1.96 / np.sqrt(len(diff_train)), linestyle=&#39;--&#39;, color=&#39;gray&#39;)
+    plt.axhline(y=1.96 / np.sqrt(len(diff_train)), linestyle=&#39;--&#39;, color=&#39;gray&#39;)
+    plt.xlabel(&#39;Lag&#39;)
+    plt.ylabel(&#39;ACF&#39;)
+
+    # Plot PACF :
+    plt.subplot(122)
+    plt.stem(lag_pacf)
+    plt.axhline(y=0, linestyle=&#39;-&#39;, color=&#39;black&#39;)
+    plt.axhline(y=-1.96 / np.sqrt(len(diff_train)), linestyle=&#39;--&#39;, color=&#39;gray&#39;)
+    plt.axhline(y=1.96 / np.sqrt(len(diff_train)), linestyle=&#39;--&#39;, color=&#39;gray&#39;)
+    plt.xlabel(&#39;Lag&#39;)
+    plt.ylabel(&#39;PACF&#39;)
+
+    plt.tight_layout()
+    plt.show()
+
+
+class suppress_stdout_stderr(object):
+    &#39;&#39;&#39;
+    A context manager for doing a &#34;deep suppression&#34; of stdout and stderr in
+    Python, i.e. will suppress all print, even if the print originates in a
+    compiled C/Fortran sub-function.
+       This will not suppress raised exceptions, since exceptions are printed
+    to stderr just before a script exits, and after the context manager has
+    exited (at least, I think that is why it lets exceptions through).
+
+    &#39;&#39;&#39;
+
+    def __init__(self):
+        # Open a pair of null files
+        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
+        # Save the actual stdout (1) and stderr (2) file descriptors.
+        self.save_fds = (os.dup(1), os.dup(2))
+
+    def __enter__(self):
+        # Assign the null pointers to stdout and stderr.
+        os.dup2(self.null_fds[0], 1)
+        os.dup2(self.null_fds[1], 2)
+
+    def __exit__(self, *_):
+        # Re-assign the real stdout/stderr back to (1) and (2)
+        os.dup2(self.save_fds[0], 1)
+        os.dup2(self.save_fds[1], 2)
+        # Close the null files
+        os.close(self.null_fds[0])
+        os.close(self.null_fds[1])
+
+
+if __name__ == &#39;__main__&#39;:
+    main()</code></pre>
+            </details>
+        </section>
+        <section>
+        </section>
+        <section>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-functions">Functions</h2>
+            <dl>
+                <dt id="Simulation.MacroActivity.arima_forecast_duration_dist"><code class="name flex">
+                    <span>def <span class="ident">arima_forecast_duration_dist</span></span>(<span>data, train_ratio, nb_steps_to_forecast, label, display=False)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Train an ARIMA model to forecast the data
+                        :param data:
+                        :param train_ratio:
+                        :param seasonality:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def arima_forecast_duration_dist(data, train_ratio, nb_steps_to_forecast, label, display=False):
+    &#34;&#34;&#34;
+    Train an ARIMA model to forecast the data
+    :param data:
+    :param train_ratio:
+    :param seasonality:
+    :return:
+    &#34;&#34;&#34;
+    train_size = int(len(data) * train_ratio)
+
+    train, test = data[:train_size], data[train_size:]
+
+    test_size = test.shape[0]
+
+    model = VARMAX(train.values, order=(3, 2), enforce_stationarity=True, enforce_invertibility=False)
+    try:
+        model = model.fit(disp=False)
+    except np.linalg.LinAlgError as e:
+        return None, None, None
+
+    raw_forecast = model.forecast(test_size + nb_steps_to_forecast)
+
+    index = np.arange(train_size + 1, train_size + 1 + test_size + nb_steps_to_forecast)
+    raw_forecast = pd.DataFrame(raw_forecast, index, [&#39;mean&#39;, &#39;std&#39;])
+
+    # all_forecast = pd.Series(all_forecast)
+    # raw_forecast = sarima_model.get_forecast(
+    #     steps=test_size + nb_steps_to_forecast).predicted_mean  # predict N steps into the future
+
+    # raw_forecast = all_forecast_df[train_size:]
+
+    validation_forecast = raw_forecast[:test_size]
+    nmse_error_mean = mean_squared_error(test[&#39;mean&#39;], validation_forecast[&#39;mean&#39;]) / np.mean(test[&#39;mean&#39;])
+    nmse_error_std = mean_squared_error(test[&#39;std&#39;], validation_forecast[&#39;std&#39;]) / np.mean(test[&#39;std&#39;])
+
+    # Forecast to use
+    forecasts = raw_forecast[test_size:]
+
+    # Replace all negative values by 0
+    forecasts[forecasts &lt; 0] = 0
+    # forecasts = np.where(forecasts &gt; 0, forecasts, 0)
+    # forecasts = forecasts.reshape((nb_periods_to_forecast, nb_tstep))
+
+    if display:
+        # Visualize the forecasts (blue=train, green=forecasts)
+        # print(sarima_model.summary())
+        data = data.astype(&#39;float&#39;)
+        raw_forecast = raw_forecast.astype(&#39;float&#39;)
+        sns.lineplot(data=data, palette=&#34;tab10&#34;, linewidth=2.5, style=&#39;event&#39;, markers=True, dashes=False)
+        sns.lineplot(data=raw_forecast, palette=&#34;prism&#34;, linewidth=2.5, style=&#39;event&#39;, markers=True, dashes=False)
+        # plt.plot(np.arange(train_size, train_size + len(raw_forecast)), raw_forecast, label=&#39;Predicted data&#39;)
+        # plt.plot(all_forecast, label=&#39;Predicted data&#39;)
+        plt.title(f&#39;{label}\nNMSE ERROR Mean: {nmse_error_mean:.3f}\nNMSE ERROR Std: {nmse_error_std:.3f}&#39;)
+        plt.legend()
+        plt.show()
+
+    return nmse_error_mean, nmse_error_std, forecasts.astype(&#39;float&#39;)</code></pre>
+                    </details>
+                </dd>
+                <dt id="Simulation.MacroActivity.find_ARIMA_params"><code class="name flex">
+                    <span>def <span class="ident">find_ARIMA_params</span></span>(<span>data, seasonality)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>:param data:
+                        :param seasonality:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def find_ARIMA_params(data, seasonality):
+    &#34;&#34;&#34;
+
+    :param data:
+    :param seasonality:
+    :return:
+    &#34;&#34;&#34;
+
+    plt.plot(data)
+    plt.show()
+
+    diff_train = pd.Series(np.log(data))
+
+    diff_train = diff_train.diff(periods=seasonality)[seasonality:]
+    diff_train.replace([np.inf, -np.inf], np.nan, inplace=True)
+
+    diff_train = diff_train.fillna(0)
+
+    #
+    plt.plot(diff_train)
+    plt.show()
+    #
+    lag_acf = acf(diff_train, nlags=20)
+    lag_pacf = pacf(diff_train, nlags=20, method=&#39;ols&#39;)
+
+    born_supp = 1.96 / np.sqrt(len(diff_train))
+    born_inf = -born_supp
+
+    # Plot ACF:
+    plt.figure(figsize=(15, 5))
+    plt.subplot(121)
+    plt.stem(lag_acf)
+    plt.axhline(y=0, linestyle=&#39;-&#39;, color=&#39;black&#39;)
+    plt.axhline(y=-1.96 / np.sqrt(len(diff_train)), linestyle=&#39;--&#39;, color=&#39;gray&#39;)
+    plt.axhline(y=1.96 / np.sqrt(len(diff_train)), linestyle=&#39;--&#39;, color=&#39;gray&#39;)
+    plt.xlabel(&#39;Lag&#39;)
+    plt.ylabel(&#39;ACF&#39;)
+
+    # Plot PACF :
+    plt.subplot(122)
+    plt.stem(lag_pacf)
+    plt.axhline(y=0, linestyle=&#39;-&#39;, color=&#39;black&#39;)
+    plt.axhline(y=-1.96 / np.sqrt(len(diff_train)), linestyle=&#39;--&#39;, color=&#39;gray&#39;)
+    plt.axhline(y=1.96 / np.sqrt(len(diff_train)), linestyle=&#39;--&#39;, color=&#39;gray&#39;)
+    plt.xlabel(&#39;Lag&#39;)
+    plt.ylabel(&#39;PACF&#39;)
+
+    plt.tight_layout()
+    plt.show()</code></pre>
+                    </details>
+                </dd>
+                <dt id="Simulation.MacroActivity.fit_and_forecast"><code class="name flex">
+                    <span>def <span class="ident">fit_and_forecast</span></span>(<span>data, train_ratio, nb_periods_predict)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Fit and predict the values of the time series
+                        :param data:
+                        :return:</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def fit_and_forecast(data, train_ratio, nb_periods_predict):
+    &#34;&#34;&#34;
+    Fit and predict the values of the time series
+    :param data:
+    :return:
+    &#34;&#34;&#34;
+
+    train_size = int(train_ratio * len(data))
+
+    train, test = data[:train_size], data[train_size:]
+
+    # plt.plot(train)
+    # plt.show()
+
+    model = ARIMA(train, order=(2, 1, 0))
+    # model = SARIMAX(train, order=(4, 0, 0), seasonal_order=(0, 0, 0, 1), enforce_stationarity=True,
+    #         enforce_invertibility=False)
+
+    model_fit = model.fit(disp=False)
+
+    validation_forecast = model_fit.forecast(len(test))[0]
+
+    error = mean_squared_error(test, validation_forecast) / np.mean(test)
+
+    real_forecast = model_fit.forecast(len(test) + nb_periods_predict)[0][len(test):]
+
+    return error, real_forecast</code></pre>
+                    </details>
+                </dd>
+                <dt id="Simulation.MacroActivity.main"><code class="name flex">
+                    <span>def <span class="ident">main</span></span>(<span>)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">def main():
+    dataset_name = &#39;aruba&#39;
+    # dataset_name = &#39;hh101&#39;
+    dataset = pick_dataset(dataset_name)
+    # SIM_MODEL PARAMETERS
+    episode = (&#39;toilet&#39;, &#39;dress&#39;)
+    # episode = (&#39;relax&#39;,)
+    # episode = (&#39;enter_home&#39;, &#39;leave_home&#39;, &#39;watch_tv&#39;)
+    period = dt.timedelta(days=1)
+    time_step = dt.timedelta(minutes=60)
+    tep = 30
+
+    ############################
+    # PREDICTION PARAMETERS
+    train_ratio = 0.8
+
+    # TIME WINDOW PARAMETERS
+    window_size = 30
+    time_window_duration = dt.timedelta(days=window_size)
+    start_date = dataset.date.min().to_pydatetime()
+    end_date = dataset.date.max().to_pydatetime() - time_window_duration
+
+    nb_days = int((end_date - start_date) / period) + 1
+
+    activity = MacroActivity(episode=episode, period=period, time_step=time_step, tep=tep)
+
+    tw_id = 0
+    while True:
+        window_start_date = start_date + tw_id * period
+        window_end_date = window_start_date + time_window_duration
+
+        if window_start_date &gt;= end_date:
+            break
+
+        window_dataset = dataset[(dataset.date &gt;= window_start_date) &amp; (dataset.date &lt; window_end_date)].copy()
+
+        occurrences, events = compute_episode_occurrences(dataset=window_dataset, episode=episode, tep=tep)
+
+        if len(occurrences) == 0:
+            print(&#39;No occurrences found !!&#39;)
+            tw_id += 1
+            continue
+        # print(&#39;{} occurrences of the episode {}&#39;.format(len(occurrences), episode))
+        activity.add_time_window(occurrences=occurrences, events=events, time_window_id=tw_id, display=False)
+
+        tw_id += 1
+
+        sys.stdout.write(&#34;\r{}/{} Time Windows CAPTURED&#34;.format(tw_id, nb_days))
+        sys.stdout.flush()
+    sys.stdout.write(&#34;\n&#34;)
+
+    # Dump Parameters
+    output = &#39;../output/{}/Activity_{}/&#39;.format(dataset_name, episode)
+    # Create the folder if it does not exist yet
+    if not os.path.exists(os.path.dirname(output)):
+        try:
+            os.makedirs(os.path.dirname(output))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+    # Dump Activity Daily Profile
+    pickle.dump(activity.count_histogram, open(output + &#34;/daily_profile.pkl&#34;, &#39;wb&#39;))
+
+    # Dump Activity Durations
+    pickle.dump(activity.duration_distrib, open(output + &#34;/durations_distrib.pkl&#34;, &#39;wb&#39;))
+
+    # Dump Execution order
+    pickle.dump(activity.occurrence_order, open(output + &#34;/execution_order.pkl&#34;, &#39;wb&#39;))
+
+    # Dump INTER-EVENTS duration
+    pickle.dump(activity.expon_lambda, open(output + &#34;/inter_events.pkl&#34;, &#39;wb&#39;))
+
+    activity.plot_time_series()
+
+    # Build the model with a lot of time windows
+    print(&#34;#####################################&#34;)
+    print(&#34;#    TRAINING FORECASTING MODEL     #&#34;)
+    print(&#34;#####################################&#34;)
+    error = activity.forecast_history_count(train_ratio=train_ratio, last_time_window_id=tw_id - 1,
+                                            nb_periods_to_forecast=10, display=True)
+
+    duration_errors = activity.forecast_durations(train_ratio=train_ratio,
+                                                  last_time_window_id=tw_id - 1,
+                                                  nb_periods_to_forecast=10, display=True)</code></pre>
+                    </details>
+                </dd>
+            </dl>
+        </section>
+        <section>
+            <h2 class="section-title" id="header-classes">Classes</h2>
+            <dl>
+                <dt id="Simulation.MacroActivity.MacroActivity"><code class="flex name class">
+                    <span>class <span class="ident">MacroActivity</span></span>
+                    <span>(</span><span>episode, period, time_step, tep=30)</span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>Creation of a Macro-Activity</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">class MacroActivity:
+    ID = 0  # Identifier of the macro-activity
+
+    LSTM = 0
+    SARIMAX = 1
+
+    def __init__(self, episode, period, time_step, tep=30):
+        &#34;&#34;&#34;
+        Creation of a Macro-Activity
+
+        &#34;&#34;&#34;
+
+        print(&#39;\n&#39;)
+        print(&#34;##################################################&#34;)
+        print(&#34;## Creation of the Macro-Activity &#39;{}&#39; ##&#34;.format(episode))
+        print(&#34;####################################################&#34;)
+        print(&#39;\n&#39;)
+        self.episode = episode
+        self.period = period
+        self.time_step = time_step
+        self.period_ts_index = np.arange(int(period.total_seconds() / time_step.total_seconds()))
+        self.tep = dt.timedelta(minutes=tep)
+
+        # ACTIVITY DAILY PROFILE
+        # Initialize the histogram for the activity periodicity profile
+        hist_columns = [&#39;tw_id&#39;] + [&#39;ts_{}&#39;.format(ts_id) for ts_id in self.period_ts_index]
+        self.count_histogram = pd.DataFrame(columns=hist_columns)  # For daily profiles
+
+        # ACTIVITY DURATION PROBABILITY DISTRIBUTIONS
+        # Key: label, Value: DataFrame with [&#39;tw_id&#39;, &#39;mean&#39;, &#39;std&#39;]
+        self.duration_distrib = {}  # For activity duration laws
+
+        for label in self.episode:
+            # Stored as Gaussian Distribution
+            self.duration_distrib[label] = pd.DataFrame(columns=[&#39;tw_id&#39;, &#39;mean&#39;, &#39;std&#39;])
+
+        # EXECUTION ORDER
+        self.occurrence_order = pd.DataFrame(
+            columns=[&#39;tw_id&#39;])  # For execution orders, the columns of the df are like &#39;0132&#39;
+
+        # INTER-EVENTS DURATIONS
+        self.expon_lambda = pd.DataFrame(columns=[&#39;tw_id&#39;, &#39;lambda&#39;])
+
+        # self.add_time_window(occurrences, events, start_time_window_id, display=display)
+
+        # self.build_histogram(occurrences, display=display)
+        self.nb_updates = 0
+        MacroActivity.ID += 1
+
+    def __repr__(self):
+
+        str = &#39;&#39;
+        if len(self.episode) &gt; 1:
+            str += &#39;MACRO-ACTIVITY&#39;
+        else:
+            str += &#39;SINGLE-ACTIVITY&#39;
+        str += &#39;{&#39; + &#39; -- &#39;.join(self.episode) + &#39;}&#39;
+        return str
+
+    def get_set_episode(self):
+        return frozenset(self.episode)
+
+    def preprocessing(self, occurrences, events):
+        &#39;&#39;&#39;
+        Preprocessing the occurrences and the events
+        :param occurrences:
+        :return:
+        &#39;&#39;&#39;
+        occurrences[&#39;relative_date&#39;] = occurrences.date.apply(
+            lambda x: modulo_datetime(x.to_pydatetime(), self.period))
+        occurrences[&#39;time_step_id&#39;] = occurrences[&#39;relative_date&#39;] / self.time_step.total_seconds()
+        occurrences[&#39;time_step_id&#39;] = occurrences[&#39;time_step_id&#39;].apply(math.floor)
+        occurrences[&#39;activity_duration&#39;] = occurrences.end_date - occurrences.date
+        occurrences[&#39;activity_duration&#39;] = occurrences[&#39;activity_duration&#39;].apply(lambda x: x.total_seconds())
+
+        events[&#39;activity_duration&#39;] = events.end_date - events.date
+        events[&#39;activity_duration&#39;] = events[&#39;activity_duration&#39;].apply(lambda x: x.total_seconds())
+
+        return occurrences, events
+
+    def build_histogram(self, occurrences, display=False):
+        &#39;&#39;&#39;
+        Build the Time distribution count_histogram on occurrences
+        :param occurrences:
+        :param display:
+        :return:
+        &#39;&#39;&#39;
+
+        # Remove duplicates &#39;day_date - time_step_id&#39;
+        occurrences[&#39;day_date&#39;] = occurrences.date.apply(lambda x: x.date())
+        occurrences.drop_duplicates([&#39;day_date&#39;, &#39;time_step_id&#39;], inplace=True)
+
+        hist = occurrences.groupby([&#39;time_step_id&#39;]).count()[&#39;date&#39;]
+
+        # Create an period_ts_index to have every time steps in the period
+
+        hist = hist.reindex(self.period_ts_index)
+
+        hist.fillna(0, inplace=True)
+
+        # hist = hist/len(hist)  # normalize
+
+        if display:
+            plt.bar(hist.index, hist.values)
+            plt.title(&#34;Activity Daily Profile\n&#34; +
+                      &#39;--&#39;.join(self.episode) +
+                      &#39;\nTime step : {} min&#39;.format(round(self.time_step.total_seconds() / 60, 1)))
+            plt.ylabel(&#39;Probability&#39;)
+            plt.show()
+
+        return hist
+
+    def add_time_window(self, occurrences, events, time_window_id, display=False):
+        &#34;&#34;&#34;
+        Update the ocurrence time Histogram and the duration laws history with the new time window data
+        :param display:
+        :param time_window_id:
+        :param events:
+        :param occurrences:
+        :return:
+        &#34;&#34;&#34;
+        self.nb_updates += 1  # Useful to know the number of available data for forecasting
+
+        occurrences, events = self.preprocessing(occurrences, events)
+
+        if len(self.count_histogram) &gt; 0:
+            last_filled_tw_id = self.count_histogram.tw_id.max()
+        else:
+            last_filled_tw_id = -1
+
+        # Fill the missing time windows data
+        hist = self.build_histogram(occurrences, display=display)
+        for tw_id in range(last_filled_tw_id + 1, time_window_id):
+            self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(len(hist)))
+
+            for label in self.episode:
+                duration_df = self.duration_distrib[label]
+                previous_mean_duration, previous_std_duration = 0, 0
+                if len(duration_df) &gt; 0:
+                    previous_mean_duration, previous_std_duration = duration_df.iloc[-1][&#39;mean&#39;], duration_df.iloc[-1][
+                        &#39;std&#39;]
+                duration_df.at[tw_id] = [tw_id, previous_mean_duration, previous_std_duration]
+
+            self.occurrence_order.at[tw_id, &#39;tw_id&#39;] = tw_id
+            self.expon_lambda.at[tw_id] = [tw_id, 0]
+
+        ## ACTIVITY DAILY PROFILE &amp; ACTIVITIES DURATIONS
+        # Update histogram count history
+        self.count_histogram.at[time_window_id] = [time_window_id] + list(hist.values.T)
+
+        # print(&#39;Histogram count [UPDATED]&#39;)
+        #
+        # UPDATE DURATIONS LAWS
+        for label in self.episode:
+            label_df = events[events.label == label]
+            duration_df = self.duration_distrib[label]
+
+            mean_duration = np.mean(label_df.activity_duration)
+            std_duration = np.std(label_df.activity_duration)
+            duration_df.at[time_window_id] = [time_window_id, float(mean_duration), float(std_duration)]
+
+        # print(&#39;Duration Gaussian Distribution [UPDATED]&#39;)
+
+        ## STOP HERE IF SINGLE ACTIVITY
+        if len(self.episode) &lt; 2:
+            return
+
+        ## UPDATE EXECUTION ORDER
+        occ_order_probability_dict = {}
+
+        # Replace labels by their alphabetic identifier
+        for label in self.episode:
+            events.loc[events.label == label, &#39;alph_id&#39;] = sorted(self.episode).index(label)
+
+        for id, occ_row in occurrences.iterrows():
+            start_date = occ_row.date
+            end_date = start_date + self.tep
+            arr = list(events.loc[(events.date &gt;= start_date) &amp; (events.date &lt; end_date), &#39;alph_id&#39;].values)
+            # remove duplicates
+            arr = list(dict.fromkeys(arr))
+            occ_order_str = &#39;&#39;.join([str(int(x)) for x in arr])
+
+            if occ_order_str in occ_order_probability_dict:
+                occ_order_probability_dict[occ_order_str] += 1 / len(occurrences)
+            else:
+                occ_order_probability_dict[occ_order_str] = 1 / len(occurrences)
+
+        self.occurrence_order.at[time_window_id, &#39;tw_id&#39;] = time_window_id
+        for occ_order_str, prob in occ_order_probability_dict.items():
+            self.occurrence_order.at[time_window_id, occ_order_str] = prob
+
+        self.occurrence_order.fillna(0, inplace=True)
+
+        # print(&#39;Execution Order Probability [UPDATED]&#39;)
+
+        ## UPDATE INTER-EVENTS DURATION
+        # Add occ_id to events
+        events[&#34;occ_id&#34;] = events.index
+        events[&#34;occ_id&#34;] = events.occ_id.apply(lambda x: math.floor(x / len(self.episode)))
+
+        events = events.join(events.groupby([&#39;occ_id&#39;])[[&#39;date&#39;]].shift(-1).add_suffix(&#39;_next&#39;))
+        events.rename(columns={events.columns[-1]: &#34;date_next&#34;}, inplace=True)
+
+        events.dropna(inplace=True)
+        inter_event_durations = (events.date_next - events.date).apply(lambda x: x.total_seconds()).values
+
+        # Fit an exponential distribution
+        loc, scale = expon.fit(inter_event_durations.astype(np.float64), floc=0)
+
+        self.expon_lambda.at[time_window_id] = [time_window_id, 1 / scale]
+
+    def get_count_histogram(self, time_window_id):
+        &#34;&#34;&#34;
+        :param time_window_id: time window identifier
+        :return: the histogram count at a specific time window
+        &#34;&#34;&#34;
+        return self.count_histogram.loc[[time_window_id]]
+
+    def forecast_history_count(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
+                               display=False):
+        &#34;&#34;&#34;
+        Fit a time series forecasting model to the history count data
+        :param train_ratio:
+        :param last_time_window_id: Last time window id registered by the manager
+        :param nb_periods_to_forecast:
+        :param display:
+        :return: Normalised Mean Squared Error (NMSE)
+        &#34;&#34;&#34;
+
+        nb_tstep = len(self.count_histogram.columns) - 1
+        nb_steps_to_forecast = nb_periods_to_forecast * nb_tstep
+
+        # Fill history count df until last time window registered
+        last_filled_tw_id = int(self.count_histogram.tw_id.max())
+
+        for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
+            self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(nb_tstep))
+
+        raw_dataset = self.count_histogram.drop([&#39;tw_id&#39;], axis=1)
+        dataset = raw_dataset.values.flatten()
+
+        if self.nb_updates &lt; 10:  # Can&#39;t train on such less data
+            # Just copy the last known information
+            current_tw_id = last_time_window_id
+            hist_count = list(self.count_histogram.values[-1])[1:]  # remove the &#39;tw_id&#39; column
+            for i in range(nb_periods_to_forecast):
+                current_tw_id += 1
+                self.count_histogram.at[current_tw_id] = [current_tw_id] + hist_count
+            return None
+
+        dataset = dataset.astype(int)
+
+        train_size = int(len(dataset) * train_ratio)
+
+        train, test = dataset[:train_size], dataset[train_size:]
+
+        test_size = test.shape[0]
+
+        sarima_model = sarimax.SARIMAX(train, order=(2, 0, 2), seasonal_order=(1, 0, 0, nb_tstep),
+                                       enforce_stationarity=False,
+                                       enforce_invertibility=False)
+
+        sarima_model = sarima_model.fit(disp=False)
+
+        raw_forecast = sarima_model.predict(start=train_size, end=-1 + train_size + test_size + nb_steps_to_forecast)
+
+        raw_forecast = pd.Series(raw_forecast)
+
+        validation_forecast = raw_forecast[:test_size]
+        mse_error = mean_squared_error(test, validation_forecast)
+
+        # Forecast to use
+        forecasts = raw_forecast[test_size:]
+
+        # Replace all negative values by 0
+        forecasts = np.where(forecasts &gt; 0, forecasts, 0)
+        forecasts = forecasts.reshape((nb_periods_to_forecast, nb_tstep))
+
+        current_tw_id = last_time_window_id
+        for hist_count in forecasts:
+            current_tw_id += 1
+            self.count_histogram.at[current_tw_id] = [current_tw_id] + list(hist_count)
+
+        if display:
+            plt.figure(figsize=(10, 5))
+            plt.plot(np.arange(train_size, train_size + len(validation_forecast)), validation_forecast, &#39;r&#39;)
+            plt.plot(dataset, &#39;b&#39;, alpha=0.5)
+            plt.plot(np.arange(len(dataset), len(dataset) + len(raw_forecast)), raw_forecast, &#39;red&#39;, alpha=0.7)
+
+            plt.title(&#39;{}\nTest MSE: {:.3f}&#39;.format(self.episode, mse_error))
+            plt.xlabel(&#39;Time&#39;)
+            plt.ylabel(&#39;count&#39;)
+            plt.axvline(x=train_size, color=&#39;black&#39;)
+            plt.show()
+
+        return mse_error
+
+    def forecast_durations(self, train_ratio, last_time_window_id, nb_periods_to_forecast, display=False):
+        &#34;&#34;&#34;
+        forecast the activities duration
+        :param train_ratio:
+        :param last_time_window_id:
+        :param nb_periods_to_forecast:
+        :param display:
+        :return: Two dict like object {label: r2_score}
+        &#34;&#34;&#34;
+
+        duration_dist_errors = pd.DataFrame(columns=[&#39;label&#39;, &#39;mean_error&#39;, &#39;std_error&#39;])
+
+        for label in self.episode:
+            print(&#39;[{}] Duration forecasting...&#39;.format(label))
+
+            # Fill history count df until last time window registered
+
+            last_filled_tw_id = int(self.duration_distrib[label].tw_id.max())
+
+            for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
+                self.duration_distrib[label].at[tw_id] = [tw_id, 0, 0]
+
+            forecast_df = pd.DataFrame(columns=[&#39;tw_id&#39;, &#39;mean&#39;, &#39;std&#39;])
+
+            forecast_df.tw_id = np.arange(last_time_window_id, last_time_window_id + nb_periods_to_forecast)
+
+            # Fit &amp; Predict Duration Mean values
+            # print(&#39;Mean Duration Forecasting...&#39;)
+            duration_dist_data = self.duration_distrib[label][[&#39;mean&#39;, &#39;std&#39;]]
+            # mean_duration_data = list(self.duration_distrib[label][&#39;mean&#39;].values)
+            # std_duration_data = list(self.duration_distrib[label][&#39;std&#39;].values)
+
+            if len(duration_dist_data) &lt; 10:
+                forecast_df[&#39;mean&#39;] = [duration_dist_data[&#39;mean&#39;].values[-1]] * nb_periods_to_forecast
+                forecast_df[&#39;std&#39;] = [duration_dist_data[&#39;std&#39;].values[-1]] * nb_periods_to_forecast
+                self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+                # TODO : Do a real MSE ERROR calculation even here
+                duration_dist_errors.loc[len(duration_dist_data)] = [label, np.nan, np.nan]
+                continue
+
+            nmse_error_mean, nmse_error_std, duration_dist_forecast_values = arima_forecast_duration_dist(
+                data=duration_dist_data,
+                train_ratio=train_ratio,
+                nb_steps_to_forecast=nb_periods_to_forecast,
+                label=f&#39;{label} - Duration Distribution&#39;,
+                display=display)
+
+            if duration_dist_forecast_values is None:
+                forecast_df[&#39;mean&#39;] = [duration_dist_data[&#39;mean&#39;].values[-1]] * nb_periods_to_forecast
+                forecast_df[&#39;std&#39;] = [duration_dist_data[&#39;std&#39;].values[-1]] * nb_periods_to_forecast
+                self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+                # TODO : Do a real MSE ERROR calculation even here
+                duration_dist_errors.loc[len(duration_dist_data)] = [label, np.nan, np.nan]
+                continue
+
+            # print(&#34;Mean Duration Error (NMSE) : {:.2f}&#34;.format(mean_duration_error))
+            duration_dist_errors.loc[len(duration_dist_data)] = [label, nmse_error_mean, nmse_error_std]
+
+            forecast_df[&#39;mean&#39;] = duration_dist_forecast_values[&#39;mean&#39;].values
+            forecast_df[&#39;std&#39;] = duration_dist_forecast_values[&#39;std&#39;].values
+
+            self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+
+        return duration_dist_errors
+
+    def forecast_execution_order(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
+                                 display=False):
+        &#34;&#34;&#34;
+        Fit the execution order
+        :param train_ratio:
+        :param last_time_window_id:
+        :param nb_periods_to_forecast:
+        :param display:
+        :return:
+        &#34;&#34;&#34;
+
+        pass
+
+    def simulate(self, start_date, time_step_id, time_window_id):
+        &#34;&#34;&#34;
+        Generate events on the macro-activity
+        :param start_date:
+        :param time_step_id:
+        :param time_window_id:
+        :return:
+        &#34;&#34;&#34;
+
+        events = pd.DataFrame(columns=[&#39;date&#39;, &#39;end_date&#39;, &#39;label&#39;])
+
+        current_date = start_date
+
+        # TODO : Take the execution order into account
+        for label in self.episode:
+            mean = self.duration_distrib[label].loc[time_window_id][&#39;mean&#39;]
+            std = self.duration_distrib[label].loc[time_window_id][&#39;std&#39;]
+
+            # To avoid negative durations
+            if (mean == 0) and (std == 0):
+                continue
+            if (np.isnan(mean)) or (np.isnan(std)):
+                continue
+            duration = -1
+            while duration &lt; 0:
+                duration = math.ceil(np.random.normal(mean, std))
+
+            end_date = current_date + dt.timedelta(seconds=duration)
+            events.loc[len(events)] = [current_date, end_date, label]
+
+            current_date = end_date
+
+        return events
+
+    def plot_time_series(self):
+        &#34;&#34;&#34;
+        Display all the time series present in the Macro-Activity
+        :return:
+        &#34;&#34;&#34;
+
+        ## ACTIVITY DAILY PROFILE Time Series
+        ######################################
+
+        raw_dataset = self.count_histogram.drop([&#39;tw_id&#39;], axis=1)
+        dataset = raw_dataset.values.flatten()
+
+        plt.figure()
+        plt.plot(dataset)
+        plt.title(&#34;Histogram Count&#34;)
+
+        ## ACTIVITY DURATIONS
+        #####################
+        plt.figure()
+        for label in self.episode:
+            df = self.duration_distrib[label]
+            df[&#39;mean&#39;] /= 60
+            plt.plot(df.tw_id, df[&#39;mean&#39;], label=label)
+            # sns.lineplot(x=&#39;tw_id&#39;, y=&#39;mean&#39;, data=df, label=label)
+        plt.title(&#39;Mean Activity Duration&#39;)
+        plt.xlabel(&#39;Time Windows ID&#39;)
+        plt.ylabel(&#39;Duration (min)&#39;)
+        plt.legend()
+
+        # EXECUTION ORDER
+
+        if len(self.episode) &lt; 2:
+            plt.show()
+            return
+
+        df = self.occurrence_order
+        df = df.melt(&#39;tw_id&#39;, var_name=&#39;cols&#39;, value_name=&#39;vals&#39;)
+        g = sns.factorplot(x=&#34;tw_id&#34;, y=&#34;vals&#34;, hue=&#39;cols&#39;, data=df)
+
+        plt.xlabel(&#39;Time Windows ID&#39;)
+        plt.ylabel(&#39;Probability&#39;)
+        plt.title(&#34;Execution Order : {}&#34;.format(self.episode))
+        plt.legend()
+
+        # INTER-EVENTS DURATIONS
+        plt.figure()
+        df = self.expon_lambda
+        plt.plot(df[&#39;tw_id&#39;], df[&#39;lambda&#39;])
+        # sns.lineplot(x=&#39;tw_id&#39;, y=&#39;lambda&#39;, data=df)
+
+        plt.xlabel(&#39;Time Windows ID&#39;)
+        plt.ylabel(&#39;Lambda&#39;)
+        plt.title(&#39;Exponenital Distrib Parameter&#39;)
+
+        plt.show()
+
+    def dump_data(self, output):
+        &#34;&#34;&#34;
+        Dump All the data in the output_dir
+        :return:
+        &#34;&#34;&#34;
+
+        # Create the directory for the macro-activity
+
+        output += f&#39;{str(self)}/&#39;
+        # Create the folder if it does not exist yet
+        if not os.path.exists(os.path.dirname(output)):
+            try:
+                os.makedirs(os.path.dirname(output))
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+        # Dump the histogram count
+        self.count_histogram.to_csv(output + &#34;/count_histogram.csv&#34;, index=False, sep=&#34;;&#34;)
+
+        for label, duration_distrib in self.duration_distrib.items():
+            # Stored as Gaussian Distribution
+            duration_distrib.to_csv(output + f&#34;{label}_duration_distribution.csv&#34;, index=False, sep=&#34;;&#34;)</code></pre>
+                    </details>
+                    <h3>Class variables</h3>
+                    <dl>
+                        <dt id="Simulation.MacroActivity.MacroActivity.ID"><code class="name">var <span
+                                class="ident">ID</span></code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.LSTM"><code class="name">var <span class="ident">LSTM</span></code>
+                        </dt>
+                        <dd>
+                            <div class="desc"></div>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.SARIMAX"><code class="name">var <span
+                                class="ident">SARIMAX</span></code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                        </dd>
+                    </dl>
+                    <h3>Methods</h3>
+                    <dl>
+                        <dt id="Simulation.MacroActivity.MacroActivity.add_time_window"><code class="name flex">
+                            <span>def <span class="ident">add_time_window</span></span>(<span>self, occurrences, events, time_window_id, display=False)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Update the ocurrence time Histogram and the duration laws history with
+                                the new time window data
+                                :param display:
+                                :param time_window_id:
+                                :param events:
+                                :param occurrences:
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def add_time_window(self, occurrences, events, time_window_id, display=False):
+    &#34;&#34;&#34;
+    Update the ocurrence time Histogram and the duration laws history with the new time window data
+    :param display:
+    :param time_window_id:
+    :param events:
+    :param occurrences:
+    :return:
+    &#34;&#34;&#34;
+    self.nb_updates += 1  # Useful to know the number of available data for forecasting
+
+    occurrences, events = self.preprocessing(occurrences, events)
+
+    if len(self.count_histogram) &gt; 0:
+        last_filled_tw_id = self.count_histogram.tw_id.max()
+    else:
+        last_filled_tw_id = -1
+
+    # Fill the missing time windows data
+    hist = self.build_histogram(occurrences, display=display)
+    for tw_id in range(last_filled_tw_id + 1, time_window_id):
+        self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(len(hist)))
+
+        for label in self.episode:
+            duration_df = self.duration_distrib[label]
+            previous_mean_duration, previous_std_duration = 0, 0
+            if len(duration_df) &gt; 0:
+                previous_mean_duration, previous_std_duration = duration_df.iloc[-1][&#39;mean&#39;], duration_df.iloc[-1][
+                    &#39;std&#39;]
+            duration_df.at[tw_id] = [tw_id, previous_mean_duration, previous_std_duration]
+
+        self.occurrence_order.at[tw_id, &#39;tw_id&#39;] = tw_id
+        self.expon_lambda.at[tw_id] = [tw_id, 0]
+
+    ## ACTIVITY DAILY PROFILE &amp; ACTIVITIES DURATIONS
+    # Update histogram count history
+    self.count_histogram.at[time_window_id] = [time_window_id] + list(hist.values.T)
+
+    # print(&#39;Histogram count [UPDATED]&#39;)
+    #
+    # UPDATE DURATIONS LAWS
+    for label in self.episode:
+        label_df = events[events.label == label]
+        duration_df = self.duration_distrib[label]
+
+        mean_duration = np.mean(label_df.activity_duration)
+        std_duration = np.std(label_df.activity_duration)
+        duration_df.at[time_window_id] = [time_window_id, float(mean_duration), float(std_duration)]
+
+    # print(&#39;Duration Gaussian Distribution [UPDATED]&#39;)
+
+    ## STOP HERE IF SINGLE ACTIVITY
+    if len(self.episode) &lt; 2:
+        return
+
+    ## UPDATE EXECUTION ORDER
+    occ_order_probability_dict = {}
+
+    # Replace labels by their alphabetic identifier
+    for label in self.episode:
+        events.loc[events.label == label, &#39;alph_id&#39;] = sorted(self.episode).index(label)
+
+    for id, occ_row in occurrences.iterrows():
+        start_date = occ_row.date
+        end_date = start_date + self.tep
+        arr = list(events.loc[(events.date &gt;= start_date) &amp; (events.date &lt; end_date), &#39;alph_id&#39;].values)
+        # remove duplicates
+        arr = list(dict.fromkeys(arr))
+        occ_order_str = &#39;&#39;.join([str(int(x)) for x in arr])
+
+        if occ_order_str in occ_order_probability_dict:
+            occ_order_probability_dict[occ_order_str] += 1 / len(occurrences)
+        else:
+            occ_order_probability_dict[occ_order_str] = 1 / len(occurrences)
+
+    self.occurrence_order.at[time_window_id, &#39;tw_id&#39;] = time_window_id
+    for occ_order_str, prob in occ_order_probability_dict.items():
+        self.occurrence_order.at[time_window_id, occ_order_str] = prob
+
+    self.occurrence_order.fillna(0, inplace=True)
+
+    # print(&#39;Execution Order Probability [UPDATED]&#39;)
+
+    ## UPDATE INTER-EVENTS DURATION
+    # Add occ_id to events
+    events[&#34;occ_id&#34;] = events.index
+    events[&#34;occ_id&#34;] = events.occ_id.apply(lambda x: math.floor(x / len(self.episode)))
+
+    events = events.join(events.groupby([&#39;occ_id&#39;])[[&#39;date&#39;]].shift(-1).add_suffix(&#39;_next&#39;))
+    events.rename(columns={events.columns[-1]: &#34;date_next&#34;}, inplace=True)
+
+    events.dropna(inplace=True)
+    inter_event_durations = (events.date_next - events.date).apply(lambda x: x.total_seconds()).values
+
+    # Fit an exponential distribution
+    loc, scale = expon.fit(inter_event_durations.astype(np.float64), floc=0)
+
+    self.expon_lambda.at[time_window_id] = [time_window_id, 1 / scale]</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.build_histogram"><code class="name flex">
+                            <span>def <span class="ident">build_histogram</span></span>(<span>self, occurrences, display=False)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Build the Time distribution count_histogram on occurrences
+                                :param occurrences:
+                                :param display:
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def build_histogram(self, occurrences, display=False):
+    &#39;&#39;&#39;
+    Build the Time distribution count_histogram on occurrences
+    :param occurrences:
+    :param display:
+    :return:
+    &#39;&#39;&#39;
+
+    # Remove duplicates &#39;day_date - time_step_id&#39;
+    occurrences[&#39;day_date&#39;] = occurrences.date.apply(lambda x: x.date())
+    occurrences.drop_duplicates([&#39;day_date&#39;, &#39;time_step_id&#39;], inplace=True)
+
+    hist = occurrences.groupby([&#39;time_step_id&#39;]).count()[&#39;date&#39;]
+
+    # Create an period_ts_index to have every time steps in the period
+
+    hist = hist.reindex(self.period_ts_index)
+
+    hist.fillna(0, inplace=True)
+
+    # hist = hist/len(hist)  # normalize
+
+    if display:
+        plt.bar(hist.index, hist.values)
+        plt.title(&#34;Activity Daily Profile\n&#34; +
+                  &#39;--&#39;.join(self.episode) +
+                  &#39;\nTime step : {} min&#39;.format(round(self.time_step.total_seconds() / 60, 1)))
+        plt.ylabel(&#39;Probability&#39;)
+        plt.show()
+
+    return hist</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.dump_data"><code class="name flex">
+                            <span>def <span class="ident">dump_data</span></span>(<span>self, output)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Dump All the data in the output_dir
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def dump_data(self, output):
+    &#34;&#34;&#34;
+    Dump All the data in the output_dir
+    :return:
+    &#34;&#34;&#34;
+
+    # Create the directory for the macro-activity
+
+    output += f&#39;{str(self)}/&#39;
+    # Create the folder if it does not exist yet
+    if not os.path.exists(os.path.dirname(output)):
+        try:
+            os.makedirs(os.path.dirname(output))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+    # Dump the histogram count
+    self.count_histogram.to_csv(output + &#34;/count_histogram.csv&#34;, index=False, sep=&#34;;&#34;)
+
+    for label, duration_distrib in self.duration_distrib.items():
+        # Stored as Gaussian Distribution
+        duration_distrib.to_csv(output + f&#34;{label}_duration_distribution.csv&#34;, index=False, sep=&#34;;&#34;)</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.forecast_durations"><code class="name flex">
+                            <span>def <span class="ident">forecast_durations</span></span>(<span>self, train_ratio, last_time_window_id, nb_periods_to_forecast, display=False)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>forecast the activities duration
+                                :param train_ratio:
+                                :param last_time_window_id:
+                                :param nb_periods_to_forecast:
+                                :param display:
+                                :return: Two dict like object {label: r2_score}</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def forecast_durations(self, train_ratio, last_time_window_id, nb_periods_to_forecast, display=False):
+    &#34;&#34;&#34;
+    forecast the activities duration
+    :param train_ratio:
+    :param last_time_window_id:
+    :param nb_periods_to_forecast:
+    :param display:
+    :return: Two dict like object {label: r2_score}
+    &#34;&#34;&#34;
+
+    duration_dist_errors = pd.DataFrame(columns=[&#39;label&#39;, &#39;mean_error&#39;, &#39;std_error&#39;])
+
+    for label in self.episode:
+        print(&#39;[{}] Duration forecasting...&#39;.format(label))
+
+        # Fill history count df until last time window registered
+
+        last_filled_tw_id = int(self.duration_distrib[label].tw_id.max())
+
+        for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
+            self.duration_distrib[label].at[tw_id] = [tw_id, 0, 0]
+
+        forecast_df = pd.DataFrame(columns=[&#39;tw_id&#39;, &#39;mean&#39;, &#39;std&#39;])
+
+        forecast_df.tw_id = np.arange(last_time_window_id, last_time_window_id + nb_periods_to_forecast)
+
+        # Fit &amp; Predict Duration Mean values
+        # print(&#39;Mean Duration Forecasting...&#39;)
+        duration_dist_data = self.duration_distrib[label][[&#39;mean&#39;, &#39;std&#39;]]
+        # mean_duration_data = list(self.duration_distrib[label][&#39;mean&#39;].values)
+        # std_duration_data = list(self.duration_distrib[label][&#39;std&#39;].values)
+
+        if len(duration_dist_data) &lt; 10:
+            forecast_df[&#39;mean&#39;] = [duration_dist_data[&#39;mean&#39;].values[-1]] * nb_periods_to_forecast
+            forecast_df[&#39;std&#39;] = [duration_dist_data[&#39;std&#39;].values[-1]] * nb_periods_to_forecast
+            self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+            # TODO : Do a real MSE ERROR calculation even here
+            duration_dist_errors.loc[len(duration_dist_data)] = [label, np.nan, np.nan]
+            continue
+
+        nmse_error_mean, nmse_error_std, duration_dist_forecast_values = arima_forecast_duration_dist(
+            data=duration_dist_data,
+            train_ratio=train_ratio,
+            nb_steps_to_forecast=nb_periods_to_forecast,
+            label=f&#39;{label} - Duration Distribution&#39;,
+            display=display)
+
+        if duration_dist_forecast_values is None:
+            forecast_df[&#39;mean&#39;] = [duration_dist_data[&#39;mean&#39;].values[-1]] * nb_periods_to_forecast
+            forecast_df[&#39;std&#39;] = [duration_dist_data[&#39;std&#39;].values[-1]] * nb_periods_to_forecast
+            self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+            # TODO : Do a real MSE ERROR calculation even here
+            duration_dist_errors.loc[len(duration_dist_data)] = [label, np.nan, np.nan]
+            continue
+
+        # print(&#34;Mean Duration Error (NMSE) : {:.2f}&#34;.format(mean_duration_error))
+        duration_dist_errors.loc[len(duration_dist_data)] = [label, nmse_error_mean, nmse_error_std]
+
+        forecast_df[&#39;mean&#39;] = duration_dist_forecast_values[&#39;mean&#39;].values
+        forecast_df[&#39;std&#39;] = duration_dist_forecast_values[&#39;std&#39;].values
+
+        self.duration_distrib[label] = self.duration_distrib[label].append(forecast_df, ignore_index=True)
+
+    return duration_dist_errors</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.forecast_execution_order"><code
+                                class="name flex">
+                            <span>def <span class="ident">forecast_execution_order</span></span>(<span>self, train_ratio, last_time_window_id, nb_periods_to_forecast, display=False)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Fit the execution order
+                                :param train_ratio:
+                                :param last_time_window_id:
+                                :param nb_periods_to_forecast:
+                                :param display:
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def forecast_execution_order(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
+                             display=False):
+    &#34;&#34;&#34;
+    Fit the execution order
+    :param train_ratio:
+    :param last_time_window_id:
+    :param nb_periods_to_forecast:
+    :param display:
+    :return:
+    &#34;&#34;&#34;
+
+    pass</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.forecast_history_count"><code class="name flex">
+                            <span>def <span class="ident">forecast_history_count</span></span>(<span>self, train_ratio, last_time_window_id, nb_periods_to_forecast, display=False)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Fit a time series forecasting model to the history count data
+                                :param train_ratio:
+                                :param last_time_window_id: Last time window id registered by the manager
+                                :param nb_periods_to_forecast:
+                                :param display:
+                                :return: Normalised Mean Squared Error (NMSE)</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def forecast_history_count(self, train_ratio, last_time_window_id, nb_periods_to_forecast,
+                           display=False):
+    &#34;&#34;&#34;
+    Fit a time series forecasting model to the history count data
+    :param train_ratio:
+    :param last_time_window_id: Last time window id registered by the manager
+    :param nb_periods_to_forecast:
+    :param display:
+    :return: Normalised Mean Squared Error (NMSE)
+    &#34;&#34;&#34;
+
+    nb_tstep = len(self.count_histogram.columns) - 1
+    nb_steps_to_forecast = nb_periods_to_forecast * nb_tstep
+
+    # Fill history count df until last time window registered
+    last_filled_tw_id = int(self.count_histogram.tw_id.max())
+
+    for tw_id in range(last_filled_tw_id + 1, last_time_window_id):
+        self.count_histogram.at[tw_id] = [tw_id] + list(np.zeros(nb_tstep))
+
+    raw_dataset = self.count_histogram.drop([&#39;tw_id&#39;], axis=1)
+    dataset = raw_dataset.values.flatten()
+
+    if self.nb_updates &lt; 10:  # Can&#39;t train on such less data
+        # Just copy the last known information
+        current_tw_id = last_time_window_id
+        hist_count = list(self.count_histogram.values[-1])[1:]  # remove the &#39;tw_id&#39; column
+        for i in range(nb_periods_to_forecast):
+            current_tw_id += 1
+            self.count_histogram.at[current_tw_id] = [current_tw_id] + hist_count
+        return None
+
+    dataset = dataset.astype(int)
+
+    train_size = int(len(dataset) * train_ratio)
+
+    train, test = dataset[:train_size], dataset[train_size:]
+
+    test_size = test.shape[0]
+
+    sarima_model = sarimax.SARIMAX(train, order=(2, 0, 2), seasonal_order=(1, 0, 0, nb_tstep),
+                                   enforce_stationarity=False,
+                                   enforce_invertibility=False)
+
+    sarima_model = sarima_model.fit(disp=False)
+
+    raw_forecast = sarima_model.predict(start=train_size, end=-1 + train_size + test_size + nb_steps_to_forecast)
+
+    raw_forecast = pd.Series(raw_forecast)
+
+    validation_forecast = raw_forecast[:test_size]
+    mse_error = mean_squared_error(test, validation_forecast)
+
+    # Forecast to use
+    forecasts = raw_forecast[test_size:]
+
+    # Replace all negative values by 0
+    forecasts = np.where(forecasts &gt; 0, forecasts, 0)
+    forecasts = forecasts.reshape((nb_periods_to_forecast, nb_tstep))
+
+    current_tw_id = last_time_window_id
+    for hist_count in forecasts:
+        current_tw_id += 1
+        self.count_histogram.at[current_tw_id] = [current_tw_id] + list(hist_count)
+
+    if display:
+        plt.figure(figsize=(10, 5))
+        plt.plot(np.arange(train_size, train_size + len(validation_forecast)), validation_forecast, &#39;r&#39;)
+        plt.plot(dataset, &#39;b&#39;, alpha=0.5)
+        plt.plot(np.arange(len(dataset), len(dataset) + len(raw_forecast)), raw_forecast, &#39;red&#39;, alpha=0.7)
+
+        plt.title(&#39;{}\nTest MSE: {:.3f}&#39;.format(self.episode, mse_error))
+        plt.xlabel(&#39;Time&#39;)
+        plt.ylabel(&#39;count&#39;)
+        plt.axvline(x=train_size, color=&#39;black&#39;)
+        plt.show()
+
+    return mse_error</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.get_count_histogram"><code class="name flex">
+                            <span>def <span
+                                    class="ident">get_count_histogram</span></span>(<span>self, time_window_id)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>:param time_window_id: time window identifier
+                                :return: the histogram count at a specific time window</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def get_count_histogram(self, time_window_id):
+    &#34;&#34;&#34;
+    :param time_window_id: time window identifier
+    :return: the histogram count at a specific time window
+    &#34;&#34;&#34;
+    return self.count_histogram.loc[[time_window_id]]</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.get_set_episode"><code class="name flex">
+                            <span>def <span class="ident">get_set_episode</span></span>(<span>self)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def get_set_episode(self):
+    return frozenset(self.episode)</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.plot_time_series"><code class="name flex">
+                            <span>def <span class="ident">plot_time_series</span></span>(<span>self)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Display all the time series present in the Macro-Activity
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def plot_time_series(self):
+    &#34;&#34;&#34;
+    Display all the time series present in the Macro-Activity
+    :return:
+    &#34;&#34;&#34;
+
+    ## ACTIVITY DAILY PROFILE Time Series
+    ######################################
+
+    raw_dataset = self.count_histogram.drop([&#39;tw_id&#39;], axis=1)
+    dataset = raw_dataset.values.flatten()
+
+    plt.figure()
+    plt.plot(dataset)
+    plt.title(&#34;Histogram Count&#34;)
+
+    ## ACTIVITY DURATIONS
+    #####################
+    plt.figure()
+    for label in self.episode:
+        df = self.duration_distrib[label]
+        df[&#39;mean&#39;] /= 60
+        plt.plot(df.tw_id, df[&#39;mean&#39;], label=label)
+        # sns.lineplot(x=&#39;tw_id&#39;, y=&#39;mean&#39;, data=df, label=label)
+    plt.title(&#39;Mean Activity Duration&#39;)
+    plt.xlabel(&#39;Time Windows ID&#39;)
+    plt.ylabel(&#39;Duration (min)&#39;)
+    plt.legend()
+
+    # EXECUTION ORDER
+
+    if len(self.episode) &lt; 2:
+        plt.show()
+        return
+
+    df = self.occurrence_order
+    df = df.melt(&#39;tw_id&#39;, var_name=&#39;cols&#39;, value_name=&#39;vals&#39;)
+    g = sns.factorplot(x=&#34;tw_id&#34;, y=&#34;vals&#34;, hue=&#39;cols&#39;, data=df)
+
+    plt.xlabel(&#39;Time Windows ID&#39;)
+    plt.ylabel(&#39;Probability&#39;)
+    plt.title(&#34;Execution Order : {}&#34;.format(self.episode))
+    plt.legend()
+
+    # INTER-EVENTS DURATIONS
+    plt.figure()
+    df = self.expon_lambda
+    plt.plot(df[&#39;tw_id&#39;], df[&#39;lambda&#39;])
+    # sns.lineplot(x=&#39;tw_id&#39;, y=&#39;lambda&#39;, data=df)
+
+    plt.xlabel(&#39;Time Windows ID&#39;)
+    plt.ylabel(&#39;Lambda&#39;)
+    plt.title(&#39;Exponenital Distrib Parameter&#39;)
+
+    plt.show()</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.preprocessing"><code class="name flex">
+                            <span>def <span
+                                    class="ident">preprocessing</span></span>(<span>self, occurrences, events)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Preprocessing the occurrences and the events
+                                :param occurrences:
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def preprocessing(self, occurrences, events):
+    &#39;&#39;&#39;
+    Preprocessing the occurrences and the events
+    :param occurrences:
+    :return:
+    &#39;&#39;&#39;
+    occurrences[&#39;relative_date&#39;] = occurrences.date.apply(
+        lambda x: modulo_datetime(x.to_pydatetime(), self.period))
+    occurrences[&#39;time_step_id&#39;] = occurrences[&#39;relative_date&#39;] / self.time_step.total_seconds()
+    occurrences[&#39;time_step_id&#39;] = occurrences[&#39;time_step_id&#39;].apply(math.floor)
+    occurrences[&#39;activity_duration&#39;] = occurrences.end_date - occurrences.date
+    occurrences[&#39;activity_duration&#39;] = occurrences[&#39;activity_duration&#39;].apply(lambda x: x.total_seconds())
+
+    events[&#39;activity_duration&#39;] = events.end_date - events.date
+    events[&#39;activity_duration&#39;] = events[&#39;activity_duration&#39;].apply(lambda x: x.total_seconds())
+
+    return occurrences, events</code></pre>
+                            </details>
+                        </dd>
+                        <dt id="Simulation.MacroActivity.MacroActivity.simulate"><code class="name flex">
+                            <span>def <span class="ident">simulate</span></span>(<span>self, start_date, time_step_id, time_window_id)</span>
+                        </code></dt>
+                        <dd>
+                            <div class="desc"><p>Generate events on the macro-activity
+                                :param start_date:
+                                :param time_step_id:
+                                :param time_window_id:
+                                :return:</p></div>
+                            <details class="source">
+                                <summary>
+                                    <span>Expand source code</span>
+                                </summary>
+                                <pre><code class="python">def simulate(self, start_date, time_step_id, time_window_id):
+    &#34;&#34;&#34;
+    Generate events on the macro-activity
+    :param start_date:
+    :param time_step_id:
+    :param time_window_id:
+    :return:
+    &#34;&#34;&#34;
+
+    events = pd.DataFrame(columns=[&#39;date&#39;, &#39;end_date&#39;, &#39;label&#39;])
+
+    current_date = start_date
+
+    # TODO : Take the execution order into account
+    for label in self.episode:
+        mean = self.duration_distrib[label].loc[time_window_id][&#39;mean&#39;]
+        std = self.duration_distrib[label].loc[time_window_id][&#39;std&#39;]
+
+        # To avoid negative durations
+        if (mean == 0) and (std == 0):
+            continue
+        if (np.isnan(mean)) or (np.isnan(std)):
+            continue
+        duration = -1
+        while duration &lt; 0:
+            duration = math.ceil(np.random.normal(mean, std))
+
+        end_date = current_date + dt.timedelta(seconds=duration)
+        events.loc[len(events)] = [current_date, end_date, label]
+
+        current_date = end_date
+
+    return events</code></pre>
+                            </details>
+                        </dd>
+                    </dl>
+                </dd>
+                <dt id="Simulation.MacroActivity.suppress_stdout_stderr"><code class="flex name class">
+                    <span>class <span class="ident">suppress_stdout_stderr</span></span>
+                </code></dt>
+                <dd>
+                    <div class="desc"><p>A context manager for doing a "deep suppression" of stdout and stderr in
+                        Python, i.e. will suppress all print, even if the print originates in a
+                        compiled C/Fortran sub-function.
+                        This will not suppress raised exceptions, since exceptions are printed
+                        to stderr just before a script exits, and after the context manager has
+                        exited (at least, I think that is why it lets exceptions through).</p></div>
+                    <details class="source">
+                        <summary>
+                            <span>Expand source code</span>
+                        </summary>
+                        <pre><code class="python">class suppress_stdout_stderr(object):
+    &#39;&#39;&#39;
+    A context manager for doing a &#34;deep suppression&#34; of stdout and stderr in
+    Python, i.e. will suppress all print, even if the print originates in a
+    compiled C/Fortran sub-function.
+       This will not suppress raised exceptions, since exceptions are printed
+    to stderr just before a script exits, and after the context manager has
+    exited (at least, I think that is why it lets exceptions through).
+
+    &#39;&#39;&#39;
+
+    def __init__(self):
+        # Open a pair of null files
+        self.null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
+        # Save the actual stdout (1) and stderr (2) file descriptors.
+        self.save_fds = (os.dup(1), os.dup(2))
+
+    def __enter__(self):
+        # Assign the null pointers to stdout and stderr.
+        os.dup2(self.null_fds[0], 1)
+        os.dup2(self.null_fds[1], 2)
+
+    def __exit__(self, *_):
+        # Re-assign the real stdout/stderr back to (1) and (2)
+        os.dup2(self.save_fds[0], 1)
+        os.dup2(self.save_fds[1], 2)
+        # Close the null files
+        os.close(self.null_fds[0])
+        os.close(self.null_fds[1])</code></pre>
+                    </details>
+                </dd>
+            </dl>
+        </section>
+    </article>
+    <nav id="sidebar">
+        <h1>Index</h1>
+        <div class="toc">
+            <ul></ul>
+        </div>
+        <ul id="index">
+            <li><h3>Super-module</h3>
+                <ul>
+                    <li><code><a href="index.html" title="Simulation">Simulation</a></code></li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-functions">Functions</a></h3>
+                <ul class="">
+                    <li><code><a href="#Simulation.MacroActivity.arima_forecast_duration_dist"
+                                 title="Simulation.MacroActivity.arima_forecast_duration_dist">arima_forecast_duration_dist</a></code>
+                    </li>
+                    <li><code><a href="#Simulation.MacroActivity.find_ARIMA_params"
+                                 title="Simulation.MacroActivity.find_ARIMA_params">find_ARIMA_params</a></code></li>
+                    <li><code><a href="#Simulation.MacroActivity.fit_and_forecast"
+                                 title="Simulation.MacroActivity.fit_and_forecast">fit_and_forecast</a></code></li>
+                    <li><code><a href="#Simulation.MacroActivity.main"
+                                 title="Simulation.MacroActivity.main">main</a></code></li>
+                </ul>
+            </li>
+            <li><h3><a href="#header-classes">Classes</a></h3>
+                <ul>
+                    <li>
+                        <h4><code><a href="#Simulation.MacroActivity.MacroActivity"
+                                     title="Simulation.MacroActivity.MacroActivity">MacroActivity</a></code></h4>
+                        <ul class="">
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.ID"
+                                         title="Simulation.MacroActivity.MacroActivity.ID">ID</a></code></li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.LSTM"
+                                         title="Simulation.MacroActivity.MacroActivity.LSTM">LSTM</a></code></li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.SARIMAX"
+                                         title="Simulation.MacroActivity.MacroActivity.SARIMAX">SARIMAX</a></code></li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.add_time_window"
+                                         title="Simulation.MacroActivity.MacroActivity.add_time_window">add_time_window</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.build_histogram"
+                                         title="Simulation.MacroActivity.MacroActivity.build_histogram">build_histogram</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.dump_data"
+                                         title="Simulation.MacroActivity.MacroActivity.dump_data">dump_data</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.forecast_durations"
+                                         title="Simulation.MacroActivity.MacroActivity.forecast_durations">forecast_durations</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.forecast_execution_order"
+                                         title="Simulation.MacroActivity.MacroActivity.forecast_execution_order">forecast_execution_order</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.forecast_history_count"
+                                         title="Simulation.MacroActivity.MacroActivity.forecast_history_count">forecast_history_count</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.get_count_histogram"
+                                         title="Simulation.MacroActivity.MacroActivity.get_count_histogram">get_count_histogram</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.get_set_episode"
+                                         title="Simulation.MacroActivity.MacroActivity.get_set_episode">get_set_episode</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.plot_time_series"
+                                         title="Simulation.MacroActivity.MacroActivity.plot_time_series">plot_time_series</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.preprocessing"
+                                         title="Simulation.MacroActivity.MacroActivity.preprocessing">preprocessing</a></code>
+                            </li>
+                            <li><code><a href="#Simulation.MacroActivity.MacroActivity.simulate"
+                                         title="Simulation.MacroActivity.MacroActivity.simulate">simulate</a></code>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h4><code><a href="#Simulation.MacroActivity.suppress_stdout_stderr"
+                                     title="Simulation.MacroActivity.suppress_stdout_stderr">suppress_stdout_stderr</a></code>
+                        </h4>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</main>
+<footer id="footer">
+    <p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

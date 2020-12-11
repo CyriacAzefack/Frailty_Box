@@ -12,16 +12,13 @@ import scipy
 import seaborn as sns
 import tensorflow as tf
 from matplotlib.collections import LineCollection
-from numpy.random import seed
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.manifold import TSNE
 from sklearn.metrics import silhouette_samples, silhouette_score, davies_bouldin_score
 from tqdm import trange
 
-seed(1996)
-tf.random.set_seed(1996)
-
-from Visualization.CalendarDisplay import display_calendar
+# import Vizu.CalendarDisplay
+# from Vizu.CalendarDisplay import display_calendar
 
 font = {'family': 'normal',
         'weight': 'bold',
